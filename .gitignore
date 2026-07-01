@@ -1,0 +1,34 @@
+# ═══════════════════════════════════════════════════════════════
+# SECRETS — NE JAMAIS COMMITTER (crucial !)
+# ═══════════════════════════════════════════════════════════════
+.env
+.env.*
+!.env.example
+*.key
+secrets.json
+credentials.json
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# ── OS / éditeurs ──
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# ── Logs & temporaires ──
+*.log
+*.tmp
+tmp/
+
+# ── Pinecone / cache local éventuel ──
+cache/
+backups/
