@@ -1,0 +1,44 @@
+name: Indexer les PV dans Pinecone
+
+# Lancement manuel uniquement (bouton "Run workflow" dans l'onglet Actions).
+# Indexe la base pv_conseil_schaerbeek.json dans l'index Pinecone "pv-explorer".
+#
+# PRÉREQUIS : ajouter le secret PINECONE_API_KEY dans
+#   Settings → Secrets and variables → Actions → New repository secret
+#
+# Par défaut, réindexe proprement (--reset vide l'index avant). Décoche l'option
+# reset au lancement pour un simple upsert sans suppression.
+on:
+  workflow_dispatch:
+    inputs:
+      reset:
+        description: "Vider l'index avant réindexation (--reset)"
+        type: boolean
+        default: true
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Installer les dépendances
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Indexer les PV
+        working-directory: backend
+        env:
+          PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+        run: |
+          if [ "${{ inputs.reset }}" = "true" ]; then
+            python index_pv.py --reset
+          else
+            python index_pv.py
+          fi
