@@ -1,6 +1,8 @@
-fastapi>=0.115.0
-uvicorn>=0.32.0
-anthropic>=0.40.0
-pinecone>=5.4.0
-python-dotenv>=1.0.0
-slowapi>=0.1.9
+# Versions épinglées (testées ensemble) pour éviter qu'un rebuild casse
+# silencieusement l'API — l'API de réponse Pinecone a changé entre majeures.
+fastapi==0.138.2
+uvicorn==0.49.0
+anthropic==0.115.0
+pinecone==9.1.0
+python-dotenv==1.2.2
+slowapi==0.1.10

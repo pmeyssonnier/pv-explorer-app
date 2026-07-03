@@ -453,8 +453,12 @@ async function submitQuestion() {
     });
 
     if (!res.ok) {
+      if (res.status === 429) {
+        throw new Error("Trop de questions d'affilée. Patientez une minute avant de réessayer.");
+      }
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || 'Erreur ' + res.status);
+      // slowapi renvoie {error:...}, FastAPI {detail:...}
+      throw new Error(err.detail || err.error || 'Erreur ' + res.status);
     }
 
     const data = await res.json();
@@ -505,7 +509,10 @@ async function loadStats() {
   const container = document.getElementById('statsContent');
   try {
     const res = await fetch(API_URL + '/stats');
-    if (!res.ok) throw new Error('Erreur ' + res.status);
+    if (!res.ok) {
+      if (res.status === 429) throw new Error("Trop de requêtes. Patientez un instant.");
+      throw new Error('Erreur ' + res.status);
+    }
     const s = await res.json();
 
     const maxTheme = Math.max(...s.top_thematiques.map(t => t[1]), 1);
