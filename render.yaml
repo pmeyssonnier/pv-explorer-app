@@ -4,9 +4,11 @@ services:
   - type: web
     name: pv-explorer-api
     runtime: python
+    plan: free                 # tier gratuit (le service s'endort après inactivité)
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
+    healthCheckPath: /health
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false          # à saisir manuellement dans le dashboard (secret)
