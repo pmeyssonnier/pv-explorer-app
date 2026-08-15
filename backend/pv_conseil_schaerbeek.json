@@ -5,10 +5,11 @@
     "date_creation": "2026-06-05",
     "seances_incluses": [
       "2025-12-17",
+      "2026-02-11",
       "2026-03-25",
       "2026-04-22"
     ],
-    "total_points": 193,
+    "total_points": 256,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -1632,6 +1633,1459 @@
           "thematiques": [
             "motion",
             "logement_social"
+          ]
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2026-02-11",
+        "date": "2026-02-11",
+        "commune": "schaerbeek",
+        "heure_ouverture": "18:40",
+        "heure_cloture": null,
+        "president": "Hasan Koyuncu",
+        "bourgmestre": "Audrey Henry",
+        "bourgmestre_ff": null,
+        "secretaire_communal": "David Neuprez",
+        "presents_count": 33,
+        "excuses": [
+          "Justine Harze",
+          "Gudrun Willems",
+          "Emin Ozkara",
+          "Cécile Jodogne",
+          "Yusuf Yildiz",
+          "Anton Schuurmans",
+          "Ahmed El",
+          "Yousra Ouchen",
+          "Ayse Yigit",
+          "Saït Köse",
+          "Philippe Den",
+          "Secrétaire Communal"
+        ],
+        "absents": [],
+        "source_file": "pvconseil2026.02.11sp.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "?",
+          "sous_rubrique": "",
+          "titre": "La situation du Théâtre Océan Nord - Demande de Madame Mona Molitor",
+          "resume": "La situation du Théâtre Océan Nord - Demande de Madame Mona Molitor",
+          "intervenants": [
+            "Mona Molitor"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": null,
+          "montant_eur": null,
+          "thematiques": [
+            "culture"
+          ]
+        },
+        {
+          "sp": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "SIBELGA - Assemblée Générale Extraordinaire du 12.03.2026 - Prise de participation de SIBELGA dans la société NEWCO - Approbation",
+          "resume": "SIBELGA - Assemblée Générale Extraordinaire du 12.03.2026 - Prise de participation de SIBELGA dans la société NEWCO - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1663891.28,
+          "thematiques": [
+            "energie",
+            "intercommunale"
+          ]
+        },
+        {
+          "sp": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL A Vos Côtés 1030 - Remplacement d'une représentante à l'Assemblée Générale et au Conseil d'administration",
+          "resume": "ASBL A Vos Côtés 1030 - Remplacement d'une représentante à l'Assemblée Générale et au Conseil d'administration",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl"
+          ]
+        },
+        {
+          "sp": 4,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL Crèches de Schaerbeek - Remplacement de représentants au Conseil d'Administration.",
+          "resume": "ASBL Crèches de Schaerbeek - Remplacement de représentants au Conseil d'Administration.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "petite_enfance"
+          ]
+        },
+        {
+          "sp": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "Jeunesse 1030 asbl - Remplacement d'un représentant au Conseil d'Administration - =- Jeunesse 1030 vzw - Vervanging van een vertegenwoordiger in de Raad van Bestuur DÉCISION DU CONSEIL",
+          "resume": "Jeunesse 1030 asbl - Remplacement d'un représentant au Conseil d'Administration - =- Jeunesse 1030 vzw - Vervanging van een vertegenwoordiger in de Raad van Bestuur DÉCISION DU CONSEIL",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl"
+          ]
+        },
+        {
+          "sp": 6,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "SPORT 1030 Asbl - Remplacement d'un représentant à l'Assemblée Générale et au Conseil d'Administration",
+          "resume": "SPORT 1030 Asbl - Remplacement d'un représentant à l'Assemblée Générale et au Conseil d'Administration",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "sport"
+          ]
+        },
+        {
+          "sp": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "Programme WePulse – Cadres particuliers relatifs aux domaines RH (Soft RH et Hard RH)- Souscription au Volet 1 \"BUILD\" - Non souscription au Volet 2 \"RUN\"",
+          "resume": "Programme WePulse – Cadres particuliers relatifs aux domaines RH (Soft RH et Hard RH)- Souscription au Volet 1 \"BUILD\" - Non souscription au Volet 2 \"RUN\"",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "aines"
+          ]
+        },
+        {
+          "sp": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "Contrat de gestion de l'ASBL \"Harmonisation Sociale Schaerbeekoise\" 2026-2030 - Convention - Approbation",
+          "resume": "Contrat de gestion de l'ASBL \"Harmonisation Sociale Schaerbeekoise\" 2026-2030 - Convention - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention"
+          ]
+        },
+        {
+          "sp": 9,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "Contrat de gestion de l'ASBL \"OCS\" 2026-2030 - Convention - Approbation",
+          "resume": "Contrat de gestion de l'ASBL \"OCS\" 2026-2030 - Convention - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention"
+          ]
+        },
+        {
+          "sp": 10,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"ALBERTINE\" - Convention cadre pluriannuelle 2026-2030 – Approbation",
+          "resume": "ASBL \"ALBERTINE\" - Convention cadre pluriannuelle 2026-2030 – Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention"
+          ]
+        },
+        {
+          "sp": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Bibla Lire en classe\" - Convention cadre pluriannuelle 2026-2030 – Approbation",
+          "resume": "ASBL \"Bibla Lire en classe\" - Convention cadre pluriannuelle 2026-2030 – Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention"
+          ]
+        },
+        {
+          "sp": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Ludothèque Sésame\" - Convention cadre pluriannuelle 2026-2030 – Approbation",
+          "resume": "ASBL \"Ludothèque Sésame\" - Convention cadre pluriannuelle 2026-2030 – Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention"
+          ]
+        },
+        {
+          "sp": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Art et culture 1030\" - Convention cadre pluriannuelle sous forme de contrat de gestion 2026-2030 – Approbation",
+          "resume": "ASBL \"Art et culture 1030\" - Convention cadre pluriannuelle sous forme de contrat de gestion 2026-2030 – Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention",
+            "culture"
+          ]
+        },
+        {
+          "sp": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Sport 10 30 \" - Contrat de gestion 2026 – Approbation",
+          "resume": "ASBL \"Sport 10 30 \" - Contrat de gestion 2026 – Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "sport"
+          ]
+        },
+        {
+          "sp": 15,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Enseignement Communal francophone 1030\" - Comptes 2023 et 2024 - Prise d'acte",
+          "resume": "ASBL \"Enseignement Communal francophone 1030\" - Comptes 2023 et 2024 - Prise d'acte",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "enseignement"
+          ]
+        },
+        {
+          "sp": 16,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Œuvres des Colonies Scolaires de Schaerbeek\" en abrégé OCS - Comptes 2023 et 2024 - Prise d'acte",
+          "resume": "ASBL \"Œuvres des Colonies Scolaires de Schaerbeek\" en abrégé OCS - Comptes 2023 et 2024 - Prise d'acte",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 849315.36,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "enseignement"
+          ]
+        },
+        {
+          "sp": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"PRO VELO institut de Recherche et de la Promotion du Vélo\" en abrégé \"Pro Velo\" - Comptes 2024 et dérogation au règlement - Prise d'acte",
+          "resume": "ASBL \"PRO VELO institut de Recherche et de la Promotion du Vélo\" en abrégé \"Pro Velo\" - Comptes 2024 et dérogation au règlement - Prise d'acte",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 414101.0,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "reglement",
+            "motion",
+            "velo"
+          ]
+        },
+        {
+          "sp": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Union des Travailleu(r)ses du Sexe Organisé-e-s Pour l'Indépendance\" en abrégé \"UTSOPI\"- Comptes 2024 - Prise d'acte",
+          "resume": "ASBL \"Union des Travailleu(r)ses du Sexe Organisé-e-s Pour l'Indépendance\" en abrégé \"UTSOPI\"- Comptes 2024 - Prise d'acte",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 98166.7,
+          "thematiques": [
+            "asbl",
+            "comptes"
+          ]
+        },
+        {
+          "sp": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"VIA\" - Comptes 2024 - Prise d'acte",
+          "resume": "ASBL \"VIA\" - Comptes 2024 - Prise d'acte",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 12006.0,
+          "thematiques": [
+            "asbl",
+            "comptes"
+          ]
+        },
+        {
+          "sp": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"F.C. Kosova\" - Comptes 2024 - Prise d'acte",
+          "resume": "ASBL \"F.C. Kosova\" - Comptes 2024 - Prise d'acte",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 68691.96,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "sport"
+          ]
+        },
+        {
+          "sp": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Royal Cercle Athlétique de Schaerbeek\" - Comptes 2024 - Prise d'acte",
+          "resume": "ASBL \"Royal Cercle Athlétique de Schaerbeek\" - Comptes 2024 - Prise d'acte",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 158838.43,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "sport"
+          ]
+        },
+        {
+          "sp": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "ASBL \" Judo Royal Crossing Club Schaerbeek \" - Comptes 2024 - Prise d'acte",
+          "resume": "ASBL \" Judo Royal Crossing Club Schaerbeek \" - Comptes 2024 - Prise d'acte",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 283375.52,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "sport"
+          ]
+        },
+        {
+          "sp": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "Taxe sur l'extension temporaire des terrasses et le placement de terrasses sur des emplacements de stationnement sans permis d’urbanisme – Exercice d’imposition 2026 – Renouvellement",
+          "resume": "Taxe sur l'extension temporaire des terrasses et le placement de terrasses sur des emplacements de stationnement sans permis d’urbanisme – Exercice d’imposition 2026 – Renouvellement",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 197.46,
+          "thematiques": [
+            "fiscalite",
+            "mobilite"
+          ]
+        },
+        {
+          "sp": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Secrétariat",
+          "sous_rubrique": "",
+          "titre": "Taxe sur les logements meublés - Exercices 2026 à 2030 – Renouvellement et modification",
+          "resume": "Taxe sur les logements meublés - Exercices 2026 à 2030 – Renouvellement et modification",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 33,
+            "contre": 0,
+            "abstentions": 3
+          },
+          "montant_eur": 1050.0,
+          "thematiques": [
+            "fiscalite",
+            "logement"
+          ]
+        },
+        {
+          "sp": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique",
+          "sous_rubrique": "",
+          "titre": "\"Faire Samen Rasquinet\" - Subside annuel au Collectif Ciné Sur cour (2000€) - Approbation",
+          "resume": "\"Faire Samen Rasquinet\" - Subside annuel au Collectif Ciné Sur cour (2000€) - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subside",
+            "contrat_quartier",
+            "culture"
+          ]
+        },
+        {
+          "sp": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique",
+          "sous_rubrique": "",
+          "titre": "Règlement redevance sur l'utilisation du sabot – Abrogation",
+          "resume": "Règlement redevance sur l'utilisation du sabot – Abrogation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fiscalite",
+            "reglement",
+            "mobilite"
+          ]
+        },
+        {
+          "sp": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique",
+          "sous_rubrique": "",
+          "titre": "Candidature Co-Create (projet de recherche Innoviris) sur les intérieurs d'ilot (projet HABÎLOT) - Accord de collaboration - Approbation",
+          "resume": "Candidature Co-Create (projet de recherche Innoviris) sur les intérieurs d'ilot (projet HABÎLOT) - Accord de collaboration - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "divers"
+          ]
+        },
+        {
+          "sp": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique",
+          "sous_rubrique": "",
+          "titre": "\"Contrats École 2021-2024 : école 1 et Champagnat\" de Perspective Brussels - Avenants aux conventions - Approbation",
+          "resume": "\"Contrats École 2021-2024 : école 1 et Champagnat\" de Perspective Brussels - Avenants aux conventions - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention",
+            "enseignement"
+          ]
+        },
+        {
+          "sp": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique",
+          "sous_rubrique": "",
+          "titre": "Subvention Politique de soutien à la mise en œuvre des politiques de revitalisation urbaine (CQD et CRU) 2025 - Avenants à la Convention avec la Région de Bruxelles- Capitale - Approbation",
+          "resume": "Subvention Politique de soutien à la mise en œuvre des politiques de revitalisation urbaine (CQD et CRU) 2025 - Avenants à la Convention avec la Région de Bruxelles- Capitale - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subside",
+            "convention"
+          ]
+        },
+        {
+          "sp": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Affaires générales",
+          "sous_rubrique": "",
+          "titre": "Aff. C. / Région de Bruxelles-Capitale – Taxe sur les immeubles non résidentiels – Exercice 2021 – Jugement défavorable – Décision d’interjeter appel – Approbation",
+          "resume": "Aff. C. / Région de Bruxelles-Capitale – Taxe sur les immeubles non résidentiels – Exercice 2021 – Jugement défavorable – Décision d’interjeter appel – Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fiscalite"
+          ]
+        },
+        {
+          "sp": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Affaires générales",
+          "sous_rubrique": "",
+          "titre": "Ordonnance du Conseil communal autorisant temporairement sans permis d’urbanisme les extensions de terrasses et le placement de terrasses sur emplacement de stationnement - Prolongation",
+          "resume": "Ordonnance du Conseil communal autorisant temporairement sans permis d’urbanisme les extensions de terrasses et le placement de terrasses sur emplacement de stationnement - Prolongation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 6
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "reglement",
+            "mobilite"
+          ]
+        },
+        {
+          "sp": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Centre FAC (Formation et Accompagnement de la Construction), Rue de la Poste 262 - Remplacement de la chaudière- Marché public de faible montant - Marché de travaux - Pour information",
+          "resume": "Centre FAC (Formation et Accompagnement de la Construction), Rue de la Poste 262 - Remplacement de la chaudière- Marché public de faible montant - Marché de travaux - Pour information",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 17681.54,
+          "thematiques": [
+            "marche_public",
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Crèche La Trifide, Boulevard Léopold III 29 - Remplacement de quatre stores à enrouleur- Marché public de faible montant - Marché de travaux - Pour information",
+          "resume": "Crèche La Trifide, Boulevard Léopold III 29 - Remplacement de quatre stores à enrouleur- Marché public de faible montant - Marché de travaux - Pour information",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3594.8,
+          "thematiques": [
+            "marche_public",
+            "petite_enfance",
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Crèche Les Petites Etoiles, rue Godefroid Guffens 26 - Pose de deux stores bannes - Marché public de faible montant - Marché de travaux - Pour information",
+          "resume": "Crèche Les Petites Etoiles, rue Godefroid Guffens 26 - Pose de deux stores bannes - Marché public de faible montant - Marché de travaux - Pour information",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5641.57,
+          "thematiques": [
+            "marche_public",
+            "petite_enfance",
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Création de caves-urnes pour le cimetière de Schaerbeek - Marché public de faible montant - Marché de travaux - Pour information",
+          "resume": "Création de caves-urnes pour le cimetière de Schaerbeek - Marché public de faible montant - Marché de travaux - Pour information",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "marche_public",
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Maison des Citoyens, Place Gaucheret 20- Modernisation de l'ascenseur suite à une analyse de risques - Marché public de faible montant - Marché de travaux - Pour information",
+          "resume": "Maison des Citoyens, Place Gaucheret 20- Modernisation de l'ascenseur suite à une analyse de risques - Marché public de faible montant - Marché de travaux - Pour information",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "marche_public",
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 37,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Concession de services visant l’organisation des excursions destinées aux seniors - Choix de la procédure de passation et fixation des conditions du contrat de concession - Approbation",
+          "resume": "Concession de services visant l’organisation des excursions destinées aux seniors - Choix de la procédure de passation et fixation des conditions du contrat de concession - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "aines"
+          ]
+        },
+        {
+          "sp": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Adhésion au marché public de fournitures ayant pour objet “ Machines de nettoyage 2026 ” conclu par la centrale d’achat CREAT de la Tussengemeentelijke Maatschappij voor Services (TMVS)\"- Approbation",
+          "resume": "Adhésion au marché public de fournitures ayant pour objet “ Machines de nettoyage 2026 ” conclu par la centrale d’achat CREAT de la Tussengemeentelijke Maatschappij voor Services (TMVS)\"- Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "marche_public",
+            "proprete"
+          ]
+        },
+        {
+          "sp": 39,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Acquisition de diverses fournitures et/ou divers services répondant aux besoins des services - Marchés Publics de faible montant conclus par facture acceptée - Procédure de passation et attribution - Semaine 05/26 - Budget extraordinaire - Pour information - =- Aankoop van diverse leveringen en/of diensten voor de behoeften van de diensten - Overheidsopdrachten van beperkte waarde gesloten door mi",
+          "resume": "Acquisition de diverses fournitures et/ou divers services répondant aux besoins des services - Marchés Publics de faible montant conclus par facture acceptée - Procédure de passation et attribution - ",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 40,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Cabinet Échevin Frédéric NIMAL - Commande d'un smartphone auprès de Orange SA, adjudicataire de la centrale de marché de Irisnet - Pour information",
+          "resume": "Cabinet Échevin Frédéric NIMAL - Commande d'un smartphone auprès de Orange SA, adjudicataire de la centrale de marché de Irisnet - Pour information",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 34,
+            "contre": 0,
+            "abstentions": 2
+          },
+          "montant_eur": 925.18,
+          "thematiques": [
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Marché public de fournitures ayant pour objet l'achat de papier et d’enveloppes pour les imprimantes et photocopieurs de l’administration communale - Choix de la procédure de passation et fixation des conditions du marché -Engagement de la procédure - Pour information",
+          "resume": "Marché public de fournitures ayant pour objet l'achat de papier et d’enveloppes pour les imprimantes et photocopieurs de l’administration communale - Choix de la procédure de passation et fixation des",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "marche_public",
+            "velo"
+          ]
+        },
+        {
+          "sp": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Marché public de services pour la plastification de livres pour les bibliothèques communales francophones et néerlandophone de la Commune de Schaerbeek - Choix de la procédure de passation et fixation des conditions du marché - Pour information",
+          "resume": "Marché public de services pour la plastification de livres pour les bibliothèques communales francophones et néerlandophone de la Commune de Schaerbeek - Choix de la procédure de passation et fixation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "marche_public"
+          ]
+        },
+        {
+          "sp": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "CTR – Aménagement de locaux pour les Archives communales et les collections de la Maison des Arts - Procédure de passation et conditions du marché - Pour information",
+          "resume": "CTR – Aménagement de locaux pour les Archives communales et les collections de la Maison des Arts - Procédure de passation et conditions du marché - Pour information",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 44,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Marché public de services – Collecte et traitement des bonbonnes de protoxyde d’azote/gaz hilarant ramassées sur la voie publique, pour une durée d'1 an, 2026/2027 – Procédure de passation et conditions du marché – Pour information",
+          "resume": "Marché public de services – Collecte et traitement des bonbonnes de protoxyde d’azote/gaz hilarant ramassées sur la voie publique, pour une durée d'1 an, 2026/2027 – Procédure de passation et conditio",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "marche_public"
+          ]
+        },
+        {
+          "sp": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Contrat de Quartier Durable Petite Colline - Opération 4.11 \" Projet R+ \" - Garantie bancaire ASIS \"Brabant 214\"",
+          "resume": "Contrat de Quartier Durable Petite Colline - Opération 4.11 \" Projet R+ \" - Garantie bancaire ASIS \"Brabant 214\"",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 285000.0,
+          "thematiques": [
+            "contrat_quartier"
+          ]
+        },
+        {
+          "sp": 46,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Vie citoyenne",
+          "sous_rubrique": "",
+          "titre": "MUZIK1030 BAR - Règlement des appels à projets - Approbation",
+          "resume": "MUZIK1030 BAR - Règlement des appels à projets - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "reglement"
+          ]
+        },
+        {
+          "sp": 47,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Vie citoyenne",
+          "sous_rubrique": "",
+          "titre": "Conseil Consultatif des Aînés - Règlement - Approbation",
+          "resume": "Conseil Consultatif des Aînés - Règlement - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "reglement",
+            "aines"
+          ]
+        },
+        {
+          "sp": 48,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Vie citoyenne",
+          "sous_rubrique": "",
+          "titre": "Règlement d'attribution des subsides pour les projets Aînés - Approbation",
+          "resume": "Règlement d'attribution des subsides pour les projets Aînés - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subside",
+            "reglement",
+            "aines"
+          ]
+        },
+        {
+          "sp": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "",
+          "titre": "Convention de collaboration \"exposition itinérante\" - ASBL Territoires de la Mémoire - Approbation",
+          "resume": "Convention de collaboration \"exposition itinérante\" - ASBL Territoires de la Mémoire - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention",
+            "culture"
+          ]
+        },
+        {
+          "sp": 50,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "",
+          "titre": "Convention de collaboration \"exposition itinérante\" - War Heritage Institute - Approbation",
+          "resume": "Convention de collaboration \"exposition itinérante\" - War Heritage Institute - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention",
+            "culture"
+          ]
+        },
+        {
+          "sp": 76,
+          "urgence": true,
+          "type": "demande_habitant",
+          "rubrique": "Points en urgence",
+          "sous_rubrique": "",
+          "titre": "Situation des personnes sans-chez-soi et mesures prises par la commune - Demande de Madame Kirsten Crick",
+          "resume": "Situation des personnes sans-chez-soi et mesures prises par la commune - Demande de Madame Kirsten Crick",
+          "intervenants": [
+            "Kirsten Crick"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": null,
+          "montant_eur": null,
+          "thematiques": [
+            "sans_abri"
+          ]
+        },
+        {
+          "sp": 77,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Points en urgence",
+          "sous_rubrique": "",
+          "titre": "SA Crédit pour habitation sociales (0402.204.461) – vente des participations de la Commune de Schaerbeek - Approbation",
+          "resume": "SA Crédit pour habitation sociales (0402.204.461) – vente des participations de la Commune de Schaerbeek - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30524.0,
+          "thematiques": [
+            "logement"
+          ]
+        },
+        {
+          "sp": 78,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Points en urgence",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Réseau Coordination Enfance\" - Convention cadre pluriannuelle 2026-2030 – Approbation",
+          "resume": "ASBL \"Réseau Coordination Enfance\" - Convention cadre pluriannuelle 2026-2030 – Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention"
+          ]
+        },
+        {
+          "sp": 79,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "",
+          "titre": "Acquisition de diverses fournitures et/ou divers services répondant aux besoins des services - Marchés Publics de faible montant conclus par facture acceptée - Procédure de passation et attribution - Semaine 07/26 - Budget extraordinaire - Pour information - =- Aankoop van diverse leveringen en/of diensten voor de behoeften van de diensten - Overheidsopdrachten van beperkte waarde gesloten door mi",
+          "resume": "Acquisition de diverses fournitures et/ou divers services répondant aux besoins des services - Marchés Publics de faible montant conclus par facture acceptée - Procédure de passation et attribution - ",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1473.54,
+          "thematiques": [
+            "infrastructure"
+          ]
+        },
+        {
+          "sp": 80,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Vie citoyenne",
+          "sous_rubrique": "",
+          "titre": "Convention de collaboration technique entre Point Culture asbl et la Commune pour la gestion du Comptoir Médiathèque pour l'année 2026 - Approbation",
+          "resume": "Convention de collaboration technique entre Point Culture asbl et la Commune pour la gestion du Comptoir Médiathèque pour l'année 2026 - Approbation",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention",
+            "culture"
+          ]
+        },
+        {
+          "sp": 51,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Vie citoyenne",
+          "sous_rubrique": "",
+          "titre": "Les problèmes de mobilité dans la rue Floris et dans la rue Gallait (Demande de Monsieur Georges VERZIN)",
+          "resume": "Les problèmes de mobilité dans la rue Floris et dans la rue Gallait (Demande de Monsieur Georges VERZIN)",
+          "intervenants": [
+            "Georges VERZIN"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": null,
+          "montant_eur": null,
+          "thematiques": [
+            "mobilite"
+          ]
+        },
+        {
+          "sp": 81,
+          "urgence": true,
+          "type": "motion",
+          "rubrique": "Motions",
+          "sous_rubrique": "",
+          "titre": "Motion en soutien au peuple iranien et contre la répression exercée par les autorités en place (Motion de Monsieur Elias AMMI)",
+          "resume": "Motion en soutien au peuple iranien et contre la répression exercée par les autorités en place (Motion de Monsieur Elias AMMI)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 32,
+            "contre": 0,
+            "abstentions": 2
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "motion",
+            "international"
+          ]
+        },
+        {
+          "sp": 82,
+          "urgence": true,
+          "type": "motion",
+          "rubrique": "Motions",
+          "sous_rubrique": "",
+          "titre": "Schaerbeek s'engage pour le 8 mars et l'égalité (Motion de Madame Leila LAHSSAINI)",
+          "resume": "Schaerbeek s'engage pour le 8 mars et l'égalité (Motion de Madame Leila LAHSSAINI)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 23,
+            "contre": 0,
+            "abstentions": 9
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "motion",
+            "egalite"
+          ]
+        },
+        {
+          "sp": 83,
+          "urgence": true,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "La lutte contre le harcèlement scolaire à Schaerbeek (Question de Madame Naïma BELKHATIR)",
+          "resume": "La lutte contre le harcèlement scolaire à Schaerbeek (Question de Madame Naïma BELKHATIR)",
+          "intervenants": [
+            "Naïma BELKHATIR"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": null,
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "securite"
+          ]
+        },
+        {
+          "sp": 84,
+          "urgence": true,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Le E-sport à Schaerbeek (Question de Monsieur Salih DEMIRHAN)",
+          "resume": "Le E-sport à Schaerbeek (Question de Monsieur Salih DEMIRHAN)",
+          "intervenants": [
+            "Salih DEMIRHAN"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": null,
+          "montant_eur": null,
+          "thematiques": [
+            "sport",
+            "e_sport"
+          ]
+        },
+        {
+          "sp": 85,
+          "urgence": true,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "L'externalisation des services de nettoyages dans les écoles communales (Question de Monsieur Benjamin DEVOS)",
+          "resume": "L'externalisation des services de nettoyages dans les écoles communales (Question de Monsieur Benjamin DEVOS)",
+          "intervenants": [
+            "Benjamin DEVOS"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": null,
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "proprete"
+          ]
+        },
+        {
+          "sp": 86,
+          "urgence": true,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Sécurité quartier Nord (Question de Monsieur Salih DEMIRHAN)",
+          "resume": "Sécurité quartier Nord (Question de Monsieur Salih DEMIRHAN)",
+          "intervenants": [
+            "Salih DEMIRHAN"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": null,
+          "montant_eur": null,
+          "thematiques": [
+            "securite"
+          ]
+        },
+        {
+          "sp": 87,
+          "urgence": true,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Plan Propreté (Question de Monsieur Anton SCHUURMANS)",
+          "resume": "Plan Propreté (Question de Monsieur Anton SCHUURMANS)",
+          "intervenants": [
+            "Anton SCHUURMANS"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": null,
+          "montant_eur": null,
+          "thematiques": [
+            "proprete"
           ]
         }
       ]
