@@ -80,19 +80,53 @@ git push -u origin main
 
 ---
 
-## 2. Indexer les PV dans Pinecone (une seule fois)
+## 2. Indexer les PV dans Pinecone
 
 ```bash
 cd backend
 pip install -r requirements.txt
 cp .env.example .env          # puis édite .env avec tes vraies clés
-export $(cat .env | xargs)    # charge les variables (Linux/Mac)
-python index_pv.py --reset
+set -a; source .env; set +a   # charge les variables (Linux/Mac)
+python index_pv.py            # indexe Schaerbeek (défaut)
 ```
 
 Clés gratuites :
 - **Pinecone** : https://app.pinecone.io (tier gratuit, sans carte bancaire)
 - **Anthropic** : https://console.anthropic.com
+
+> 💡 Sans machine locale, tu peux aussi indexer via **GitHub Actions** :
+> onglet *Actions → « Indexer les PV dans Pinecone » → Run workflow* (la clé est
+> lue depuis le secret `PINECONE_API_KEY`). Les inputs `commune` / `input`
+> permettent de choisir quoi indexer.
+
+### Multi-commune
+
+L'app gère plusieurs communes dans **un seul index** / **un seul namespace** :
+chaque vecteur porte une métadonnée `commune`. La recherche est **croisée par
+défaut** (toutes communes) ; le filtre par commune est optionnel (sélecteur du
+frontend, ou champ `commune` dans la requête `/ask`).
+
+```bash
+# (Ré)indexer Schaerbeek — met à jour les vecteurs en place (ID stable),
+# ajoute/actualise la métadonnée commune="schaerbeek" sans toucher aux autres.
+python index_pv.py --commune schaerbeek --input pv_conseil_schaerbeek.json
+
+# Plus tard : indexer Evere (le fichier JSON doit d'abord être produit par la
+# pipeline d'extraction PDF→JSON — chantier séparé, non inclus ici).
+python index_pv.py --commune evere --input pv_conseil_evere.json
+```
+
+- **Ne pas** utiliser `--reset` pour ajouter une commune : `--reset` vide **tout**
+  l'index (toutes communes). L'upsert par ID est idempotent, donc une simple
+  réindexation suffit.
+- **Convention d'unicité** : les séances de communes différentes doivent avoir
+  des `id` distincts dans leur JSON (les IDs de vecteurs ne sont pas préfixés par
+  commune). La pipeline Evere doit garantir cette unicité.
+
+> **Migration des vecteurs Schaerbeek existants** : les vecteurs indexés avant
+> l'ajout du multi-commune n'ont pas le champ `commune`. Relance une fois
+> l'indexation Schaerbeek (commande ci-dessus, ou le workflow Actions) pour que
+> les 193 vecteurs portent `commune="schaerbeek"` et soient filtrables.
 
 ---
 

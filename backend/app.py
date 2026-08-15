@@ -124,6 +124,9 @@ class QuestionRequest(BaseModel):
     # Longueur bornée : protège le budget API (une question démesurée serait
     # envoyée telle quelle à Claude). Pydantic renvoie 422 hors bornes.
     question: str = Field(min_length=3, max_length=MAX_QUESTION_LEN)
+    # Commune optionnelle. Absente ou "toutes" → recherche croisée (aucun
+    # filtre, comportement historique). Sinon → filtre sur cette commune.
+    commune: Optional[str] = Field(default=None, max_length=50)
 
 
 class Source(BaseModel):
@@ -203,13 +206,17 @@ def ask(request: Request, req: QuestionRequest):
     if not question:
         raise HTTPException(status_code=400, detail="Question vide")
 
+    # Filtre commune optionnel. Absent, vide ou "toutes"/"all" → aucun filtre
+    # (recherche croisée toutes communes, comportement historique).
+    query = {"inputs": {"text": question}, "top_k": TOP_K}
+    commune = (req.commune or "").strip().lower()
+    if commune and commune not in ("toutes", "toute", "all", "tous"):
+        query["filter"] = {"commune": {"$eq": commune}}
+
     # 1. Recherche vectorielle (embedding intégré Pinecone)
     try:
         index = get_pinecone_index()
-        results = index.search(
-            namespace=NAMESPACE,
-            query={"inputs": {"text": question}, "top_k": TOP_K}
-        )
+        results = index.search(namespace=NAMESPACE, query=query)
         matches = results.get("result", {}).get("hits", [])
     except Exception:
         logger.exception("Erreur lors de la recherche vectorielle Pinecone")

@@ -10,9 +10,15 @@ PRÉREQUIS :
     export PINECONE_API_KEY="pcsk_..."
 
 USAGE :
-    python index_pv.py                    # indexe pv_conseil_schaerbeek.json
-    python index_pv.py --reset            # vide l'index avant de réindexer
-    python index_pv.py --file autre.json  # indexe un autre fichier
+    python index_pv.py                                  # Schaerbeek (défaut)
+    python index_pv.py --reset                          # vide l'index puis réindexe
+    python index_pv.py --commune evere --input pv_conseil_evere.json   # autre commune
+
+MULTI-COMMUNE :
+    Un seul index, un seul namespace ("pv"). Chaque vecteur porte une
+    métadonnée `commune` ("schaerbeek", "evere", …) pour permettre un filtrage
+    optionnel côté recherche. Sans --reset, chaque commune s'ajoute/se met à
+    jour par upsert idempotent (ID stable) sans toucher aux autres.
 
 Le script crée un index Pinecone "pv-explorer" avec le modèle d'embedding
 intégré multilingual-e5-large (1024 dimensions, gère bien le français).
@@ -91,11 +97,14 @@ def format_vote(vote: dict) -> str:
     return "vote non précisé"
 
 
-def point_to_chunk(point: dict, seance: dict) -> dict:
+def point_to_chunk(point: dict, seance: dict, commune: str) -> dict:
     """
     Transforme un point de PV en chunk indexable.
     Le texte contient tout le contexte pour que la recherche soit pertinente.
+    `commune` (ex. "schaerbeek") est écrit en métadonnée pour le filtrage
+    multi-commune et injecté dans le texte vectorisé.
     """
+    commune_nom = commune.capitalize()
     date = seance.get("date", "date inconnue")
     montant = point.get("montant_eur")
     montant_str = f"\nMontant : {montant:,.0f} €".replace(",", " ") if montant else ""
@@ -105,7 +114,7 @@ def point_to_chunk(point: dict, seance: dict) -> dict:
     rep_str = f"\nRépondant : {repondant}" if repondant else ""
 
     # Le texte qui sera vectorisé et recherché
-    chunk_text = f"""Séance du Conseil communal de Schaerbeek du {date}.
+    chunk_text = f"""Séance du Conseil communal de {commune_nom} du {date}.
 Point SP {point.get('sp','?')} — {point.get('rubrique','')} / {point.get('sous_rubrique','')}
 Titre : {point.get('titre','')}
 Résumé : {point.get('resume','')}
@@ -113,12 +122,16 @@ Décision : {point.get('decision','')}
 Vote : {format_vote(point.get('vote'))}{montant_str}{interv_str}{rep_str}
 Thématiques : {', '.join(point.get('thematiques') or [])}"""
 
-    # ID unique et stable pour ce point
+    # ID unique et stable pour ce point. Inchangé (pas de préfixe commune) pour
+    # que la réindexation d'une commune existante reste un upsert idempotent.
+    # ⚠️ Les séances de communes différentes doivent avoir des `id` distincts
+    #    (la pipeline d'extraction d'Evere doit garantir cette unicité).
     chunk_id = f"{seance.get('id','PV')}_SP{point.get('sp','?')}"
 
     # Métadonnées pour filtrage et affichage (Pinecone limite à ~40KB par vecteur)
     metadata = {
         "chunk_text": chunk_text,          # champ vectorisé
+        "commune": commune,                # filtrage multi-commune
         "date": date,
         "sp": int(point.get("sp", 0)) if str(point.get("sp", "")).isdigit() else 0,
         "rubrique": point.get("rubrique", "") or "",
@@ -132,8 +145,8 @@ Thématiques : {', '.join(point.get('thematiques') or [])}"""
     return {"id": chunk_id, "metadata": metadata}
 
 
-def load_chunks(json_path: Path) -> list[dict]:
-    """Charge le JSON des PV et le transforme en liste de chunks."""
+def load_chunks(json_path: Path, commune: str) -> list[dict]:
+    """Charge le JSON des PV et le transforme en liste de chunks (avec commune)."""
     with open(json_path, encoding="utf-8") as f:
         db = json.load(f)
 
@@ -141,7 +154,7 @@ def load_chunks(json_path: Path) -> list[dict]:
     for seance in db.get("seances", []):
         seance_meta = seance.get("seance", {})
         for point in seance.get("points", []):
-            chunks.append(point_to_chunk(point, seance_meta))
+            chunks.append(point_to_chunk(point, seance_meta, commune))
     return chunks
 
 
@@ -174,25 +187,37 @@ def index_chunks(pc: Pinecone, chunks: list[dict]):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Indexe les PV dans Pinecone")
-    parser.add_argument("--file", default=DEFAULT_JSON, help="Fichier JSON des PV")
+    parser = argparse.ArgumentParser(description="Indexe les PV d'une commune dans Pinecone")
+    # --input est l'alias privilégié ; --file reste accepté pour compatibilité.
+    parser.add_argument("--input", "--file", dest="input", default=DEFAULT_JSON,
+                        help="Fichier JSON des PV à indexer")
+    parser.add_argument("--commune", default="schaerbeek",
+                        help="Nom de la commune (écrit en métadonnée), ex. schaerbeek, evere")
     parser.add_argument("--reset", action="store_true", help="Vide l'index avant réindexation")
     args = parser.parse_args()
 
-    json_path = Path(args.file)
+    commune = args.commune.strip().lower()
+    if not commune:
+        print("❌ --commune ne peut pas être vide")
+        sys.exit(1)
+
+    json_path = Path(args.input)
     if not json_path.exists():
         print(f"❌ Fichier introuvable : {json_path}")
         sys.exit(1)
 
     print("═" * 60)
-    print("  INDEXATION PV SCHAERBEEK → PINECONE")
+    print(f"  INDEXATION PV {commune.upper()} → PINECONE")
     print("═" * 60)
 
     pc = get_client()
+    # ⚠️ --reset vide TOUT l'index (toutes communes). À n'utiliser que pour une
+    #    reconstruction complète. Pour ajouter/mettre à jour une commune sans
+    #    toucher aux autres, lancer SANS --reset (upsert idempotent par ID).
     ensure_index(pc, reset=args.reset)
 
-    chunks = load_chunks(json_path)
-    print(f"📄 {len(chunks)} points chargés depuis {json_path.name}")
+    chunks = load_chunks(json_path, commune)
+    print(f"📄 {len(chunks)} points chargés depuis {json_path.name} (commune : {commune})")
 
     if not chunks:
         print("❌ Aucun point à indexer")

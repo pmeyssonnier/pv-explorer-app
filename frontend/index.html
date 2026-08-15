@@ -233,6 +233,20 @@ body {
   transition: border-color 0.15s;
 }
 .ask-input:focus { border-color: var(--or); }
+.commune-select {
+  background: var(--blanc);
+  border: 1px solid var(--ligne);
+  border-radius: 4px;
+  padding: 0 12px;
+  font-family: var(--corps);
+  font-size: 14px;
+  color: var(--encre);
+  outline: none;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.commune-select:focus { border-color: var(--or); }
+@media (max-width: 560px) { .commune-select { max-width: 40vw; } }
 .ask-btn {
   background: var(--bordeaux);
   color: var(--blanc);
@@ -367,6 +381,11 @@ body {
 <!-- ── BARRE DE SAISIE (visible en mode chat) ── -->
 <div class="ask-bar" id="askBar">
   <div class="ask-inner">
+    <select class="commune-select" id="communeSelect" aria-label="Filtrer par commune" title="Filtrer par commune">
+      <option value="">Toutes les communes</option>
+      <option value="schaerbeek">Schaerbeek</option>
+      <option value="evere">Evere</option>
+    </select>
     <input type="text" class="ask-input" id="askInput"
            placeholder="Posez votre question sur les procès-verbaux…"
            onkeydown="if(event.key==='Enter') submitQuestion()">
@@ -445,11 +464,17 @@ async function submitQuestion() {
     </div>`);
   window.scrollTo(0, document.body.scrollHeight);
 
+  // Filtre commune : "Toutes" (value vide) → on n'envoie rien (recherche croisée)
+  const communeSel = document.getElementById('communeSelect');
+  const commune = communeSel ? communeSel.value : '';
+  const payload = { question };
+  if (commune) payload.commune = commune;
+
   try {
     const res = await fetch(API_URL + '/ask', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ question })
+      body: JSON.stringify(payload)
     });
 
     if (!res.ok) {

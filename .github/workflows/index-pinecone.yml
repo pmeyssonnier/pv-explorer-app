@@ -11,10 +11,18 @@ name: Indexer les PV dans Pinecone
 on:
   workflow_dispatch:
     inputs:
+      commune:
+        description: "Commune à indexer (métadonnée)"
+        type: string
+        default: "schaerbeek"
+      input:
+        description: "Fichier JSON des PV à indexer"
+        type: string
+        default: "pv_conseil_schaerbeek.json"
       reset:
-        description: "Vider l'index avant réindexation (--reset)"
+        description: "Vider TOUT l'index avant réindexation (--reset) — toutes communes !"
         type: boolean
-        default: true
+        default: false
 
 jobs:
   index:
@@ -36,9 +44,12 @@ jobs:
         working-directory: backend
         env:
           PINECONE_API_KEY: ${{ secrets.PINECONE_API_KEY }}
+          # Via l'environnement (jamais interpolé dans le shell) pour éviter
+          # toute injection depuis les inputs du workflow.
+          COMMUNE: ${{ inputs.commune }}
+          INPUT: ${{ inputs.input }}
+          RESET: ${{ inputs.reset }}
         run: |
-          if [ "${{ inputs.reset }}" = "true" ]; then
-            python index_pv.py --reset
-          else
-            python index_pv.py
-          fi
+          RESET_FLAG=""
+          if [ "$RESET" = "true" ]; then RESET_FLAG="--reset"; fi
+          python index_pv.py --commune "$COMMUNE" --input "$INPUT" $RESET_FLAG
