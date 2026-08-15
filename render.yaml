@@ -17,4 +17,6 @@ services:
       - key: PV_JSON_PATH
         value: pv_conseil_schaerbeek.json
       - key: ALLOWED_ORIGINS
-        sync: false          # URL du frontend Vercel, à saisir dans le dashboard
+        # URL publique du frontend Vercel (pas un secret). Plusieurs origines
+        # possibles, séparées par des virgules.
+        value: https://pv-explorer-app.vercel.app
