@@ -5,6 +5,7 @@ services:
     name: pv-explorer-api
     runtime: python
     plan: free                 # tier gratuit (le service s'endort après inactivité)
+    branch: main               # branche déployée (auto-deploy à chaque push sur main)
     rootDir: backend
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
