@@ -48,9 +48,9 @@ CONFIG = {
     # Laisser "" pour lire depuis la variable d'environnement ANTHROPIC_API_KEY
     "ANTHROPIC_API_KEY": "",
     "MODEL":      "claude-haiku-4-5-20251001",   # FIX #6 : nom correct
-    "MAX_TOKENS": 4096,
+    "MAX_TOKENS": 8192,          # assez pour un chunk complet (fini les JSON tronqués)
 
-    "CHUNK_SIZE":         12,
+    "CHUNK_SIZE":         8,     # chunks plus petits = réponses JSON plus fiables
     "API_DELAY_SEC":      1.5,
     "SKIP_ALREADY_DONE":  True,
     "MAX_RETRIES":        3,
@@ -117,16 +117,38 @@ def get_client() -> anthropic.Anthropic:
 # EXTRACTION TEXTE PDF
 # ══════════════════════════════════════════════════════════════════════════
 def extract_pdf_metadata(pdf_path: Path) -> dict:
+    """Déduit la date depuis le NOM de fichier, en gérant plusieurs formats
+    Schaerbeek et en VALIDANT la date. Si aucune date plausible n'est trouvée,
+    date=None → la pipeline prend alors la date extraite du CONTENU du PV."""
+    from datetime import date as _date
     name = pdf_path.stem
     meta = {"filename": pdf_path.name, "filepath": str(pdf_path), "date": None, "seance_id": None}
-    for pattern in [r"(\d{4})[._\-](\d{2})[._\-](\d{2})", r"(\d{4})(\d{2})(\d{2})"]:
-        m = re.search(pattern, name)
-        if m:
-            y, mo, d = m.groups()
-            meta["date"] = f"{y}-{mo}-{d}"
-            meta["seance_id"] = f"PV-{y}-{mo}-{d}"
-            break
-    return meta
+
+    def _set(y, mo, d) -> bool:
+        try:
+            _date(int(y), int(mo), int(d))          # rejette 2503-20-20, mois 18, etc.
+            if not (2000 <= int(y) <= 2100):
+                return False
+            meta["date"] = f"{int(y):04d}-{int(mo):02d}-{int(d):02d}"
+            meta["seance_id"] = f"PV-{meta['date']}"
+            return True
+        except ValueError:
+            return False
+
+    # Ordre = du plus fiable au plus ambigu. On s'arrête à la 1re date VALIDE.
+    #   1) AAAA(sep)MM(sep)JJ   ex: 2026.02.11 / 2026-02-11
+    #   2) AAAAMMJJ collés      ex: 20260211
+    #   3) JJMMAAAA collés      ex: 250320201830 -> 25/03/2020
+    m = re.search(r"(20\d{2})[._\-](\d{1,2})[._\-](\d{1,2})", name)
+    if m and _set(*m.groups()):
+        return meta
+    m = re.search(r"(20\d{2})(\d{2})(\d{2})", name)
+    if m and _set(*m.groups()):
+        return meta
+    m = re.search(r"(\d{2})(\d{2})(20\d{2})", name)
+    if m and _set(m.group(3), m.group(2), m.group(1)):
+        return meta
+    return meta   # date=None -> repli sur date_seance (contenu) dans process_pdf
 
 
 def extract_text_from_pdf(pdf_path: Path) -> list[dict]:
@@ -227,9 +249,21 @@ def call_claude_api(user_prompt: str) -> Optional[dict]:
                 model=CONFIG["MODEL"], max_tokens=CONFIG["MAX_TOKENS"],
                 system=SYSTEM_PROMPT, messages=[{"role": "user", "content": user_prompt}]
             )
-            raw = response.content[0].text.strip()
-            raw = re.sub(r"^```json\s*", "", raw)
+            # Bloc texte robuste (ne suppose pas que content[0] soit du texte)
+            raw = next((b.text for b in response.content
+                        if getattr(b, "type", None) == "text"), "").strip()
+            raw = re.sub(r"^```(?:json)?\s*", "", raw)
             raw = re.sub(r"\s*```$", "", raw).strip()
+            # Tolère du texte avant/après le JSON (erreur "Extra data") :
+            # on isole du 1er '{' au dernier '}'.
+            if not raw.startswith("{"):
+                i = raw.find("{")
+                if i != -1:
+                    raw = raw[i:]
+            if not raw.endswith("}"):
+                j = raw.rfind("}")
+                if j != -1:
+                    raw = raw[:j + 1]
             data = json.loads(raw)
             save_to_cache(cache_key, data)
             time.sleep(CONFIG["API_DELAY_SEC"])
