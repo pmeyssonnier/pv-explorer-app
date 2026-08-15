@@ -40,9 +40,13 @@ from google.colab import drive; drive.mount('/content/drive')
 ### Schaerbeek — `1030.be`
 - Page : `https://www.1030.be/fr/proces-verbaux` — les liens PDF sont chargés
   **en JavaScript** (d'où Selenium) **et** l'IP cloud est bloquée (d'où Colab).
-- **Pattern URL confirmé** :
-  `https://www.1030.be/data/media/document/pv-conseil-YYYY.MM.DD-sp_N.pdf`
-  (`N` = 0, 1, 2… pour les séances à plusieurs documents).
+- **Patterns URL confirmés — 2 emplacements coexistent** :
+  - `/data/media/import/pv_conseil_YYYY.MM.DD_sp.pdf` (underscores)
+  - `/data/media/import/PV%20Conseil%20YYYY.MM.DD.pdf` (espaces URL-encodés, PV anciens ~2017)
+  - `/data/media/document/pv-conseil-YYYY.MM.DD.pdf` (tirets, avec ou sans `-sp` / `-sp_N`)
+
+  La date garde toujours ses **points** (`YYYY.MM.DD`). Le scraper sonde ces
+  formes ; `is_pv_pdf()` reconnaît les trois nomenclatures.
 - Le scraper combine deux méthodes : (A) Selenium pour lire les liens JS,
   (C) **sondage proactif** d'URLs reconstruites par pattern (le Conseil siège en
   général le **dernier mercredi du mois**, hors juillet/août ; exceptions dans

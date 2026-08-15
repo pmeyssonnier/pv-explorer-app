@@ -1,10 +1,15 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║  SCRAPER PV CONSEIL COMMUNAL SCHAERBEEK (1030.be) → GOOGLE DRIVE        ║
-║  Google Colab - Python 3.10+                          VERSION 2.1        ║
+║  Google Colab - Python 3.10+                          VERSION 2.2        ║
 ║  Scrape https://www.1030.be/fr/proces-verbaux                            ║
 ║  et copie tous les PDF dans Google Drive                                 ║
 ╚══════════════════════════════════════════════════════════════════════════╝
+
+CHANGELOG v2.2 :
+  - Patterns d'URL confirmés : 2 emplacements (/import/ et /document/) et
+    3 nomenclatures (tirets `pv-conseil-`, underscores `pv_conseil_`, espaces
+    `PV Conseil` URL-encodées). is_pv_pdf() reconnaît les trois.
 
 CHANGELOG v2.1 (corrections code review Opus 4.8) :
   - FIX #1 : suppression du paramètre `log=None` inutile (check/download_missing)
@@ -25,7 +30,10 @@ STRATÉGIE :
   Depuis Colab (IP Google) ça fonctionne. Deux méthodes combinées :
     A) Selenium (charge le JS) → récupère les liens <a href="*.pdf">
     C) Reconstruction d'URL par pattern (sondage proactif)
-       Pattern confirmé : /data/media/document/pv-conseil-YYYY.MM.DD-sp_N.pdf
+       Patterns confirmés (2 emplacements) :
+         /data/media/import/pv_conseil_YYYY.MM.DD_sp.pdf   (underscores)
+         /data/media/import/PV%20Conseil%20YYYY.MM.DD.pdf  (espaces, PV anciens)
+         /data/media/document/pv-conseil-YYYY.MM.DD.pdf    (tirets, avec/sans -sp)
 """
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -240,7 +248,8 @@ def extract_pdf_links_from_html(html: str) -> list[str]:
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 7 — MÉTHODE C : RECONSTRUCTION D'URL PAR PATTERN (proactive)
 # ══════════════════════════════════════════════════════════════════════════
-# Pattern confirmé : pv-conseil-YYYY.MM.DD-sp_N.pdf (N = 0, 1, 2...)
+# Patterns confirmés : /import/pv_conseil_YYYY.MM.DD_sp.pdf,
+#   /import/PV%20Conseil%20YYYY.MM.DD.pdf, /document/pv-conseil-YYYY.MM.DD[-sp[_N]].pdf
 #
 # DESIGN : au lieu d'une liste statique à maintenir manuellement, on GÉNÈRE
 # les dates probables (le Conseil communal de Schaerbeek siège en général le
@@ -297,19 +306,30 @@ def get_all_seance_dates() -> list[str]:
 # Alias rétrocompatible : certaines fonctions référencent encore KNOWN_SEANCE_DATES
 KNOWN_SEANCE_DATES = get_all_seance_dates()
 
+# {date} = date à points (YYYY.MM.DD) — c'est la forme utilisée dans les noms
+# de fichiers 1030.be. Deux EMPLACEMENTS confirmés coexistent : /import/ (souvent
+# les PV plus anciens) et /document/ (PV plus récents).
 URL_TEMPLATES = [
-    # Format principal confirmé
-    "https://www.1030.be/data/media/document/pv-conseil-{date}-sp_{n}.pdf",
+    # ── /import/ — underscores, la date conserve ses points ──────────────────
+    #   ex : /import/pv_conseil_2024.01.24_sp.pdf
+    "https://www.1030.be/data/media/import/pv_conseil_{date}_sp.pdf",
+    "https://www.1030.be/data/media/import/pv_conseil_{date}.pdf",
+    # ── /import/ ancienne nomenclature avec espaces (URL-encodés %20) ─────────
+    #   ex : /import/PV%20Conseil%202017.02.22.pdf
+    "https://www.1030.be/data/media/import/PV%20Conseil%20{date}.pdf",
+    # ── /document/ — tirets, avec ou sans suffixe -sp / -sp_N ─────────────────
+    #   ex : /document/pv-conseil-2025.05.21.pdf  et  ...-2024.02.21-sp.pdf
+    "https://www.1030.be/data/media/document/pv-conseil-{date}.pdf",
     "https://www.1030.be/data/media/document/pv-conseil-{date}-sp.pdf",
-    # Variantes avec tirets bas
+    "https://www.1030.be/data/media/document/pv-conseil-{date}-sp_{n}.pdf",
+    "https://www.1030.be/data/media/document/pv-conseil-{date}-sp_{n}_0.pdf",
+    # ── Variantes historiques (underscores dans la date), par sécurité ───────
     "https://www.1030.be/data/media/document/pv-conseil-{date_under}-sp_{n}.pdf",
     "https://www.1030.be/data/media/document/pv-conseil-{date_under}-sp.pdf",
-    # Variantes NL
+    "https://www.1030.be/data/media/document/pv_conseil_{date_under}_sp_{n}.pdf",
+    # ── Variantes NL ─────────────────────────────────────────────────────────
     "https://www.1030.be/data/media/document/notulen-raad-{date}-{n}.pdf",
     "https://www.1030.be/data/media/document/notulen-{date}.pdf",
-    # Variantes avec préfixes différents
-    "https://www.1030.be/data/media/document/pv_conseil_{date_under}_sp_{n}.pdf",
-    "https://www.1030.be/data/media/document/pv-conseil-{date}-sp_{n}_0.pdf",
 ]
 
 
@@ -406,13 +426,16 @@ def make_absolute(href: str) -> Optional[str]:
 
 
 def is_pv_pdf(url: str) -> bool:
-    """Vérifie si l'URL correspond à un PV du conseil communal."""
-    url_lower = url.lower()
-    return (
-        url_lower.endswith(".pdf") and
-        "1030.be" in url_lower and
-        any(k in url_lower for k in ["pv-conseil", "pv_conseil", "notulen", "proces-verbal"])
-    )
+    """Vérifie si l'URL correspond à un PV du conseil communal.
+    Couvre les 2 emplacements (/import/, /document/) et les 3 nomenclatures
+    (tirets `pv-conseil-`, underscores `pv_conseil_`, espaces `PV Conseil`)."""
+    u = url.lower()
+    if not (u.endswith(".pdf") and "1030.be" in u):
+        return False
+    return any(k in u for k in [
+        "pv-conseil", "pv_conseil", "pv%20conseil", "pv conseil",
+        "notulen", "proces-verbal",
+    ])
 
 
 def url_to_filename(url: str) -> str:
