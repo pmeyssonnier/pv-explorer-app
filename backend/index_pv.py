@@ -42,6 +42,13 @@ DIMENSION = 1024
 BATCH_SIZE = 90         # Pinecone limite les upserts d'embeddings intégrés par batch
 DEFAULT_JSON = "pv_conseil_schaerbeek.json"
 
+# Plan Pinecone Starter (gratuit) : le modèle d'embedding multilingual-e5-large
+# est plafonné à 250 000 tokens/min (input_type "passage"). On cadence l'envoi
+# sous une marge de sécurité et on réessaie sur 429.
+SAFE_TOKENS_PER_MIN = 200_000
+RATE_LIMIT_WAIT_SEC = 65        # attendre > 60 s réinitialise la fenêtre par minute
+MAX_RATE_RETRIES = 8
+
 
 def get_client() -> Pinecone:
     api_key = os.environ.get("PINECONE_API_KEY", "")
@@ -166,24 +173,63 @@ def load_chunks(json_path: Path, default_commune: str) -> list[dict]:
     return chunks
 
 
+def _estimate_tokens(text: str) -> int:
+    """Estimation prudente du nombre de tokens (français ≈ 4 chars/token ;
+    on divise par 3.5 pour SUR-estimer → marge de sécurité côté cadence)."""
+    return max(1, int(len(text or "") / 3.5))
+
+
+def _is_rate_limit(e: Exception) -> bool:
+    """Détecte un 429 Pinecone quelle que soit la version du SDK."""
+    return (
+        "RateLimit" in type(e).__name__
+        or "429" in str(e)
+        or "RESOURCE_EXHAUSTED" in str(e)
+    )
+
+
+def _upsert_with_retry(index, records: list[dict]):
+    """Upsert un batch en réessayant sur 429 (plafond tokens/min)."""
+    for attempt in range(MAX_RATE_RETRIES):
+        try:
+            index.upsert_records(namespace="pv", records=records)
+            return
+        except Exception as e:  # noqa: BLE001 — on ne retente que les 429
+            if _is_rate_limit(e) and attempt < MAX_RATE_RETRIES - 1:
+                print(f"   ⏳ 429 (plafond tokens/min) — attente {RATE_LIMIT_WAIT_SEC}s "
+                      f"puis reprise du batch (tentative {attempt + 2}/{MAX_RATE_RETRIES})")
+                time.sleep(RATE_LIMIT_WAIT_SEC)
+                continue
+            raise
+
+
 def index_chunks(pc: Pinecone, chunks: list[dict]):
-    """Upsert les chunks dans Pinecone par batches."""
+    """Upsert les chunks dans Pinecone par batches, en respectant le plafond
+    de tokens/min du plan gratuit (cadence proportionnelle + retry sur 429)."""
     index = pc.Index(INDEX_NAME)
     total = len(chunks)
-    print(f"📤 Indexation de {total} chunks (batches de {BATCH_SIZE})...")
+    tokens_per_sec = SAFE_TOKENS_PER_MIN / 60.0
+    print(f"📤 Indexation de {total} chunks (batches de {BATCH_SIZE}, "
+          f"cadence ≤ {SAFE_TOKENS_PER_MIN:,} tokens/min)...")
 
     for i in range(0, total, BATCH_SIZE):
         batch = chunks[i:i + BATCH_SIZE]
         # Format pour upsert avec embedding intégré : liste de records
         records = []
+        batch_tokens = 0
         for c in batch:
             record = {"id": c["id"]}
             record.update(c["metadata"])   # inclut chunk_text qui sera vectorisé
             records.append(record)
-        index.upsert_records(namespace="pv", records=records)
+            batch_tokens += _estimate_tokens(c["metadata"].get("chunk_text", ""))
+
+        _upsert_with_retry(index, records)
         done = min(i + BATCH_SIZE, total)
         print(f"   {done}/{total} chunks indexés")
-        time.sleep(0.5)
+
+        # Cadence : espace le prochain batch pour rester sous le plafond/min.
+        if done < total:
+            time.sleep(max(0.5, batch_tokens / tokens_per_sec))
 
     print("✅ Indexation terminée")
 
