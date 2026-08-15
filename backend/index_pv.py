@@ -145,14 +145,22 @@ Thématiques : {', '.join(point.get('thematiques') or [])}"""
     return {"id": chunk_id, "metadata": metadata}
 
 
-def load_chunks(json_path: Path, commune: str) -> list[dict]:
-    """Charge le JSON des PV et le transforme en liste de chunks (avec commune)."""
+def load_chunks(json_path: Path, default_commune: str) -> list[dict]:
+    """Charge le JSON des PV et le transforme en liste de chunks.
+
+    La commune de chaque vecteur est lue dans seance["commune"] si présente
+    (cas d'un JSON multi-commune produit par la pipeline d'extraction), sinon
+    on retombe sur `default_commune` (fichier mono-commune + argument --commune).
+    Rétro-compatible : le JSON Schaerbeek historique n'a pas de champ commune
+    → tout est indexé avec default_commune (schaerbeek).
+    """
     with open(json_path, encoding="utf-8") as f:
         db = json.load(f)
 
     chunks = []
     for seance in db.get("seances", []):
         seance_meta = seance.get("seance", {})
+        commune = (seance_meta.get("commune") or default_commune).strip().lower()
         for point in seance.get("points", []):
             chunks.append(point_to_chunk(point, seance_meta, commune))
     return chunks
@@ -217,7 +225,8 @@ def main():
     ensure_index(pc, reset=args.reset)
 
     chunks = load_chunks(json_path, commune)
-    print(f"📄 {len(chunks)} points chargés depuis {json_path.name} (commune : {commune})")
+    print(f"📄 {len(chunks)} points chargés depuis {json_path.name} "
+          f"(commune par défaut : {commune} ; seance['commune'] prioritaire si présent)")
 
     if not chunks:
         print("❌ Aucun point à indexer")
