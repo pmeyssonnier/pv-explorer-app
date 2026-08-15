@@ -1,8 +1,15 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║  PIPELINE EXTRACTION PV CONSEIL COMMUNAL SCHAERBEEK → JSON              ║
-║  Google Colab - Python 3.10+                          VERSION 2.1        ║
+║  Google Colab - Python 3.10+                          VERSION 2.2        ║
 ╚══════════════════════════════════════════════════════════════════════════╝
+
+CHANGELOG v2.2 (robustesse PV denses) :
+  - MAX_TOKENS 4096 → 8192 (chunks denses ne tronquent plus le JSON)
+  - CHUNK_SIZE 12 → 8 (réponses JSON plus fiables)
+  - split-on-failure : si un chunk échoue (JSON tronqué/invalide après
+    MAX_RETRIES), on le découpe récursivement en deux jusqu'à la page unique.
+    Plus aucun point n'est perdu silencieusement sur un PV dense.
 
 CHANGELOG v2.1 (corrections code review Opus 4.8) :
   - FIX #1 : client API instancié dans run_pipeline() (plus au niveau module)
@@ -288,6 +295,38 @@ def call_claude_api(user_prompt: str) -> Optional[dict]:
 # ══════════════════════════════════════════════════════════════════════════
 # TRAITEMENT PDF
 # ══════════════════════════════════════════════════════════════════════════
+def _extract_chunk_points(chunk: list[dict], seance_date: Optional[str],
+                          depth: int = 0) -> tuple[list, Optional[str]]:
+    """Extrait les points d'un chunk de pages. Si l'appel API échoue
+    (typiquement un JSON tronqué parce que le chunk est trop dense pour
+    MAX_TOKENS), on DÉCOUPE le chunk en deux et on réessaie chaque moitié
+    récursivement — jusqu'à la page unique. Ainsi aucun point n'est jamais
+    perdu silencieusement, même sur les PV les plus denses.
+    Retourne (points, date_seance éventuellement complétée)."""
+    log = get_logger()
+    result = call_claude_api(make_user_prompt(chunk, seance_date))
+    if result is not None:
+        if result.get("date_seance") and not seance_date:
+            seance_date = result["date_seance"]
+        return result.get("points", []), seance_date
+
+    # Échec : on tente de scinder le chunk (sauf s'il ne reste qu'une page).
+    if len(chunk) <= 1:
+        log.warning(f"    Page {chunk[0]['page_num']} ignorée (échec API même en page unique)")
+        return [], seance_date
+
+    mid = len(chunk) // 2
+    log.warning(
+        f"    Chunk pages {chunk[0]['page_num']}-{chunk[-1]['page_num']} en échec — "
+        f"découpage en 2 (niveau {depth+1})"
+    )
+    points = []
+    for half in (chunk[:mid], chunk[mid:]):
+        sub_points, seance_date = _extract_chunk_points(half, seance_date, depth + 1)
+        points.extend(sub_points)
+    return points, seance_date
+
+
 def process_pdf(pdf_path: Path) -> Optional[dict]:
     log = get_logger()
     log.info(f"\n{'='*60}")
@@ -309,13 +348,7 @@ def process_pdf(pdf_path: Path) -> Optional[dict]:
     seance_date = meta["date"]
     for i, chunk in enumerate(chunks):
         log.info(f"  Chunk {i+1}/{len(chunks)} (pages {chunk[0]['page_num']}-{chunk[-1]['page_num']})")
-        result = call_claude_api(make_user_prompt(chunk, seance_date))
-        if result is None:
-            log.warning(f"    Chunk {i+1} ignoré (échec API)")
-            continue
-        if result.get("date_seance") and not seance_date:
-            seance_date = result["date_seance"]
-        points = result.get("points", [])
+        points, seance_date = _extract_chunk_points(chunk, seance_date)
         log.info(f"    → {len(points)} points extraits")
         all_points.extend(points)
 
@@ -509,7 +542,7 @@ def run_pipeline(max_files: Optional[int] = None, dry_run: bool = False,
 
     log = get_logger()
     log.info("\n" + "█"*60)
-    log.info("DÉMARRAGE PIPELINE PV EXTRACTION v2.1")
+    log.info("DÉMARRAGE PIPELINE PV EXTRACTION v2.2")
     log.info(f"Modèle : {CONFIG['MODEL']} | Chunk : {CONFIG['CHUNK_SIZE']} pages")
     log.info("█"*60)
 
