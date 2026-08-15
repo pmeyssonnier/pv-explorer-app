@@ -10,6 +10,8 @@ CHANGELOG v2.2 (robustesse PV denses) :
   - split-on-failure : si un chunk échoue (JSON tronqué/invalide après
     MAX_RETRIES), on le découpe récursivement en deux jusqu'à la page unique.
     Plus aucun point n'est perdu silencieusement sur un PV dense.
+  - sp normalisé en int (_coerce_sp) + tris robustes (_sp_key) : Claude renvoie
+    parfois sp en texte ("12"), ce qui plantait dédup/tri (str vs int).
 
 CHANGELOG v2.1 (corrections code review Opus 4.8) :
   - FIX #1 : client API instancié dans run_pipeline() (plus au niveau module)
@@ -174,6 +176,24 @@ def extract_text_from_pdf(pdf_path: Path) -> list[dict]:
 
 def chunk_pages(pages: list[dict], chunk_size: int) -> list[list[dict]]:
     return [pages[i:i + chunk_size] for i in range(0, len(pages), chunk_size)]
+
+
+def _coerce_sp(point: dict) -> dict:
+    """Claude renvoie parfois sp en texte ("12", "12 bis") et parfois en int.
+    On normalise en int quand c'est un nombre — sinon les tris/dédup plantent
+    (TypeError: '<' not supported between 'str' and 'int')."""
+    sp = point.get("sp")
+    if isinstance(sp, str):
+        m = re.match(r"\s*(\d+)", sp)
+        if m:
+            point["sp"] = int(m.group(1))
+    return point
+
+
+def _sp_key(point: dict):
+    """Clé de tri robuste : les sp entiers d'abord (triés), les autres après."""
+    sp = point.get("sp")
+    return (0, sp) if isinstance(sp, int) else (1, str(sp))
 
 # ══════════════════════════════════════════════════════════════════════════
 # PROMPT SYSTEM
@@ -358,12 +378,13 @@ def process_pdf(pdf_path: Path) -> Optional[dict]:
 
     sp_map = {}
     for p in all_points:
+        _coerce_sp(p)
         sp = p.get("sp")
         if sp is None:
             continue
         if sp not in sp_map or sum(1 for v in p.values() if v) > sum(1 for v in sp_map[sp].values() if v):
             sp_map[sp] = p
-    deduped = sorted(sp_map.values(), key=lambda p: p.get("sp", 999))
+    deduped = sorted(sp_map.values(), key=_sp_key)
     log.info(f"  Points dédupliqués : {len(all_points)} → {len(deduped)}")
 
     seance_struct = {
@@ -479,9 +500,12 @@ def merge_seance_into_db(db: dict, new_seance: dict) -> bool:
         return False
     existing = next((s for s in db["seances"] if s["seance"]["date"] == new_date), None)
     if existing:
+        for p in existing["points"]:
+            _coerce_sp(p)
         existing_sps = {p.get("sp") for p in existing["points"]}
         added = updated = 0
         for new_point in new_seance["points"]:
+            _coerce_sp(new_point)
             sp = new_point.get("sp")
             if sp not in existing_sps:
                 existing["points"].append(new_point)
@@ -491,7 +515,7 @@ def merge_seance_into_db(db: dict, new_seance: dict) -> bool:
                 if sum(1 for v in new_point.values() if v) > sum(1 for v in existing["points"][idx].values() if v):
                     existing["points"][idx] = new_point
                     updated += 1
-        existing["points"].sort(key=lambda p: p.get("sp", 999))
+        existing["points"].sort(key=_sp_key)
         for k, v in new_seance["seance"].items():
             if v and not existing["seance"].get(k):
                 existing["seance"][k] = v
