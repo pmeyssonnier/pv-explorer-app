@@ -39,13 +39,15 @@ EMBED_MODEL = "multilingual-e5-large"   # embeddings intégrés Pinecone, multil
 CLOUD = "aws"
 REGION = "us-east-1"
 DIMENSION = 1024
-BATCH_SIZE = 90         # Pinecone limite les upserts d'embeddings intégrés par batch
+BATCH_SIZE = 60         # burst plus petit = reprise sur 429 moins coûteuse
 DEFAULT_JSON = "pv_conseil_schaerbeek.json"
 
 # Plan Pinecone Starter (gratuit) : le modèle d'embedding multilingual-e5-large
 # est plafonné à 250 000 tokens/min (input_type "passage"). On cadence l'envoi
-# sous une marge de sécurité et on réessaie sur 429.
-SAFE_TOKENS_PER_MIN = 200_000
+# NETTEMENT sous ce plafond (≈ 52 %) : rouler à 80-90 % provoquait des 429 à
+# répétition car l'estimation de tokens sous-évalue le français réel. Cette marge
+# élimine le thrashing ; le run complet reste ~9 min pour 6,6k points.
+SAFE_TOKENS_PER_MIN = 130_000
 RATE_LIMIT_WAIT_SEC = 65        # attendre > 60 s réinitialise la fenêtre par minute
 MAX_RATE_RETRIES = 8
 
@@ -176,9 +178,11 @@ def load_chunks(json_path: Path, default_commune: str) -> list[dict]:
 
 
 def _estimate_tokens(text: str) -> int:
-    """Estimation prudente du nombre de tokens (français ≈ 4 chars/token ;
-    on divise par 3.5 pour SUR-estimer → marge de sécurité côté cadence)."""
-    return max(1, int(len(text or "") / 3.5))
+    """Estimation prudente du nombre de tokens. Le tokenizer e5 découpe le
+    français réel (accents, chiffres, noms propres) plus finement que 4 chars/
+    token ; on divise par 3.0 pour SUR-estimer franchement → la cadence reste
+    sous le plafond même quand le texte est dense en chiffres/montants."""
+    return max(1, int(len(text or "") / 3.0))
 
 
 def _is_rate_limit(e: Exception) -> bool:
