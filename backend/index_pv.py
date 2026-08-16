@@ -194,29 +194,48 @@ def _is_rate_limit(e: Exception) -> bool:
     )
 
 
-def _upsert_with_retry(index, records: list[dict]):
-    """Upsert un batch en réessayant sur 429 (plafond tokens/min)."""
+MIN_TOKENS_PER_MIN = 40_000     # plancher : en-dessous, la réindexation serait absurde
+
+
+def _upsert_with_retry(index, records: list[dict]) -> int:
+    """Upsert un batch en réessayant sur 429 (plafond tokens/min).
+    Retourne le nombre de reprises qu'il a fallu (0 = passé du premier coup) —
+    l'appelant s'en sert pour ralentir la cadence globale (auto-adaptation)."""
     for attempt in range(MAX_RATE_RETRIES):
         try:
             index.upsert_records(namespace="pv", records=records)
-            return
+            return attempt
         except Exception as e:  # noqa: BLE001 — on ne retente que les 429
             if _is_rate_limit(e) and attempt < MAX_RATE_RETRIES - 1:
                 print(f"   ⏳ 429 (plafond tokens/min) — attente {RATE_LIMIT_WAIT_SEC}s "
-                      f"puis reprise du batch (tentative {attempt + 2}/{MAX_RATE_RETRIES})")
+                      f"puis reprise du batch (tentative {attempt + 2}/{MAX_RATE_RETRIES})",
+                      flush=True)
                 time.sleep(RATE_LIMIT_WAIT_SEC)
                 continue
             raise
+    return MAX_RATE_RETRIES
 
 
 def index_chunks(pc: Pinecone, chunks: list[dict]):
-    """Upsert les chunks dans Pinecone par batches, en respectant le plafond
-    de tokens/min du plan gratuit (cadence proportionnelle + retry sur 429)."""
+    """Upsert les chunks par batches en s'ADAPTANT au vrai débit toléré par
+    Pinecone : on part de SAFE_TOKENS_PER_MIN et, à chaque batch qui a dû être
+    repris sur 429, on réduit la cadence (× 0,6, plancher MIN_TOKENS_PER_MIN)
+    jusqu'à ne plus déclencher de 429. Sorties `flush`ées pour un suivi live
+    dans Colab (sinon l'affichage bufferisé donne l'illusion d'un blocage)."""
     index = pc.Index(INDEX_NAME)
     total = len(chunks)
-    tokens_per_sec = SAFE_TOKENS_PER_MIN / 60.0
+    effective_tpm = SAFE_TOKENS_PER_MIN
+
+    # Baseline : combien de vecteurs déjà présents (diagnostic anti-doublon).
+    try:
+        base = index.describe_index_stats().get("total_vector_count", "?")
+        print(f"ℹ️  Vecteurs déjà dans l'index avant ce run : {base}", flush=True)
+    except Exception:
+        pass
+
     print(f"📤 Indexation de {total} chunks (batches de {BATCH_SIZE}, "
-          f"cadence ≤ {SAFE_TOKENS_PER_MIN:,} tokens/min)...")
+          f"cadence initiale ≤ {SAFE_TOKENS_PER_MIN:,} tokens/min, auto-adaptative)...",
+          flush=True)
 
     for i in range(0, total, BATCH_SIZE):
         batch = chunks[i:i + BATCH_SIZE]
@@ -229,21 +248,29 @@ def index_chunks(pc: Pinecone, chunks: list[dict]):
             records.append(record)
             batch_tokens += _estimate_tokens(c["metadata"].get("chunk_text", ""))
 
-        _upsert_with_retry(index, records)
+        retries = _upsert_with_retry(index, records)
         done = min(i + BATCH_SIZE, total)
-        print(f"   {done}/{total} chunks indexés")
 
-        # Cadence : espace le prochain batch pour rester sous le plafond/min.
+        # Auto-adaptation : un 429 = on roule trop vite pour CE plan → on ralentit
+        # durablement le reste du run (converge vers le débit réellement toléré).
+        if retries > 0 and effective_tpm > MIN_TOKENS_PER_MIN:
+            effective_tpm = max(MIN_TOKENS_PER_MIN, int(effective_tpm * 0.6))
+            print(f"   ↓ cadence réduite à {effective_tpm:,} tokens/min "
+                  f"(429 rencontré)", flush=True)
+
+        print(f"   {done}/{total} chunks indexés", flush=True)
+
+        # Cadence : espace le prochain batch pour rester sous le débit courant.
         if done < total:
-            time.sleep(max(0.5, batch_tokens / tokens_per_sec))
+            time.sleep(max(0.5, batch_tokens / (effective_tpm / 60.0)))
 
-    print("✅ Indexation terminée")
+    print("✅ Indexation terminée", flush=True)
 
     # Afficher les stats
     time.sleep(3)
     stats = index.describe_index_stats()
-    print(f"\n📊 Index '{INDEX_NAME}' :")
-    print(f"   Vecteurs totaux : {stats.get('total_vector_count', '?')}")
+    print(f"\n📊 Index '{INDEX_NAME}' :", flush=True)
+    print(f"   Vecteurs totaux : {stats.get('total_vector_count', '?')}", flush=True)
 
 
 def main():
