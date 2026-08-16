@@ -140,6 +140,8 @@ Thématiques : {', '.join(point.get('thematiques') or [])}"""
         "chunk_text": chunk_text,          # champ vectorisé
         "commune": commune,                # filtrage multi-commune
         "date": date,
+        "year": int(date[:4]) if date[:4].isdigit() else 0,  # filtrage temporel
+
         "sp": int(point.get("sp", 0)) if str(point.get("sp", "")).isdigit() else 0,
         "rubrique": point.get("rubrique", "") or "",
         "titre": (point.get("titre", "") or "")[:500],

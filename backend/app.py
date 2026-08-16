@@ -206,6 +206,32 @@ def health():
     return checks
 
 
+_YEAR_RE = re.compile(r"\b(20[0-3]\d)\b")   # années plausibles 2000-2039
+
+
+def _year_filter(question: str):
+    """Détecte une/des année(s) dans la question → filtre Pinecone sur `year`
+    (numérique). None si aucune année. Permet aux sources de correspondre à la
+    période demandée (« décisions en 2018 » ne doit pas citer 2025).
+      « en 2018 » / « 2018 »          → {"$eq": 2018}
+      « depuis 2015 » / « après … »   → {"$gte": 2015}
+      « avant 2016 » / « jusqu'à … »  → {"$lte": 2016}
+      « entre 2015 et 2018 » (2 ans)  → {"$gte": 2015, "$lte": 2018}
+    """
+    years = [int(y) for y in _YEAR_RE.findall(question) if 2000 <= int(y) <= 2035]
+    if not years:
+        return None
+    q = _strip_accents(question.lower())
+    if len(years) >= 2:
+        return {"$gte": min(years), "$lte": max(years)}
+    y = years[0]
+    if any(w in q for w in ("depuis", "a partir", "apres", "des ")):
+        return {"$gte": y}
+    if any(w in q for w in ("avant", "jusqu")):
+        return {"$lte": y}
+    return {"$eq": y}
+
+
 @app.post("/ask", response_model=AnswerResponse)
 @limiter.limit("10/minute;100/day")
 def ask(request: Request, req: QuestionRequest):
@@ -214,18 +240,36 @@ def ask(request: Request, req: QuestionRequest):
     if not question:
         raise HTTPException(status_code=400, detail="Question vide")
 
-    # Filtre commune optionnel. Absent, vide ou "toutes"/"all" → aucun filtre
-    # (recherche croisée toutes communes, comportement historique).
+    # Filtres optionnels (métadonnées Pinecone) :
+    #  - commune : absent/"toutes" → recherche croisée (comportement historique)
+    #  - année   : détectée dans la question (« en 2018 », « depuis 2015 »…) pour
+    #              que les sources correspondent bien à la période demandée.
     query = {"inputs": {"text": question}, "top_k": TOP_K}
+    filters = {}
     commune = (req.commune or "").strip().lower()
     if commune and commune not in ("toutes", "toute", "all", "tous"):
-        query["filter"] = {"commune": {"$eq": commune}}
+        filters["commune"] = {"$eq": commune}
+    year_filter = _year_filter(question)
+    if year_filter:
+        filters["year"] = year_filter
+    if filters:
+        query["filter"] = filters
 
     # 1. Recherche vectorielle (embedding intégré Pinecone)
     try:
         index = get_pinecone_index()
         results = index.search(namespace=NAMESPACE, query=query)
         matches = results.get("result", {}).get("hits", [])
+        # Repli : si le filtre année ne renvoie rien (index pas encore réindexé
+        # avec le champ `year`), on refait la recherche sans ce filtre plutôt
+        # que de répondre « aucun passage ».
+        if not matches and year_filter:
+            fallback = {"inputs": {"text": question}, "top_k": TOP_K}
+            others = {k: v for k, v in filters.items() if k != "year"}
+            if others:
+                fallback["filter"] = others
+            results = index.search(namespace=NAMESPACE, query=fallback)
+            matches = results.get("result", {}).get("hits", [])
     except Exception:
         logger.exception("Erreur lors de la recherche vectorielle Pinecone")
         raise HTTPException(
