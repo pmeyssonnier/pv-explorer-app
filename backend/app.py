@@ -404,16 +404,29 @@ _THEME_SYNONYMS = {
     # « police » écarté : ambigu (police d'assurance / tribunal de police).
     "securite":    ["securite", "prevention", "camera", "gardien", "incivilite"],
     "cpas":        ["cpas", "precarite", "insertion"],
+    "voirie":      ["voirie", "chaussee", "trottoir", "egout", "asphalt",
+                    "pave", "refection"],
+    # « energie » écarté : capte les deals Eandis/Sibelga (intercommunale, ~M€).
+    "environnement": ["environnement", "climat", "arbre", "plantation",
+                      "biodiversite", "vegetal", "verdur"],
+    "finance":     ["finance", "fiscal", "taxe", "redevance", "emprunt",
+                    "tresorerie"],
 }
+
+# Types de points NON dépensiers : motions, questions orales et demandes
+# d'habitants citent des montants sans engager de dépense communale
+# (ex. motion « survol aérien » = 500 M€). Écartés de /trend.
+_TREND_SKIP_TYPES = {"motion", "question_orale", "demande_habitant"}
 
 # Documents dont le montant N'EST PAS une dépense discrétionnaire du thème :
 # budgets globaux (total de l'entité), transferts/dotations à d'autres entités,
 # et litiges juridiques (montant en cause, pas une dépense). Exclus de /trend.
 _TREND_EXCLUDE = re.compile(
-    r"(modification budgetaire|douzieme[s]? provisoire|comptes annuels"
+    r"(modification budgetaire|douzieme[s]? provisoire|comptes? (annuels|communaux)"
     r"|compte.{0,25}exercice"
     r"|budget.{0,25}(exercice|ordinaire|extraordinaire|\d{4}|general|initial|participatif)"
     r"|dotation.{0,25}(police|cpas|zone)"
+    r"|garantie communale|avance.{0,15}tresorerie|provision.{0,15}(pour|risque)"
     r"|(affaire|aff)\s*c/|recours|contentieux|affaires juridiques)"
 )
 
@@ -479,7 +492,8 @@ def trend(request: Request, theme: str = Query(..., min_length=2, max_length=60)
             nblob = _strip_accents(blob.lower()).replace(".", "")
             if not any(pat.search(nblob) for pat in patterns):
                 continue
-            if _TREND_EXCLUDE.search(_strip_accents((p.get("titre") or "").lower()).replace(".", "")):
+            if (p.get("type") in _TREND_SKIP_TYPES
+                    or _TREND_EXCLUDE.search(_strip_accents((p.get("titre") or "").lower()).replace(".", ""))):
                 exclus += 1
                 continue
             cell = by_year[year]
