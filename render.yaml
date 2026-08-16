@@ -23,5 +23,4 @@ services:
         # servie doit figurer ici (le navigateur envoie le domaine exact visité).
         #   pv-explorer.vercel.app     → domaine principal
         #   pv-schaerbeek.vercel.app   → alias
-        #   pv-explorer-app.vercel.app → ancien, gardé en repli
-        value: https://pv-explorer.vercel.app,https://pv-schaerbeek.vercel.app,https://pv-explorer-app.vercel.app
+        value: https://pv-explorer.vercel.app,https://pv-schaerbeek.vercel.app
