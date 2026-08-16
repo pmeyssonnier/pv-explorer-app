@@ -405,11 +405,26 @@ def stats(request: Request):
         if (p.get("vote") or {}).get("type") == "vote_nominal":
             votes_non_unanimes += 1
 
+    # Répartition par année (PV + points), pour le graphe de l'onglet Stats.
+    pv_year = Counter()
+    pts_year = Counter()
+    for s in db.get("seances", []):
+        y = ((s.get("seance", {}) or {}).get("date") or "")[:4]
+        if not y:
+            continue
+        pv_year[y] += 1
+        pts_year[y] += len(s.get("points", []))
+    pv_par_annee = [
+        {"annee": y, "pv": pv_year[y], "points": pts_year[y]}
+        for y in sorted(pv_year)
+    ]
+
     return {
         "nb_seances": len(db.get("seances", [])),
         "nb_points": len(all_points),
         "montant_total_eur": round(montant_total, 2),
         "votes_non_unanimes": votes_non_unanimes,
+        "pv_par_annee": pv_par_annee,
         "top_thematiques": themes.most_common(10),
         "top_rubriques": rubriques.most_common(10),
         "decisions": decisions.most_common(),

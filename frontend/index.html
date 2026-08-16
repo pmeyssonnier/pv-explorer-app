@@ -364,6 +364,28 @@ body {
   letter-spacing: 0.06em;
 }
 .stat-section { margin-bottom: 28px; }
+/* ── GRAPHE PV PAR ANNÉE ── */
+.yc-scroll { overflow-x: auto; }
+.yc-plot {
+  display: flex; align-items: flex-end; gap: 8px; height: 195px;
+  padding: 20px 2px 0; min-width: 520px; border-bottom: 2px solid var(--or);
+}
+.yc-col {
+  flex: 1 1 0; display: flex; flex-direction: column; align-items: center;
+  justify-content: flex-end; height: 100%; gap: 5px; min-width: 26px;
+}
+.yc-val { font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--encre); }
+.yc-val.yc-muted { color: var(--encre-soft); }
+.yc-bar {
+  width: 100%; max-width: 30px; border-radius: 4px 4px 0 0;
+  background: linear-gradient(0deg, var(--or), var(--bordeaux));
+  transition: filter 0.15s;
+}
+.yc-col:hover .yc-bar { filter: brightness(1.08); }
+.yc-gap { background: none; border: 2px dashed var(--ligne); }
+.yc-yr { font-size: 11px; color: var(--encre-soft); font-variant-numeric: tabular-nums; }
+.yc-note { font-size: 12px; color: var(--encre-soft); margin-top: 10px; }
+
 .stat-section h3 {
   font-family: var(--display);
   font-size: 18px;
@@ -756,6 +778,37 @@ async function loadStats() {
       style: 'currency', currency: 'EUR', maximumFractionDigits: 0
     }).format(s.montant_total_eur);
 
+    // Graphe « PV par année » — on remplit les années absentes de la plage.
+    const ann = s.pv_par_annee || [];
+    let yearChart = '';
+    if (ann.length) {
+      const byYear = {}; ann.forEach(a => byYear[+a.annee] = a);
+      const yrs = ann.map(a => +a.annee);
+      const lo = Math.min(...yrs), hi = Math.max(...yrs);
+      const maxPv = Math.max(...ann.map(a => a.pv), 1);
+      let cols = '';
+      for (let y = lo; y <= hi; y++) {
+        const a = byYear[y];
+        if (a) {
+          const h = Math.round(a.pv / maxPv * 150) + 4;
+          cols += `<div class="yc-col" title="${y} · ${a.pv} PV · ${a.points.toLocaleString('fr-BE')} points">
+            <span class="yc-val">${a.pv}</span>
+            <div class="yc-bar" style="height:${h}px"></div>
+            <span class="yc-yr">${y}</span></div>`;
+        } else {
+          cols += `<div class="yc-col" title="${y} · non extraite">
+            <span class="yc-val yc-muted">—</span>
+            <div class="yc-bar yc-gap" style="height:22px"></div>
+            <span class="yc-yr">${y}</span></div>`;
+        }
+      }
+      yearChart = `<div class="stat-section">
+        <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Procès-verbaux par année</h3>
+        <div class="yc-scroll"><div class="yc-plot">${cols}</div></div>
+        <p class="yc-note">Hauteur = nombre de séances · pointillé = année non extraite · survol pour le détail.</p>
+      </div>`;
+    }
+
     container.innerHTML = `
       <div class="stats-grid">
         <div class="stat-card"><svg class="stat-ico" aria-hidden="true"><use href="#ico-date"/></svg><div class="stat-num">${s.nb_seances}</div><div class="stat-label">Séances</div></div>
@@ -763,6 +816,7 @@ async function loadStats() {
         <div class="stat-card"><svg class="stat-ico" aria-hidden="true"><use href="#ico-vote"/></svg><div class="stat-num">${s.votes_non_unanimes}</div><div class="stat-label">Votes disputés</div></div>
         <div class="stat-card"><svg class="stat-ico" aria-hidden="true"><use href="#ico-montant"/></svg><div class="stat-num" style="font-size:22px">${montantFmt}</div><div class="stat-label">Montants engagés</div></div>
       </div>
+      ${yearChart}
       <div class="stat-section">
         <h3><svg class="icon" aria-hidden="true"><use href="#ico-thematique"/></svg>Thématiques les plus fréquentes</h3>
         ${themesBars}
