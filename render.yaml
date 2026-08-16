@@ -20,7 +20,7 @@ services:
       - key: ALLOWED_ORIGINS
         # URL publique du frontend Vercel (pas un secret). Plusieurs origines
         # possibles, séparées par des virgules (sans espace).
-        # Les deux domaines sont autorisés le temps de renommer le projet
-        # Vercel (pv-explorer-app → pv-explorer). On pourra retirer l'ancien
-        # une fois la bascule confirmée.
-        value: https://pv-explorer-app.vercel.app,https://pv-explorer.vercel.app
+        # Domaine actuel : pv-explorer.vercel.app. L'ancien (pv-explorer-app)
+        # reste toléré le temps que d'éventuels liens se propagent ; il pourra
+        # être retiré ensuite.
+        value: https://pv-explorer.vercel.app,https://pv-explorer-app.vercel.app

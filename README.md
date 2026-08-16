@@ -28,7 +28,7 @@ communal en langage naturel, avec réponses sourcées et statistiques.
 ```
 
 **Déploiement actuel** : backend sur **Render** (`pv-explorer-api.onrender.com`),
-frontend sur **Vercel** (`pv-explorer-app.vercel.app`). *(Railway reste une
+frontend sur **Vercel** (`pv-explorer.vercel.app`). *(Railway reste une
 alternative — `railway.json` est fourni.)*
 
 ## Structure du dépôt
@@ -134,7 +134,7 @@ détecté automatiquement.)*
    ```
 2. https://vercel.com → **Add New… → Project** → importe le dépôt
 3. **Root Directory** : `frontend` · Framework **Other** (statique) → **Deploy**
-4. Récupère l'URL Vercel (ex. `https://pv-explorer-app.vercel.app`).
+4. Récupère l'URL Vercel (ex. `https://pv-explorer.vercel.app`).
 
 ---
 
