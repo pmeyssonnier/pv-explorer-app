@@ -555,11 +555,38 @@ def get_pdf_list(input_dir: str) -> list[Path]:
     log.info(f"PDF trouvés : {len(pdfs)} fichiers dans {input_dir}")
     return pdfs
 
+
+def _pdf_year(pdf_path: Path) -> Optional[int]:
+    """Année déduite du NOM de fichier (via extract_pdf_metadata), ou None si le
+    nom ne contient pas de date lisible. Sert au filtre year= de run_pipeline."""
+    d = extract_pdf_metadata(pdf_path).get("date")
+    return int(d[:4]) if d else None
+
+
+def filter_pdfs_by_year(pdfs: list[Path], year: int) -> list[Path]:
+    """Ne garde que les PV de l'année demandée (d'après la date du nom de
+    fichier). Les PDF dont le nom ne porte pas de date sont écartés : à ce stade
+    l'année n'est connue que par le nom (le contenu n'est lu qu'au traitement)."""
+    log = get_logger()
+    year = int(year)
+    kept, no_date = [], 0
+    for p in pdfs:
+        py = _pdf_year(p)
+        if py == year:
+            kept.append(p)
+        elif py is None:
+            no_date += 1
+    msg = f"Filtre année {year} : {len(kept)}/{len(pdfs)} PDF retenus"
+    if no_date:
+        msg += f" ({no_date} sans date lisible dans le nom, ignorés)"
+    log.info(msg)
+    return kept
+
 # ══════════════════════════════════════════════════════════════════════════
 # PIPELINE PRINCIPALE
 # ══════════════════════════════════════════════════════════════════════════
 def run_pipeline(max_files: Optional[int] = None, dry_run: bool = False,
-                 force_reprocess: bool = False) -> dict:
+                 force_reprocess: bool = False, year: Optional[int] = None) -> dict:
     for d in [CONFIG["DRIVE_ROOT"], CONFIG["OUTPUT_DIR"], CONFIG["CACHE_DIR"], CONFIG["BACKUP_DIR"]]:
         Path(d).mkdir(parents=True, exist_ok=True)
     _attach_file_logging()
@@ -568,6 +595,8 @@ def run_pipeline(max_files: Optional[int] = None, dry_run: bool = False,
     log.info("\n" + "█"*60)
     log.info("DÉMARRAGE PIPELINE PV EXTRACTION v2.2")
     log.info(f"Modèle : {CONFIG['MODEL']} | Chunk : {CONFIG['CHUNK_SIZE']} pages")
+    if year is not None:
+        log.info(f"Filtre : année {year} uniquement")
     log.info("█"*60)
 
     if not dry_run:
@@ -580,6 +609,11 @@ def run_pipeline(max_files: Optional[int] = None, dry_run: bool = False,
     done = load_progress() if (CONFIG["SKIP_ALREADY_DONE"] and not force_reprocess) else set()
     db = load_database()
     pdfs = get_pdf_list(CONFIG["INPUT_DIR"])
+    if year is not None:
+        pdfs = filter_pdfs_by_year(pdfs, year)
+        if not pdfs:
+            log.warning(f"Aucun PV pour l'année {year} — rien à traiter.")
+            return db
     if max_files:
         pdfs = pdfs[:max_files]
 
@@ -695,8 +729,10 @@ def stats_summary(db: dict):
 
 
 # UTILISATION COLAB :
-#   run_pipeline(max_files=2, dry_run=True)   # test sans API
-#   db = run_pipeline()                        # production
+#   run_pipeline(max_files=2, dry_run=True)    # test sans API
+#   db = run_pipeline()                         # production (tous les PV)
+#   db = run_pipeline(year=2021)                # une seule année (ex. 2021)
+#   db = run_pipeline(year=2021, dry_run=True)  # vérifier quels PV seraient traités
 #   validate_database(db); stats_summary(db)
 #   export_csv(db, "/content/drive/MyDrive/PV_Schaerbeek/pv_all_points.csv")
 
