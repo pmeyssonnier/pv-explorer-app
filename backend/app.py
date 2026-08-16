@@ -55,7 +55,11 @@ except ImportError:
 INDEX_NAME = "pv-explorer"
 NAMESPACE = "pv"
 CLAUDE_MODEL = "claude-sonnet-4-6"   # bon rapport qualité/coût pour du public
-TOP_K = 8                            # nb de passages récupérés par question
+TOP_K = 20                           # passages récupérés (contexte donné à Claude).
+                                     # Élevé pour couvrir les questions transversales
+                                     # (ex. « évolution depuis 2012 ») sur ~4 400 points.
+MAX_SOURCES = 8                      # sources AFFICHÉES dans l'UI (lisibilité) —
+                                     # Claude reçoit les TOP_K, l'utilisateur voit le top.
 MAX_QUESTION_LEN = 500              # garde-fou coût : longueur max d'une question
 # Seuil de pertinence minimal (score cosinus) pour afficher une source.
 # 0.0 = désactivé. Les scores e5 sont resserrés : à calibrer sur des exemples
@@ -276,7 +280,7 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
         client = get_anthropic()
         response = client.messages.create(
             model=CLAUDE_MODEL,
-            max_tokens=1500,
+            max_tokens=2048,
             temperature=0.2,   # factuel et cité : on limite la créativité
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_prompt}]
@@ -312,6 +316,8 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
                 decision=str(meta.get("decision", "")),
                 score=round(float(h["score"]), 3),
             ))
+            if len(sources) >= MAX_SOURCES:   # UI lisible ; Claude a reçu tous les TOP_K
+                break
 
     return AnswerResponse(answer=answer, sources=sources)
 
