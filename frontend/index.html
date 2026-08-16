@@ -225,12 +225,13 @@ body {
 }
 .ask-input {
   flex: 1;
+  min-width: 0;
   background: var(--blanc);
   border: 1px solid var(--ligne);
   border-radius: 4px;
-  padding: 13px 16px;
+  padding: 15px 16px;
   font-family: var(--corps);
-  font-size: 15px;
+  font-size: 16px;              /* 16px = pas de zoom auto iOS au focus */
   color: var(--encre);
   outline: none;
   transition: border-color 0.15s;
@@ -249,7 +250,16 @@ body {
   flex: 0 0 auto;
 }
 .commune-select:focus { border-color: var(--or); }
-@media (max-width: 560px) { .commune-select { max-width: 40vw; } }
+/* Mobile : la saisie passe en pleine largeur sur sa propre ligne (au-dessus),
+   le sélecteur de commune et le bouton se partagent la ligne du dessous. */
+@media (max-width: 560px) {
+  .ask-bar { padding: 12px 14px; }
+  .ask-inner { flex-wrap: wrap; }
+  .ask-input { flex: 1 1 100%; order: -1; }
+  .commune-select { flex: 1 1 auto; max-width: none; padding: 12px; }
+  .ask-btn { flex: 0 0 auto; padding: 12px 20px; }
+  .main { padding-bottom: 170px; }   /* barre sur 2 lignes : plus de marge basse */
+}
 .ask-btn {
   background: var(--bordeaux);
   color: var(--blanc);
