@@ -28,11 +28,13 @@ DÉPLOIEMENT SERVERLESS (Railway / Render) :
 """
 
 import os
+import re
 import json
 import logging
+import unicodedata
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -55,9 +57,11 @@ except ImportError:
 INDEX_NAME = "pv-explorer"
 NAMESPACE = "pv"
 CLAUDE_MODEL = "claude-sonnet-4-6"   # bon rapport qualité/coût pour du public
-TOP_K = 20                           # passages récupérés (contexte donné à Claude).
+TOP_K = 30                           # passages récupérés (contexte donné à Claude).
                                      # Élevé pour couvrir les questions transversales
                                      # (ex. « évolution depuis 2012 ») sur ~4 400 points.
+                                     # NB : le RAG reste sémantique — pour une agrégation
+                                     # exhaustive par thème/année, voir l'endpoint /trend.
 MAX_SOURCES = 8                      # sources AFFICHÉES dans l'UI (lisibilité) —
                                      # Claude reçoit les TOP_K, l'utilisateur voit le top.
 MAX_QUESTION_LEN = 500              # garde-fou coût : longueur max d'une question
@@ -366,4 +370,127 @@ def stats(request: Request):
         "top_rubriques": rubriques.most_common(10),
         "decisions": decisions.most_common(),
         "seances_dates": [s.get("seance", {}).get("date") for s in db.get("seances", [])],
+    }
+
+
+# ── ÉVOLUTION PAR THÈME (agrégation exhaustive, non sémantique) ──────────────
+def _strip_accents(s: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", s)
+                   if unicodedata.category(c) != "Mn")
+
+# Mots trop génériques : ignorés dans le thème pour ne pas tout matcher.
+_TREND_STOPWORDS = {
+    "budget", "montant", "depense", "cout", "evolution", "evolue", "evoluer",
+    "depuis", "total", "annuel", "communal", "commune", "schaerbeek", "conseil",
+    "point", "euro", "pour", "des", "les", "aux", "sur", "dans", "quel", "quelle",
+    "combien", "quels", "quelles", "avec", "une", "und",
+}
+
+
+# Synonymes par thème civique : chaque valeur est un RADICAL cherché en début
+# de mot (accent-strippé). Étend le rappel (« propreté » → nettoyage, déchet…)
+# sans les collisions d'un simple substring. Clé = radical repère du thème.
+_THEME_SYNONYMS = {
+    "proprete":    ["proprete", "nettoy", "dechet", "immondice", "salubrit",
+                    "balay", "encombrant", "graffiti", "caniveau", "corbeille"],
+    "mobilite":    ["mobilite", "velo", "pieton", "cyclable", "stationnement",
+                    "trottoir"],
+    "ecole":       ["ecole", "scolaire", "enseignement", "creche"],
+    "culture":     ["culture", "culturel", "bibliotheque", "musee", "theatre",
+                    "patrimoine"],
+    "sport":       ["sport", "piscine", "stade", "gymnase"],
+    "logement":    ["logement", "habitat", "locatif"],
+    "climat":      ["climat", "environnement", "energie", "arbre"],
+    "securite":    ["securite", "police", "camera", "prevention"],
+}
+
+
+def _trend_tokens(theme: str) -> list[str]:
+    """Radicaux à chercher pour le thème : sans accents, singularisés, étendus
+    par synonymes si le thème correspond à une famille connue. On NE tronque
+    PAS (« proprete » évite la collision avec « propres / fonds propres ») ;
+    le matching se fait en début de mot (\\b), attrapant les flexions."""
+    raw = re.findall(r"[a-z]{3,}", _strip_accents(theme.lower()))
+    terms = set()
+    for t in raw:
+        if t in _TREND_STOPWORDS:
+            continue
+        if len(t) > 4 and t.endswith("s"):   # pluriel → singulier grossier
+            t = t[:-1]
+        grp = None
+        for key, syns in _THEME_SYNONYMS.items():
+            if t == key or t.startswith(key) or key.startswith(t):
+                grp = syns
+                break
+        if grp:
+            terms.update(grp)
+        else:
+            terms.add(t)
+    return sorted(terms)
+
+
+@app.get("/trend")
+@limiter.limit("30/minute")
+def trend(request: Request, theme: str = Query(..., min_length=2, max_length=60)):
+    """Pour un thème, additionne les montants par année sur TOUS les points
+    (balayage exhaustif par mots-clés). Répond aux questions d'évolution que le
+    RAG top-k ne couvre pas (ex. « budget propreté depuis 2012 »)."""
+    json_path = os.environ.get("PV_JSON_PATH", "pv_conseil_schaerbeek.json")
+    if not os.path.exists(json_path):
+        raise HTTPException(status_code=404, detail="Données non disponibles")
+    with open(json_path, encoding="utf-8") as f:
+        db = json.load(f)
+
+    tokens = _trend_tokens(theme)
+    if not tokens:
+        raise HTTPException(
+            status_code=400,
+            detail="Thème trop générique — précise un mot-clé (ex. propreté, mobilité, écoles).",
+        )
+    # Matching en DÉBUT de mot : \bproprete attrape « propreté(s) » mais pas
+    # « propres / fonds propres ».
+    patterns = [re.compile(r"\b" + re.escape(t)) for t in tokens]
+
+    from collections import defaultdict
+    by_year = defaultdict(lambda: {"points": 0, "avec_montant": 0, "total_eur": 0.0})
+    items = []
+    for s in db.get("seances", []):
+        date = (s.get("seance", {}) or {}).get("date") or ""
+        year = date[:4] or "?"
+        for p in s.get("points", []):
+            blob = " ".join(str(p.get(k, "")) for k in
+                            ("titre", "resume", "rubrique", "sous_rubrique"))
+            blob += " " + " ".join(p.get("thematiques") or [])
+            nblob = _strip_accents(blob.lower())
+            if not any(pat.search(nblob) for pat in patterns):
+                continue
+            cell = by_year[year]
+            cell["points"] += 1
+            m = p.get("montant_eur")
+            if m and m > 0:
+                cell["avec_montant"] += 1
+                cell["total_eur"] += float(m)
+                items.append({
+                    "date": date,
+                    "sp": int(float(p.get("sp") or 0)),
+                    "montant_eur": round(float(m), 2),
+                    "titre": (p.get("titre") or "")[:120],
+                    "decision": p.get("decision") or "",
+                })
+
+    annees = [
+        {"annee": y, "points": v["points"],
+         "points_avec_montant": v["avec_montant"], "total_eur": round(v["total_eur"], 2)}
+        for y, v in sorted(by_year.items())
+    ]
+    items.sort(key=lambda x: -x["montant_eur"])
+    return {
+        "theme": theme,
+        "annees": annees,
+        "points_total": sum(a["points"] for a in annees),
+        "total_eur": round(sum(a["total_eur"] for a in annees), 2),
+        "top_items": items[:8],
+        "note": ("Agrégation exhaustive de tous les points mentionnant le thème. "
+                 "Montants ponctuels (marchés, subsides, achats) — non consolidés "
+                 "en budget officiel."),
     }
