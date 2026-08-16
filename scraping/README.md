@@ -147,7 +147,8 @@ Côté indexation, **`backend/index_pv.py` lit `seance["commune"]` par séance**
    `Drive/PV_Schaerbeek/input/<commune>/`.
 2. **Pipeline** (Colab) : appliquer `patch_multi_communes.py` puis
    `run_pipeline()` → `pv_conseil_<…>.json`.
-3. **Déposer** le JSON dans `backend/` (et `data/`) du dépôt, committer.
+3. **Déposer** le JSON dans `backend/` du dépôt, committer. C'est la seule
+   copie utilisée (par `app.py`, `index_pv.py` et `render.yaml`).
 4. **Indexer** : lancer le workflow GitHub Actions *« Indexer les PV »*
    (inputs `commune` / `input`) — voir `.github/workflows/index-pinecone.yml`.
 5. L'app (stats + recherche) couvre alors les nouvelles séances.
