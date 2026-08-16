@@ -408,16 +408,29 @@ def stats(request: Request):
     # Répartition par année (PV + points), pour le graphe de l'onglet Stats.
     pv_year = Counter()
     pts_year = Counter()
+    themes_year = {}          # année -> Counter de thèmes canoniques
+    themes_all = Counter()    # toutes années confondues (canoniques)
     for s in db.get("seances", []):
         y = ((s.get("seance", {}) or {}).get("date") or "")[:4]
         if not y:
             continue
         pv_year[y] += 1
         pts_year[y] += len(s.get("points", []))
+        yc = themes_year.setdefault(y, Counter())
+        for p in s.get("points", []):
+            for t in (p.get("thematiques") or []):
+                c = _canon_theme(t)
+                yc[c] += 1
+                themes_all[c] += 1
     pv_par_annee = [
         {"annee": y, "pv": pv_year[y], "points": pts_year[y]}
         for y in sorted(pv_year)
     ]
+    # Top 12 thèmes par année + « toutes » — alimente le filtre synchronisé
+    # du graphe des thématiques (clic sur une année → sujets de cette année).
+    themes_par_annee = {"toutes": themes_all.most_common(12)}
+    for y, yc in themes_year.items():
+        themes_par_annee[y] = yc.most_common(12)
 
     return {
         "nb_seances": len(db.get("seances", [])),
@@ -425,6 +438,7 @@ def stats(request: Request):
         "montant_total_eur": round(montant_total, 2),
         "votes_non_unanimes": votes_non_unanimes,
         "pv_par_annee": pv_par_annee,
+        "themes_par_annee": themes_par_annee,
         "top_thematiques": themes.most_common(10),
         "top_rubriques": rubriques.most_common(10),
         "decisions": decisions.most_common(),
@@ -436,6 +450,25 @@ def stats(request: Request):
 def _strip_accents(s: str) -> str:
     return "".join(c for c in unicodedata.normalize("NFD", s)
                    if unicodedata.category(c) != "Mn")
+
+
+# Fusions de thèmes après singularisation (mêmes sujets, tags différents).
+_THEME_CANON = {"enseignement": "education"}
+
+
+def _canon_theme(theme: str) -> str:
+    """Normalise un tag `thematiques` en libellé canonique : accents retirés,
+    underscores → espaces, singularisation simple (marches_publics /
+    marche_public → « marche public », fournitures → « fourniture »). Fusionne
+    les doublons singulier/pluriel qui gonflent artificiellement le comptage."""
+    s = re.sub(r"\s+", " ", _strip_accents(theme.lower()).replace("_", " ")).strip()
+    toks = []
+    for w in s.split(" "):
+        if len(w) > 4 and w.endswith("s") and not w.endswith("ss"):
+            w = w[:-1]
+        toks.append(w)
+    s = " ".join(toks)
+    return _THEME_CANON.get(s, s)
 
 # Mots trop génériques : ignorés dans le thème pour ne pas tout matcher.
 _TREND_STOPWORDS = {

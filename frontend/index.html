@@ -404,6 +404,18 @@ body {
 }
 .yc-toggle button:hover { color: var(--bordeaux); }
 .yc-toggle button.active { background: var(--bordeaux); color: #fff; }
+.yc-col.yc-clic { cursor: pointer; }
+.yc-col.yc-clic:hover .yc-val { color: var(--bordeaux); }
+.th-year {
+  font-size: 13px; color: var(--encre-soft); font-weight: 600;
+  display: inline-flex; align-items: center;
+}
+.th-year select {
+  font-family: var(--corps); font-size: 13px; font-weight: 600;
+  color: var(--encre); background: var(--papier);
+  border: 1px solid var(--ligne); border-radius: 8px;
+  padding: 5px 10px; cursor: pointer;
+}
 
 .stat-section h3 {
   font-family: var(--display);
@@ -775,6 +787,31 @@ async function submitQuestion() {
 // ── STATISTIQUES ──
 let statsLoaded = false;
 let yearData = [];
+let themesByYear = {};
+
+// Rend les barres de thématiques pour l'année choisie ('toutes' ou 'YYYY').
+function renderThemes(year) {
+  const box = document.getElementById('themesBars');
+  if (!box) return;
+  const rows = themesByYear[year] || themesByYear['toutes'] || [];
+  if (!rows.length) { box.innerHTML = '<p class="yc-note">Aucune donnée pour cette année.</p>'; return; }
+  const max = Math.max(...rows.map(r => r[1]), 1);
+  box.innerHTML = rows.map(([nom, n]) => `
+    <div class="bar-row">
+      <div class="bar-label">${escapeHtml(nom.replace(/_/g, ' '))}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${n/max*100}%"></div></div>
+      <div class="bar-val">${n}</div>
+    </div>`).join('');
+  const sel = document.getElementById('themeYear');
+  if (sel && sel.value !== year) sel.value = year;
+}
+
+// Synchro : clic sur une barre d'année → thématiques de cette année.
+function selectThemeYear(y) {
+  renderThemes(String(y));
+  const sec = document.getElementById('themesSection');
+  if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
 
 // Rend le graphe « activité par année » pour la métrique choisie (pv ou points).
 function renderYearChart(metric) {
@@ -799,7 +836,8 @@ function renderYearChart(metric) {
     const val = a[metric];
     const h = Math.max(4, Math.round(val / maxVal * 130));
     const shown = metric === 'points' ? val.toLocaleString('fr-BE') : val;
-    html += `<div class="yc-col" title="${y} · ${a.pv} PV · ${a.points.toLocaleString('fr-BE')} points">`
+    html += `<div class="yc-col yc-clic" onclick="selectThemeYear(${y})" `
+      + `title="${y} · ${a.pv} PV · ${a.points.toLocaleString('fr-BE')} points — voir les thématiques">`
       + `<span class="yc-val">${shown}</span>`
       + `<div class="yc-bar" style="height:${h}px"></div>`
       + `<span class="yc-yr">${y}</span></div>`;
@@ -822,13 +860,12 @@ async function loadStats() {
     }
     const s = await res.json();
 
-    const maxTheme = Math.max(...s.top_thematiques.map(t => t[1]), 1);
-    const themesBars = s.top_thematiques.map(([nom, n]) => `
-      <div class="bar-row">
-        <div class="bar-label">${escapeHtml(nom.replace(/_/g, ' '))}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${n/maxTheme*100}%"></div></div>
-        <div class="bar-val">${n}</div>
-      </div>`).join('');
+    // Thématiques par année — options du sélecteur synchronisé (voir renderThemes).
+    themesByYear = s.themes_par_annee || { toutes: s.top_thematiques || [] };
+    const themeYears = Object.keys(themesByYear)
+      .filter(y => y !== 'toutes').sort().reverse();
+    const themeOptions = ['<option value="toutes">Toutes les années</option>']
+      .concat(themeYears.map(y => `<option value="${y}">${y}</option>`)).join('');
 
     const montantFmt = new Intl.NumberFormat('fr-BE', {
       style: 'currency', currency: 'EUR', maximumFractionDigits: 0
@@ -856,11 +893,17 @@ async function loadStats() {
         <div class="stat-card"><svg class="stat-ico" aria-hidden="true"><use href="#ico-montant"/></svg><div class="stat-num" style="font-size:22px">${montantFmt}</div><div class="stat-label">Montants engagés</div></div>
       </div>
       ${yearChart}
-      <div class="stat-section">
-        <h3><svg class="icon" aria-hidden="true"><use href="#ico-thematique"/></svg>Thématiques les plus fréquentes</h3>
-        ${themesBars}
+      <div class="stat-section" id="themesSection">
+        <div class="yc-head">
+          <h3><svg class="icon" aria-hidden="true"><use href="#ico-thematique"/></svg>Thématiques les plus fréquentes</h3>
+          <label class="th-year">Année&nbsp;
+            <select id="themeYear" onchange="renderThemes(this.value)">${themeOptions}</select>
+          </label>
+        </div>
+        <div id="themesBars"></div>
       </div>`;
     if (yearData.length) renderYearChart('pv');
+    renderThemes('toutes');
     statsLoaded = true;
   } catch (err) {
     container.innerHTML = `<div class="error-box">Impossible de charger les statistiques. ${escapeHtml(err.message)}</div>`;
