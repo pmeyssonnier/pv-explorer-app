@@ -168,7 +168,12 @@ body {
   border-color: var(--bordeaux);
   align-self: flex-start;
   max-width: 90%;
+  cursor: pointer;
+  transition: box-shadow 0.15s, transform 0.1s;
 }
+.msg-question .msg-bubble:hover { box-shadow: 0 3px 12px rgba(109,34,51,0.28); }
+.msg-question .msg-bubble:active { transform: translateY(1px); }
+.msg-question .msg-bubble:focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
 
 /* ── SOURCES (élément signature : délibérations citées) ──────── */
 .sources { margin-top: 12px; }
@@ -488,6 +493,18 @@ function askSuggestion(el) {
   submitQuestion();
 }
 
+// ── REPOSER UNE QUESTION DÉJÀ POSÉE ──
+// Clic sur une bulle de question → on la remet dans le champ (à renvoyer/éditer).
+function reuseQuestion(el) {
+  const q = (el.textContent || '').trim();
+  if (!q) return;
+  const input = document.getElementById('askInput');
+  input.value = q;
+  input.focus();
+  try { input.setSelectionRange(q.length, q.length); } catch (e) {}
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
 // ── POSER UNE QUESTION ──
 async function submitQuestion() {
   if (isLoading) return;
@@ -506,7 +523,10 @@ async function submitQuestion() {
   conv.insertAdjacentHTML('beforeend', `
     <div class="msg msg-question">
       <div class="msg-role">Votre question</div>
-      <div class="msg-bubble">${escapeHtml(question)}</div>
+      <div class="msg-bubble" role="button" tabindex="0"
+           title="Cliquer pour reposer ou modifier cette question"
+           onclick="reuseQuestion(this)"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();reuseQuestion(this);}">${escapeHtml(question)}</div>
     </div>`);
 
   // Afficher le chargement
