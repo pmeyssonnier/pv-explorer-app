@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="pv-explorer">
+  <rect width="64" height="64" rx="14" fill="#6d2233"/>
+  <!-- page de procès-verbal -->
+  <rect x="15" y="12" width="26" height="33" rx="3.4" fill="#f7f3ec"/>
+  <rect x="20" y="19.2" width="16" height="3.2" rx="1.6" fill="#c8952b"/>
+  <rect x="20" y="25.4" width="16" height="2.8" rx="1.4" fill="#c9b7a4"/>
+  <rect x="20" y="30.8" width="11.2" height="2.8" rx="1.4" fill="#c9b7a4"/>
+  <!-- loupe -->
+  <circle cx="41.2" cy="40" r="13.2" fill="#6d2233"/>
+  <circle cx="41.2" cy="40" r="9" fill="none" stroke="#c8952b" stroke-width="4.6"/>
+  <line x1="48.2" y1="47" x2="54" y2="52.8" stroke="#c8952b" stroke-width="4.6" stroke-linecap="round"/>
+</svg>

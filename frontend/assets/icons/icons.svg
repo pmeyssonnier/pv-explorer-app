@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!--
+    Jeu d'icônes pv-explorer — grille 24, trait 1.7, currentColor.
+    Usage :  <svg class="icon" aria-hidden="true"><use href="assets/icons/icons.svg#ico-search"/></svg>
+    Couleur :  .icon { width:1.25em; height:1.25em; color: var(--bordeaux); }
+  -->
+  <defs>
+    <style>
+      symbol { fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+    </style>
+  </defs>
+
+  <!-- Recherche -->
+  <symbol id="ico-search" viewBox="0 0 24 24">
+    <circle cx="10.5" cy="10.5" r="6.5"/>
+    <line x1="15.5" y1="15.5" x2="20.5" y2="20.5"/>
+  </symbol>
+
+  <!-- Statistiques -->
+  <symbol id="ico-stats" viewBox="0 0 24 24">
+    <line x1="3.5" y1="20.5" x2="20.5" y2="20.5"/>
+    <line x1="6.5" y1="20.5" x2="6.5" y2="13"/>
+    <line x1="12" y1="20.5" x2="12" y2="7.5"/>
+    <line x1="17.5" y1="20.5" x2="17.5" y2="15.5"/>
+  </symbol>
+
+  <!-- Commune (hôtel communal) -->
+  <symbol id="ico-commune" viewBox="0 0 24 24">
+    <path d="M3.5 9.5 12 4l8.5 5.5"/>
+    <line x1="4.5" y1="9.5" x2="19.5" y2="9.5"/>
+    <line x1="6.5" y1="10" x2="6.5" y2="18"/>
+    <line x1="10" y1="10" x2="10" y2="18"/>
+    <line x1="14" y1="10" x2="14" y2="18"/>
+    <line x1="17.5" y1="10" x2="17.5" y2="18"/>
+    <line x1="3.5" y1="20.5" x2="20.5" y2="20.5"/>
+  </symbol>
+
+  <!-- Date / séance -->
+  <symbol id="ico-date" viewBox="0 0 24 24">
+    <rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/>
+    <line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/>
+    <line x1="8" y1="3.2" x2="8" y2="6.5"/>
+    <line x1="16" y1="3.2" x2="16" y2="6.5"/>
+    <line x1="7.5" y1="13.5" x2="12" y2="13.5"/>
+  </symbol>
+
+  <!-- Point / procès-verbal -->
+  <symbol id="ico-pv" viewBox="0 0 24 24">
+    <path d="M7 3.5h6.5L18 8v12.5H7z"/>
+    <path d="M13.5 3.5V8H18"/>
+    <line x1="9.5" y1="12" x2="15.5" y2="12"/>
+    <line x1="9.5" y1="15" x2="15.5" y2="15"/>
+    <line x1="9.5" y1="18" x2="13" y2="18"/>
+  </symbol>
+
+  <!-- Décision (marteau de séance) -->
+  <symbol id="ico-decision" viewBox="0 0 24 24">
+    <rect x="10.6" y="3.4" width="7.5" height="4.4" rx="1.2" transform="rotate(45 14.35 5.6)"/>
+    <line x1="12.1" y1="8.2" x2="6.4" y2="13.9"/>
+    <line x1="9.6" y1="5.7" x2="14.9" y2="11"/>
+    <line x1="4.2" y1="20.4" x2="12.2" y2="20.4"/>
+    <line x1="8.2" y1="16.6" x2="8.2" y2="20.4"/>
+  </symbol>
+
+  <!-- Vote -->
+  <symbol id="ico-vote" viewBox="0 0 24 24">
+    <path d="M4 12.5v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/>
+    <path d="M8 12.5 4 11l1.4-3.2 4 1.6"/>
+    <path d="M8.2 13.2 15 4.2l3.4 2.6L11.8 16z"/>
+    <line x1="9" y1="17.5" x2="15" y2="17.5"/>
+  </symbol>
+
+  <!-- Montant (euro) -->
+  <symbol id="ico-montant" viewBox="0 0 24 24">
+    <circle cx="12" cy="12" r="8.5"/>
+    <path d="M15 8.7a4 4 0 1 0 0 6.6"/>
+    <line x1="7.5" y1="11" x2="13.5" y2="11"/>
+    <line x1="7.5" y1="13.4" x2="12.5" y2="13.4"/>
+  </symbol>
+
+  <!-- Intervenant -->
+  <symbol id="ico-intervenant" viewBox="0 0 24 24">
+    <circle cx="10" cy="8.5" r="3.5"/>
+    <path d="M4.5 20c0-3.6 2.5-6 5.5-6s5.5 2.4 5.5 6"/>
+    <path d="M17.5 7.5a4 4 0 0 1 0 6"/>
+    <path d="M19.5 5.5a7 7 0 0 1 0 10"/>
+  </symbol>
+
+  <!-- Thématique (étiquette) -->
+  <symbol id="ico-thematique" viewBox="0 0 24 24">
+    <path d="M4 4.5h7.2a2 2 0 0 1 1.42.59l6.3 6.3a2 2 0 0 1 0 2.83l-4.5 4.5a2 2 0 0 1-2.83 0l-6.3-6.3A2 2 0 0 1 4 10.98z"/>
+    <circle cx="8.2" cy="8.7" r="1.3"/>
+  </symbol>
+
+  <!-- Urgence -->
+  <symbol id="ico-urgence" viewBox="0 0 24 24">
+    <path d="M13 3 5 13.5h6L10 21l9-11h-6z"/>
+  </symbol>
+
+  <!-- Source / citation -->
+  <symbol id="ico-source" viewBox="0 0 24 24">
+    <path d="M9.5 6.5c-3 .8-4.5 3-4.5 6.5H8a1.5 1.5 0 0 1 1.5 1.5v2.5A1.5 1.5 0 0 1 8 18.5H5.5A1.5 1.5 0 0 1 4 17V13c0-4 2-6.6 5.5-7.5z"/>
+    <path d="M19.5 6.5c-3 .8-4.5 3-4.5 6.5H18a1.5 1.5 0 0 1 1.5 1.5v2.5A1.5 1.5 0 0 1 18 18.5h-2.5A1.5 1.5 0 0 1 14 17V13c0-4 2-6.6 5.5-7.5z"/>
+  </symbol>
+</svg>
