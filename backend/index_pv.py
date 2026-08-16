@@ -12,7 +12,14 @@ PRÉREQUIS :
 USAGE :
     python index_pv.py                                  # Schaerbeek (défaut)
     python index_pv.py --reset                          # vide l'index puis réindexe
+    python index_pv.py --only-year 2021,2022            # n'indexe QUE ces années
     python index_pv.py --commune evere --input pv_conseil_evere.json   # autre commune
+
+RÉINDEXATION CIBLÉE (--only-year) :
+    N'envoie que les points des années demandées. Grâce aux ID stables, c'est un
+    upsert idempotent : les vecteurs existants sont réécrits sans doublon, les
+    autres années restent intactes. Idéal après l'ajout d'une année (ex. 2022) :
+    ~10× moins de tokens à ré-embedder → plus de plafond tokens/min saturé.
 
 MULTI-COMMUNE :
     Un seul index, un seul namespace ("pv"). Chaque vecteur porte une
@@ -281,6 +288,8 @@ def main():
     parser.add_argument("--commune", default="schaerbeek",
                         help="Nom de la commune (écrit en métadonnée), ex. schaerbeek, evere")
     parser.add_argument("--reset", action="store_true", help="Vide l'index avant réindexation")
+    parser.add_argument("--only-year", dest="only_year", default="",
+                        help="N'indexe QUE ces années (ex. 2021,2022). Vide = toutes.")
     args = parser.parse_args()
 
     commune = args.commune.strip().lower()
@@ -306,6 +315,15 @@ def main():
     chunks = load_chunks(json_path, commune)
     print(f"📄 {len(chunks)} points chargés depuis {json_path.name} "
           f"(commune par défaut : {commune} ; seance['commune'] prioritaire si présent)")
+
+    if args.only_year:
+        years = {int(y) for y in args.only_year.split(",") if y.strip().isdigit()}
+        if not years:
+            print(f"❌ --only-year invalide : « {args.only_year} » (ex. attendu : 2021,2022)")
+            sys.exit(1)
+        before = len(chunks)
+        chunks = [c for c in chunks if c["metadata"].get("year") in years]
+        print(f"🎯 Filtre --only-year {sorted(years)} : {before} → {len(chunks)} chunks à (ré)indexer")
 
     if not chunks:
         print("❌ Aucun point à indexer")
