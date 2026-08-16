@@ -382,9 +382,28 @@ body {
   transition: filter 0.15s;
 }
 .yc-col:hover .yc-bar { filter: brightness(1.08); }
-.yc-gap { background: none; border: 2px dashed var(--ligne); }
+.yc-gap {
+  width: 100%; max-width: 30px; height: 20px;
+  background: none; border: 2px dashed var(--ligne); border-radius: 4px 4px 0 0;
+}
 .yc-yr { font-size: 11px; color: var(--encre-soft); font-variant-numeric: tabular-nums; }
 .yc-note { font-size: 12px; color: var(--encre-soft); margin-top: 10px; }
+.yc-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.yc-head h3 { margin: 0; }
+.yc-toggle {
+  display: inline-flex; border: 1px solid var(--ligne); border-radius: 999px;
+  overflow: hidden; background: var(--papier);
+}
+.yc-toggle button {
+  border: none; background: none; cursor: pointer;
+  font-family: var(--corps); font-size: 13px; font-weight: 600;
+  color: var(--encre-soft); padding: 6px 16px; transition: background 0.15s, color 0.15s;
+}
+.yc-toggle button:hover { color: var(--bordeaux); }
+.yc-toggle button.active { background: var(--bordeaux); color: #fff; }
 
 .stat-section h3 {
   font-family: var(--display);
@@ -755,6 +774,43 @@ async function submitQuestion() {
 
 // ── STATISTIQUES ──
 let statsLoaded = false;
+let yearData = [];
+
+// Rend le graphe « activité par année » pour la métrique choisie (pv ou points).
+function renderYearChart(metric) {
+  const plot = document.getElementById('ycPlot');
+  if (!plot || !yearData.length) return;
+  const years = yearData.map(a => +a.annee);
+  const lo = Math.min(...years), hi = Math.max(...years);
+  const maxVal = Math.max(...yearData.map(a => a[metric] || 0), 1);
+  const byYear = {};
+  yearData.forEach(a => { byYear[+a.annee] = a; });
+
+  let html = '';
+  for (let y = lo; y <= hi; y++) {
+    const a = byYear[y];
+    if (!a || !(a[metric] > 0)) {
+      html += `<div class="yc-col" title="${y} · non extraite">`
+        + `<span class="yc-val yc-muted">—</span>`
+        + `<div class="yc-gap"></div>`
+        + `<span class="yc-yr">${y}</span></div>`;
+      continue;
+    }
+    const val = a[metric];
+    const h = Math.max(4, Math.round(val / maxVal * 130));
+    const shown = metric === 'points' ? val.toLocaleString('fr-BE') : val;
+    html += `<div class="yc-col" title="${y} · ${a.pv} PV · ${a.points.toLocaleString('fr-BE')} points">`
+      + `<span class="yc-val">${shown}</span>`
+      + `<div class="yc-bar" style="height:${h}px"></div>`
+      + `<span class="yc-yr">${y}</span></div>`;
+  }
+  plot.innerHTML = html;
+
+  document.querySelectorAll('.yc-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.metric === metric);
+  });
+}
+
 async function loadStats() {
   if (statsLoaded) return;
   const container = document.getElementById('statsContent');
@@ -778,36 +834,19 @@ async function loadStats() {
       style: 'currency', currency: 'EUR', maximumFractionDigits: 0
     }).format(s.montant_total_eur);
 
-    // Graphe « PV par année » — on remplit les années absentes de la plage.
-    const ann = s.pv_par_annee || [];
-    let yearChart = '';
-    if (ann.length) {
-      const byYear = {}; ann.forEach(a => byYear[+a.annee] = a);
-      const yrs = ann.map(a => +a.annee);
-      const lo = Math.min(...yrs), hi = Math.max(...yrs);
-      const maxPv = Math.max(...ann.map(a => a.pv), 1);
-      let cols = '';
-      for (let y = lo; y <= hi; y++) {
-        const a = byYear[y];
-        if (a) {
-          const h = Math.round(a.pv / maxPv * 150) + 4;
-          cols += `<div class="yc-col" title="${y} · ${a.pv} PV · ${a.points.toLocaleString('fr-BE')} points">
-            <span class="yc-val">${a.pv}</span>
-            <div class="yc-bar" style="height:${h}px"></div>
-            <span class="yc-yr">${y}</span></div>`;
-        } else {
-          cols += `<div class="yc-col" title="${y} · non extraite">
-            <span class="yc-val yc-muted">—</span>
-            <div class="yc-bar yc-gap" style="height:22px"></div>
-            <span class="yc-yr">${y}</span></div>`;
-        }
-      }
-      yearChart = `<div class="stat-section">
-        <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Procès-verbaux par année</h3>
-        <div class="yc-scroll"><div class="yc-plot">${cols}</div></div>
-        <p class="yc-note">Hauteur = nombre de séances · pointillé = année non extraite · survol pour le détail.</p>
-      </div>`;
-    }
+    // Graphe « activité par année » (bascule PV ↔ points) — voir renderYearChart().
+    yearData = s.pv_par_annee || [];
+    const yearChart = yearData.length ? `<div class="stat-section">
+      <div class="yc-head">
+        <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Activité par année</h3>
+        <div class="yc-toggle">
+          <button data-metric="pv" onclick="renderYearChart('pv')">PV</button>
+          <button data-metric="points" onclick="renderYearChart('points')">Points</button>
+        </div>
+      </div>
+      <div class="yc-scroll"><div class="yc-plot" id="ycPlot"></div></div>
+      <p class="yc-note">Hauteur = valeur de l'année · pointillé = année non extraite · survol pour le détail.</p>
+    </div>` : '';
 
     container.innerHTML = `
       <div class="stats-grid">
@@ -821,6 +860,7 @@ async function loadStats() {
         <h3><svg class="icon" aria-hidden="true"><use href="#ico-thematique"/></svg>Thématiques les plus fréquentes</h3>
         ${themesBars}
       </div>`;
+    if (yearData.length) renderYearChart('pv');
     statsLoaded = true;
   } catch (err) {
     container.innerHTML = `<div class="error-box">Impossible de charger les statistiques. ${escapeHtml(err.message)}</div>`;
