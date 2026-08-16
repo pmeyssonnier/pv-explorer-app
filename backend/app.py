@@ -401,8 +401,21 @@ _THEME_SYNONYMS = {
     "sport":       ["sport", "piscine", "stade", "gymnase"],
     "logement":    ["logement", "habitat", "locatif"],
     "climat":      ["climat", "environnement", "energie", "arbre"],
-    "securite":    ["securite", "police", "camera", "prevention"],
+    # « police » écarté : ambigu (police d'assurance / tribunal de police).
+    "securite":    ["securite", "prevention", "camera", "gardien", "incivilite"],
+    "cpas":        ["cpas", "precarite", "insertion"],
 }
+
+# Documents dont le montant N'EST PAS une dépense discrétionnaire du thème :
+# budgets globaux (total de l'entité), transferts/dotations à d'autres entités,
+# et litiges juridiques (montant en cause, pas une dépense). Exclus de /trend.
+_TREND_EXCLUDE = re.compile(
+    r"(modification budgetaire|douzieme[s]? provisoire|comptes annuels"
+    r"|compte.{0,25}exercice"
+    r"|budget.{0,25}(exercice|ordinaire|extraordinaire|\d{4}|general|initial|participatif)"
+    r"|dotation.{0,25}(police|cpas|zone)"
+    r"|(affaire|aff)\s*c/|recours|contentieux|affaires juridiques)"
+)
 
 
 def _trend_tokens(theme: str) -> list[str]:
@@ -454,6 +467,7 @@ def trend(request: Request, theme: str = Query(..., min_length=2, max_length=60)
     from collections import defaultdict
     by_year = defaultdict(lambda: {"points": 0, "avec_montant": 0, "total_eur": 0.0})
     items = []
+    exclus = 0  # documents budgétaires globaux / transferts / litiges écartés
     for s in db.get("seances", []):
         date = (s.get("seance", {}) or {}).get("date") or ""
         year = date[:4] or "?"
@@ -461,8 +475,12 @@ def trend(request: Request, theme: str = Query(..., min_length=2, max_length=60)
             blob = " ".join(str(p.get(k, "")) for k in
                             ("titre", "resume", "rubrique", "sous_rubrique"))
             blob += " " + " ".join(p.get("thematiques") or [])
-            nblob = _strip_accents(blob.lower())
+            # .replace(".", "") : « C.P.A.S. » → « cpas » (sinon lettres isolées)
+            nblob = _strip_accents(blob.lower()).replace(".", "")
             if not any(pat.search(nblob) for pat in patterns):
+                continue
+            if _TREND_EXCLUDE.search(_strip_accents((p.get("titre") or "").lower()).replace(".", "")):
+                exclus += 1
                 continue
             cell = by_year[year]
             cell["points"] += 1
@@ -489,8 +507,10 @@ def trend(request: Request, theme: str = Query(..., min_length=2, max_length=60)
         "annees": annees,
         "points_total": sum(a["points"] for a in annees),
         "total_eur": round(sum(a["total_eur"] for a in annees), 2),
+        "documents_exclus": exclus,
         "top_items": items[:8],
-        "note": ("Agrégation exhaustive de tous les points mentionnant le thème. "
-                 "Montants ponctuels (marchés, subsides, achats) — non consolidés "
-                 "en budget officiel."),
+        "note": ("Agrégation exhaustive des points mentionnant le thème. Montants "
+                 "ponctuels (marchés, subsides, achats) — non consolidés en budget "
+                 "officiel. Budgets globaux, dotations et litiges juridiques sont "
+                 "écartés pour éviter les totaux trompeurs."),
     }
