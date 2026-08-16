@@ -356,7 +356,7 @@ def stats(request: Request):
             themes[t] += 1
         rubriques[p.get("rubrique", "?")] += 1
         decisions[p.get("decision", "?")] += 1
-        if p.get("montant_eur"):
+        if p.get("montant_eur") and not _is_excluded_amount(p):
             montant_total += p["montant_eur"]
         if (p.get("vote") or {}).get("type") == "vote_nominal":
             votes_non_unanimes += 1
@@ -423,12 +423,34 @@ _TREND_SKIP_TYPES = {"motion", "question_orale", "demande_habitant"}
 # et litiges juridiques (montant en cause, pas une dépense). Exclus de /trend.
 _TREND_EXCLUDE = re.compile(
     r"(modification budgetaire|douzieme[s]? provisoire|comptes? (annuels|communaux)"
-    r"|compte.{0,25}exercice"
+    r"|compte.{0,25}exercice|comptes \d{4}|comptes de l"
     r"|budget.{0,25}(exercice|ordinaire|extraordinaire|\d{4}|general|initial|participatif)"
     r"|dotation.{0,25}(police|cpas|zone)"
     r"|garantie communale|avance.{0,15}tresorerie|provision.{0,15}(pour|risque)"
+    # opérations d'intercommunales (valeur d'actifs / statuts, pas une dépense) :
+    r"|eandis|sibelga|interfin|intercommunale|modification.{0,15}statuts"
     r"|(affaire|aff)\s*c/|recours|contentieux|affaires juridiques)"
 )
+
+# Décisions non dépensières : le conseil constate / prend acte sans engager de
+# dépense (ex. comptes d'un organisme présentés « pour information »).
+_TREND_NONSPEND_DECISION = re.compile(
+    r"prend (pour information|acte|connaissance)|pour information|prend note|constate"
+)
+
+
+def _is_excluded_amount(p: dict) -> bool:
+    """True si le montant du point n'est PAS une dépense discrétionnaire de la
+    commune (budget global, transfert/dotation, litige, opération
+    d'intercommunale, ou acte non dépensier : motion, question, prise d'acte).
+    Partagé par /stats et /trend pour des chiffres cohérents et non trompeurs."""
+    if p.get("type") in _TREND_SKIP_TYPES:
+        return True
+    titre = _strip_accents((p.get("titre") or "").lower()).replace(".", "")
+    if _TREND_EXCLUDE.search(titre):
+        return True
+    decision = _strip_accents((p.get("decision") or "").lower()).replace(".", "")
+    return bool(_TREND_NONSPEND_DECISION.search(decision))
 
 
 def _trend_tokens(theme: str) -> list[str]:
@@ -492,8 +514,7 @@ def trend(request: Request, theme: str = Query(..., min_length=2, max_length=60)
             nblob = _strip_accents(blob.lower()).replace(".", "")
             if not any(pat.search(nblob) for pat in patterns):
                 continue
-            if (p.get("type") in _TREND_SKIP_TYPES
-                    or _TREND_EXCLUDE.search(_strip_accents((p.get("titre") or "").lower()).replace(".", ""))):
+            if _is_excluded_amount(p):
                 exclus += 1
                 continue
             cell = by_year[year]
