@@ -143,6 +143,27 @@ body {
 }
 .suggestion:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
 
+/* ── HISTORIQUE + NOUVELLE RECHERCHE ── */
+.history { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--ligne); }
+.history-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.history-head > span {
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 600; color: var(--encre-soft);
+}
+.history-clear {
+  background: none; border: none; color: var(--encre-soft);
+  font-size: 12px; cursor: pointer; text-decoration: underline;
+  font-family: var(--corps); padding: 0;
+}
+.history-clear:hover { color: var(--bordeaux); }
+.new-search {
+  background: none; border: 1px solid var(--ligne); color: var(--bordeaux);
+  border-radius: 20px; padding: 7px 15px; font-family: var(--corps);
+  font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
+  transition: all 0.15s;
+}
+.new-search:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+
 .conversation { display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px; }
 .msg { display: flex; flex-direction: column; gap: 6px; }
 .msg-role {
@@ -426,7 +447,16 @@ body {
         <span class="suggestion" onclick="askSuggestion(this)">Quels votes n'étaient pas unanimes ?</span>
         <span class="suggestion" onclick="askSuggestion(this)">Que dit le PV sur la propreté publique ?</span>
       </div>
+      <div class="history" id="historyBlock" style="display:none">
+        <div class="history-head">
+          <span>Vos questions récentes</span>
+          <button class="history-clear" type="button" onclick="clearHistory()">Effacer</button>
+        </div>
+        <div class="suggestions" id="historyChips"></div>
+      </div>
     </div>
+
+    <button class="new-search" id="newSearchBtn" type="button" onclick="newSearch()" style="display:none">↻ Nouvelle recherche</button>
 
     <div class="conversation" id="conversation"></div>
   </section>
@@ -505,6 +535,53 @@ function reuseQuestion(el) {
   window.scrollTo(0, document.body.scrollHeight);
 }
 
+// ── HISTORIQUE PERSISTANT DES QUESTIONS (localStorage) ──
+const HIST_KEY = 'pv_explorer_history';
+const HIST_MAX = 12;
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function saveHistory(q) {
+  q = (q || '').trim();
+  if (!q) return;
+  let h = getHistory().filter(x => x.toLowerCase() !== q.toLowerCase());
+  h.unshift(q);
+  h = h.slice(0, HIST_MAX);
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch (e) {}
+  renderHistory();
+}
+function clearHistory() {
+  try { localStorage.removeItem(HIST_KEY); } catch (e) {}
+  renderHistory();
+}
+function renderHistory() {
+  const block = document.getElementById('historyBlock');
+  const chips = document.getElementById('historyChips');
+  if (!block || !chips) return;
+  const h = getHistory();
+  if (!h.length) { block.style.display = 'none'; chips.innerHTML = ''; return; }
+  block.style.display = '';
+  chips.innerHTML = h.map(q =>
+    `<span class="suggestion" onclick="askSuggestion(this)">${escapeHtml(q)}</span>`
+  ).join('');
+}
+
+// ── NOUVELLE RECHERCHE : revient à l'écran d'accueil (l'historique reste) ──
+function newSearch() {
+  document.getElementById('conversation').innerHTML = '';
+  document.getElementById('introCard').style.display = '';
+  document.getElementById('newSearchBtn').style.display = 'none';
+  const input = document.getElementById('askInput');
+  if (input) input.value = '';
+  renderHistory();
+  window.scrollTo(0, 0);
+}
+
+// Afficher l'historique au chargement
+renderHistory();
+
 // ── POSER UNE QUESTION ──
 async function submitQuestion() {
   if (isLoading) return;
@@ -515,6 +592,8 @@ async function submitQuestion() {
   isLoading = true;
   document.getElementById('askBtn').disabled = true;
   document.getElementById('introCard').style.display = 'none';
+  document.getElementById('newSearchBtn').style.display = '';
+  saveHistory(question);
   input.value = '';
 
   const conv = document.getElementById('conversation');
