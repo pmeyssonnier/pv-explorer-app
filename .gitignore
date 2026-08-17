@@ -32,3 +32,11 @@ tmp/
 # ── Pinecone / cache local éventuel ──
 cache/
 backups/
+
+# ── Données sources lourdes — JAMAIS dans le repo (PDF des PV, dossier local) ──
+# Le corpus PDF (~100+ Mo) reste sur ta machine / Drive ; seul le JSON extrait
+# (pv_conseil_schaerbeek.json) est suivi.
+PV/
+*.pdf
+# Copies de travail accidentelles de la base (« pv_conseil_schaerbeek (1).json »)
+* (*).json

@@ -14,12 +14,25 @@ from config import PV_JSON_PATH
 from utils.text import _strip_accents, _canon_theme
 
 
+# Cache mémoire du JSON parsé : /stats et /trend le relisaient (~7,6 Mo) à
+# CHAQUE appel. Le fichier ne change qu'au redéploiement (conteneur immuable) ;
+# on garde donc le dict parsé et on ne recharge que si le mtime change (utile
+# en dev / si le fichier est remplacé sur place). Les consommateurs ne font que
+# LIRE le dict, jamais le muter → partage sûr.
+_db_cache = {"mtime": None, "db": None}
+
+
 def load_db() -> dict:
-    """Charge la base JSON des PV. Lève FileNotFoundError si le fichier manque."""
+    """Charge la base JSON des PV (mise en cache par mtime). Lève
+    FileNotFoundError si le fichier manque."""
     if not os.path.exists(PV_JSON_PATH):
         raise FileNotFoundError(PV_JSON_PATH)
-    with open(PV_JSON_PATH, encoding="utf-8") as f:
-        return json.load(f)
+    mtime = os.path.getmtime(PV_JSON_PATH)
+    if _db_cache["mtime"] != mtime:
+        with open(PV_JSON_PATH, encoding="utf-8") as f:
+            _db_cache["db"] = json.load(f)
+        _db_cache["mtime"] = mtime
+    return _db_cache["db"]
 
 
 # ── ÉVOLUTION PAR THÈME (agrégation exhaustive, non sémantique) ──────────────
