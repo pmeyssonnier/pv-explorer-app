@@ -34,6 +34,12 @@ MAX_QUESTION_LEN = 500               # garde-fou coût : longueur max d'une ques
 # réels avant de relever (ex. 0.80) pour masquer les sources hors-sujet.
 SCORE_MIN = 0.0
 
+# Timeouts (secondes) des appels réseau externes. Bornent la durée max qu'un
+# thread du threadpool FastAPI peut rester retenu sur un appel lent ou bloqué :
+# au-delà, l'appel échoue proprement (500) au lieu d'immobiliser un thread.
+PINECONE_TIMEOUT = 15    # la recherche vectorielle est rapide (<2 s en régime normal)
+ANTHROPIC_TIMEOUT = 45   # marge pour une génération complète (max_tokens=2048)
+
 # Chemin du fichier JSON des PV (lu par les statistiques). Surchargeable par env.
 PV_JSON_PATH = os.environ.get("PV_JSON_PATH", "pv_conseil_schaerbeek.json")
 

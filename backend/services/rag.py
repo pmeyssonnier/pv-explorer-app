@@ -11,7 +11,8 @@ import anthropic
 from fastapi import HTTPException
 
 from config import (
-    NAMESPACE, CLAUDE_MODEL, TOP_K, MAX_SOURCES, SCORE_MIN, logger,
+    NAMESPACE, CLAUDE_MODEL, TOP_K, MAX_SOURCES, SCORE_MIN,
+    PINECONE_TIMEOUT, ANTHROPIC_TIMEOUT, logger,
 )
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
@@ -27,7 +28,8 @@ def get_anthropic() -> anthropic.Anthropic:
         key = os.environ.get("ANTHROPIC_API_KEY", "")
         if not key:
             raise RuntimeError("ANTHROPIC_API_KEY manquante côté serveur")
-        _anthropic_client = anthropic.Anthropic(api_key=key)
+        # timeout : borne la durée d'un appel bloqué (APITimeoutError sinon).
+        _anthropic_client = anthropic.Anthropic(api_key=key, timeout=ANTHROPIC_TIMEOUT)
     return _anthropic_client
 
 
@@ -84,7 +86,7 @@ def answer(question_raw: str, commune_raw: Optional[str]) -> AnswerResponse:
     # 1. Recherche vectorielle (embedding intégré Pinecone)
     try:
         index = get_pinecone_index()
-        results = index.search(namespace=NAMESPACE, query=query)
+        results = index.search(namespace=NAMESPACE, query=query, timeout=PINECONE_TIMEOUT)
         matches = results.get("result", {}).get("hits", [])
         # PAS de repli sans le filtre année : mieux vaut répondre honnêtement
         # « aucun point pour cette période » que de citer silencieusement une
