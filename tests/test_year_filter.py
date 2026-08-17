@@ -4,7 +4,7 @@ une mauvaise borne = des sources d'une autre année, donc une réponse
 """
 import pytest
 
-from app import _year_filter, _describe_year_filter
+from utils.dates import _year_filter, _describe_year_filter
 
 
 # ── Année exacte ────────────────────────────────────────────────────────────

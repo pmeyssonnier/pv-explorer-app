@@ -3,7 +3,7 @@
 """
 import pytest
 
-from app import _strip_accents, _canon_theme
+from utils.text import _strip_accents, _canon_theme
 
 
 @pytest.mark.parametrize("s, attendu", [
