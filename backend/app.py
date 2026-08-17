@@ -162,7 +162,23 @@ def ask(request: Request, req: QuestionRequest):
         # PAS de repli sans le filtre année : mieux vaut répondre honnêtement
         # « aucun point pour cette période » que de citer silencieusement une
         # autre année (l'index est réindexé avec le champ `year`).
-    except Exception:
+    except Exception as e:
+        # Cas particulier : quota mensuel d'embedding Pinecone épuisé (429
+        # RESOURCE_EXHAUSTED). La recherche embed la question à la volée ; sans
+        # quota, impossible. On répond clairement (200) plutôt qu'une 500
+        # anxiogène — les onglets Statistiques/Évolution, eux, n'embeddent pas.
+        blob = f"{type(e).__name__} {e}"
+        if any(k in blob for k in ("RESOURCE_EXHAUSTED", "RateLimit", "429", "token limit")):
+            logger.warning("Quota d'embedding Pinecone atteint sur /ask : %s", e)
+            return AnswerResponse(
+                answer=(
+                    "La recherche dans les procès-verbaux est momentanément "
+                    "indisponible : la limite mensuelle du service de recherche a "
+                    "été atteinte. Les onglets « Statistiques » et « Évolution par "
+                    "thème » restent pleinement accessibles en attendant."
+                ),
+                sources=[]
+            )
         logger.exception("Erreur lors de la recherche vectorielle Pinecone")
         raise HTTPException(
             status_code=500,
