@@ -1,0 +1,11 @@
+# Configuration ruff — linting minimal mais utile (jeu de règles par défaut :
+# pyflakes F + erreurs pycodestyle E4/E7/E9). On ne vise PAS un style pédant,
+# seulement les erreurs réelles (imports inutilisés, noms non définis, etc.).
+target-version = "py311"
+line-length = 100
+
+[lint]
+# E402 = « import pas en haut du fichier ». Volontaire ici : les scripts Colab
+# (scraping/, pipeline/) placent un gros cartouche de documentation puis les
+# imports. Ce n'est pas une erreur dans ce contexte.
+ignore = ["E402"]

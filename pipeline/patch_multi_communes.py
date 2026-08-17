@@ -39,7 +39,6 @@ A TERME :
 """
 
 import sys
-import re
 from pathlib import Path
 
 sys.path.insert(0, "/content/drive/MyDrive/PV_Schaerbeek")

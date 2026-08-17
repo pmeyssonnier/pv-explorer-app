@@ -1,0 +1,5 @@
+# Dépendances de développement / CI (tests + lint).
+# Les libs applicatives viennent de backend/requirements.txt.
+-r backend/requirements.txt
+pytest==9.1.1
+ruff==0.15.8

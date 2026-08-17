@@ -52,7 +52,6 @@ print("✅ Tous les modules installés")
 # ══════════════════════════════════════════════════════════════════════════
 # SECTION 2 — IMPORTS
 # ══════════════════════════════════════════════════════════════════════════
-import os
 import re
 import time
 import json
@@ -62,7 +61,6 @@ import requests
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
-from urllib.parse import urljoin, urlparse
 from tqdm import tqdm
 
 # ══════════════════════════════════════════════════════════════════════════
