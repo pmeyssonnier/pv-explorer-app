@@ -2,6 +2,7 @@
 
 > Outil citoyen pour interroger en langage naturel les procès-verbaux du Conseil communal de Schaerbeek (et, à terme, d'autres communes bruxelloises). Recherche sémantique (RAG) + statistiques, réponses citées.
 
+[![CI](https://github.com/pmeyssonnier/pv-explorer-/actions/workflows/ci.yml/badge.svg)](https://github.com/pmeyssonnier/pv-explorer-/actions/workflows/ci.yml)
 ![RAG](https://img.shields.io/badge/RAG-Pinecone-4f8ef7)
 ![Claude](https://img.shields.io/badge/LLM-Claude-c8952b)
 ![FastAPI](https://img.shields.io/badge/API-FastAPI-4a7c59)
