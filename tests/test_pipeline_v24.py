@@ -8,6 +8,19 @@ from pv_extraction_pipeline import (
     _coerce_amount, normalize_point, _fix_point_pages,
     expected_sp_from_pages, verify_completeness, extract_seance_date_from_text,
 )
+from reextract_targeted import targets_from_audit
+
+
+# ── targets_from_audit : sélection des séances à re-extraire ────────────────
+def test_targets_from_audit_filtre_seuil():
+    report = [
+        {"date": "2016-11-30", "status": "incomplet", "missing_sp": list(range(12, 27))},
+        {"date": "2022-12-21", "status": "incomplet", "missing_sp": [87]},  # off-by-one
+        {"date": "2020-01-29", "status": "ok"},
+    ]
+    assert targets_from_audit(report, min_missing=1) == ["2016-11-30", "2022-12-21"]
+    # min_missing=2 écarte le off-by-one (souvent un faux positif regex)
+    assert targets_from_audit(report, min_missing=2) == ["2016-11-30"]
 
 
 # ── _coerce_amount (dont la régression « TVAC ») ────────────────────────────
