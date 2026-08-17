@@ -5,7 +5,7 @@ litige, opération d'intercommunale, acte non dépensier). Partagé par /stats e
 """
 import pytest
 
-from app import _is_excluded_amount
+from services.statistics import _is_excluded_amount
 
 
 def _point(**kw):

@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from app import _is_excluded_amount
+from services.statistics import _is_excluded_amount
 
 DB_PATH = Path(__file__).resolve().parent.parent / "backend" / "pv_conseil_schaerbeek.json"
 
