@@ -16,18 +16,24 @@ def root():
 
 @router.get("/health")
 def health():
-    """Vérifie que les clés sont configurées et l'index accessible."""
-    checks = {
-        "anthropic_key": bool(os.environ.get("ANTHROPIC_API_KEY")),
-        "pinecone_key": bool(os.environ.get("PINECONE_API_KEY")),
-    }
+    """État PUBLIC minimal : le service tourne et l'index est joignable.
+
+    Volontairement sobre : un endpoint public n'a pas à révéler quels
+    fournisseurs ont une clé configurée, ni le nombre exact de vecteurs. Ces
+    détails ne vont QUE dans les logs (niveau debug, pour ne pas noyer les pings
+    fréquents de Render), et la traceback complète est loguée en cas d'échec.
+    """
+    logger.debug(
+        "health — anthropic_key=%s pinecone_key=%s",
+        bool(os.environ.get("ANTHROPIC_API_KEY")),
+        bool(os.environ.get("PINECONE_API_KEY")),
+    )
+    index_status = "error"
     try:
-        idx = get_pinecone_index()
-        stats = idx.describe_index_stats()
-        checks["index_vectors"] = stats.get("total_vector_count", 0)
-        checks["index_ok"] = True
+        stats = get_pinecone_index().describe_index_stats()
+        logger.debug("health — index_vectors=%s", stats.get("total_vector_count", 0))
+        index_status = "ok"
     except Exception:
-        # Ne pas exposer le détail de l'exception au client (fuite d'infos).
+        # Détail côté serveur uniquement (jamais renvoyé au client).
         logger.exception("Échec de la vérification de l'index Pinecone")
-        checks["index_ok"] = False
-    return checks
+    return {"status": "ok", "index": index_status}

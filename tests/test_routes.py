@@ -16,11 +16,17 @@ def test_root():
     assert r.json()["status"] == "ok"
 
 
-def test_health_shape():
-    # Sans PINECONE_API_KEY : index_ok=false mais la route répond 200 (dégradé propre).
+def test_health_shape_minimal():
+    # Réponse PUBLIQUE minimale : {status, index}. Sans PINECONE_API_KEY,
+    # index="error" mais la route répond 200 (dégradé propre).
     r = client.get("/health")
     assert r.status_code == 200
-    assert "index_ok" in r.json()
+    body = r.json()
+    assert body["status"] == "ok"
+    assert body["index"] in ("ok", "error")
+    # Garde-fou vie privée : aucun détail fournisseur/volume ne doit fuiter.
+    for leak in ("anthropic_key", "pinecone_key", "index_vectors", "index_ok"):
+        assert leak not in body
 
 
 def test_stats_route():
