@@ -1,8 +1,35 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║  PIPELINE EXTRACTION PV CONSEIL COMMUNAL SCHAERBEEK → JSON              ║
-║  Google Colab - Python 3.10+                          VERSION 2.2        ║
+║  Google Colab - Python 3.10+                          VERSION 2.4        ║
 ╚══════════════════════════════════════════════════════════════════════════╝
+
+CHANGELOG v2.4 (fusion de deux forks parallèles du v2.2) :
+  Réunit deux jeux de changements DÉVELOPPÉS EN PARALLÈLE sur le v2.2 :
+
+  Fork A — qualité des données & date de repli :
+    - extract_seance_date_from_text : repli déterministe qui déduit la date
+      depuis le CONTENU (mois FR+NL, accents perdus, texte collé) quand le nom
+      de fichier ne porte pas de date exploitable. (Comblait un trou promis en
+      commentaire mais jamais codé.)
+    - Couche de normalisation (normalize_point & co) : nettoie la sortie LLM —
+      parse montants "65.000 € TVAC"→float, coerce bool/int, dédoublonne les
+      intervenants, structure le vote. Réduit la surface d'hallucination/format.
+    - _set_meta_date factorisé (nom de fichier ET contenu suivent les mêmes règles).
+
+  Fork B — traçabilité & complétude :
+    - GREFFE 1 : `page` par point (le LLM reporte la balise [Page N]) BORNÉE à
+      l'intervalle réel du chunk (_fix_point_pages, anti-hallucination) ; chaque
+      point porte aussi `source_file` → lien vérifiable vers le PV d'origine.
+    - GREFFE 2 : complétude déterministe. expected_sp_from_pages compte les
+      points attendus par regex (ancre `SP n.-`, sans LLM) ; verify_completeness
+      compare au LLM ; si des SP manquent et RECOVER_MISSING=True,
+      _recover_missing_points relance le LLM page par page (borné). Rapport
+      stocké (`seance.extraction_check`) + agrégé par completeness_report(db).
+    - export_csv expose page + source_file.
+
+  Point de fusion clé : normalize_point CONSERVE désormais `page` (sinon la
+  reconstruction du point l'aurait supprimé, neutralisant la GREFFE 1).
 
 CHANGELOG v2.2 (robustesse PV denses) :
   - MAX_TOKENS 4096 → 8192 (chunks denses ne tronquent plus le JSON)
@@ -33,8 +60,10 @@ import time
 import shutil          # FIX #4
 import hashlib
 import logging
+import math
+import unicodedata
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date as _date
 from typing import Optional
 
 import pdfplumber
@@ -64,6 +93,10 @@ CONFIG = {
     "SKIP_ALREADY_DONE":  True,
     "MAX_RETRIES":        3,
     "MAX_BACKUPS":        10,     # DESIGN : rotation
+
+    # GREFFE 2 : si des points attendus (comptés par regex) manquent après
+    # extraction LLM, relance ciblée page par page pour les récupérer.
+    "RECOVER_MISSING":    True,
 }
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -125,39 +158,87 @@ def get_client() -> anthropic.Anthropic:
 # ══════════════════════════════════════════════════════════════════════════
 # EXTRACTION TEXTE PDF
 # ══════════════════════════════════════════════════════════════════════════
+def _set_meta_date(meta: dict, y, mo, d) -> bool:
+    """Écrit une date ISO validée dans `meta`.
+
+    Centralisé pour que la date issue du nom de fichier et celle issue du texte
+    suivent exactement les mêmes règles.
+    """
+    try:
+        _date(int(y), int(mo), int(d))          # rejette 2503-20-20, mois 18, etc.
+        if not (2000 <= int(y) <= 2100):
+            return False
+        meta["date"] = f"{int(y):04d}-{int(mo):02d}-{int(d):02d}"
+        meta["seance_id"] = f"PV-{meta['date']}"
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
 def extract_pdf_metadata(pdf_path: Path) -> dict:
     """Déduit la date depuis le NOM de fichier, en gérant plusieurs formats
     Schaerbeek et en VALIDANT la date. Si aucune date plausible n'est trouvée,
     date=None → la pipeline prend alors la date extraite du CONTENU du PV."""
-    from datetime import date as _date
     name = pdf_path.stem
     meta = {"filename": pdf_path.name, "filepath": str(pdf_path), "date": None, "seance_id": None}
-
-    def _set(y, mo, d) -> bool:
-        try:
-            _date(int(y), int(mo), int(d))          # rejette 2503-20-20, mois 18, etc.
-            if not (2000 <= int(y) <= 2100):
-                return False
-            meta["date"] = f"{int(y):04d}-{int(mo):02d}-{int(d):02d}"
-            meta["seance_id"] = f"PV-{meta['date']}"
-            return True
-        except ValueError:
-            return False
 
     # Ordre = du plus fiable au plus ambigu. On s'arrête à la 1re date VALIDE.
     #   1) AAAA(sep)MM(sep)JJ   ex: 2026.02.11 / 2026-02-11
     #   2) AAAAMMJJ collés      ex: 20260211
     #   3) JJMMAAAA collés      ex: 250320201830 -> 25/03/2020
     m = re.search(r"(20\d{2})[._\-](\d{1,2})[._\-](\d{1,2})", name)
-    if m and _set(*m.groups()):
+    if m and _set_meta_date(meta, *m.groups()):
         return meta
     m = re.search(r"(20\d{2})(\d{2})(\d{2})", name)
-    if m and _set(*m.groups()):
+    if m and _set_meta_date(meta, *m.groups()):
         return meta
     m = re.search(r"(\d{2})(\d{2})(20\d{2})", name)
-    if m and _set(m.group(3), m.group(2), m.group(1)):
+    if m and _set_meta_date(meta, m.group(3), m.group(2), m.group(1)):
         return meta
     return meta   # date=None -> repli sur date_seance (contenu) dans process_pdf
+
+
+_MONTHS = {
+    "janvier": 1, "fevrier": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6,
+    "juillet": 7, "aout": 8, "septembre": 9, "octobre": 10, "novembre": 11,
+    "decembre": 12,
+    "januari": 1, "februari": 2, "maart": 3, "april": 4, "mei": 5, "juni": 6,
+    "juli": 7, "augustus": 8, "september": 9, "oktober": 10, "november": 11,
+    "december": 12,
+}
+
+
+def _strip_accents(s: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", s)
+                   if unicodedata.category(c) != "Mn")
+
+
+def extract_seance_date_from_text(text: str) -> Optional[str]:
+    """Déduit la date depuis le texte extrait du PV.
+
+    Les PDF Schaerbeek perdent parfois les accents ou les espaces à l'extraction
+    (`SEANCE DU20 SEPTEMBRE 2023`). Cette fonction tolère ces variantes et sert
+    de repli déterministe quand le nom du PDF ne contient pas de date exploitable.
+    """
+    norm = _strip_accents(text or "").lower()
+    norm = re.sub(r"\s+", " ", norm)
+    meta = {"date": None, "seance_id": None}
+
+    for m in re.finditer(
+        r"\b(?:seance\s+du|vergadering\s+van)\s*(\d{1,2})\s+([a-z]+)\s+(20\d{2})",
+        norm,
+    ):
+        month = _MONTHS.get(m.group(2))
+        if month and _set_meta_date(meta, m.group(3), month, m.group(1)):
+            return meta["date"]
+
+    m = re.search(
+        r"\b(?:seance|vergadering).{0,40}?(\d{1,2})[./\-](\d{1,2})[./\-](20\d{2})",
+        norm,
+    )
+    if m and _set_meta_date(meta, m.group(3), m.group(2), m.group(1)):
+        return meta["date"]
+    return None
 
 
 def extract_text_from_pdf(pdf_path: Path) -> list[dict]:
@@ -190,10 +271,144 @@ def _coerce_sp(point: dict) -> dict:
     return point
 
 
+def _clean_str(value, default: str = "") -> str:
+    if value is None:
+        return default
+    return re.sub(r"\s+", " ", str(value)).strip()
+
+
+def _clean_str_list(value) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    out = []
+    seen = set()
+    for item in value:
+        s = _clean_str(item)
+        if not s:
+            continue
+        key = s.lower()
+        if key not in seen:
+            out.append(s)
+            seen.add(key)
+    return out
+
+
+def _coerce_bool(value) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "vrai", "oui", "yes"}
+    return bool(value)
+
+
+def _coerce_int_or_none(value) -> Optional[int]:
+    if value in (None, ""):
+        return None
+    try:
+        return int(float(str(value).replace(",", ".").strip()))
+    except (TypeError, ValueError):
+        return None
+
+
+def _coerce_amount(value) -> Optional[float]:
+    if value in (None, ""):
+        return None
+    if isinstance(value, (int, float)):
+        return float(value) if math.isfinite(float(value)) else None
+    # Isole le nombre au format belge ("." = milliers, "," = décimales) en
+    # ignorant la devise ET les suffixes texte ("65.000 € TVAC", "1.234,56 EUR
+    # HTVA"…) : sans ça, "tvac" restait collé et cassait le float → None.
+    m = re.search(r"\d[\d.\s]*(?:,\d+)?", str(value))
+    if not m:
+        return None
+    num = re.sub(r"[\s.]", "", m.group(0)).replace(",", ".")
+    try:
+        n = float(num)
+        return n if math.isfinite(n) else None
+    except ValueError:
+        return None
+
+
+def _normalize_vote(value) -> dict:
+    vote = value if isinstance(value, dict) else {}
+    vote_type = _clean_str(vote.get("type")) or None
+    return {
+        "type": vote_type,
+        "pour": _coerce_int_or_none(vote.get("pour")),
+        "contre": _coerce_int_or_none(vote.get("contre")) or 0,
+        "abstentions": _coerce_int_or_none(vote.get("abstentions")) or 0,
+    }
+
+
+def normalize_point(point: dict) -> Optional[dict]:
+    """Normalise un point produit par Claude.
+
+    Claude peut renvoyer des champs absents, `null`, ou typés en chaîne. On
+    préfère nettoyer avant la fusion plutôt que propager des formes instables
+    dans la base JSON.
+    """
+    if not isinstance(point, dict):
+        return None
+    point = dict(point)
+    _coerce_sp(point)
+    if point.get("sp") is None:
+        return None
+    return {
+        "sp": point.get("sp"),
+        # GREFFE 1 : passe-plat BRUT — la coercition/bornage se fait dans
+        # _fix_point_pages (qui a le contexte du chunk et récupère "Page 7"→7).
+        "page": point.get("page"),
+        "urgence": _coerce_bool(point.get("urgence")),
+        "type": _clean_str(point.get("type"), "point_normal") or "point_normal",
+        "rubrique": _clean_str(point.get("rubrique")),
+        "sous_rubrique": _clean_str(point.get("sous_rubrique")),
+        "titre": _clean_str(point.get("titre")),
+        "resume": _clean_str(point.get("resume")),
+        "intervenants": _clean_str_list(point.get("intervenants")),
+        "repondant": _clean_str(point.get("repondant")) or None,
+        "decision": _clean_str(point.get("decision")),
+        "vote": _normalize_vote(point.get("vote")),
+        "montant_eur": _coerce_amount(point.get("montant_eur")),
+        "thematiques": _clean_str_list(point.get("thematiques")),
+    }
+
+
+def normalize_extraction_result(data: dict) -> Optional[dict]:
+    """Valide la forme minimale `{date_seance, points}` renvoyée par Claude."""
+    if not isinstance(data, dict):
+        return None
+    points = []
+    for raw_point in data.get("points") or []:
+        point = normalize_point(raw_point)
+        if point is not None:
+            points.append(point)
+    return {
+        "date_seance": _clean_str(data.get("date_seance")) or None,
+        "points": points,
+    }
+
+
 def _sp_key(point: dict):
     """Clé de tri robuste : les sp entiers d'abord (triés), les autres après."""
     sp = point.get("sp")
     return (0, sp) if isinstance(sp, int) else (1, str(sp))
+
+
+# ── GREFFE 1 : traçabilité page (filet déterministe) ─────────────────────────
+def _fix_point_pages(points: list[dict], chunk: list[dict]) -> list[dict]:
+    """Borne le champ `page` (déjà coercé en int|None par normalize_point) à
+    l'intervalle RÉEL des pages du chunk. Une page absente ou hors intervalle
+    (hallucination) est ramenée à la 1re page du chunk. Garantit un `page`
+    exploitable pour tout point, sans faire confiance aveuglément au modèle."""
+    page_nums = [p["page_num"] for p in chunk]
+    lo, hi, fallback = min(page_nums), max(page_nums), page_nums[0]
+    for pt in points:
+        pg = pt.get("page")
+        if isinstance(pg, str):
+            m = re.search(r"\d+", pg)          # tolère "Page 4", "p.4", etc.
+            pg = int(m.group()) if m else None
+        pt["page"] = pg if isinstance(pg, int) and lo <= pg <= hi else fallback
+    return points
 
 # ══════════════════════════════════════════════════════════════════════════
 # PROMPT SYSTEM
@@ -203,7 +418,7 @@ Tu dois extraire les points de l'ordre du jour à partir du texte brut de pages 
 
 SCHÉMA JSON D'UN POINT :
 {
-  "sp": <int>, "urgence": <bool>,
+  "sp": <int>, "page": <int>, "urgence": <bool>,
   "type": <"point_normal"|"point_urgent"|"motion"|"demande_habitant"|"question_orale">,
   "rubrique": <string>, "sous_rubrique": <string>,
   "titre": <string>, "resume": <string>,
@@ -214,6 +429,8 @@ SCHÉMA JSON D'UN POINT :
 }
 
 RÈGLES :
+- "page" = le numéro de la balise [Page N] où COMMENCE le point (son titre "SP n.-").
+  Reporte l'entier N tel quel ; en cas de doute, la page du titre du point.
 - "Approuvé à l'unanimité" → vote.type="unanimite"
 - "Décidé par X voix contre Y et Z abstentions" → vote.type="vote_nominal"
 - "Ce point est reporté" → vote.type="reporte", decision="REPORTÉ"
@@ -266,7 +483,7 @@ def call_claude_api(user_prompt: str) -> Optional[dict]:
     cached = load_from_cache(cache_key)
     if cached is not None:
         log.debug(f"    Cache hit : {cache_key}")
-        return cached
+        return normalize_extraction_result(cached)
 
     client = get_client()
     for attempt in range(CONFIG["MAX_RETRIES"]):
@@ -292,6 +509,9 @@ def call_claude_api(user_prompt: str) -> Optional[dict]:
                 if j != -1:
                     raw = raw[:j + 1]
             data = json.loads(raw)
+            data = normalize_extraction_result(data)
+            if data is None:
+                raise ValueError("Réponse JSON sans structure attendue")
             save_to_cache(cache_key, data)
             time.sleep(CONFIG["API_DELAY_SEC"])
             return data
@@ -328,7 +548,8 @@ def _extract_chunk_points(chunk: list[dict], seance_date: Optional[str],
     if result is not None:
         if result.get("date_seance") and not seance_date:
             seance_date = result["date_seance"]
-        return result.get("points", []), seance_date
+        points = _fix_point_pages(result.get("points", []), chunk)   # GREFFE 1
+        return points, seance_date
 
     # Échec : on tente de scinder le chunk (sauf s'il ne reste qu'une page).
     if len(chunk) <= 1:
@@ -347,6 +568,67 @@ def _extract_chunk_points(chunk: list[dict], seance_date: Optional[str],
     return points, seance_date
 
 
+# ── GREFFE 2 : complétude déterministe (regex) + récupération ciblée ─────────
+RE_SP_ANCHOR = re.compile(r"SP\s*(\d+)\s*\.-", re.IGNORECASE)
+
+
+def expected_sp_from_pages(pages: list[dict]) -> dict:
+    """Compte, PAR REGEX (sans LLM), les points attendus : {sp: page_de_début}.
+    L'ancre 'SP n.-' est présente dans tous les PV Schaerbeek (validée 2018→2026).
+    Déterministe : sert de vérité-terrain pour détecter ce que le LLM aurait raté."""
+    found = {}
+    for p in pages:
+        for m in RE_SP_ANCHOR.finditer(p["text"]):
+            found.setdefault(int(m.group(1)), p["page_num"])  # 1re occurrence
+    return found
+
+
+def verify_completeness(pages: list[dict], points: list[dict]) -> dict:
+    """Compare les SP attendus (regex) aux SP extraits (LLM). Rapport actionnable."""
+    expected = expected_sp_from_pages(pages)
+    got = {p["sp"] for p in points if isinstance(p.get("sp"), int)}
+    missing = sorted(set(expected) - got)
+    return {
+        "expected": len(expected),
+        "extracted": len(got),
+        "missing_sp": missing,
+        "extra_sp": sorted(got - set(expected)),
+        "missing_pages": sorted({expected[sp] for sp in missing}),
+        "ok": not missing,
+    }
+
+
+def _dedup_by_sp(points: list[dict]) -> list[dict]:
+    """Dédup par sp en gardant l'enregistrement le plus renseigné. Factorisé pour
+    être rejouable après une récupération ciblée."""
+    sp_map = {}
+    for p in points:
+        _coerce_sp(p)
+        sp = p.get("sp")
+        if sp is None:
+            continue
+        if sp not in sp_map or sum(1 for v in p.values() if v) > sum(1 for v in sp_map[sp].values() if v):
+            sp_map[sp] = p
+    return sorted(sp_map.values(), key=_sp_key)
+
+
+def _recover_missing_points(pages: list[dict], report: dict,
+                            seance_date: Optional[str]) -> list[dict]:
+    """Relance le LLM PAGE PAR PAGE sur les pages portant un SP manquant, et ne
+    garde que les points dont le sp était effectivement manquant. Passage unique
+    et borné (pas de boucle) — récupère les points perdus sur PV denses."""
+    log = get_logger()
+    missing = set(report["missing_sp"])
+    targets = set(report["missing_pages"])
+    recovered = []
+    for pg in [p for p in pages if p["page_num"] in targets]:
+        pts, _ = _extract_chunk_points([pg], seance_date)
+        recovered.extend(pt for pt in pts if _coerce_sp(pt).get("sp") in missing)
+    if recovered:
+        log.info(f"  ↻ Récupération ciblée : {len(recovered)} point(s) sur pages {sorted(targets)}")
+    return recovered
+
+
 def process_pdf(pdf_path: Path) -> Optional[dict]:
     log = get_logger()
     log.info(f"\n{'='*60}")
@@ -358,6 +640,12 @@ def process_pdf(pdf_path: Path) -> Optional[dict]:
     if not pages:
         log.error("  Aucune page extraite — PDF peut-être scanné/image")
         return None
+    if not meta["date"]:
+        text_date = extract_seance_date_from_text(" ".join(p["text"] for p in pages[:2]))
+        if text_date:
+            meta["date"] = text_date
+            meta["seance_id"] = f"PV-{text_date}"
+            log.info(f"  Date extraite du contenu : {text_date}")
     pages = [p for p in pages if p["char_count"] > 100]
     log.info(f"  Pages utiles : {len(pages)}")
 
@@ -370,22 +658,40 @@ def process_pdf(pdf_path: Path) -> Optional[dict]:
         log.info(f"  Chunk {i+1}/{len(chunks)} (pages {chunk[0]['page_num']}-{chunk[-1]['page_num']})")
         points, seance_date = _extract_chunk_points(chunk, seance_date)
         log.info(f"    → {len(points)} points extraits")
-        all_points.extend(points)
+        all_points.extend(p for p in (normalize_point(p) for p in points) if p is not None)
 
     if not all_points:
         log.warning("  Aucun point extrait")
         return None
 
-    sp_map = {}
-    for p in all_points:
-        _coerce_sp(p)
-        sp = p.get("sp")
-        if sp is None:
-            continue
-        if sp not in sp_map or sum(1 for v in p.values() if v) > sum(1 for v in sp_map[sp].values() if v):
-            sp_map[sp] = p
-    deduped = sorted(sp_map.values(), key=_sp_key)
+    deduped = _dedup_by_sp(all_points)
     log.info(f"  Points dédupliqués : {len(all_points)} → {len(deduped)}")
+
+    # GREFFE 2 : contrôle de complétude (regex vs LLM) + récupération ciblée.
+    check = verify_completeness(pages, deduped)
+    if not check["ok"]:
+        log.warning(
+            f"  ⚠ Complétude : {check['extracted']}/{check['expected']} points — "
+            f"{len(check['missing_sp'])} SP manquants {check['missing_sp']} "
+            f"(pages {check['missing_pages']})"
+        )
+        if CONFIG["RECOVER_MISSING"]:
+            recovered = _recover_missing_points(pages, check, seance_date)
+            if recovered:
+                recovered = [p for p in (normalize_point(p) for p in recovered) if p is not None]
+                deduped = _dedup_by_sp(all_points + recovered)
+                check = verify_completeness(pages, deduped)   # re-vérifie
+                log.info(
+                    f"  ↻ Après récupération : {check['extracted']}/{check['expected']} — "
+                    + ("complet ✅" if check["ok"] else f"encore manquant {check['missing_sp']}")
+                )
+    else:
+        log.info(f"  ✅ Complétude : {check['extracted']}/{check['expected']} points (regex = LLM)")
+
+    # GREFFE 1 : chaque point porte son fichier source (page déjà présente) →
+    # lien vérifiable vers le PV d'origine.
+    for p in deduped:
+        p.setdefault("source_file", meta["filename"])
 
     seance_struct = {
         "seance": {
@@ -394,6 +700,7 @@ def process_pdf(pdf_path: Path) -> Optional[dict]:
             "heure_ouverture": None, "heure_cloture": None, "president": None,
             "bourgmestre": None, "bourgmestre_ff": None, "secretaire_communal": None,
             "presents_count": None, "excuses": [], "absents": [],
+            "extraction_check": check,   # GREFFE 2 : rapport de complétude versionné
         },
         "points": deduped
     }
@@ -690,7 +997,9 @@ def export_csv(db: dict, output_path: str):
         for p in seance["points"]:
             vote = p.get("vote", {}) or {}
             rows.append({
-                "date": date, "sp": p.get("sp"), "type": p.get("type"),
+                "date": date, "sp": p.get("sp"), "page": p.get("page"),
+                "source_file": p.get("source_file") or seance["seance"].get("source_file"),
+                "type": p.get("type"),
                 "rubrique": p.get("rubrique"), "sous_rubrique": p.get("sous_rubrique"),
                 "titre": (p.get("titre") or "")[:200], "resume": (p.get("resume") or "")[:300],
                 "decision": p.get("decision"), "vote_type": vote.get("type"),
@@ -709,6 +1018,30 @@ def export_csv(db: dict, output_path: str):
         writer.writeheader()
         writer.writerows(rows)
     log.info(f"CSV exporté : {output_path} ({len(rows)} lignes)")
+
+
+def completeness_report(db: dict) -> dict:
+    """GREFFE 2 (niveau base) : récapitule les rapports de complétude stockés par
+    séance. Sert d'éval versionnée anti-régression : toute séance où regex > LLM
+    est signalée. À exécuter après run_pipeline(), ou en CI sur la base publiée."""
+    total_expected = total_extracted = 0
+    incomplete = []
+    for s in db["seances"]:
+        chk = s["seance"].get("extraction_check")
+        if not chk:
+            continue
+        total_expected += chk["expected"]
+        total_extracted += chk["extracted"]
+        if not chk["ok"]:
+            incomplete.append((s["seance"]["date"], chk["missing_sp"]))
+    print(f"\n{'━'*50}\n  COMPLÉTUDE (regex vs LLM)\n{'━'*50}")
+    print(f"  Points attendus : {total_expected} | extraits : {total_extracted}")
+    print(f"  Séances incomplètes : {len(incomplete)}")
+    for date, missing in incomplete[:20]:
+        print(f"    ⚠ {date} : SP manquants {missing}")
+    print(f"{'━'*50}\n")
+    return {"expected": total_expected, "extracted": total_extracted,
+            "incomplete_seances": incomplete}
 
 
 def stats_summary(db: dict):
@@ -734,6 +1067,7 @@ def stats_summary(db: dict):
 #   db = run_pipeline(year=2021)                # une seule année (ex. 2021)
 #   db = run_pipeline(year=2021, dry_run=True)  # vérifier quels PV seraient traités
 #   validate_database(db); stats_summary(db)
+#   completeness_report(db)                     # éval regex vs LLM (points manqués)
 #   export_csv(db, "/content/drive/MyDrive/PV_Schaerbeek/pv_all_points.csv")
 
 if __name__ == "__main__":
