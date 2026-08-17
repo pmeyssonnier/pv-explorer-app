@@ -37,13 +37,19 @@ alternative — `railway.json` est fourni.)*
 ```
 .
 ├── backend/                  → API FastAPI (déployée sur Render)
-│   ├── app.py                → endpoints /ask (RAG) et /stats
-│   ├── index_pv.py           → indexation Pinecone (--commune, --input)
+│   ├── app.py                → point de montage (app + limiter + CORS + routers)
+│   ├── config.py             → constantes, CORS, logger
+│   ├── limiter.py            → rate limiter slowapi partagé
+│   ├── models/api.py         → schémas Pydantic (requêtes/réponses)
+│   ├── prompts/rag.py        → system prompt
+│   ├── utils/                → text.py (normalisation) · dates.py (filtre année)
+│   ├── services/             → rag.py · statistics.py · pinecone_service.py
+│   ├── routers/              → health.py · ask.py · stats.py
+│   ├── index_pv.py           → indexation Pinecone (--commune, --input, --only-year)
 │   ├── requirements.txt      → versions épinglées
-│   ├── railway.json          → config Railway (alternative)
-│   ├── Procfile              → config Railway/Render
+│   ├── Procfile · railway.json → config Render / Railway
 │   ├── .env.example          → modèle de configuration
-│   └── pv_conseil_schaerbeek.json
+│   └── pv_conseil_schaerbeek.json  → base des PV (lue par /stats et /trend)
 ├── frontend/                 → interface citoyen (déployée sur Vercel)
 │   ├── index.html            → chat + stats + sélecteur de commune
 │   └── vercel.json
@@ -54,9 +60,10 @@ alternative — `railway.json` est fourni.)*
 ├── pipeline/                 → extraction PDF → JSON (Colab)
 │   ├── pv_extraction_pipeline.py
 │   └── patch_multi_communes.py
-├── data/                     → copie de référence de la base
+├── tests/                    → suite pytest (fonctions pures + routes HTTP)
 ├── render.yaml               → Blueprint Render (déploiement backend)
-├── .github/workflows/        → indexation Pinecone via GitHub Actions
+├── ruff.toml · pytest.ini    → lint + config de tests
+├── .github/workflows/        → CI (ruff + pytest) et indexation Pinecone
 └── .gitignore                → protège les secrets (.env jamais committé)
 ```
 
