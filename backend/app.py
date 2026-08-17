@@ -232,6 +232,22 @@ def _year_filter(question: str):
     return {"$eq": y}
 
 
+def _describe_year_filter(yf: dict) -> str:
+    """Formule la période d'un filtre `year` en français, pour un message
+    « aucun point » honnête et précis (« en 2019 », « depuis 2015 »…)."""
+    lo, hi = yf.get("$gte"), yf.get("$lte")
+    eq = yf.get("$eq")
+    if eq is not None:
+        return f"en {eq}"
+    if lo is not None and hi is not None:
+        return f"entre {lo} et {hi}" if lo != hi else f"en {lo}"
+    if lo is not None:
+        return f"depuis {lo}"
+    if hi is not None:
+        return f"avant {hi}"
+    return "pour la période demandée"
+
+
 @app.post("/ask", response_model=AnswerResponse)
 @limiter.limit("10/minute;100/day")
 def ask(request: Request, req: QuestionRequest):
@@ -260,16 +276,9 @@ def ask(request: Request, req: QuestionRequest):
         index = get_pinecone_index()
         results = index.search(namespace=NAMESPACE, query=query)
         matches = results.get("result", {}).get("hits", [])
-        # Repli : si le filtre année ne renvoie rien (index pas encore réindexé
-        # avec le champ `year`), on refait la recherche sans ce filtre plutôt
-        # que de répondre « aucun passage ».
-        if not matches and year_filter:
-            fallback = {"inputs": {"text": question}, "top_k": TOP_K}
-            others = {k: v for k, v in filters.items() if k != "year"}
-            if others:
-                fallback["filter"] = others
-            results = index.search(namespace=NAMESPACE, query=fallback)
-            matches = results.get("result", {}).get("hits", [])
+        # PAS de repli sans le filtre année : mieux vaut répondre honnêtement
+        # « aucun point pour cette période » que de citer silencieusement une
+        # autre année (l'index est réindexé avec le champ `year`).
     except Exception:
         logger.exception("Erreur lors de la recherche vectorielle Pinecone")
         raise HTTPException(
@@ -278,6 +287,17 @@ def ask(request: Request, req: QuestionRequest):
         )
 
     if not matches:
+        if year_filter:
+            periode = _describe_year_filter(year_filter)
+            return AnswerResponse(
+                answer=(
+                    f"Je n'ai trouvé aucun point du Conseil communal correspondant "
+                    f"à votre recherche {periode}. Cette période n'est peut-être pas "
+                    f"encore couverte par les procès-verbaux disponibles, ou aucun "
+                    f"point ne correspond à votre question sur ces années."
+                ),
+                sources=[]
+            )
         return AnswerResponse(
             answer="Je ne trouve aucun passage pertinent dans les procès-verbaux disponibles.",
             sources=[]
