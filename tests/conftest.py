@@ -5,11 +5,19 @@ package installable) et neutralise les dépendances lourdes/optionnelles dont
 les FONCTIONS PURES testées ici n'ont pas besoin (pdfplumber, tqdm). Ainsi la
 suite tourne vite, sans télécharger de PDF ni de clé API.
 """
+import os
 import sys
 import types
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# 0. PV_JSON_PATH en absolu : l'app le lit en relatif (rootDir=backend en prod) ;
+#    les tests tournent depuis la racine du dépôt → on pointe le vrai fichier
+#    pour que /stats et /trend fonctionnent quel que soit le répertoire courant.
+os.environ.setdefault(
+    "PV_JSON_PATH", str(ROOT / "backend" / "pv_conseil_schaerbeek.json")
+)
 
 # 1. Rendre backend/ et pipeline/ importables (modules à plat, pas de package).
 for sub in ("backend", "pipeline"):

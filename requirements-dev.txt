@@ -3,3 +3,4 @@
 -r backend/requirements.txt
 pytest==9.1.1
 ruff==0.15.8
+httpx==0.28.1
