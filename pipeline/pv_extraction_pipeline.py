@@ -315,11 +315,15 @@ def _coerce_amount(value) -> Optional[float]:
         return None
     if isinstance(value, (int, float)):
         return float(value) if math.isfinite(float(value)) else None
-    s = str(value).lower()
-    s = re.sub(r"[€\s]", "", s)
-    s = s.replace(".", "").replace(",", ".")
+    # Isole le nombre au format belge ("." = milliers, "," = décimales) en
+    # ignorant la devise ET les suffixes texte ("65.000 € TVAC", "1.234,56 EUR
+    # HTVA"…) : sans ça, "tvac" restait collé et cassait le float → None.
+    m = re.search(r"\d[\d.\s]*(?:,\d+)?", str(value))
+    if not m:
+        return None
+    num = re.sub(r"[\s.]", "", m.group(0)).replace(",", ".")
     try:
-        n = float(s)
+        n = float(num)
         return n if math.isfinite(n) else None
     except ValueError:
         return None
