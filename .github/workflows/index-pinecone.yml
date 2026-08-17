@@ -6,8 +6,9 @@ name: Indexer les PV dans Pinecone
 # PRÉREQUIS : ajouter le secret PINECONE_API_KEY dans
 #   Settings → Secrets and variables → Actions → New repository secret
 #
-# Par défaut, réindexe proprement (--reset vide l'index avant). Décoche l'option
-# reset au lancement pour un simple upsert sans suppression.
+# Par défaut : upsert idempotent (SANS suppression). Le reset global (--reset)
+# vide TOUT l'index — toutes communes — et exige une confirmation explicite
+# (input reset_confirm) pour éviter tout clic accidentel destructeur.
 on:
   workflow_dispatch:
     inputs:
@@ -20,9 +21,20 @@ on:
         type: string
         default: "pv_conseil_schaerbeek.json"
       reset:
-        description: "Vider TOUT l'index avant réindexation (--reset) — toutes communes !"
+        description: "⚠️ DANGER : vider TOUT l'index (toutes communes) avant réindexation"
         type: boolean
         default: false
+      reset_confirm:
+        description: "Pour confirmer un reset global, tape exactement : pv-explorer"
+        type: string
+        default: ""
+
+# Une seule indexation à la fois : une nouvelle exécution attend la fin de la
+# précédente (jamais deux écritures simultanées sur l'index). On n'annule PAS
+# celle en cours — une indexation ne doit pas être coupée en plein milieu.
+concurrency:
+  group: pinecone-index
+  cancel-in-progress: false
 
 jobs:
   index:
@@ -49,7 +61,18 @@ jobs:
           COMMUNE: ${{ inputs.commune }}
           INPUT: ${{ inputs.input }}
           RESET: ${{ inputs.reset }}
+          RESET_CONFIRM: ${{ inputs.reset_confirm }}
         run: |
           RESET_FLAG=""
-          if [ "$RESET" = "true" ]; then RESET_FLAG="--reset"; fi
+          if [ "$RESET" = "true" ]; then
+            # Garde-fou : le reset global n'est appliqué que si la confirmation
+            # correspond EXACTEMENT au nom de l'index. Sinon, échec explicite.
+            if [ "$RESET_CONFIRM" != "pv-explorer" ]; then
+              echo "❌ Reset global demandé mais confirmation invalide."
+              echo "   Tape 'pv-explorer' dans reset_confirm pour vider TOUT l'index."
+              exit 1
+            fi
+            echo "⚠️  RESET GLOBAL confirmé — l'index entier (toutes communes) va être vidé."
+            RESET_FLAG="--reset"
+          fi
           python index_pv.py --commune "$COMMUNE" --input "$INPUT" $RESET_FLAG
