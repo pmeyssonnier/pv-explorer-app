@@ -30,9 +30,11 @@ MAX_SOURCES = 8                      # sources AFFICHÉES dans l'UI (lisibilité
                                      # Claude reçoit les TOP_K, l'utilisateur voit le top.
 MAX_QUESTION_LEN = 500               # garde-fou coût : longueur max d'une question
 # Seuil de pertinence minimal (score cosinus) pour afficher une source.
-# 0.0 = désactivé. Les scores e5 sont resserrés : à calibrer sur des exemples
-# réels avant de relever (ex. 0.80) pour masquer les sources hors-sujet.
-SCORE_MIN = 0.0
+# 0.0 = désactivé (aucun filtrage). Les scores e5 sont resserrés (bande haute
+# étroite) : NE PAS deviner une valeur — la calibrer avec backend/eval_rag.py,
+# qui mesure la distribution des scores (dont le plancher de bruit des questions
+# hors-sujet). Réglable par env pour ajuster sans redéployer de code.
+SCORE_MIN = float(os.environ.get("SCORE_MIN", "0.0"))
 
 # Timeouts (secondes) des appels réseau externes. Bornent la durée max qu'un
 # thread du threadpool FastAPI peut rester retenu sur un appel lent ou bloqué :
