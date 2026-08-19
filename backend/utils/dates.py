@@ -24,6 +24,11 @@ _RE_LTE = re.compile(
     r"\b(?:avant|jusqu'?en|jusqu'?au|jusqu'?a|jusque)\s+"
     + _YEAR_PREFIX + _YEAR
 )
+# Intention « comptable » : un compte/bilan d'exercice Y est approuvé en séance
+# Y+1, un budget Y voté en séance Y-1/Y. Pour ces questions, « … 2011 » ne doit
+# pas se limiter aux séances de 2011 (souvent inexistantes), mais couvrir la
+# séance qui approuve réellement le document (voir _year_filter, étape 4).
+_RE_FINANCE = re.compile(r"\b(?:compte|budget|bilan)")
 
 
 def _year_filter(question: str):
@@ -60,8 +65,17 @@ def _year_filter(question: str):
     if m:
         return {"$lte": int(m.group(1))}
 
-    # 4. Sinon : année exacte
-    return {"$eq": years[0]}
+    # 4. Année exacte — sauf intention « comptable » (compte/budget/bilan) : le
+    #    compte d'un exercice Y est voté en séance Y+1, un budget Y en séance
+    #    Y-1/Y. On élargit alors à [Y-1, Y+1] pour attraper la séance qui
+    #    approuve réellement « le compte/budget 2011 » (sinon 0 résultat, la
+    #    base ne contenant pas toujours de séance de l'année demandée).
+    #    N'affecte QUE l'année exacte : une borne/fourchette explicite (« depuis
+    #    2015 », « entre 2015 et 2018 ») exprime déjà l'intention et est respectée.
+    y = years[0]
+    if _RE_FINANCE.search(q):
+        return {"$gte": y - 1, "$lte": y + 1}
+    return {"$eq": y}
 
 
 def _describe_year_filter(yf: dict) -> str:

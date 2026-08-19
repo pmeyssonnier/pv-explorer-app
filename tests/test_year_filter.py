@@ -12,7 +12,7 @@ from utils.dates import _year_filter, _describe_year_filter
     ("Quelles décisions en 2018 ?", 2018),
     ("Les subsides 2019", 2019),
     ("Sécurité en 2020", 2020),
-    ("budget 2012", 2012),
+    ("Les marchés publics 2012", 2012),
 ])
 def test_annee_exacte(q, year):
     assert _year_filter(q) == {"$eq": year}
@@ -22,7 +22,7 @@ def test_annee_exacte(q, year):
 @pytest.mark.parametrize("q, year", [
     ("Quelles décisions des écoles en 2018 ?", 2018),
     ("Quelles aides des associations en 2020 ?", 2020),
-    ("Le budget des travaux en 2015", 2015),
+    ("Les marchés des travaux en 2015", 2015),
     ("La rénovation des trottoirs en 2017", 2017),
 ])
 def test_des_article_reste_egalite(q, year):
@@ -62,6 +62,29 @@ def test_borne_haute(q, year):
 ])
 def test_fourchette(q, lo, hi):
     assert _year_filter(q) == {"$gte": lo, "$lte": hi}
+
+
+# ── Intention « comptable » : année exacte élargie à [Y-1, Y+1] ─────────────
+# Le compte d'un exercice Y est voté en séance Y+1, un budget Y en séance Y-1/Y.
+@pytest.mark.parametrize("q, y", [
+    ('compte ASBL "Mission Locale de Schaerbeek" 2011', 2011),
+    ("compte 2011 de l'ASBL", 2011),
+    ("les comptes 2016", 2016),
+    ("budget 2012", 2012),
+    ("bilan financier 2015", 2015),
+])
+def test_intention_financiere_annee_elargie(q, y):
+    assert _year_filter(q) == {"$gte": y - 1, "$lte": y + 1}
+
+
+# Une borne/fourchette EXPLICITE reste respectée même avec un mot financier.
+@pytest.mark.parametrize("q, expected", [
+    ("comptes depuis 2015", {"$gte": 2015}),
+    ("budget avant 2016", {"$lte": 2016}),
+    ("comptes entre 2015 et 2018", {"$gte": 2015, "$lte": 2018}),
+])
+def test_intention_financiere_borne_non_elargie(q, expected):
+    assert _year_filter(q) == expected
 
 
 # ── Absence d'année ─────────────────────────────────────────────────────────
