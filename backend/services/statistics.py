@@ -161,12 +161,15 @@ def compute_stats(db: dict) -> dict:
     pts_year = Counter()
     themes_year = {}          # année -> Counter de thèmes canoniques
     themes_all = Counter()    # toutes années confondues (canoniques)
+    dates_year = defaultdict(list)   # année -> [dates ISO des séances]
     for s in db.get("seances", []):
-        y = ((s.get("seance", {}) or {}).get("date") or "")[:4]
+        date = (s.get("seance", {}) or {}).get("date") or ""
+        y = date[:4]
         if not y:
             continue
         pv_year[y] += 1
         pts_year[y] += len(s.get("points", []))
+        dates_year[y].append(date)
         yc = themes_year.setdefault(y, Counter())
         for p in s.get("points", []):
             for t in (p.get("thematiques") or []):
@@ -182,6 +185,46 @@ def compute_stats(db: dict) -> dict:
     themes_par_annee = {"toutes": themes_all.most_common(12)}
     for y, yc in themes_year.items():
         themes_par_annee[y] = yc.most_common(12)
+    # Dates des séances par année — alimente le panneau « Séances par année »
+    # (même interaction synchronisée que les thématiques : clic sur une année).
+    dates_par_annee = {y: sorted(dates_year[y]) for y in dates_year}
+
+    # Résumé COMPACT par séance : alimente le drill-down Année → Mois → Séance
+    # côté frontend (KPI + thématiques recalculés à la volée pour chaque niveau,
+    # sans nouvel appel serveur). Montant filtré comme le KPI global.
+    seances_resume = []
+    for s in db.get("seances", []):
+        meta = s.get("seance", {}) or {}
+        date = meta.get("date")
+        if not date:
+            continue
+        pts = s.get("points", [])
+        v = sum(1 for p in pts if (p.get("vote") or {}).get("type") == "vote_nominal")
+        m = sum(p["montant_eur"] for p in pts
+                if p.get("montant_eur") and not _is_excluded_amount(p))
+        tc = Counter()                 # thème -> nb de points
+        tm = defaultdict(float)        # thème -> montant engagé (même filtre que le KPI)
+        for p in pts:
+            mp = p["montant_eur"] if (p.get("montant_eur") and not _is_excluded_amount(p)) else 0
+            for t in (p.get("thematiques") or []):
+                c = _canon_theme(t)
+                tc[c] += 1
+                if mp:
+                    tm[c] += mp
+        # [thème, nb_points, montant] — trié par nb de points décroissant
+        th_list = [[t, n, round(tm.get(t, 0.0), 2)] for t, n in tc.most_common()]
+        seances_resume.append({
+            "date": date,
+            "points": len(pts),
+            "votes": v,
+            "montant": round(m, 2),
+            "themes": th_list,
+            "file": meta.get("source_file"),
+            # URL publique du PDF : pass-through (à renseigner plus tard dans le JSON
+            # source via un champ url/source_url) → le lien apparaît dès qu'elle existe.
+            "url": meta.get("url") or meta.get("source_url"),
+        })
+    seances_resume.sort(key=lambda x: x["date"])
 
     return {
         "nb_seances": len(db.get("seances", [])),
@@ -190,6 +233,8 @@ def compute_stats(db: dict) -> dict:
         "votes_non_unanimes": votes_non_unanimes,
         "pv_par_annee": pv_par_annee,
         "themes_par_annee": themes_par_annee,
+        "dates_par_annee": dates_par_annee,
+        "seances_resume": seances_resume,
         "top_thematiques": themes.most_common(10),
         "top_rubriques": rubriques.most_common(10),
         "decisions": decisions.most_common(),
