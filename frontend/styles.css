@@ -330,6 +330,18 @@ body {
   .trend-input { flex: 1 1 100%; }
 }
 
+/* Petit chrono au-dessus de la conversation : « En cours depuis X s » pendant
+   l'appel, puis « Durée d'exécution : X s » une fois la réponse arrivée. */
+.chat-timer {
+  font-size: 13px; color: var(--encre-soft);
+  font-variant-numeric: tabular-nums;
+  margin: 0 2px 12px; padding: 5px 10px;
+  border-left: 3px solid var(--bordeaux);
+  background: color-mix(in srgb, var(--bordeaux) 8%, transparent);
+  border-radius: 0 6px 6px 0;
+}
+.chat-timer.running { color: var(--bordeaux); font-weight: 600; }
+
 .conversation { display: flex; flex-direction: column; gap: 20px; margin-bottom: 24px; }
 .msg { display: flex; flex-direction: column; gap: 6px; }
 .msg-role {

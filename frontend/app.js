@@ -148,10 +148,44 @@ function newSearch() {
   document.getElementById('conversation').innerHTML = '';
   document.getElementById('introCard').style.display = '';
   document.getElementById('newSearchBtn').style.display = 'none';
+  hideChatTimer();
   const input = document.getElementById('askInput');
   if (input) input.value = '';
   renderHistory();
   window.scrollTo(0, 0);
+}
+
+// ── CHRONO du chat (petit message au-dessus de la conversation) ──
+// Pendant l'appel : « En cours depuis X s » (rafraîchi). À la fin : fige sur
+// « Durée d'exécution : X s ». Mesure le temps réel vu par le citoyen (réveil
+// Render inclus), pas le temps serveur.
+let chatTimerId = null;
+let chatTimerStart = 0;
+function startChatTimer() {
+  const el = document.getElementById('chatTimer');
+  if (!el) return;
+  chatTimerStart = Date.now();
+  el.style.display = '';
+  el.classList.add('running');
+  const tick = () => {
+    const s = Math.floor((Date.now() - chatTimerStart) / 1000);
+    el.textContent = `⏱ En cours depuis ${s} s`;
+  };
+  tick();
+  chatTimerId = setInterval(tick, 250);
+}
+function stopChatTimer() {
+  if (chatTimerId) { clearInterval(chatTimerId); chatTimerId = null; }
+  const el = document.getElementById('chatTimer');
+  if (!el) return;
+  const s = ((Date.now() - chatTimerStart) / 1000).toFixed(1);
+  el.classList.remove('running');
+  el.textContent = `⏱ Durée d'exécution : ${s} s`;
+}
+function hideChatTimer() {
+  if (chatTimerId) { clearInterval(chatTimerId); chatTimerId = null; }
+  const el = document.getElementById('chatTimer');
+  if (el) { el.style.display = 'none'; el.classList.remove('running'); el.textContent = ''; }
 }
 
 // Afficher l'historique au chargement
@@ -193,6 +227,7 @@ async function submitQuestion() {
         <span class="dots"><span></span><span></span><span></span></span></div>
       </div>
     </div>`);
+  startChatTimer();
   window.scrollTo(0, document.body.scrollHeight);
 
   // Filtre commune : "Toutes" (value vide) → on n'envoie rien (recherche croisée)
@@ -269,6 +304,7 @@ async function submitQuestion() {
       </div>`);
   }
 
+  stopChatTimer();
   isLoading = false;
   document.getElementById('askBtn').disabled = false;
   window.scrollTo(0, document.body.scrollHeight);
