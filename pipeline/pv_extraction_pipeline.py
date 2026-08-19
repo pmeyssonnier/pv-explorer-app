@@ -429,6 +429,10 @@ SCHÉMA JSON D'UN POINT :
 }
 
 RÈGLES :
+- Ne DEVINE JAMAIS une valeur absente. Si une information n'est pas écrite dans
+  le texte, mets `null` (ou 0 pour contre/abstentions). N'extrais que ce qui est
+  réellement présent — un montant, un nombre de voix ou une date inventés sont
+  des erreurs graves. Mieux vaut `null` qu'une valeur plausible mais fausse.
 - "page" = le numéro de la balise [Page N] où COMMENCE le point (son titre "SP n.-").
   Reporte l'entier N tel quel ; en cas de doute, la page du titre du point.
 - "Approuvé à l'unanimité" → vote.type="unanimite"

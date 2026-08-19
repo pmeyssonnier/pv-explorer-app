@@ -15,8 +15,9 @@ try:
 except ImportError:
     pass
 
-# Version applicative (affichée dans le menu Options du frontend).
-VERSION = "1.1.0"
+# Version applicative — SOURCE UNIQUE, exposée par GET /health et lue par le
+# frontend (le menu Options l'affiche). Bumper ici seulement.
+VERSION = "1.2.0"
 
 # ── Pinecone / modèle ───────────────────────────────────────────────────────
 INDEX_NAME = "pv-explorer"

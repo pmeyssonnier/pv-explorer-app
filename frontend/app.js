@@ -15,7 +15,11 @@ const API_URL = (location.hostname === "localhost" || location.hostname === "127
 let isLoading = false;
 
 // ── OPTIONS (menu ⚙️) — préférences par navigateur (localStorage) ──
-const APP_VERSION = '1.1.0';
+// Version : source unique = le backend (GET /health → { version }). La constante
+// locale n'est qu'un REPLI affiché si le backend est injoignable (hors-ligne, ou
+// réveil du service Render). Garder cette valeur vaguement à jour, sans plus.
+const APP_VERSION = '1.2.0';
+let appVersion = APP_VERSION;
 const SETTINGS_KEY = 'pv_settings';
 const SETTINGS_DEFAULTS = {
   theme: 'auto', maxSources: 15, topK: 30, scoreMin: 0,
@@ -56,8 +60,26 @@ function renderSettings() {
   set('setScoreMin', settings.scoreMin); txt('valScoreMin', (+settings.scoreMin).toFixed(2));
   set('setModel', settings.model);
   set('setOrder', settings.order);
-  txt('appVersion', APP_VERSION);
+  txt('appVersion', appVersion);
 }
+
+// Récupère la version auprès du backend (source unique). Silencieux en cas
+// d'échec : on garde le repli local `APP_VERSION`. Met à jour l'affichage même
+// si le panneau Options est déjà ouvert.
+async function fetchVersion() {
+  try {
+    const r = await fetch(`${API_URL}/health`, { cache: 'no-store' });
+    if (!r.ok) return;
+    const d = await r.json();
+    if (d && d.version) {
+      appVersion = d.version;
+      const el = document.getElementById('appVersion');
+      if (el) el.textContent = appVersion;
+    }
+  } catch (e) { /* backend injoignable → repli local conservé */ }
+}
+fetchVersion();
+
 applyTheme();   // le <head> a déjà posé le thème ; on confirme après chargement d'app.js
 
 // ── ONGLETS ──

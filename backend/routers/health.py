@@ -3,7 +3,7 @@ import os
 
 from fastapi import APIRouter
 
-from config import logger
+from config import VERSION, logger
 from services.pinecone_service import get_pinecone_index
 
 router = APIRouter()
@@ -11,15 +11,18 @@ router = APIRouter()
 
 @router.get("/")
 def root():
-    return {"service": "PV Schaerbeek Q&R", "status": "ok", "version": "0.1"}
+    return {"service": "PV Schaerbeek Q&R", "status": "ok", "version": VERSION}
 
 
 @router.get("/health")
 def health():
     """LIVENESS : le process répond. AUCUN appel externe — c'est cet endpoint
     que Render ping fréquemment (healthCheckPath), il doit rester instantané et
-    ne pas coupler la santé du service à la disponibilité de Pinecone."""
-    return {"status": "ok"}
+    ne pas coupler la santé du service à la disponibilité de Pinecone.
+
+    Expose aussi `version` (constante, aucun coût) : c'est la SOURCE UNIQUE de
+    version, lue par le frontend pour l'afficher (plus de numéro dupliqué)."""
+    return {"status": "ok", "version": VERSION}
 
 
 @router.get("/ready")
