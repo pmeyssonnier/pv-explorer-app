@@ -286,9 +286,10 @@ async function submitQuestion() {
         <div class="msg-role">Assistant</div>
         <div class="msg-bubble">${renderMarkdown(data.answer)}</div>
         ${sourcesHtml}
-        <div class="msg-actions" data-md="${encodeURIComponent(data.answer || '')}">
+        <div class="msg-actions" data-md="${encodeURIComponent(data.answer || '')}" data-q="${encodeURIComponent(question || '')}">
           <button class="msg-act" type="button" onclick="copyAnswer(this)">Copier</button>
           <button class="msg-act" type="button" onclick="downloadAnswer(this)">Exporter (.md)</button>
+          <button class="msg-act" type="button" onclick="shareAnswer(this)">Partager</button>
         </div>
       </div>`);
 
@@ -751,6 +752,60 @@ function downloadAnswer(btn) {
   a.href = URL.createObjectURL(blob); a.download = 'reponse-pv-schaerbeek.md';
   document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
 }
+
+// ── PARTAGE ──
+// URL de l'app sans query/fragment (repère de base pour les liens partagés).
+function shareBaseUrl() { return location.href.split('#')[0].split('?')[0]; }
+
+// Copie « texte + lien » dans le presse-papier (repli si navigator.share absent).
+function copyShare(payload, cb) {
+  (navigator.clipboard ? navigator.clipboard.writeText(payload).then(cb) : Promise.reject()).catch(() => {
+    const t = document.createElement('textarea'); t.value = payload; document.body.appendChild(t);
+    t.select(); try { document.execCommand('copy'); } catch (e) {} t.remove(); cb();
+  });
+}
+
+// Partage via la feuille native (mobile) si dispo, sinon copie du lien. Le
+// bouton confirme brièvement (« Partagé ✓ » / « Lien copié ✓ »).
+function doShare(title, text, url, btn) {
+  const orig = btn ? btn.textContent : '';
+  const flash = (msg) => { if (btn) { btn.textContent = msg; setTimeout(() => { btn.textContent = orig; }, 1800); } };
+  if (navigator.share) {
+    navigator.share({ title, text, url }).then(() => flash('Partagé ✓')).catch((err) => {
+      if (err && err.name === 'AbortError') return;           // annulé par l'utilisateur
+      copyShare(`${text}\n${url}`, () => flash('Lien copié ✓'));
+    });
+  } else {
+    copyShare(`${text}\n${url}`, () => flash('Lien copié ✓'));
+  }
+}
+
+function shareAnswer(btn) {
+  const q = decodeURIComponent(btn.closest('.msg-actions').dataset.q || '');
+  const url = q ? `${shareBaseUrl()}?q=${encodeURIComponent(q)}` : shareBaseUrl();
+  const text = q ? `Question aux procès-verbaux du Conseil communal de Schaerbeek : « ${q} »`
+                 : 'PV Explorer — procès-verbaux du Conseil communal de Schaerbeek';
+  doShare('PV Explorer — Conseil communal de Schaerbeek', text, url, btn);
+}
+
+function shareStats(btn) {
+  doShare('PV Explorer — Statistiques du Conseil communal de Schaerbeek',
+          'Statistiques des décisions du Conseil communal de Schaerbeek',
+          `${shareBaseUrl()}?tab=stats`, btn);
+}
+
+// Liens partagés : ?tab=stats ouvre l'onglet Statistiques ; ?q=… ré-ouvre la
+// question et la relance automatiquement (au chargement).
+function handleDeepLink() {
+  const params = new URLSearchParams(location.search);
+  if (params.get('tab') === 'stats') switchTab('stats');
+  const q = params.get('q');
+  if (q) {
+    const input = document.getElementById('askInput');
+    if (input) { input.value = q; submitQuestion(); }
+  }
+}
+handleDeepLink();
 function formatDate(iso) {
   if (!iso) return '?';
   const parts = iso.split('-');
