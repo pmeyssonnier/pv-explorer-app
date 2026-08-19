@@ -17,10 +17,13 @@ def test_root():
 
 
 def test_health_liveness():
-    # Liveness : instantané, aucun appel externe → juste {status: ok}.
+    # Liveness : instantané, aucun appel externe → {status: ok} + version
+    # (constante, source unique lue par le frontend).
     r = client.get("/health")
     assert r.status_code == 200
-    assert r.json() == {"status": "ok"}
+    body = r.json()
+    assert body["status"] == "ok"
+    assert isinstance(body.get("version"), str) and body["version"]
 
 
 def test_ready_shape_minimal():
