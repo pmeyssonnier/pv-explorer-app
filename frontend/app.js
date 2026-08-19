@@ -14,6 +14,52 @@ const API_URL = (location.hostname === "localhost" || location.hostname === "127
 // ── ÉTAT ──
 let isLoading = false;
 
+// ── OPTIONS (menu ⚙️) — préférences par navigateur (localStorage) ──
+const APP_VERSION = '1.1.0';
+const SETTINGS_KEY = 'pv_settings';
+const SETTINGS_DEFAULTS = {
+  theme: 'auto', maxSources: 15, topK: 30, scoreMin: 0,
+  model: 'claude-sonnet-4-6', order: 'relevance',
+};
+function loadSettings() {
+  try { return Object.assign({}, SETTINGS_DEFAULTS, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); }
+  catch (e) { return Object.assign({}, SETTINGS_DEFAULTS); }
+}
+let settings = loadSettings();
+function saveSettings() { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {} }
+
+function applyTheme() {
+  if (settings.theme === 'light' || settings.theme === 'dark')
+    document.documentElement.setAttribute('data-theme', settings.theme);
+  else
+    document.documentElement.removeAttribute('data-theme');   // « auto » → préférence OS
+}
+function openSettings() { renderSettings(); document.getElementById('settingsOverlay').classList.add('open'); }
+function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
+function updateSetting(key, val) {
+  settings[key] = val; saveSettings();
+  if (key === 'theme') applyTheme();
+  renderSettings();
+}
+function resetSettings() {
+  settings = Object.assign({}, SETTINGS_DEFAULTS);
+  saveSettings(); applyTheme(); renderSettings();
+}
+// Reflète l'état courant dans les contrôles du panneau.
+function renderSettings() {
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+  const txt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  document.querySelectorAll('#themeSeg button').forEach(b =>
+    b.classList.toggle('on', b.dataset.v === settings.theme));
+  set('setMaxSources', settings.maxSources); txt('valMaxSources', settings.maxSources);
+  set('setTopK', settings.topK); txt('valTopK', settings.topK);
+  set('setScoreMin', settings.scoreMin); txt('valScoreMin', (+settings.scoreMin).toFixed(2));
+  set('setModel', settings.model);
+  set('setOrder', settings.order);
+  txt('appVersion', APP_VERSION);
+}
+applyTheme();   // le <head> a déjà posé le thème ; on confirme après chargement d'app.js
+
 // ── ONGLETS ──
 function switchTab(tab) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -132,6 +178,11 @@ async function submitQuestion() {
   const commune = communeSel ? communeSel.value : '';
   const payload = { question };
   if (commune) payload.commune = commune;
+  // Réglages du menu Options (re-bornés côté serveur).
+  payload.top_k = settings.topK;
+  payload.max_sources = settings.maxSources;
+  payload.score_min = settings.scoreMin;
+  payload.model = settings.model;
 
   try {
     const res = await fetch(API_URL + '/ask', {
@@ -152,17 +203,19 @@ async function submitQuestion() {
     const data = await res.json();
     document.getElementById(loadingId).remove();
 
-    // Construire les sources
+    // Construire les sources (ordre selon les Options : pertinence [défaut] ou date)
     let sourcesHtml = '';
-    if (data.sources && data.sources.length) {
-      const items = data.sources.map(s => `
+    let srcs = data.sources || [];
+    if (settings.order === 'date') srcs = srcs.slice().sort((a, b) => a.date < b.date ? 1 : -1);
+    if (srcs.length) {
+      const items = srcs.map(s => `
         <div class="source-item">
           <div class="source-ref"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}<br>Point SP ${s.sp}</div>
           <div class="source-titre">${escapeHtml(s.titre)}</div>
           <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
         </div>`).join('');
       sourcesHtml = `<div class="sources">
-        <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${data.sources.length} délibérations</div>
+        <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length} délibérations</div>
         ${items}</div>`;
     }
 
