@@ -26,7 +26,7 @@ TOP_K = 30                           # passages récupérés (contexte donné à
                                      # (ex. « évolution depuis 2012 ») sur ~4 400 points.
                                      # NB : le RAG reste sémantique — pour une agrégation
                                      # exhaustive par thème/année, voir l'endpoint /trend.
-MAX_SOURCES = 8                      # sources AFFICHÉES dans l'UI (lisibilité) —
+MAX_SOURCES = 15                     # sources AFFICHÉES dans l'UI (lisibilité) —
                                      # Claude reçoit les TOP_K, l'utilisateur voit le top.
 MAX_QUESTION_LEN = 500               # garde-fou coût : longueur max d'une question
 # Seuil de pertinence minimal (score cosinus) pour afficher une source.
