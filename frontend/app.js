@@ -169,8 +169,12 @@ async function submitQuestion() {
     conv.insertAdjacentHTML('beforeend', `
       <div class="msg">
         <div class="msg-role">Assistant</div>
-        <div class="msg-bubble">${escapeHtml(data.answer)}</div>
+        <div class="msg-bubble">${renderMarkdown(data.answer)}</div>
         ${sourcesHtml}
+        <div class="msg-actions" data-md="${encodeURIComponent(data.answer || '')}">
+          <button class="msg-act" type="button" onclick="copyAnswer(this)">Copier</button>
+          <button class="msg-act" type="button" onclick="downloadAnswer(this)">Exporter (.md)</button>
+        </div>
       </div>`);
 
   } catch (err) {
@@ -408,7 +412,7 @@ function renderPvList() {
     all.forEach(s => { const y = s.date.slice(0, 4); (byYear[y] = byYear[y] || []).push(s); });
     const years = Object.keys(byYear).sort().reverse();
     box.innerHTML = years.map(y => {
-      const items = byYear[y].slice().sort((a, b) => a.date < b.date ? -1 : 1);
+      const items = byYear[y].slice().sort((a, b) => a.date < b.date ? 1 : -1);
       const open = expandedYears.has(y);
       return `<div class="pv-group">
         <button type="button" class="pv-group-head" onclick="toggleYear('${y}')">
@@ -420,7 +424,7 @@ function renderPvList() {
       </div>`;
     }).join('');
   } else {
-    const list = all.slice().sort((a, b) => a.date < b.date ? -1 : 1);
+    const list = all.slice().sort((a, b) => a.date < b.date ? 1 : -1);
     box.innerHTML = list.map(pvRowHtml).join('')
       + (list.length > 1 ? '<p class="yc-note">Cliquez une séance pour n\'afficher que ses indicateurs et thématiques.</p>' : '');
   }
@@ -523,11 +527,7 @@ function trendSuggestion(el) {
   document.getElementById('trendInput').value = el.textContent;
   loadTrend();
 }
-function fmtEUR(n) {
-  return new Intl.NumberFormat('fr-BE', {
-    style: 'currency', currency: 'EUR', maximumFractionDigits: 0
-  }).format(n || 0);
-}
+function fmtEUR(n) { return fmtMontant(n); }   // même format « # ### ##0 € » que les KPI
 async function loadTrend() {
   const theme = document.getElementById('trendInput').value.trim();
   const box = document.getElementById('trendResult');
@@ -552,12 +552,17 @@ async function loadTrend() {
         <div class="bar-track"><div class="bar-fill" style="width:${a.total_eur / max * 100}%"></div></div>
         <div class="bar-val">${fmtEUR(a.total_eur)}</div>
       </div>`).join('');
-    const items = (d.top_items || []).map(it => `
+    const items = (d.top_items || []).map(it => {
+      const dateHtml = it.url
+        ? `<a class="pv-pdf-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>${formatDate(it.date)}</a>`
+        : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>${formatDate(it.date)}`;
+      return `
       <div class="source-item">
-        <div class="source-ref"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>${formatDate(it.date)}<br>SP ${it.sp}</div>
+        <div class="source-ref">${dateHtml}<br>SP ${it.sp}</div>
         <div class="source-titre">${escapeHtml(it.titre)}</div>
         <div class="source-decision">${fmtEUR(it.montant_eur)}</div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
     box.innerHTML = `
       <div class="trend-summary"><strong>${fmtEUR(d.total_eur)}</strong> cumulés · ${d.points_total} points liés à « ${escapeHtml(d.theme)} »</div>
       <div class="stat-section"><h3>Montants par année</h3>${bars}</div>
@@ -571,6 +576,64 @@ async function loadTrend() {
 // ── HELPERS ──
 function escapeHtml(t) {
   return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Rendu Markdown minimal et SÛR (échappe le texte d'abord, puis n'insère que nos
+// propres balises) : tableaux, titres, gras/italique, code, listes, séparateurs.
+function renderMarkdown(src) {
+  const inline = s => escapeHtml(s)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*(?!\s)([^*]+?)\*/g, '$1<em>$2</em>')
+    .replace(/`([^`]+?)`/g, '<code>$1</code>');
+  const lines = String(src || '').replace(/\r\n/g, '\n').split('\n');
+  const out = [];
+  let i = 0;
+  const isRow = l => /^\s*\|.*\|\s*$/.test(l);
+  const cells = l => l.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+  while (i < lines.length) {
+    const l = lines[i];
+    if (isRow(l) && i + 1 < lines.length && /^\s*\|[\s:|-]+\|\s*$/.test(lines[i + 1])) {
+      const head = cells(l); i += 2; const rows = [];
+      while (i < lines.length && isRow(lines[i])) { rows.push(cells(lines[i])); i++; }
+      const thead = '<tr>' + head.map(h => `<th>${inline(h)}</th>`).join('') + '</tr>';
+      const tbody = rows.map(r => '<tr>' + head.map((_, j) => `<td>${inline(r[j] || '')}</td>`).join('') + '</tr>').join('');
+      out.push(`<div class="md-tablewrap"><table class="md-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table></div>`);
+      continue;
+    }
+    const mh = l.match(/^(#{1,6})\s+(.*)$/);
+    if (mh) { out.push(`<h4 class="md-h">${inline(mh[2])}</h4>`); i++; continue; }
+    if (/^\s*---+\s*$/.test(l)) { out.push('<hr class="md-hr">'); i++; continue; }
+    if (/^\s*[-*]\s+/.test(l)) {
+      const items = [];
+      while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) { items.push(`<li>${inline(lines[i].replace(/^\s*[-*]\s+/, ''))}</li>`); i++; }
+      out.push(`<ul class="md-ul">${items.join('')}</ul>`); continue;
+    }
+    if (/^\s*$/.test(l)) { i++; continue; }
+    const para = [];
+    while (i < lines.length && !/^\s*$/.test(lines[i]) && !isRow(lines[i])
+           && !/^#{1,6}\s/.test(lines[i]) && !/^\s*[-*]\s+/.test(lines[i]) && !/^\s*---+\s*$/.test(lines[i])) {
+      para.push(inline(lines[i])); i++;
+    }
+    if (para.length) out.push(`<p>${para.join('<br>')}</p>`);
+  }
+  return out.join('');
+}
+
+// Export d'une réponse (Markdown brut stocké dans data-md).
+function copyAnswer(btn) {
+  const md = decodeURIComponent(btn.closest('.msg-actions').dataset.md || '');
+  const done = () => { btn.textContent = 'Copié ✓'; setTimeout(() => btn.textContent = 'Copier', 1500); };
+  (navigator.clipboard ? navigator.clipboard.writeText(md).then(done) : Promise.reject()).catch(() => {
+    const t = document.createElement('textarea'); t.value = md; document.body.appendChild(t);
+    t.select(); try { document.execCommand('copy'); } catch (e) {} t.remove(); done();
+  });
+}
+function downloadAnswer(btn) {
+  const md = decodeURIComponent(btn.closest('.msg-actions').dataset.md || '');
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'reponse-pv-schaerbeek.md';
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
 }
 function formatDate(iso) {
   if (!iso) return '?';

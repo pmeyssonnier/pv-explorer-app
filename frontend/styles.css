@@ -7,6 +7,7 @@
 :root {
   --bordeaux: #6d2233;
   --bordeaux-dark: #4d1523;
+  --bordeaux-clair: #8f3a4b;
   --or: #c8952b;
   --or-light: #e8c874;
   --papier: #f7f3ec;
@@ -407,6 +408,7 @@ body {
   font-weight: 900;
   color: var(--bordeaux);
   line-height: 1;
+  white-space: nowrap;   /* garde « … € » sur une seule ligne */
 }
 .stat-label {
   font-size: 12px;
@@ -429,8 +431,8 @@ body {
 .yc-val { font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--encre); }
 .yc-val.yc-muted { color: var(--encre-soft); }
 .yc-bar {
-  width: 100%; max-width: 30px; border-radius: 4px 4px 0 0;
-  background: linear-gradient(0deg, var(--or), var(--bordeaux));
+  width: 100%; max-width: 30px; border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(180deg, var(--bordeaux-clair), var(--bordeaux));
   transition: filter 0.15s;
 }
 .yc-col:hover .yc-bar { filter: brightness(1.08); }
@@ -484,9 +486,35 @@ body {
 .bar-row.bar-sel { background: var(--papier-dark); }
 .bar-row.bar-sel .bar-label { color: var(--bordeaux); font-weight: 600; }
 .pv-clear { border: none; background: var(--bordeaux); color: #fff; border-radius: 50%; width: 17px; height: 17px; font-size: 10px; line-height: 1; cursor: pointer; vertical-align: middle; }
+/* Lien date → PV (PDF) dans « Plus grosses dépenses » */
+.pv-pdf-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; }
+.pv-pdf-link:hover { text-decoration: underline; }
+.pv-pdf-link .icon { color: var(--or); }
+
+/* ── RENDU MARKDOWN DES RÉPONSES DU CHAT ── */
+.msg-bubble p { margin: 0 0 10px; }
+.msg-bubble p:last-child { margin-bottom: 0; }
+.msg-bubble .md-h { font-family: var(--display); font-size: 16px; font-weight: 600; margin: 14px 0 8px; color: var(--bordeaux); }
+.msg-bubble .md-ul { margin: 6px 0 10px; padding-left: 20px; }
+.msg-bubble .md-ul li { margin-bottom: 4px; }
+.msg-bubble .md-hr { border: none; border-top: 1px solid var(--ligne); margin: 12px 0; }
+.msg-bubble code { background: var(--papier-dark); border-radius: 4px; padding: 1px 5px; font-size: 0.92em; }
+.md-tablewrap { overflow-x: auto; margin: 10px 0; }
+.md-table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+.md-table th, .md-table td { border: 1px solid var(--ligne); padding: 7px 10px; text-align: left; vertical-align: top; }
+.md-table th { background: var(--papier-dark); font-weight: 600; color: var(--bordeaux); white-space: nowrap; }
+.md-table tr:nth-child(even) td { background: color-mix(in srgb, var(--papier-dark) 45%, transparent); }
+
+/* Actions d'export sous une réponse */
+.msg-actions { display: flex; gap: 8px; margin-top: 10px; }
+.msg-act {
+  border: 1px solid var(--ligne); background: var(--blanc); color: var(--bordeaux);
+  border-radius: 16px; padding: 4px 12px; font-size: 12.5px; cursor: pointer; transition: all 0.15s;
+}
+.msg-act:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
 .bar-label { font-size: 13px; width: 150px; text-align: right; color: var(--encre-soft); }
 .bar-track { flex: 1; height: 22px; background: var(--papier-dark); border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; background: linear-gradient(90deg, var(--bordeaux), var(--or)); border-radius: 3px; transition: width 0.6s ease; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, var(--or), var(--or-light)); border-radius: 3px; transition: width 0.6s ease; }
 .bar-val { font-size: 13px; font-weight: 600; color: var(--bordeaux); width: 40px; }
 .bar-eur {
   font-size: 12.5px; color: var(--encre-soft); width: 92px; flex: none;
