@@ -27,6 +27,8 @@ class Source(BaseModel):
     titre: str
     decision: str
     score: float
+    # Lien vers le PDF officiel du PV (résolu par date depuis le JSON) — None si absent.
+    url: Optional[str] = None
 
 
 class AnswerResponse(BaseModel):

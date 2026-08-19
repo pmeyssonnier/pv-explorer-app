@@ -18,6 +18,20 @@ from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
 from services.pinecone_service import get_pinecone_index
+from services.statistics import load_db
+
+
+def _pdf_url_map() -> dict:
+    """date ISO → URL du PDF officiel du PV, lue depuis le JSON (mtime-caché).
+    Permet d'ajouter le lien aux sources sans réindexer Pinecone. {} si indispo."""
+    try:
+        db = load_db()
+    except Exception:
+        return {}
+    return {
+        (s.get("seance", {}) or {}).get("date"): (s.get("seance", {}) or {}).get("source_url")
+        for s in db.get("seances", [])
+    }
 
 _anthropic_client: Optional[anthropic.Anthropic] = None
 
@@ -202,16 +216,19 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
     not_found = "je ne trouve pas" in answer_text.lower()
     sources = []
     if not not_found:
+        url_map = _pdf_url_map()
         for h in norm:
             if h["score"] < score_min:
                 continue
             meta = h["metadata"]
+            date_str = str(meta.get("date", ""))
             sources.append(Source(
-                date=str(meta.get("date", "")),
+                date=date_str,
                 sp=int(float(meta.get("sp") or 0)),
                 titre=str(meta.get("titre", "")),
                 decision=str(meta.get("decision", "")),
                 score=round(float(h["score"]), 3),
+                url=url_map.get(date_str),
             ))
             if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
                 break

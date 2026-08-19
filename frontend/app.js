@@ -208,12 +208,17 @@ async function submitQuestion() {
     let srcs = data.sources || [];
     if (settings.order === 'date') srcs = srcs.slice().sort((a, b) => a.date < b.date ? 1 : -1);
     if (srcs.length) {
-      const items = srcs.map(s => `
+      const items = srcs.map(s => {
+        const seance = s.url
+          ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}</a>`
+          : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}`;
+        return `
         <div class="source-item">
-          <div class="source-ref"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}<br>Point SP ${s.sp}</div>
+          <div class="source-ref">${seance}<br>Point SP ${s.sp}</div>
           <div class="source-titre">${escapeHtml(s.titre)}</div>
           <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
-        </div>`).join('');
+        </div>`;
+      }).join('');
       sourcesHtml = `<div class="sources">
         <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length} délibérations</div>
         ${items}</div>`;
