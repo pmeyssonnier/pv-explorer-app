@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Conseil communal de Schaerbeek — Questions aux procès-verbaux</title>
+<!-- Applique le thème choisi AVANT le premier rendu (évite le flash clair→sombre) -->
+<script>
+(function () {
+  try {
+    var t = (JSON.parse(localStorage.getItem('pv_settings') || '{}').theme) || 'auto';
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+})();
+</script>
 <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.svg">
 <meta name="theme-color" content="#6d2233">
@@ -33,6 +42,9 @@
 </svg>
 
 <header class="header">
+  <button class="gear-btn" type="button" onclick="openSettings()" aria-label="Options" title="Options">
+    <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+  </button>
   <div class="header-inner">
     <svg class="header-mark" viewBox="0 0 64 64" aria-hidden="true">
       <rect x="15" y="12" width="26" height="33" rx="3.4" fill="#f7f3ec"/>
@@ -134,6 +146,63 @@
   Outil citoyen non officiel · Données issues des procès-verbaux publics du Conseil communal de Schaerbeek<br>
   Les réponses sont générées automatiquement — vérifiez toujours le procès-verbal original en cas de doute.
 </footer>
+
+<!-- ── PANNEAU ⚙️ OPTIONS ── -->
+<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-panel" role="dialog" aria-modal="true" aria-label="Options">
+    <div class="settings-head">
+      <h2>Options</h2>
+      <button class="settings-close" type="button" onclick="closeSettings()" aria-label="Fermer">✕</button>
+    </div>
+
+    <section class="settings-sec">
+      <h3>Apparence</h3>
+      <div class="seg" id="themeSeg">
+        <button type="button" data-v="light" onclick="updateSetting('theme','light')">Clair</button>
+        <button type="button" data-v="dark" onclick="updateSetting('theme','dark')">Sombre</button>
+        <button type="button" data-v="auto" onclick="updateSetting('theme','auto')">Auto</button>
+      </div>
+    </section>
+
+    <section class="settings-sec">
+      <h3>Recherche (chat)</h3>
+      <div class="set-row">
+        <div class="set-top"><span>Sources affichées</span><b id="valMaxSources">15</b></div>
+        <input type="range" id="setMaxSources" min="5" max="30" step="1" oninput="updateSetting('maxSources', +this.value)">
+        <div class="set-hint">Nombre de sources listées sous la réponse.</div>
+      </div>
+      <div class="set-row">
+        <div class="set-top"><span>Étendue de recherche</span><b id="valTopK">30</b></div>
+        <input type="range" id="setTopK" min="10" max="50" step="5" oninput="updateSetting('topK', +this.value)">
+        <div class="set-hint">Passages lus par Claude. Plus = plus complet, plus lent.</div>
+      </div>
+      <div class="set-row">
+        <div class="set-top"><span>Seuil de pertinence</span><b id="valScoreMin">0.00</b></div>
+        <input type="range" id="setScoreMin" min="0" max="0.9" step="0.05" oninput="updateSetting('scoreMin', +this.value)">
+        <div class="set-hint">Masque les sources sous ce score (0 = désactivé).</div>
+      </div>
+      <div class="set-row">
+        <div class="set-top"><span>Modèle</span></div>
+        <select id="setModel" onchange="updateSetting('model', this.value)">
+          <option value="claude-sonnet-4-6">Sonnet — précis (défaut)</option>
+          <option value="claude-haiku-4-5-20251001">Haiku — rapide / économe</option>
+        </select>
+      </div>
+      <div class="set-row">
+        <div class="set-top"><span>Ordre des sources</span></div>
+        <select id="setOrder" onchange="updateSetting('order', this.value)">
+          <option value="relevance">Par pertinence</option>
+          <option value="date">Par date (récent d'abord)</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="settings-sec settings-about">
+      <span>PV Explorer — version <strong id="appVersion"></strong></span>
+      <button class="settings-reset" type="button" onclick="resetSettings()">Réinitialiser</button>
+    </section>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>

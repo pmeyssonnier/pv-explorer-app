@@ -5,8 +5,10 @@
    Corps   : Inter (lisibilité administrative)
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --bordeaux: #6d2233;
+  --brand: #6d2233;              /* rouge « fond fort » (header/boutons) — texte clair dessus */
+  --bordeaux: #6d2233;           /* accent texte/marques — s'éclaircit en thème sombre */
   --bordeaux-dark: #4d1523;
+  --bordeaux-clair: #8f3a4b;
   --or: #c8952b;
   --or-light: #e8c874;
   --papier: #f7f3ec;
@@ -19,6 +21,41 @@
   --display: 'Fraunces', Georgia, serif;
   --corps: 'Inter', system-ui, sans-serif;
 }
+
+/* ── THÈME SOMBRE ──────────────────────────────────────────────────────────
+   On ne redéfinit que les TOKENS : surfaces sombres, encre claire, et l'accent
+   --bordeaux éclairci (lisible sur fond sombre). --brand reste rouge foncé pour
+   les fonds à texte clair (header, boutons). Deux blocs : auto (préférence OS,
+   sauf choix « clair » explicite) et choix « sombre » explicite. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bordeaux: #e2929f;
+    --bordeaux-clair: #c06e7c;
+    --or: #e0b64f;
+    --or-light: #f0d78e;
+    --papier: #17130f;
+    --papier-dark: #241d17;
+    --encre: #f0e9de;
+    --encre-soft: #ab9f8f;
+    --ligne: #3a3128;
+    --blanc: #201a15;
+    --vert: #7fb08d;
+  }
+}
+:root[data-theme="dark"] {
+  --bordeaux: #e2929f;
+  --bordeaux-clair: #c06e7c;
+  --or: #e0b64f;
+  --or-light: #f0d78e;
+  --papier: #17130f;
+  --papier-dark: #241d17;
+  --encre: #f0e9de;
+  --encre-soft: #ab9f8f;
+  --ligne: #3a3128;
+  --blanc: #201a15;
+  --vert: #7fb08d;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -32,10 +69,64 @@ body {
 
 /* ── EN-TÊTE ─────────────────────────────────────────────────── */
 .header {
-  background: var(--bordeaux);
-  color: var(--blanc);
+  background: var(--brand);
+  color: #f7f3ec;
   border-bottom: 3px solid var(--or);
+  position: relative;
 }
+.gear-btn {
+  position: absolute; top: 18px; right: 20px;
+  background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.25);
+  color: #fff; width: 40px; height: 40px; border-radius: 11px;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.15s;
+}
+.gear-btn:hover { background: rgba(255,255,255,0.26); }
+.gear-btn .icon { width: 20px; height: 20px; }
+
+/* ── PANNEAU ⚙️ OPTIONS ── */
+.settings-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: none; align-items: flex-start; justify-content: center;
+  padding: 40px 16px; z-index: 100;
+}
+.settings-overlay.open { display: flex; }
+.settings-panel {
+  background: var(--papier); border: 1px solid var(--ligne); border-radius: 18px;
+  width: 100%; max-width: 440px; max-height: 88vh; overflow: auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.settings-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px; border-bottom: 1px solid var(--ligne);
+  position: sticky; top: 0; background: var(--papier); z-index: 1;
+}
+.settings-head h2 { font-family: var(--display); font-size: 19px; }
+.settings-close {
+  border: none; background: var(--papier-dark); color: var(--encre);
+  width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 15px;
+}
+.settings-sec { padding: 16px 20px; border-bottom: 1px solid var(--ligne); }
+.settings-sec h3 {
+  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--or); margin-bottom: 12px; font-weight: 600;
+}
+.seg { display: inline-flex; border: 1px solid var(--ligne); border-radius: 20px; overflow: hidden; }
+.seg button { border: none; background: none; padding: 7px 16px; font: inherit; font-size: 13px; color: var(--encre-soft); cursor: pointer; }
+.seg button.on { background: var(--brand); color: #f7f3ec; }
+.set-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.set-row:last-child { margin-bottom: 0; }
+.set-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
+.set-top b { color: var(--bordeaux); font-variant-numeric: tabular-nums; font-size: 15px; }
+.set-hint { font-size: 11.5px; color: var(--encre-soft); }
+.settings-panel input[type=range] { width: 100%; accent-color: var(--brand); }
+.settings-panel select {
+  width: 100%; padding: 9px 10px; border: 1px solid var(--ligne); border-radius: 9px;
+  background: var(--blanc); color: var(--encre); font: inherit; font-size: 14px;
+}
+.settings-about { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--encre-soft); border-bottom: none; }
+.settings-reset { border: 1px solid var(--ligne); background: none; color: var(--bordeaux); border-radius: 16px; padding: 6px 14px; font-size: 12.5px; cursor: pointer; }
+.settings-reset:hover { background: var(--brand); color: #f7f3ec; border-color: var(--brand); }
 .header-inner {
   max-width: 860px;
   margin: 0 auto;
@@ -129,7 +220,7 @@ body {
   cursor: pointer;
   transition: all 0.15s;
 }
-.suggestion:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+.suggestion:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
 
 /* ── DRILL-DOWN STATS (Année → Mois → Séance) ── */
 .scope-line {
@@ -143,7 +234,7 @@ body {
   border: 1px solid var(--ligne); border-radius: 20px;
   padding: 5px 12px; cursor: pointer; transition: all 0.15s;
 }
-.drill-reset:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+.drill-reset:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
 .drill-reset[hidden] { display: none; }
 .drill-crumb { font-size: 13px; color: var(--encre-soft); margin: 2px 0 14px; }
 .drill-crumb a {
@@ -214,7 +305,7 @@ body {
   font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
   transition: all 0.15s;
 }
-.new-search:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+.new-search:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
 
 /* ── EXPLORATEUR D'ÉVOLUTION PAR THÈME ── */
 .trend-panel { margin-bottom: 30px; padding-bottom: 24px; border-bottom: 2px solid var(--papier-dark); }
@@ -259,8 +350,8 @@ body {
   white-space: pre-wrap;
 }
 .msg-question .msg-bubble {
-  background: var(--bordeaux);
-  color: var(--blanc);
+  background: var(--brand);
+  color: #f7f3ec;
   border-color: var(--bordeaux);
   align-self: flex-start;
   max-width: 90%;
@@ -362,8 +453,8 @@ body {
   .main { padding-bottom: 170px; }   /* barre sur 2 lignes : plus de marge basse */
 }
 .ask-btn {
-  background: var(--bordeaux);
-  color: var(--blanc);
+  background: var(--brand);
+  color: #f7f3ec;
   border: none;
   border-radius: 4px;
   padding: 0 24px;
@@ -407,6 +498,7 @@ body {
   font-weight: 900;
   color: var(--bordeaux);
   line-height: 1;
+  white-space: nowrap;   /* garde « … € » sur une seule ligne */
 }
 .stat-label {
   font-size: 12px;
@@ -429,8 +521,8 @@ body {
 .yc-val { font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--encre); }
 .yc-val.yc-muted { color: var(--encre-soft); }
 .yc-bar {
-  width: 100%; max-width: 30px; border-radius: 4px 4px 0 0;
-  background: linear-gradient(0deg, var(--or), var(--bordeaux));
+  width: 100%; max-width: 30px; border-radius: 6px 6px 3px 3px;
+  background: linear-gradient(180deg, var(--bordeaux-clair), var(--bordeaux));
   transition: filter 0.15s;
 }
 .yc-col:hover .yc-bar { filter: brightness(1.08); }
@@ -455,7 +547,7 @@ body {
   color: var(--encre-soft); padding: 6px 16px; transition: background 0.15s, color 0.15s;
 }
 .yc-toggle button:hover { color: var(--bordeaux); }
-.yc-toggle button.active { background: var(--bordeaux); color: #fff; }
+.yc-toggle button.active { background: var(--brand); color: #fff; }
 .yc-col.yc-clic { cursor: pointer; }
 .yc-col.yc-clic:hover .yc-val { color: var(--bordeaux); }
 .th-year {
@@ -483,10 +575,36 @@ body {
 .bar-row.bar-clic:hover .bar-label { color: var(--bordeaux); }
 .bar-row.bar-sel { background: var(--papier-dark); }
 .bar-row.bar-sel .bar-label { color: var(--bordeaux); font-weight: 600; }
-.pv-clear { border: none; background: var(--bordeaux); color: #fff; border-radius: 50%; width: 17px; height: 17px; font-size: 10px; line-height: 1; cursor: pointer; vertical-align: middle; }
+.pv-clear { border: none; background: var(--brand); color: #fff; border-radius: 50%; width: 17px; height: 17px; font-size: 10px; line-height: 1; cursor: pointer; vertical-align: middle; }
+/* Lien date → PV (PDF) dans « Plus grosses dépenses » */
+.pv-pdf-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; }
+.pv-pdf-link:hover { text-decoration: underline; }
+.pv-pdf-link .icon { color: var(--or); }
+
+/* ── RENDU MARKDOWN DES RÉPONSES DU CHAT ── */
+.msg-bubble p { margin: 0 0 10px; }
+.msg-bubble p:last-child { margin-bottom: 0; }
+.msg-bubble .md-h { font-family: var(--display); font-size: 16px; font-weight: 600; margin: 14px 0 8px; color: var(--bordeaux); }
+.msg-bubble .md-ul { margin: 6px 0 10px; padding-left: 20px; }
+.msg-bubble .md-ul li { margin-bottom: 4px; }
+.msg-bubble .md-hr { border: none; border-top: 1px solid var(--ligne); margin: 12px 0; }
+.msg-bubble code { background: var(--papier-dark); border-radius: 4px; padding: 1px 5px; font-size: 0.92em; }
+.md-tablewrap { overflow-x: auto; margin: 10px 0; }
+.md-table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+.md-table th, .md-table td { border: 1px solid var(--ligne); padding: 7px 10px; text-align: left; vertical-align: top; }
+.md-table th { background: var(--papier-dark); font-weight: 600; color: var(--bordeaux); white-space: nowrap; }
+.md-table tr:nth-child(even) td { background: color-mix(in srgb, var(--papier-dark) 45%, transparent); }
+
+/* Actions d'export sous une réponse */
+.msg-actions { display: flex; gap: 8px; margin-top: 10px; }
+.msg-act {
+  border: 1px solid var(--ligne); background: var(--blanc); color: var(--bordeaux);
+  border-radius: 16px; padding: 4px 12px; font-size: 12.5px; cursor: pointer; transition: all 0.15s;
+}
+.msg-act:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
 .bar-label { font-size: 13px; width: 150px; text-align: right; color: var(--encre-soft); }
 .bar-track { flex: 1; height: 22px; background: var(--papier-dark); border-radius: 3px; overflow: hidden; }
-.bar-fill { height: 100%; background: linear-gradient(90deg, var(--bordeaux), var(--or)); border-radius: 3px; transition: width 0.6s ease; }
+.bar-fill { height: 100%; background: linear-gradient(90deg, var(--or), var(--or-light)); border-radius: 3px; transition: width 0.6s ease; }
 .bar-val { font-size: 13px; font-weight: 600; color: var(--bordeaux); width: 40px; }
 .bar-eur {
   font-size: 12.5px; color: var(--encre-soft); width: 92px; flex: none;

@@ -11,13 +11,27 @@ import anthropic
 from fastapi import HTTPException
 
 from config import (
-    NAMESPACE, CLAUDE_MODEL, TOP_K, MAX_SOURCES, SCORE_MIN,
+    NAMESPACE, CLAUDE_MODEL, ALLOWED_MODELS, TOP_K, MAX_SOURCES, SCORE_MIN,
     PINECONE_TIMEOUT, ANTHROPIC_TIMEOUT, logger,
 )
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
 from services.pinecone_service import get_pinecone_index
+from services.statistics import load_db
+
+
+def _pdf_url_map() -> dict:
+    """date ISO → URL du PDF officiel du PV, lue depuis le JSON (mtime-caché).
+    Permet d'ajouter le lien aux sources sans réindexer Pinecone. {} si indispo."""
+    try:
+        db = load_db()
+    except Exception:
+        return {}
+    return {
+        (s.get("seance", {}) or {}).get("date"): (s.get("seance", {}) or {}).get("source_url")
+        for s in db.get("seances", [])
+    }
 
 _anthropic_client: Optional[anthropic.Anthropic] = None
 
@@ -61,18 +75,39 @@ def _hit_score(h) -> float:
     return 0.0
 
 
-def answer(question_raw: str, commune_raw: Optional[str]) -> AnswerResponse:
+def _clamp(val, default, lo, hi, cast):
+    """Borne un override optionnel (menu Options) : None → défaut ; sinon cast
+    puis clip dans [lo, hi]. Toute valeur invalide retombe sur le défaut."""
+    if val is None:
+        return default
+    try:
+        return max(lo, min(hi, cast(val)))
+    except (TypeError, ValueError):
+        return default
+
+
+def answer(question_raw: str, commune_raw: Optional[str], *,
+           top_k: Optional[int] = None, max_sources: Optional[int] = None,
+           score_min: Optional[float] = None, model: Optional[str] = None) -> AnswerResponse:
     """Question ouverte → recherche RAG filtrée (commune + année) + réponse Claude
-    citée. Lève HTTPException(400/500) sur entrée vide ou erreur externe."""
+    citée. Les overrides (menu Options) sont bornés ici. Lève HTTPException(400/500)
+    sur entrée vide ou erreur externe."""
     question = (question_raw or "").strip()
     if not question:
         raise HTTPException(status_code=400, detail="Question vide")
+
+    # Overrides bornés côté serveur (le front ne peut pas forcer des valeurs
+    # coûteuses/dangereuses). Un modèle hors allowlist retombe sur le défaut.
+    top_k = _clamp(top_k, TOP_K, 5, 50, int)
+    max_sources = _clamp(max_sources, MAX_SOURCES, 1, 30, int)
+    score_min = _clamp(score_min, SCORE_MIN, 0.0, 0.95, float)
+    model = model if model in ALLOWED_MODELS else CLAUDE_MODEL
 
     # Filtres optionnels (métadonnées Pinecone) :
     #  - commune : absent/"toutes" → recherche croisée (comportement historique)
     #  - année   : détectée dans la question (« en 2018 », « depuis 2015 »…) pour
     #              que les sources correspondent bien à la période demandée.
-    query = {"inputs": {"text": question}, "top_k": TOP_K}
+    query = {"inputs": {"text": question}, "top_k": top_k}
     filters = {}
     commune = (commune_raw or "").strip().lower()
     if commune and commune not in ("toutes", "toute", "all", "tous"):
@@ -155,7 +190,7 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
     try:
         client = get_anthropic()
         response = client.messages.create(
-            model=CLAUDE_MODEL,
+            model=model,
             max_tokens=2048,
             temperature=0.2,   # factuel et cité : on limite la créativité
             system=SYSTEM_PROMPT,
@@ -181,18 +216,21 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
     not_found = "je ne trouve pas" in answer_text.lower()
     sources = []
     if not not_found:
+        url_map = _pdf_url_map()
         for h in norm:
-            if h["score"] < SCORE_MIN:
+            if h["score"] < score_min:
                 continue
             meta = h["metadata"]
+            date_str = str(meta.get("date", ""))
             sources.append(Source(
-                date=str(meta.get("date", "")),
+                date=date_str,
                 sp=int(float(meta.get("sp") or 0)),
                 titre=str(meta.get("titre", "")),
                 decision=str(meta.get("decision", "")),
                 score=round(float(h["score"]), 3),
+                url=url_map.get(date_str),
             ))
-            if len(sources) >= MAX_SOURCES:   # UI lisible ; Claude a reçu tous les TOP_K
+            if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
                 break
 
     return AnswerResponse(answer=answer_text, sources=sources)

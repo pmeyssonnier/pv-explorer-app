@@ -284,6 +284,7 @@ def compute_trend(db: dict, theme: str) -> dict:
                     "montant_eur": round(float(m), 2),
                     "titre": (p.get("titre") or "")[:120],
                     "decision": p.get("decision") or "",
+                    "url": (s.get("seance", {}) or {}).get("source_url"),
                 })
 
     annees = [

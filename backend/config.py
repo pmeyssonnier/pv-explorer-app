@@ -15,10 +15,16 @@ try:
 except ImportError:
     pass
 
+# Version applicative (affichée dans le menu Options du frontend).
+VERSION = "1.1.0"
+
 # ── Pinecone / modèle ───────────────────────────────────────────────────────
 INDEX_NAME = "pv-explorer"
 NAMESPACE = "pv"
 CLAUDE_MODEL = "claude-sonnet-4-6"   # bon rapport qualité/coût pour du public
+# Modèles Claude autorisés pour l'override « modèle » par requête (menu Options).
+# Toute valeur hors de cet ensemble retombe sur CLAUDE_MODEL (garde-fou coût).
+ALLOWED_MODELS = {"claude-sonnet-4-6", "claude-haiku-4-5-20251001"}
 
 # ── RAG ─────────────────────────────────────────────────────────────────────
 TOP_K = 30                           # passages récupérés (contexte donné à Claude).
@@ -26,7 +32,7 @@ TOP_K = 30                           # passages récupérés (contexte donné à
                                      # (ex. « évolution depuis 2012 ») sur ~4 400 points.
                                      # NB : le RAG reste sémantique — pour une agrégation
                                      # exhaustive par thème/année, voir l'endpoint /trend.
-MAX_SOURCES = 8                      # sources AFFICHÉES dans l'UI (lisibilité) —
+MAX_SOURCES = 15                     # sources AFFICHÉES dans l'UI (lisibilité) —
                                      # Claude reçoit les TOP_K, l'utilisateur voit le top.
 MAX_QUESTION_LEN = 500               # garde-fou coût : longueur max d'une question
 # Seuil de pertinence minimal (score cosinus) pour afficher une source.
