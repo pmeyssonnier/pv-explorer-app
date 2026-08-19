@@ -15,10 +15,16 @@ try:
 except ImportError:
     pass
 
+# Version applicative (affichée dans le menu Options du frontend).
+VERSION = "1.1.0"
+
 # ── Pinecone / modèle ───────────────────────────────────────────────────────
 INDEX_NAME = "pv-explorer"
 NAMESPACE = "pv"
 CLAUDE_MODEL = "claude-sonnet-4-6"   # bon rapport qualité/coût pour du public
+# Modèles Claude autorisés pour l'override « modèle » par requête (menu Options).
+# Toute valeur hors de cet ensemble retombe sur CLAUDE_MODEL (garde-fou coût).
+ALLOWED_MODELS = {"claude-sonnet-4-6", "claude-haiku-4-5-20251001"}
 
 # ── RAG ─────────────────────────────────────────────────────────────────────
 TOP_K = 30                           # passages récupérés (contexte donné à Claude).

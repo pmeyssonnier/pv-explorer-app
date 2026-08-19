@@ -13,6 +13,12 @@ class QuestionRequest(BaseModel):
     # Commune optionnelle. Absente ou "toutes" → recherche croisée (aucun
     # filtre, comportement historique). Sinon → filtre sur cette commune.
     commune: Optional[str] = Field(default=None, max_length=50)
+    # Overrides optionnels du menu « Options » (front). Re-bornés côté serveur
+    # dans rag.answer() ; ces bornes larges ne sont qu'une 1re barrière (422).
+    top_k: Optional[int] = Field(default=None, ge=1, le=100)
+    max_sources: Optional[int] = Field(default=None, ge=1, le=50)
+    score_min: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    model: Optional[str] = Field(default=None, max_length=60)
 
 
 class Source(BaseModel):

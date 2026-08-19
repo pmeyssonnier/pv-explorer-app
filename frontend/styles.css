@@ -5,7 +5,8 @@
    Corps   : Inter (lisibilité administrative)
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --bordeaux: #6d2233;
+  --brand: #6d2233;              /* rouge « fond fort » (header/boutons) — texte clair dessus */
+  --bordeaux: #6d2233;           /* accent texte/marques — s'éclaircit en thème sombre */
   --bordeaux-dark: #4d1523;
   --bordeaux-clair: #8f3a4b;
   --or: #c8952b;
@@ -20,6 +21,41 @@
   --display: 'Fraunces', Georgia, serif;
   --corps: 'Inter', system-ui, sans-serif;
 }
+
+/* ── THÈME SOMBRE ──────────────────────────────────────────────────────────
+   On ne redéfinit que les TOKENS : surfaces sombres, encre claire, et l'accent
+   --bordeaux éclairci (lisible sur fond sombre). --brand reste rouge foncé pour
+   les fonds à texte clair (header, boutons). Deux blocs : auto (préférence OS,
+   sauf choix « clair » explicite) et choix « sombre » explicite. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bordeaux: #e2929f;
+    --bordeaux-clair: #c06e7c;
+    --or: #e0b64f;
+    --or-light: #f0d78e;
+    --papier: #17130f;
+    --papier-dark: #241d17;
+    --encre: #f0e9de;
+    --encre-soft: #ab9f8f;
+    --ligne: #3a3128;
+    --blanc: #201a15;
+    --vert: #7fb08d;
+  }
+}
+:root[data-theme="dark"] {
+  --bordeaux: #e2929f;
+  --bordeaux-clair: #c06e7c;
+  --or: #e0b64f;
+  --or-light: #f0d78e;
+  --papier: #17130f;
+  --papier-dark: #241d17;
+  --encre: #f0e9de;
+  --encre-soft: #ab9f8f;
+  --ligne: #3a3128;
+  --blanc: #201a15;
+  --vert: #7fb08d;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -33,8 +69,8 @@ body {
 
 /* ── EN-TÊTE ─────────────────────────────────────────────────── */
 .header {
-  background: var(--bordeaux);
-  color: var(--blanc);
+  background: var(--brand);
+  color: #f7f3ec;
   border-bottom: 3px solid var(--or);
 }
 .header-inner {
@@ -130,7 +166,7 @@ body {
   cursor: pointer;
   transition: all 0.15s;
 }
-.suggestion:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+.suggestion:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
 
 /* ── DRILL-DOWN STATS (Année → Mois → Séance) ── */
 .scope-line {
@@ -144,7 +180,7 @@ body {
   border: 1px solid var(--ligne); border-radius: 20px;
   padding: 5px 12px; cursor: pointer; transition: all 0.15s;
 }
-.drill-reset:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+.drill-reset:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
 .drill-reset[hidden] { display: none; }
 .drill-crumb { font-size: 13px; color: var(--encre-soft); margin: 2px 0 14px; }
 .drill-crumb a {
@@ -215,7 +251,7 @@ body {
   font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
   transition: all 0.15s;
 }
-.new-search:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+.new-search:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
 
 /* ── EXPLORATEUR D'ÉVOLUTION PAR THÈME ── */
 .trend-panel { margin-bottom: 30px; padding-bottom: 24px; border-bottom: 2px solid var(--papier-dark); }
@@ -260,8 +296,8 @@ body {
   white-space: pre-wrap;
 }
 .msg-question .msg-bubble {
-  background: var(--bordeaux);
-  color: var(--blanc);
+  background: var(--brand);
+  color: #f7f3ec;
   border-color: var(--bordeaux);
   align-self: flex-start;
   max-width: 90%;
@@ -363,8 +399,8 @@ body {
   .main { padding-bottom: 170px; }   /* barre sur 2 lignes : plus de marge basse */
 }
 .ask-btn {
-  background: var(--bordeaux);
-  color: var(--blanc);
+  background: var(--brand);
+  color: #f7f3ec;
   border: none;
   border-radius: 4px;
   padding: 0 24px;
@@ -457,7 +493,7 @@ body {
   color: var(--encre-soft); padding: 6px 16px; transition: background 0.15s, color 0.15s;
 }
 .yc-toggle button:hover { color: var(--bordeaux); }
-.yc-toggle button.active { background: var(--bordeaux); color: #fff; }
+.yc-toggle button.active { background: var(--brand); color: #fff; }
 .yc-col.yc-clic { cursor: pointer; }
 .yc-col.yc-clic:hover .yc-val { color: var(--bordeaux); }
 .th-year {
@@ -485,7 +521,7 @@ body {
 .bar-row.bar-clic:hover .bar-label { color: var(--bordeaux); }
 .bar-row.bar-sel { background: var(--papier-dark); }
 .bar-row.bar-sel .bar-label { color: var(--bordeaux); font-weight: 600; }
-.pv-clear { border: none; background: var(--bordeaux); color: #fff; border-radius: 50%; width: 17px; height: 17px; font-size: 10px; line-height: 1; cursor: pointer; vertical-align: middle; }
+.pv-clear { border: none; background: var(--brand); color: #fff; border-radius: 50%; width: 17px; height: 17px; font-size: 10px; line-height: 1; cursor: pointer; vertical-align: middle; }
 /* Lien date → PV (PDF) dans « Plus grosses dépenses » */
 .pv-pdf-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; }
 .pv-pdf-link:hover { text-decoration: underline; }
@@ -511,7 +547,7 @@ body {
   border: 1px solid var(--ligne); background: var(--blanc); color: var(--bordeaux);
   border-radius: 16px; padding: 4px 12px; font-size: 12.5px; cursor: pointer; transition: all 0.15s;
 }
-.msg-act:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+.msg-act:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
 .bar-label { font-size: 13px; width: 150px; text-align: right; color: var(--encre-soft); }
 .bar-track { flex: 1; height: 22px; background: var(--papier-dark); border-radius: 3px; overflow: hidden; }
 .bar-fill { height: 100%; background: linear-gradient(90deg, var(--or), var(--or-light)); border-radius: 3px; transition: width 0.6s ease; }
