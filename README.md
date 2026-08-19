@@ -32,34 +32,49 @@ communal en langage naturel, avec réponses sourcées et statistiques.
 frontend sur **Vercel** (`pv-explorer.vercel.app`). *(Railway reste une
 alternative — `railway.json` est fourni.)*
 
+## Fonctionnalités
+
+**💬 Chat (RAG)** — questions en langage naturel, réponses **sourcées** (date + numéro de point) rendues en **Markdown** (tableaux, listes, gras). Filtre par commune et par **année** détectée dans la question. Réponses **exportables** (copier / `.md`).
+
+**📊 Statistiques** — exploration par **drill-down** : *Activité par année → par mois*. Les **4 KPI** (séances, points, votes, montants engagés) et les **thématiques** (avec le montant engagé par thème) se recalculent au périmètre affiché. **Cascade** : cliquer un PV affine les indicateurs à cette séance ; cliquer une thématique filtre les PV concernés. **Liste des procès-verbaux** groupée par année (récent d'abord), chaque PV lié à son **PDF officiel** sur `1030.be` (`source_url`).
+
+**📈 Évolution d'un thème** (`/trend`) — agrégation exhaustive des montants **par année** sur tous les points liés à un thème (complémentaire à la recherche sémantique), avec liens vers les PV.
+
+**⚙️ Options** — thème **clair / sombre / auto**, et réglages de recherche (sources affichées, étendue `TOP_K`, seuil de pertinence `SCORE_MIN`, modèle, ordre des sources) mémorisés par navigateur (localStorage) et **re-bornés côté serveur**. Numéro de version affiché.
+
 ## Structure du dépôt
 
 ```
 .
 ├── backend/                  → API FastAPI (déployée sur Render)
 │   ├── app.py                → point de montage (app + limiter + CORS + routers)
-│   ├── config.py             → constantes, CORS, logger
+│   ├── config.py             → constantes (modèle, RAG : TOP_K/MAX_SOURCES/SCORE_MIN, VERSION), CORS, logger
 │   ├── limiter.py            → rate limiter slowapi partagé
 │   ├── models/api.py         → schémas Pydantic (requêtes/réponses)
 │   ├── prompts/rag.py        → system prompt
 │   ├── utils/                → text.py (normalisation) · dates.py (filtre année)
 │   ├── services/             → rag.py · statistics.py · pinecone_service.py
-│   ├── routers/              → health.py · ask.py · stats.py
+│   ├── routers/              → health.py (/health, /ready) · ask.py (/ask) · stats.py (/stats, /trend)
 │   ├── index_pv.py           → indexation Pinecone (--commune, --input, --only-year)
 │   ├── requirements.txt      → versions épinglées
 │   ├── Procfile · railway.json → config Render / Railway
 │   ├── .env.example          → modèle de configuration
 │   └── pv_conseil_schaerbeek.json  → base des PV (lue par /stats et /trend)
 ├── frontend/                 → interface citoyen (déployée sur Vercel)
-│   ├── index.html            → chat + stats + sélecteur de commune
-│   └── vercel.json
+│   ├── index.html            → structure (chat, statistiques, menu ⚙️ Options)
+│   ├── app.js                → logique (RAG, drill-down stats, cascade, thème, export)
+│   ├── styles.css            → identité visuelle + thème clair / sombre
+│   └── vercel.json           → en-têtes de sécurité + CSP
 ├── scraping/                 → téléchargement des PV (Google Colab) — voir son README
 │   ├── pv_scraper_1030.py    → Schaerbeek (1030.be)
 │   ├── pv_scraper_evere.py   → Evere (publi.irisnet.be / Editoria)
 │   └── README.md             → savoir de scraping + chaîne de bout en bout
-├── pipeline/                 → extraction PDF → JSON (Colab)
-│   ├── pv_extraction_pipeline.py
-│   └── patch_multi_communes.py
+├── pipeline/                 → extraction PDF → JSON + audit (Colab)
+│   ├── pv_extraction_pipeline.py      → extraction PDF → JSON (Haiku)
+│   ├── audit_completeness.py          → audit de complétude hors-ligne (sans LLM)
+│   ├── reextract_targeted.py          → re-extraction ciblée des séances à trous
+│   ├── patch_multi_communes.py
+│   └── PV_Schaerbeek_scrapper.ipynb   → notebook d'orchestration (Colab)
 ├── tests/                    → suite pytest (fonctions pures + routes HTTP)
 ├── render.yaml               → Blueprint Render (déploiement backend)
 ├── ruff.toml · pytest.ini    → lint + config de tests
@@ -126,8 +141,9 @@ Via le Blueprint `render.yaml` (déjà configuré : tier gratuit, health check,
    *(`PV_JSON_PATH` et `ALLOWED_ORIGINS` sont dans le Blueprint)*
 4. **Apply** → Render build et déploie (tier gratuit : le service s'endort après
    ~15 min d'inactivité, ~50 s au réveil).
-5. Teste `https://TON-SERVICE.onrender.com/health` → `index_ok: true`,
-   `index_vectors: 193`.
+5. Teste la vivacité `https://TON-SERVICE.onrender.com/health` → `{"status":"ok"}`
+   (minimal), et la disponibilité `.../ready` → vérifie l'index Pinecone (statut +
+   nombre de vecteurs, ~8 700 pour Schaerbeek).
 
 *(Alternative Railway : Root Directory `backend`, mêmes variables, `railway.json`
 détecté automatiquement.)*
@@ -136,7 +152,7 @@ détecté automatiquement.)*
 
 ## 3. Déployer le frontend sur Vercel
 
-1. Dans `frontend/index.html`, `API_PROD` pointe vers l'URL du backend Render :
+1. Dans `frontend/app.js`, `API_PROD` pointe vers l'URL du backend Render :
    ```js
    const API_PROD = "https://pv-explorer-api.onrender.com";
    ```
