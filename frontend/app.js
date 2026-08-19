@@ -188,6 +188,84 @@ function hideChatTimer() {
   if (el) { el.style.display = 'none'; el.classList.remove('running'); el.textContent = ''; }
 }
 
+// ── DICTÉE VOCALE (Web Speech API — côté navigateur, français) ──
+// Amélioration progressive : le bouton micro n'est révélé que si le navigateur
+// sait reconnaître la voix (Chrome/Edge/Safari ; pas Firefox). La transcription
+// REMPLIT le champ (l'utilisateur relit puis clique « Demander ») — pas d'envoi
+// automatique. HTTPS requis (sinon start() échoue → message).
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let dictation = null;      // instance en cours
+let dictating = false;
+
+if (SpeechRec) {
+  const mb = document.getElementById('micBtn');
+  if (mb) mb.style.display = '';
+}
+
+// Indice transitoire dans le placeholder du champ (restauré ensuite).
+let _askPlaceholder = null;
+function _micHint(text) {
+  const input = document.getElementById('askInput');
+  if (!input) return;
+  if (_askPlaceholder === null) _askPlaceholder = input.getAttribute('placeholder') || '';
+  if (text === null) { input.setAttribute('placeholder', _askPlaceholder); _askPlaceholder = null; }
+  else input.setAttribute('placeholder', text);
+}
+
+function stopDictation() {
+  if (dictation) { try { dictation.stop(); } catch (e) {} }
+}
+
+function toggleDictation(btn) {
+  if (!SpeechRec) return;
+  if (dictating) { stopDictation(); return; }
+  const input = document.getElementById('askInput');
+  if (!input) return;
+  const base = input.value.trim() ? input.value.trim() + ' ' : '';
+
+  try {
+    dictation = new SpeechRec();
+    dictation.lang = 'fr-FR';
+    dictation.interimResults = true;
+    dictation.continuous = false;
+
+    dictation.onstart = () => {
+      dictating = true;
+      btn.classList.add('listening');
+      btn.setAttribute('aria-label', 'Arrêter la dictée');
+      _micHint('🔴 Parlez…');
+    };
+    dictation.onresult = (e) => {
+      let txt = '';
+      for (let i = 0; i < e.results.length; i++) txt += e.results[i][0].transcript;
+      input.value = base + txt;
+    };
+    dictation.onerror = (e) => {
+      const err = e && e.error;
+      if (err === 'not-allowed' || err === 'service-not-allowed')
+        _micHint('Micro refusé — autorisez l’accès au microphone');
+      else if (err === 'no-speech')
+        _micHint('Aucune parole détectée — réessayez');
+      // (le reste : onend nettoie l'UI)
+    };
+    dictation.onend = () => {
+      dictating = false; dictation = null;
+      btn.classList.remove('listening');
+      btn.setAttribute('aria-label', 'Dicter la question');
+      // Restaure le placeholder après un court instant si un indice d'erreur
+      // a été posé ; sinon immédiatement.
+      setTimeout(() => _micHint(null), 1800);
+      if (input.value.trim()) input.focus();
+    };
+    dictation.start();
+  } catch (e) {
+    dictating = false; dictation = null;
+    btn.classList.remove('listening');
+    _micHint('Dictée indisponible ici (HTTPS requis)');
+    setTimeout(() => _micHint(null), 1800);
+  }
+}
+
 // Afficher l'historique au chargement
 renderHistory();
 

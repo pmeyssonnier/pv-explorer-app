@@ -483,6 +483,28 @@ body {
 .ask-btn:hover { background: var(--bordeaux-dark); }
 .ask-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* Bouton micro (dictée vocale) — révélé par JS seulement si le navigateur gère
+   la reconnaissance vocale. Pulse en rouge « enregistrement » pendant l'écoute. */
+.mic-btn {
+  flex: 0 0 auto; width: 48px;
+  background: var(--blanc); border: 1px solid var(--ligne); border-radius: 4px;
+  color: var(--bordeaux); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.mic-btn:hover { border-color: var(--bordeaux); }
+.mic-btn .icon { width: 20px; height: 20px; }
+.mic-btn.listening {
+  background: #c0392b; border-color: #c0392b; color: #fff;
+  animation: micPulse 1.15s ease-out infinite;
+}
+@keyframes micPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(192,57,43,.5); }
+  70%  { box-shadow: 0 0 0 11px rgba(192,57,43,0); }
+  100% { box-shadow: 0 0 0 0 rgba(192,57,43,0); }
+}
+@media (prefers-reduced-motion: reduce) { .mic-btn.listening { animation: none; } }
+
 /* ── CHARGEMENT ──────────────────────────────────────────────── */
 .loading { display: flex; align-items: center; gap: 10px; color: var(--encre-soft); font-size: 14px; }
 .dots { display: inline-flex; gap: 4px; }
