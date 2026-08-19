@@ -202,14 +202,36 @@ if (SpeechRec) {
   if (mb) mb.style.display = '';
 }
 
-// Indice transitoire dans le placeholder du champ (restauré ensuite).
-let _askPlaceholder = null;
-function _micHint(text) {
-  const input = document.getElementById('askInput');
-  if (!input) return;
-  if (_askPlaceholder === null) _askPlaceholder = input.getAttribute('placeholder') || '';
-  if (text === null) { input.setAttribute('placeholder', _askPlaceholder); _askPlaceholder = null; }
-  else input.setAttribute('placeholder', text);
+// Indice visible sous la barre de saisie (plus lisible sur mobile qu'un
+// placeholder tronqué). kind : 'live' (écoute) ou 'err' (erreur actionnable).
+let _micHintTimer = null;
+function micHint(text, kind) {
+  const el = document.getElementById('micHint');
+  if (!el) return;
+  if (_micHintTimer) { clearTimeout(_micHintTimer); _micHintTimer = null; }
+  if (!text) { el.hidden = true; el.textContent = ''; el.className = 'mic-hint'; return; }
+  el.textContent = text;
+  el.className = 'mic-hint' + (kind ? ' ' + kind : '');
+  el.hidden = false;
+  if (kind === 'err') _micHintTimer = setTimeout(() => micHint(null), 7000);  // laisse le temps de lire
+}
+
+// Message d'erreur actionnable selon le code renvoyé par l'API.
+function micErrorMessage(err) {
+  switch (err) {
+    case 'not-allowed':
+    case 'service-not-allowed':
+      return '🎤 Micro bloqué par le navigateur. Rechargez la page, puis autorisez le micro : ' +
+             'icône 🔒 dans la barre d’adresse → Autorisations → Microphone → Autoriser.';
+    case 'no-speech':
+      return 'Aucune parole détectée — réappuyez sur le micro et parlez.';
+    case 'audio-capture':
+      return 'Aucun micro détecté sur l’appareil.';
+    case 'network':
+      return 'Reconnaissance vocale indisponible (problème réseau).';
+    default:
+      return 'Dictée indisponible (' + (err || 'erreur inconnue') + ').';
+  }
 }
 
 function stopDictation() {
@@ -222,6 +244,7 @@ function toggleDictation(btn) {
   const input = document.getElementById('askInput');
   if (!input) return;
   const base = input.value.trim() ? input.value.trim() + ' ' : '';
+  let errored = false;
 
   try {
     dictation = new SpeechRec();
@@ -233,7 +256,7 @@ function toggleDictation(btn) {
       dictating = true;
       btn.classList.add('listening');
       btn.setAttribute('aria-label', 'Arrêter la dictée');
-      _micHint('🔴 Parlez…');
+      micHint('🔴 Écoute… parlez maintenant', 'live');
     };
     dictation.onresult = (e) => {
       let txt = '';
@@ -241,28 +264,22 @@ function toggleDictation(btn) {
       input.value = base + txt;
     };
     dictation.onerror = (e) => {
-      const err = e && e.error;
-      if (err === 'not-allowed' || err === 'service-not-allowed')
-        _micHint('Micro refusé — autorisez l’accès au microphone');
-      else if (err === 'no-speech')
-        _micHint('Aucune parole détectée — réessayez');
-      // (le reste : onend nettoie l'UI)
+      errored = true;
+      micHint(micErrorMessage(e && e.error), 'err');
     };
     dictation.onend = () => {
       dictating = false; dictation = null;
       btn.classList.remove('listening');
       btn.setAttribute('aria-label', 'Dicter la question');
-      // Restaure le placeholder après un court instant si un indice d'erreur
-      // a été posé ; sinon immédiatement.
-      setTimeout(() => _micHint(null), 1800);
+      if (!errored) micHint(null);          // efface l'indice « Écoute… » ; garde le message d'erreur
       if (input.value.trim()) input.focus();
     };
     dictation.start();
   } catch (e) {
     dictating = false; dictation = null;
     btn.classList.remove('listening');
-    _micHint('Dictée indisponible ici (HTTPS requis)');
-    setTimeout(() => _micHint(null), 1800);
+    // start() lève surtout hors HTTPS (contexte non sécurisé).
+    micHint('Dictée indisponible ici — le micro nécessite une connexion sécurisée (HTTPS).', 'err');
   }
 }
 

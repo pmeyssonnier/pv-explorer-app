@@ -505,6 +505,20 @@ body {
 }
 @media (prefers-reduced-motion: reduce) { .mic-btn.listening { animation: none; } }
 
+/* Indice de dictée sous la barre : écoute (live) ou erreur actionnable (err). */
+.mic-hint {
+  margin-top: 8px; font-size: 13px; line-height: 1.4;
+  padding: 8px 12px; border-radius: 6px;
+}
+.mic-hint.live {
+  color: #c0392b; font-weight: 600;
+  background: color-mix(in srgb, #c0392b 8%, transparent);
+}
+.mic-hint.err {
+  color: var(--encre); background: var(--blanc);
+  border: 1px solid var(--ligne); border-left: 3px solid var(--bordeaux);
+}
+
 /* ── CHARGEMENT ──────────────────────────────────────────────── */
 .loading { display: flex; align-items: center; gap: 10px; color: var(--encre-soft); font-size: 14px; }
 .dots { display: inline-flex; gap: 4px; }
