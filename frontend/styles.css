@@ -131,6 +131,70 @@ body {
 }
 .suggestion:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
 
+/* ── DRILL-DOWN STATS (Année → Mois → Séance) ── */
+.scope-line {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
+}
+.scope-title { font-family: var(--display); font-weight: 600; font-size: 18px; }
+.scope-title b { color: var(--bordeaux); }
+.drill-reset {
+  font-size: 12.5px; color: var(--bordeaux); background: none;
+  border: 1px solid var(--ligne); border-radius: 20px;
+  padding: 5px 12px; cursor: pointer; transition: all 0.15s;
+}
+.drill-reset:hover { background: var(--bordeaux); color: var(--blanc); border-color: var(--bordeaux); }
+.drill-reset[hidden] { display: none; }
+.drill-crumb { font-size: 13px; color: var(--encre-soft); margin: 2px 0 14px; }
+.drill-crumb a {
+  color: var(--bordeaux); cursor: pointer;
+  text-decoration: underline dotted; text-underline-offset: 3px;
+}
+.drill-crumb a:hover { text-decoration-style: solid; }
+.drill-crumb .crumb-sep { margin: 0 7px; color: var(--ligne); }
+.drill-crumb .crumb-here { color: var(--encre); font-weight: 600; }
+/* Mois focalisé (KPI + thématiques affinés à cette séance) */
+.yc-col.yc-sel .yc-bar { outline: 2.5px solid var(--or); outline-offset: 2px; filter: brightness(1.08); }
+.yc-col.yc-sel .yc-yr, .yc-col.yc-sel .yc-val { color: var(--bordeaux); font-weight: 700; }
+
+/* Liste des procès-verbaux (filtrée par le drill-down ; clic = affine KPI/thèmes) */
+.pv-list { display: flex; flex-direction: column; }
+.pv-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 7px 10px; margin: 0 -10px; border-bottom: 1px solid var(--ligne); border-radius: 8px;
+}
+.pv-row:last-of-type { border-bottom: none; }
+.pv-head { display: inline-flex; align-items: center; gap: 8px; }
+.pv-pick {
+  border: none; background: none; padding: 0; cursor: pointer; font: inherit;
+  font-size: 14px; font-weight: 500; color: var(--bordeaux); text-align: left;
+}
+.pv-pick:hover { text-decoration: underline; }
+.pv-pdf { display: inline-flex; color: var(--or); }
+.pv-pdf .icon { width: 15px; height: 15px; }
+.pv-meta { font-size: 12.5px; color: var(--encre-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Groupes par année (vue « toutes les années ») */
+.pv-group { border-bottom: 1px solid var(--ligne); }
+.pv-group:last-child { border-bottom: none; }
+.pv-group-head {
+  display: flex; align-items: center; gap: 9px; width: 100%;
+  border: none; background: none; cursor: pointer; font: inherit;
+  padding: 10px 2px; color: var(--encre); text-align: left;
+}
+.pv-group-head:hover .pv-group-year { color: var(--bordeaux); }
+.pv-caret { color: var(--or); font-size: 12px; width: 12px; }
+.pv-group-year { font-family: var(--display); font-weight: 600; font-size: 15px; }
+.pv-group-count { font-size: 12px; color: var(--encre-soft); }
+.pv-group-body { padding-bottom: 6px; }
+.pv-group-body .pv-row { padding-left: 21px; }
+.pv-row.pv-sel { background: var(--papier-dark); }
+.pv-row.pv-sel .pv-pick { font-weight: 700; }
+.pv-row.pv-sel::before {
+  content: ""; position: absolute; left: 0; width: 3px; height: 24px;
+  background: var(--or); border-radius: 2px;
+}
+.pv-row { position: relative; }
+
 /* ── HISTORIQUE + NOUVELLE RECHERCHE ── */
 .history { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--ligne); }
 .history-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -414,10 +478,21 @@ body {
   border-bottom: 1px solid var(--ligne);
 }
 .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.bar-row.bar-clic { cursor: pointer; border-radius: 6px; padding: 2px 6px; margin-left: -6px; margin-right: -6px; transition: background 0.12s; }
+.bar-row.bar-clic:hover { background: var(--papier-dark); }
+.bar-row.bar-clic:hover .bar-label { color: var(--bordeaux); }
+.bar-row.bar-sel { background: var(--papier-dark); }
+.bar-row.bar-sel .bar-label { color: var(--bordeaux); font-weight: 600; }
+.pv-clear { border: none; background: var(--bordeaux); color: #fff; border-radius: 50%; width: 17px; height: 17px; font-size: 10px; line-height: 1; cursor: pointer; vertical-align: middle; }
 .bar-label { font-size: 13px; width: 150px; text-align: right; color: var(--encre-soft); }
 .bar-track { flex: 1; height: 22px; background: var(--papier-dark); border-radius: 3px; overflow: hidden; }
 .bar-fill { height: 100%; background: linear-gradient(90deg, var(--bordeaux), var(--or)); border-radius: 3px; transition: width 0.6s ease; }
 .bar-val { font-size: 13px; font-weight: 600; color: var(--bordeaux); width: 40px; }
+.bar-eur {
+  font-size: 12.5px; color: var(--encre-soft); width: 92px; flex: none;
+  text-align: right; font-variant-numeric: tabular-nums;
+}
+@media (max-width: 520px) { .bar-eur { width: 66px; font-size: 11.5px; } }
 
 .error-box {
   background: #fdf0ed;
