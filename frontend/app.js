@@ -148,44 +148,20 @@ function newSearch() {
   document.getElementById('conversation').innerHTML = '';
   document.getElementById('introCard').style.display = '';
   document.getElementById('newSearchBtn').style.display = 'none';
-  hideChatTimer();
   const input = document.getElementById('askInput');
   if (input) input.value = '';
   renderHistory();
   window.scrollTo(0, 0);
 }
 
-// ── CHRONO du chat (petit message au-dessus de la conversation) ──
-// Pendant l'appel : « En cours depuis X s » (rafraîchi). À la fin : fige sur
-// « Durée d'exécution : X s ». Mesure le temps réel vu par le citoyen (réveil
-// Render inclus), pas le temps serveur.
-let chatTimerId = null;
-let chatTimerStart = 0;
-function startChatTimer() {
-  const el = document.getElementById('chatTimer');
-  if (!el) return;
-  chatTimerStart = Date.now();
-  el.style.display = '';
-  el.classList.add('running');
-  const tick = () => {
-    const s = Math.floor((Date.now() - chatTimerStart) / 1000);
-    el.textContent = `⏱ En cours depuis ${s} s`;
-  };
-  tick();
-  chatTimerId = setInterval(tick, 250);
-}
-function stopChatTimer() {
-  if (chatTimerId) { clearInterval(chatTimerId); chatTimerId = null; }
-  const el = document.getElementById('chatTimer');
-  if (!el) return;
-  const s = ((Date.now() - chatTimerStart) / 1000).toFixed(1);
-  el.classList.remove('running');
-  el.textContent = `⏱ Durée d'exécution : ${s} s`;
-}
-function hideChatTimer() {
-  if (chatTimerId) { clearInterval(chatTimerId); chatTimerId = null; }
-  const el = document.getElementById('chatTimer');
-  if (el) { el.style.display = 'none'; el.classList.remove('running'); el.textContent = ''; }
+// ── CHRONO du chat (attaché à CHAQUE réponse) ──
+// Chaque question a son propre chrono : pendant l'appel, un compteur vit dans la
+// bulle de chargement (« En cours… X s ») ; à la fin, la durée figée est
+// insérée DANS le bloc-réponse correspondant (et non dans un bandeau global qui
+// resterait épinglé en haut quand on enchaîne les questions). Mesure le temps
+// réel vu par le citoyen (réveil Render inclus), pas le temps serveur.
+function fmtDuration(t0) {
+  return `⏱ Durée d'exécution : ${((Date.now() - t0) / 1000).toFixed(1)} s`;
 }
 
 // ── DICTÉE VOCALE (Web Speech API — côté navigateur, français) ──
@@ -312,17 +288,23 @@ async function submitQuestion() {
            onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();reuseQuestion(this);}">${escapeHtml(question)}</div>
     </div>`);
 
-  // Afficher le chargement
-  const loadingId = 'loading-' + Date.now();
+  // Afficher le chargement (chrono propre à cette question, vivant dans la bulle)
+  const t0 = Date.now();
+  const loadingId = 'loading-' + t0;
+  const liveId = 'timer-' + t0;
   conv.insertAdjacentHTML('beforeend', `
     <div class="msg" id="${loadingId}">
       <div class="msg-role">Assistant</div>
       <div class="msg-bubble">
         <div class="loading"><span>Recherche dans les procès-verbaux</span>
         <span class="dots"><span></span><span></span><span></span></span></div>
+        <div class="msg-time msg-time-live" id="${liveId}" role="status" aria-live="polite">⏱ En cours… 0 s</div>
       </div>
     </div>`);
-  startChatTimer();
+  const timerId = setInterval(() => {
+    const el = document.getElementById(liveId);
+    if (el) el.textContent = `⏱ En cours… ${Math.floor((Date.now() - t0) / 1000)} s`;
+  }, 250);
   window.scrollTo(0, document.body.scrollHeight);
 
   // Filtre commune : "Toutes" (value vide) → on n'envoie rien (recherche croisée)
@@ -353,6 +335,7 @@ async function submitQuestion() {
     }
 
     const data = await res.json();
+    clearInterval(timerId);
     document.getElementById(loadingId).remove();
 
     // Construire les sources (ordre selon les Options : pertinence [défaut] ou date)
@@ -412,6 +395,7 @@ async function submitQuestion() {
         <div class="msg-role">Assistant</div>
         <div class="msg-bubble">${renderMarkdown(data.answer)}</div>
         ${sourcesHtml}
+        <div class="msg-time">${fmtDuration(t0)}</div>
         <div class="msg-actions" data-md="${encodeURIComponent(data.answer || '')}" data-q="${encodeURIComponent(question || '')}">
           <button class="msg-act" type="button" onclick="copyAnswer(this)">Copier</button>
           <button class="msg-act" type="button" onclick="downloadAnswer(this)">Exporter (.md)</button>
@@ -420,6 +404,7 @@ async function submitQuestion() {
       </div>`);
 
   } catch (err) {
+    clearInterval(timerId);
     document.getElementById(loadingId).remove();
     conv.insertAdjacentHTML('beforeend', `
       <div class="msg">
@@ -428,10 +413,10 @@ async function submitQuestion() {
           Impossible d'obtenir une réponse. ${escapeHtml(err.message)}<br>
           <small>Vérifiez que le backend est démarré (${API_URL}).</small>
         </div>
+        <div class="msg-time">${fmtDuration(t0)}</div>
       </div>`);
   }
 
-  stopChatTimer();
   isLoading = false;
   document.getElementById('askBtn').disabled = false;
   window.scrollTo(0, document.body.scrollHeight);
