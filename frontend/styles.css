@@ -134,6 +134,25 @@ body {
 .settings-about { display: flex; justify-content: space-between; align-items: center; font-size: 14.5px; color: var(--encre-soft); border-bottom: none; }
 .settings-reset { border: 1px solid var(--ligne); background: none; color: var(--bordeaux); border-radius: 18px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
 .settings-reset:hover { background: var(--brand); color: #f7f3ec; border-color: var(--brand); }
+/* Mobile : on garde le panneau confortable sur tablette/PC mais on COMPACTE
+   tout (marges, titres, contrôles, texte) pour que ça tienne sans déborder. */
+@media (max-width: 560px) {
+  .settings-overlay { padding: 20px 12px; }
+  .settings-head { padding: 15px 18px; }
+  .settings-head h2 { font-size: 20px; }
+  .settings-close { width: 32px; height: 32px; font-size: 16px; }
+  .settings-sec { padding: 15px 18px; }
+  .settings-sec h3 { font-size: 12px; margin-bottom: 12px; }
+  .seg button { padding: 7px 14px; font-size: 13px; }
+  .set-row { gap: 6px; margin-bottom: 15px; }
+  .set-top { font-size: 14px; }
+  .set-top b { font-size: 15px; }
+  .set-hint { font-size: 12px; }
+  .settings-panel input[type=range] { height: 20px; }
+  .settings-panel select { padding: 10px; font-size: 14.5px; }
+  .settings-about { font-size: 13px; }
+  .settings-reset { padding: 7px 14px; font-size: 13px; }
+}
 .header-inner {
   max-width: var(--content);
   margin: 0 auto;
