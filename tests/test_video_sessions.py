@@ -5,7 +5,7 @@ import json
 import re
 from pathlib import Path
 
-from services.rag import _video_session_map
+from utils.video import video_session_map
 
 ROOT = Path(__file__).resolve().parent.parent
 SESSIONS = ROOT / "backend" / "video_sessions.json"
@@ -21,6 +21,6 @@ def test_video_sessions_file_valid():
 
 
 def test_video_session_map_reads_file():
-    m = _video_session_map()
+    m = video_session_map()
     assert isinstance(m, dict) and m
     assert m.get("2026-02-11", "").startswith("https://www.youtube.com/watch?v=")

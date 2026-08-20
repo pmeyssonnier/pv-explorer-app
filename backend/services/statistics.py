@@ -12,6 +12,7 @@ from collections import Counter, defaultdict
 
 from config import PV_JSON_PATH
 from utils.text import _strip_accents, _canon_theme
+from utils.video import video_session_map
 
 
 # Cache mémoire du JSON parsé : /stats et /trend le relisaient (~7,6 Mo) à
@@ -193,6 +194,7 @@ def compute_stats(db: dict) -> dict:
     # côté frontend (KPI + thématiques recalculés à la volée pour chaque niveau,
     # sans nouvel appel serveur). Montant filtré comme le KPI global.
     seances_resume = []
+    vmap = video_session_map()          # date → URL vidéo de séance (si filmée)
     for s in db.get("seances", []):
         meta = s.get("seance", {}) or {}
         date = meta.get("date")
@@ -223,6 +225,8 @@ def compute_stats(db: dict) -> dict:
             # URL publique du PDF : pass-through (à renseigner plus tard dans le JSON
             # source via un champ url/source_url) → le lien apparaît dès qu'elle existe.
             "url": meta.get("url") or meta.get("source_url"),
+            # URL de la vidéo de séance (si filmée) → lien « ▶ vidéo » dans la liste des PV.
+            "video_url": vmap.get(date),
         })
     seances_resume.sort(key=lambda x: x["date"])
 
