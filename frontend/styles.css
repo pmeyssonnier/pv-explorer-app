@@ -649,6 +649,11 @@ body {
 .video-link:hover { text-decoration: underline; }
 .video-link .icon { width: 13px; height: 13px; color: var(--bordeaux); vertical-align: 0; }
 
+/* Petit lien « ▶ vidéo » (séance filmée) accolé à une délibération. */
+.video-session-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; font-size: 11px; white-space: nowrap; }
+.video-session-link:hover { text-decoration: underline; }
+.video-session-link .icon { width: 11px; height: 11px; color: var(--bordeaux); vertical-align: -1px; margin-right: 1px; }
+
 /* ── RENDU MARKDOWN DES RÉPONSES DU CHAT ── */
 .msg-bubble p { margin: 0 0 10px; }
 .msg-bubble p:last-child { margin-bottom: 0; }

@@ -32,6 +32,9 @@ class Source(BaseModel):
     url: Optional[str] = None
     # Type de source : "pv" (délibération, défaut) ou "video_conseil" (débat filmé).
     source_type: str = "pv"
+    # Lien vers la vidéo de la séance (début) quand elle a été filmée — pour un
+    # « ▶ voir la séance » sur une délibération, même sans chapitrage. None sinon.
+    video_url: Optional[str] = None
 
 
 class AnswerResponse(BaseModel):

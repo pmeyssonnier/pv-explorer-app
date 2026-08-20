@@ -32,6 +32,7 @@ import yt_dlp
 
 CHANNEL = "https://www.youtube.com/@1030be/videos"
 OUT_PATH = "/content/pv_video_conseil_schaerbeek.json"
+SESSIONS_PATH = "/content/video_sessions.json"   # date → URL vidéo (à committer dans backend/)
 MAX_VIDEOS = None          # None = toutes les séances ; un entier pour un test
 
 # Indices « néerlandais » : servent à couper la moitié NL du titre bilingue.
@@ -198,6 +199,15 @@ def main():
     db = {"source": "video_conseil_schaerbeek", "channel": "@1030be", "seances": seances}
     with open(OUT_PATH, "w", encoding="utf-8") as f:
         json.dump(db, f, ensure_ascii=False, indent=2)
+
+    # Carte date → URL de la vidéo de séance (TOUTES les séances filmées, même non
+    # chapitrées) : alimente le lien « ▶ voir la séance » du backend
+    # (backend/video_sessions.json). À committer quand de nouvelles séances sont
+    # ajoutées.
+    sessions = {s["date"]: s["video_url"] for s in seances if s.get("video_url")}
+    with open(SESSIONS_PATH, "w", encoding="utf-8") as f:
+        json.dump(dict(sorted(sessions.items(), reverse=True)), f, ensure_ascii=False, indent=2)
+    print(f"🎬 {len(sessions)} séances filmées → {SESSIONS_PATH}")
 
     tot = sum(len(s["points"]) for s in seances)
     avec = sum(1 for s in seances if s["points"])
