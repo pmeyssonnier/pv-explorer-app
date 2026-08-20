@@ -251,11 +251,12 @@ body {
 /* Liste des procès-verbaux (filtrée par le drill-down ; clic = affine KPI/thèmes) */
 .pv-list { display: flex; flex-direction: column; }
 .pv-row {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  display: flex; align-items: center; gap: 10px;
   padding: 7px 10px; margin: 0 -10px; border-bottom: 1px solid var(--ligne); border-radius: 8px;
 }
 .pv-row:last-of-type { border-bottom: none; }
-.pv-head { display: inline-flex; align-items: center; gap: 8px; }
+.pv-date { flex: 0 0 96px; }                          /* colonne date fixe → icônes alignées */
+.pv-icons { flex: 0 0 auto; min-width: 38px; display: inline-flex; align-items: center; gap: 4px; }
 .pv-pick {
   border: none; background: none; padding: 0; cursor: pointer; font: inherit;
   font-size: 14px; font-weight: 500; color: var(--bordeaux); text-align: left;
@@ -265,7 +266,8 @@ body {
 .pv-pdf .icon { width: 15px; height: 15px; }
 .pv-video { display: inline-flex; color: var(--bordeaux); margin-left: 2px; }
 .pv-video .icon { width: 15px; height: 15px; }
-.pv-meta { font-size: 12.5px; color: var(--encre-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pv-meta { flex: 1 1 auto; font-size: 12.5px; color: var(--encre-soft); font-variant-numeric: tabular-nums; }
+.pv-montant { white-space: nowrap; }
 /* Groupes par année (vue « toutes les années ») */
 .pv-group { border-bottom: 1px solid var(--ligne); }
 .pv-group:last-child { border-bottom: none; }

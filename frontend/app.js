@@ -377,14 +377,11 @@ async function submitQuestion() {
         const seance = s.url
           ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}</a>`
           : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}`;
-        // Séance filmée (sans chapitrage précis) → lien vers la vidéo (début),
-        // sur sa propre ligne pour ne pas élargir la colonne (débordement mobile).
-        const vid = s.video_url
-          ? `<br><a class="video-session-link" href="${s.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la vidéo de la séance"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo</a>`
-          : '';
+        // Pas de lien vidéo ici : dans le chat, les vidéos ont leur propre groupe
+        // « Débats filmés » — l'ajouter sur les délibérations re-mélangeait les deux.
         return `
         <div class="source-item">
-          <div class="source-ref">${seance}<br>Point SP ${s.sp}${vid}</div>
+          <div class="source-ref">${seance}<br>Point SP ${s.sp}</div>
           <div class="source-titre">${escapeHtml(s.titre)}</div>
           <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
         </div>`;
@@ -625,9 +622,9 @@ function listSeances() {
 function pvRowHtml(s) {
   const sel = s.date === selectedSeance;
   const label = `Séance du ${formatDate(s.date)}`;
-  const head = `<button type="button" class="pv-pick" onclick="selectSeance('${s.date}')"
-      title="Afficher les indicateurs et thématiques de cette séance">${label}</button>`
-    + (s.url
+  const dateBtn = `<button type="button" class="pv-pick" onclick="selectSeance('${s.date}')"
+      title="Afficher les indicateurs et thématiques de cette séance">${label}</button>`;
+  const icons = (s.url
       ? `<a class="pv-pdf" href="${s.url}" target="_blank" rel="noopener noreferrer"
            title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg></a>`
       : '')
@@ -635,9 +632,12 @@ function pvRowHtml(s) {
       ? `<a class="pv-video" href="${s.video_url}" target="_blank" rel="noopener noreferrer"
            title="Voir la vidéo de la séance"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg></a>`
       : '');
+  // Colonnes fixes : date | icônes | méta → tout aligné à gauche, sans flottement.
   return `<div class="pv-row${sel ? ' pv-sel' : ''}">`
-    + `<span class="pv-head">${head}</span>`
-    + `<span class="pv-meta">${fmtInt(s.points)} points · ${fmtInt(s.votes)} votes · ${fmtMontant(s.montant)}</span></div>`;
+    + `<span class="pv-date">${dateBtn}</span>`
+    + `<span class="pv-icons">${icons}</span>`
+    + `<span class="pv-meta">${fmtInt(s.points)} points · ${fmtInt(s.votes)} votes · `
+    + `<span class="pv-montant">${fmtMontant(s.montant)}</span></span></div>`;
 }
 
 // Liste des PV du périmètre. « Toutes les années » → groupée par année (repliable) ;
