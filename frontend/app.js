@@ -360,20 +360,20 @@ async function submitQuestion() {
     let srcs = data.sources || [];
     if (settings.order === 'date') srcs = srcs.slice().sort((a, b) => a.date < b.date ? 1 : -1);
     if (srcs.length) {
-      const items = srcs.map(s => {
-        // Débat filmé (vidéo) : lien « ▶ voir le débat » vers l'instant exact.
-        if (s.source_type === 'video_conseil') {
-          const ref = s.url
-            ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat · ${formatDate(s.date)}</a>`
-            : `<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débat du ${formatDate(s.date)}`;
-          return `
+      // Rendu d'un débat filmé (lien « ▶ voir le débat » vers l'instant exact).
+      const videoItem = s => {
+        const ref = s.url
+          ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat · ${formatDate(s.date)}</a>`
+          : `<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débat du ${formatDate(s.date)}`;
+        return `
         <div class="source-item source-video">
           <div class="source-ref">${ref}</div>
           <div class="source-titre">${escapeHtml(s.titre)}</div>
           ${s.decision ? `<div class="source-decision">${escapeHtml(s.decision)}</div>` : ''}
         </div>`;
-        }
-        // Délibération (PV) : lien vers le PDF officiel.
+      };
+      // Rendu d'une délibération (lien vers le PDF officiel du PV).
+      const pvItem = s => {
         const seance = s.url
           ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}</a>`
           : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}`;
@@ -383,10 +383,26 @@ async function submitQuestion() {
           <div class="source-titre">${escapeHtml(s.titre)}</div>
           <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
         </div>`;
-      }).join('');
+      };
+
+      // Groupes visibles, débats filmés d'abord (pour les mettre en avant).
+      const vids = srcs.filter(s => s.source_type === 'video_conseil');
+      const pvs = srcs.filter(s => s.source_type !== 'video_conseil');
+      let groups = '';
+      if (vids.length) {
+        groups += `<div class="src-group src-group-video"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débats filmés · ${vids.length}</div>`
+          + vids.map(videoItem).join('');
+      }
+      if (pvs.length) {
+        groups += `<div class="src-group"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Délibérations · ${pvs.length}</div>`
+          + pvs.map(pvItem).join('');
+      }
+      const dont = vids.length
+        ? ` · dont ${vids.length} débat${vids.length > 1 ? 's' : ''} filmé${vids.length > 1 ? 's' : ''} 🎥`
+        : '';
       sourcesHtml = `<div class="sources">
-        <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length}</div>
-        ${items}</div>`;
+        <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length}${dont}</div>
+        ${groups}</div>`;
     }
 
     conv.insertAdjacentHTML('beforeend', `

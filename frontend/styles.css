@@ -387,6 +387,16 @@ body {
   font-weight: 600;
   margin-bottom: 8px;
 }
+/* En-tête de groupe de sources (Débats filmés / Délibérations). */
+.src-group {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  font-weight: 700; color: var(--encre-soft);
+  margin: 12px 0 6px;
+}
+.src-group .icon { width: 13px; height: 13px; color: var(--or); vertical-align: 0; }
+.src-group-video { color: var(--bordeaux); }
+.src-group-video .icon { color: var(--bordeaux); }
 .source-item {
   display: flex;
   align-items: flex-start;
