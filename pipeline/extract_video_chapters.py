@@ -30,7 +30,9 @@ import time
 
 import yt_dlp
 
-CHANNEL = "https://www.youtube.com/@1030be/videos"
+CHANNEL_BASE = "https://www.youtube.com/@1030be"
+# /streams = livestreams archivés (les séances 2025+ n'y sont QUE là, pas /videos).
+TABS = ("/videos", "/streams")
 OUT_PATH = "/content/pv_video_conseil_schaerbeek.json"
 SESSIONS_PATH = "/content/video_sessions.json"   # date → URL vidéo (à committer dans backend/)
 MAX_VIDEOS = None          # None = toutes les séances ; un entier pour un test
@@ -66,9 +68,15 @@ AUTHOR_TAIL = re.compile(
 
 
 def iso_date(title):
-    """« Conseil communal du 11/02/2026 … » → « 2026-02-11 » (ou None)."""
-    m = re.search(r"(\d{2})/(\d{2})/(\d{4})", title or "")
-    return f"{m.group(3)}-{m.group(2)}-{m.group(1)}" if m else None
+    """« … du 15/10/2025 … » ou « … 15/10/25 » → « 2025-10-15 » (ou None).
+    Gère l'année sur 2 ou 4 chiffres (les livestreams utilisent parfois 25)."""
+    m = re.search(r"(\d{2})/(\d{2})/(\d{2,4})", title or "")
+    if not m:
+        return None
+    d, mo, y = m.group(1), m.group(2), m.group(3)
+    if len(y) == 2:
+        y = "20" + y
+    return f"{y}-{mo}-{d}"
 
 
 def fr_part(title):
@@ -152,15 +160,27 @@ def points_from_description(v, vid):
 
 
 def list_council_videos():
-    """Vidéos de la chaîne dont le titre est « Conseil communal du … », datées."""
+    """Séances « Conseil communal / Gemeenteraad … » datées, sur /videos ET
+    /streams (les livestreams archivés — dont 2025+ — ne sont que dans /streams).
+    Filtre élargi (« conseil communal » OU « gemeenteraad ») + garde-fou date."""
     opts = {"quiet": True, "extract_flat": True, "skip_download": True}
-    with yt_dlp.YoutubeDL(opts) as ydl:
-        listing = ydl.extract_info(CHANNEL, download=False)
-    council = []
-    for e in listing.get("entries", []):
-        title = e.get("title") or ""
-        if "conseil communal du" in title.lower() and iso_date(title):
-            council.append({"id": e["id"], "title": title, "date": iso_date(title)})
+    seen, council = set(), []
+    for tab in TABS:
+        try:
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                listing = ydl.extract_info(CHANNEL_BASE + tab, download=False)
+        except Exception as ex:
+            print(f"  ⚠ onglet {tab} ignoré ({str(ex)[:60]})")
+            continue
+        for e in listing.get("entries", []):
+            vid = e.get("id")
+            title = e.get("title") or ""
+            tl = title.lower()
+            if not vid or vid in seen:
+                continue
+            if ("conseil communal" in tl or "gemeenteraad" in tl) and iso_date(title):
+                seen.add(vid)
+                council.append({"id": vid, "title": title, "date": iso_date(title)})
     council.sort(key=lambda x: x["date"], reverse=True)   # récent d'abord
     return council[:MAX_VIDEOS] if MAX_VIDEOS else council
 
