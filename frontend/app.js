@@ -18,7 +18,7 @@ let isLoading = false;
 // Version : source unique = le backend (GET /health → { version }). La constante
 // locale n'est qu'un REPLI affiché si le backend est injoignable (hors-ligne, ou
 // réveil du service Render). Garder cette valeur vaguement à jour, sans plus.
-const APP_VERSION = '1.4.0';
+const APP_VERSION = '1.5.0';
 let appVersion = APP_VERSION;
 const SETTINGS_KEY = 'pv_settings';
 const SETTINGS_DEFAULTS = {
