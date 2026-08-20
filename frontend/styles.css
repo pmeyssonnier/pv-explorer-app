@@ -99,40 +99,40 @@ body {
 }
 .settings-overlay.open { display: flex; }
 .settings-panel {
-  background: var(--papier); border: 1px solid var(--ligne); border-radius: 18px;
-  width: 100%; max-width: 440px; max-height: 88vh; overflow: auto;
+  background: var(--papier); border: 1px solid var(--ligne); border-radius: 20px;
+  width: 100%; max-width: 560px; max-height: 90vh; overflow: auto;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 .settings-head {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 20px; border-bottom: 1px solid var(--ligne);
+  padding: 22px 26px; border-bottom: 1px solid var(--ligne);
   position: sticky; top: 0; background: var(--papier); z-index: 1;
 }
-.settings-head h2 { font-family: var(--display); font-size: 19px; }
+.settings-head h2 { font-family: var(--display); font-size: 24px; }
 .settings-close {
   border: none; background: var(--papier-dark); color: var(--encre);
-  width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 15px;
+  width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 19px;
 }
-.settings-sec { padding: 16px 20px; border-bottom: 1px solid var(--ligne); }
+.settings-sec { padding: 22px 26px; border-bottom: 1px solid var(--ligne); }
 .settings-sec h3 {
-  font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--or); margin-bottom: 12px; font-weight: 600;
+  font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--or); margin-bottom: 16px; font-weight: 600;
 }
-.seg { display: inline-flex; border: 1px solid var(--ligne); border-radius: 20px; overflow: hidden; }
-.seg button { border: none; background: none; padding: 7px 16px; font: inherit; font-size: 13px; color: var(--encre-soft); cursor: pointer; }
+.seg { display: inline-flex; border: 1px solid var(--ligne); border-radius: 22px; overflow: hidden; }
+.seg button { border: none; background: none; padding: 9px 20px; font: inherit; font-size: 14.5px; color: var(--encre-soft); cursor: pointer; }
 .seg button.on { background: var(--brand); color: #f7f3ec; }
-.set-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.set-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
 .set-row:last-child { margin-bottom: 0; }
-.set-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 14px; }
-.set-top b { color: var(--bordeaux); font-variant-numeric: tabular-nums; font-size: 15px; }
-.set-hint { font-size: 11.5px; color: var(--encre-soft); }
-.settings-panel input[type=range] { width: 100%; accent-color: var(--brand); }
+.set-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 15.5px; }
+.set-top b { color: var(--bordeaux); font-variant-numeric: tabular-nums; font-size: 17px; }
+.set-hint { font-size: 13px; color: var(--encre-soft); }
+.settings-panel input[type=range] { width: 100%; height: 24px; accent-color: var(--brand); }
 .settings-panel select {
-  width: 100%; padding: 9px 10px; border: 1px solid var(--ligne); border-radius: 9px;
-  background: var(--blanc); color: var(--encre); font: inherit; font-size: 14px;
+  width: 100%; padding: 12px 12px; border: 1px solid var(--ligne); border-radius: 10px;
+  background: var(--blanc); color: var(--encre); font: inherit; font-size: 15.5px;
 }
-.settings-about { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--encre-soft); border-bottom: none; }
-.settings-reset { border: 1px solid var(--ligne); background: none; color: var(--bordeaux); border-radius: 16px; padding: 6px 14px; font-size: 12.5px; cursor: pointer; }
+.settings-about { display: flex; justify-content: space-between; align-items: center; font-size: 14.5px; color: var(--encre-soft); border-bottom: none; }
+.settings-reset { border: 1px solid var(--ligne); background: none; color: var(--bordeaux); border-radius: 18px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
 .settings-reset:hover { background: var(--brand); color: #f7f3ec; border-color: var(--brand); }
 .header-inner {
   max-width: var(--content);
