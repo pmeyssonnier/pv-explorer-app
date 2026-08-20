@@ -4,7 +4,6 @@ Orchestration de l'endpoint /ask, isolée du câblage HTTP. `answer()` renvoie u
 AnswerResponse prêt à sérialiser et lève HTTPException sur les erreurs externes
 (recherche ou génération) pour préserver les codes/messages exacts de l'API.
 """
-import json
 import os
 from typing import Optional
 
@@ -18,6 +17,7 @@ from config import (
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
+from utils.video import video_session_map
 from services.pinecone_service import get_pinecone_index
 from services.statistics import load_db
 
@@ -33,31 +33,6 @@ def _pdf_url_map() -> dict:
         (s.get("seance", {}) or {}).get("date"): (s.get("seance", {}) or {}).get("source_url")
         for s in db.get("seances", [])
     }
-
-
-# Chemin du fichier date → URL de la vidéo de séance (backend/video_sessions.json).
-_VIDEO_SESSIONS_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)), "video_sessions.json")
-_video_sessions_cache: dict = {"mtime": None, "map": {}}
-
-
-def _video_session_map() -> dict:
-    """date ISO → URL de la vidéo de la séance (début), lue depuis
-    backend/video_sessions.json (mtime-caché). Permet d'ajouter un lien « ▶ voir
-    la séance » aux délibérations dont la séance a été filmée, sans réindexer.
-    {} si le fichier est absent/illisible."""
-    try:
-        mtime = os.path.getmtime(_VIDEO_SESSIONS_PATH)
-    except OSError:
-        return {}
-    if _video_sessions_cache["mtime"] != mtime:
-        try:
-            with open(_VIDEO_SESSIONS_PATH, encoding="utf-8") as f:
-                _video_sessions_cache["map"] = json.load(f)
-            _video_sessions_cache["mtime"] = mtime
-        except Exception:
-            return _video_sessions_cache["map"]
-    return _video_sessions_cache["map"]
 
 _anthropic_client: Optional[anthropic.Anthropic] = None
 
@@ -242,7 +217,7 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
     not_found = "je ne trouve pas" in answer_text.lower()
     sources = []
     url_map = _pdf_url_map()
-    session_map = _video_session_map()
+    session_map = video_session_map()
     for h in norm:
         if h["score"] < score_min:
             continue

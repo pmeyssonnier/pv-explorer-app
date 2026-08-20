@@ -629,6 +629,10 @@ function pvRowHtml(s) {
     + (s.url
       ? `<a class="pv-pdf" href="${s.url}" target="_blank" rel="noopener noreferrer"
            title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg></a>`
+      : '')
+    + (s.video_url
+      ? `<a class="pv-video" href="${s.video_url}" target="_blank" rel="noopener noreferrer"
+           title="Voir la vidéo de la séance"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg></a>`
       : '');
   return `<div class="pv-row${sel ? ' pv-sel' : ''}">`
     + `<span class="pv-head">${head}</span>`
