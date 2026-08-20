@@ -1129,40 +1129,47 @@ function doShare(title, text, url, btn) {
   }
 }
 
-// Partage de LA RÉPONSE (son contenu), pas un lien qui relancerait le chat chez
-// le destinataire. Sur mobile : feuille de partage native avec le fichier .md
-// (mêmes données que « Exporter »). Sinon : partage du texte, ou copie en repli.
+// Partage de LA RÉPONSE (son contenu), jamais un lien qui relancerait le chat
+// chez le destinataire. Priorité au partage de TEXTE (fiable, comme le bouton
+// des statistiques) ; le partage de fichier .md n'est qu'un bonus best-effort.
+// Ordre des replis : fichier → texte → copie. On ne retombe sur la copie QUE si
+// la feuille de partage n'existe pas — pas si un partage de fichier échoue
+// (sinon le bouton « copiait » au lieu d'ouvrir la feuille sur certains mobiles).
 function shareAnswer(btn) {
   const actions = btn.closest('.msg-actions');
   const md = decodeURIComponent(actions.dataset.md || '');
   const q = decodeURIComponent(actions.dataset.q || '');
   const orig = btn.textContent;
   const flash = (msg) => { btn.textContent = msg; setTimeout(() => { btn.textContent = orig; }, 1800); };
-  const title = 'PV Explorer — réponse du Conseil communal de Schaerbeek';
-  const text = q ? `Réponse aux procès-verbaux du Conseil communal de Schaerbeek — question : « ${q} »` : title;
   if (!md) { flash('Rien à partager'); return; }
+  const title = 'PV Explorer — réponse du Conseil communal de Schaerbeek';
+  const intro = q ? `Réponse aux procès-verbaux du Conseil communal de Schaerbeek — question : « ${q} »\n\n` : '';
+  const text = intro + md;
 
-  // 1) Partage de fichier natif (mobile/desktop compatibles) — partage le .md.
+  if (!navigator.share) {                    // pas de Web Share (desktop) → copie
+    copyShare(md, () => flash('Réponse copiée ✓'));
+    return;
+  }
+
+  // Partage de TEXTE (fiable) — feuille native, aucun lien de relance.
+  const shareText = () => navigator.share({ title, text })
+    .then(() => flash('Partagé ✓'))
+    .catch((err) => { if (!err || err.name !== 'AbortError') copyShare(md, () => flash('Réponse copiée ✓')); });
+
+  // Bonus : tenter d'abord le fichier .md ; si le partage de fichier échoue
+  // (canShare optimiste mais share qui rejette), on retombe sur le TEXTE — pas
+  // sur la copie — pour que la feuille s'ouvre quand même.
   try {
     const file = new File([md], 'reponse-pv-schaerbeek.md', { type: 'text/markdown' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       navigator.share({ files: [file], title, text })
         .then(() => flash('Partagé ✓'))
-        .catch((err) => { if (!err || err.name !== 'AbortError') copyShare(md, () => flash('Réponse copiée ✓')); });
+        .catch((err) => { if (!err || err.name !== 'AbortError') shareText(); });
       return;
     }
-  } catch (e) { /* File/canShare indisponible → replis ci-dessous */ }
+  } catch (e) { /* File/canShare indisponible → partage de texte */ }
 
-  // 2) Repli : partage du texte de la réponse (toujours pas de lien « relance »).
-  if (navigator.share) {
-    navigator.share({ title, text: md })
-      .then(() => flash('Partagé ✓'))
-      .catch((err) => { if (!err || err.name !== 'AbortError') copyShare(md, () => flash('Réponse copiée ✓')); });
-    return;
-  }
-
-  // 3) Repli desktop sans Web Share : copie de la réponse dans le presse-papier.
-  copyShare(md, () => flash('Réponse copiée ✓'));
+  shareText();
 }
 
 function shareStats(btn) {
