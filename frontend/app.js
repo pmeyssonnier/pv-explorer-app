@@ -143,49 +143,137 @@ function renderHistory() {
   ).join('');
 }
 
-// ── NOUVELLE RECHERCHE : revient à l'écran d'accueil (l'historique reste) ──
+// ── PERSISTANCE DE LA CONVERSATION (questions + réponses) ──
+// L'historique de chips ne garde que les libellés de questions ; ici on
+// persiste les ÉCHANGES complets (question, réponse, sources, durée) pour que
+// le rechargement de la page restitue la conversation telle quelle, sans
+// relancer d'appel. Stockage par navigateur (localStorage), borné à CONV_MAX
+// échanges (les plus anciens sont écartés).
+const CONV_KEY = 'pv_explorer_conversation';
+const CONV_MAX = 30;
+
+function getConversation() {
+  try { return JSON.parse(localStorage.getItem(CONV_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function saveTurn(turn) {
+  let c = getConversation();
+  c.push(turn);
+  if (c.length > CONV_MAX) c = c.slice(c.length - CONV_MAX);
+  try { localStorage.setItem(CONV_KEY, JSON.stringify(c)); }
+  catch (e) {
+    // Quota dépassé : on allège en repartant du seul dernier échange.
+    try { localStorage.setItem(CONV_KEY, JSON.stringify([turn])); } catch (e2) {}
+  }
+}
+function clearConversation() {
+  try { localStorage.removeItem(CONV_KEY); } catch (e) {}
+}
+// Restaure la conversation persistée dans le fil (au chargement).
+function restoreConversation() {
+  const c = getConversation();
+  const conv = document.getElementById('conversation');
+  if (!conv || !c.length) return;
+  conv.innerHTML = c.map(t =>
+    renderQuestionMsg(t.question) +
+    renderAnswerMsg(t.question, t.answer, buildSourcesHtml(t.sources || []), t.duration || '')
+  ).join('');
+  document.getElementById('introCard').style.display = 'none';
+  document.getElementById('newSearchBtn').style.display = '';
+}
+
+// ── RENDU RÉUTILISABLE D'UN ÉCHANGE (live + restauration) ──
+function renderQuestionMsg(question) {
+  return `
+    <div class="msg msg-question">
+      <div class="msg-role">Votre question</div>
+      <div class="msg-bubble" role="button" tabindex="0"
+           title="Cliquer pour reposer ou modifier cette question"
+           onclick="reuseQuestion(this)"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();reuseQuestion(this);}">${escapeHtml(question)}</div>
+    </div>`;
+}
+function renderAnswerMsg(question, answer, sourcesHtml, durationText) {
+  const time = durationText ? `<div class="msg-time">${escapeHtml(durationText)}</div>` : '';
+  return `
+    <div class="msg">
+      <div class="msg-role">Assistant</div>
+      <div class="msg-bubble">${renderMarkdown(answer)}</div>
+      ${sourcesHtml}
+      ${time}
+      <div class="msg-actions" data-md="${encodeURIComponent(answer || '')}" data-q="${encodeURIComponent(question || '')}">
+        <button class="msg-act" type="button" onclick="copyAnswer(this)">Copier</button>
+        <button class="msg-act" type="button" onclick="downloadAnswer(this)">Exporter (.md)</button>
+        <button class="msg-act" type="button" onclick="shareAnswer(this)">Partager</button>
+      </div>
+    </div>`;
+}
+// Assemble le bloc « Sources » (groupes Débats filmés / Délibérations) à partir
+// d'une liste de sources déjà ordonnée. '' si aucune source.
+function buildSourcesHtml(srcs) {
+  if (!srcs || !srcs.length) return '';
+  const videoItem = s => {
+    const ref = s.url
+      ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat · ${formatDate(s.date)}</a>`
+      : `<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débat du ${formatDate(s.date)}`;
+    return `
+    <div class="source-item source-video">
+      <div class="source-ref">${ref}</div>
+      <div class="source-titre">${escapeHtml(s.titre)}</div>
+      ${s.decision ? `<div class="source-decision">${escapeHtml(s.decision)}</div>` : ''}
+    </div>`;
+  };
+  const pvItem = s => {
+    const seance = s.url
+      ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}</a>`
+      : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}`;
+    return `
+    <div class="source-item">
+      <div class="source-ref">${seance}<br>Point SP ${s.sp}</div>
+      <div class="source-titre">${escapeHtml(s.titre)}</div>
+      <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
+    </div>`;
+  };
+  const vids = srcs.filter(s => s.source_type === 'video_conseil');
+  const pvs = srcs.filter(s => s.source_type !== 'video_conseil');
+  let groups = '';
+  if (vids.length) {
+    groups += `<div class="src-group src-group-video"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débats filmés · ${vids.length}</div>`
+      + vids.map(videoItem).join('');
+  }
+  if (pvs.length) {
+    groups += `<div class="src-group"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Délibérations · ${pvs.length}</div>`
+      + pvs.map(pvItem).join('');
+  }
+  const dont = vids.length
+    ? ` · dont ${vids.length} débat${vids.length > 1 ? 's' : ''} filmé${vids.length > 1 ? 's' : ''} 🎥`
+    : '';
+  return `<div class="sources">
+    <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length}${dont}</div>
+    ${groups}</div>`;
+}
+
+// ── NOUVELLE RECHERCHE : vide le fil courant (et sa persistance) ; les chips
+// de questions restent. ──
 function newSearch() {
   document.getElementById('conversation').innerHTML = '';
   document.getElementById('introCard').style.display = '';
   document.getElementById('newSearchBtn').style.display = 'none';
-  hideChatTimer();
+  clearConversation();
   const input = document.getElementById('askInput');
   if (input) input.value = '';
   renderHistory();
   window.scrollTo(0, 0);
 }
 
-// ── CHRONO du chat (petit message au-dessus de la conversation) ──
-// Pendant l'appel : « En cours depuis X s » (rafraîchi). À la fin : fige sur
-// « Durée d'exécution : X s ». Mesure le temps réel vu par le citoyen (réveil
-// Render inclus), pas le temps serveur.
-let chatTimerId = null;
-let chatTimerStart = 0;
-function startChatTimer() {
-  const el = document.getElementById('chatTimer');
-  if (!el) return;
-  chatTimerStart = Date.now();
-  el.style.display = '';
-  el.classList.add('running');
-  const tick = () => {
-    const s = Math.floor((Date.now() - chatTimerStart) / 1000);
-    el.textContent = `⏱ En cours depuis ${s} s`;
-  };
-  tick();
-  chatTimerId = setInterval(tick, 250);
-}
-function stopChatTimer() {
-  if (chatTimerId) { clearInterval(chatTimerId); chatTimerId = null; }
-  const el = document.getElementById('chatTimer');
-  if (!el) return;
-  const s = ((Date.now() - chatTimerStart) / 1000).toFixed(1);
-  el.classList.remove('running');
-  el.textContent = `⏱ Durée d'exécution : ${s} s`;
-}
-function hideChatTimer() {
-  if (chatTimerId) { clearInterval(chatTimerId); chatTimerId = null; }
-  const el = document.getElementById('chatTimer');
-  if (el) { el.style.display = 'none'; el.classList.remove('running'); el.textContent = ''; }
+// ── CHRONO du chat (attaché à CHAQUE réponse) ──
+// Chaque question a son propre chrono : pendant l'appel, un compteur vit dans la
+// bulle de chargement (« En cours… X s ») ; à la fin, la durée figée est
+// insérée DANS le bloc-réponse correspondant (et non dans un bandeau global qui
+// resterait épinglé en haut quand on enchaîne les questions). Mesure le temps
+// réel vu par le citoyen (réveil Render inclus), pas le temps serveur.
+function fmtDuration(t0) {
+  return `⏱ Durée d'exécution : ${((Date.now() - t0) / 1000).toFixed(1)} s`;
 }
 
 // ── DICTÉE VOCALE (Web Speech API — côté navigateur, français) ──
@@ -283,8 +371,9 @@ function toggleDictation(btn) {
   }
 }
 
-// Afficher l'historique au chargement
+// Afficher l'historique au chargement + restituer la conversation persistée
 renderHistory();
+restoreConversation();
 
 // ── POSER UNE QUESTION ──
 async function submitQuestion() {
@@ -303,26 +392,25 @@ async function submitQuestion() {
   const conv = document.getElementById('conversation');
 
   // Afficher la question
-  conv.insertAdjacentHTML('beforeend', `
-    <div class="msg msg-question">
-      <div class="msg-role">Votre question</div>
-      <div class="msg-bubble" role="button" tabindex="0"
-           title="Cliquer pour reposer ou modifier cette question"
-           onclick="reuseQuestion(this)"
-           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();reuseQuestion(this);}">${escapeHtml(question)}</div>
-    </div>`);
+  conv.insertAdjacentHTML('beforeend', renderQuestionMsg(question));
 
-  // Afficher le chargement
-  const loadingId = 'loading-' + Date.now();
+  // Afficher le chargement (chrono propre à cette question, vivant dans la bulle)
+  const t0 = Date.now();
+  const loadingId = 'loading-' + t0;
+  const liveId = 'timer-' + t0;
   conv.insertAdjacentHTML('beforeend', `
     <div class="msg" id="${loadingId}">
       <div class="msg-role">Assistant</div>
       <div class="msg-bubble">
         <div class="loading"><span>Recherche dans les procès-verbaux</span>
         <span class="dots"><span></span><span></span><span></span></span></div>
+        <div class="msg-time msg-time-live" id="${liveId}" role="status" aria-live="polite">⏱ En cours… 0 s</div>
       </div>
     </div>`);
-  startChatTimer();
+  const timerId = setInterval(() => {
+    const el = document.getElementById(liveId);
+    if (el) el.textContent = `⏱ En cours… ${Math.floor((Date.now() - t0) / 1000)} s`;
+  }, 250);
   window.scrollTo(0, document.body.scrollHeight);
 
   // Filtre commune : "Toutes" (value vide) → on n'envoie rien (recherche croisée)
@@ -353,73 +441,22 @@ async function submitQuestion() {
     }
 
     const data = await res.json();
+    clearInterval(timerId);
     document.getElementById(loadingId).remove();
 
-    // Construire les sources (ordre selon les Options : pertinence [défaut] ou date)
-    let sourcesHtml = '';
+    // Sources ordonnées selon les Options (pertinence [défaut] ou date).
     let srcs = data.sources || [];
     if (settings.order === 'date') srcs = srcs.slice().sort((a, b) => a.date < b.date ? 1 : -1);
-    if (srcs.length) {
-      // Rendu d'un débat filmé (lien « ▶ voir le débat » vers l'instant exact).
-      const videoItem = s => {
-        const ref = s.url
-          ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat · ${formatDate(s.date)}</a>`
-          : `<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débat du ${formatDate(s.date)}`;
-        return `
-        <div class="source-item source-video">
-          <div class="source-ref">${ref}</div>
-          <div class="source-titre">${escapeHtml(s.titre)}</div>
-          ${s.decision ? `<div class="source-decision">${escapeHtml(s.decision)}</div>` : ''}
-        </div>`;
-      };
-      // Rendu d'une délibération (lien vers le PDF officiel du PV).
-      const pvItem = s => {
-        const seance = s.url
-          ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}</a>`
-          : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}`;
-        // Pas de lien vidéo ici : dans le chat, les vidéos ont leur propre groupe
-        // « Débats filmés » — l'ajouter sur les délibérations re-mélangeait les deux.
-        return `
-        <div class="source-item">
-          <div class="source-ref">${seance}<br>Point SP ${s.sp}</div>
-          <div class="source-titre">${escapeHtml(s.titre)}</div>
-          <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
-        </div>`;
-      };
 
-      // Groupes visibles, débats filmés d'abord (pour les mettre en avant).
-      const vids = srcs.filter(s => s.source_type === 'video_conseil');
-      const pvs = srcs.filter(s => s.source_type !== 'video_conseil');
-      let groups = '';
-      if (vids.length) {
-        groups += `<div class="src-group src-group-video"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débats filmés · ${vids.length}</div>`
-          + vids.map(videoItem).join('');
-      }
-      if (pvs.length) {
-        groups += `<div class="src-group"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Délibérations · ${pvs.length}</div>`
-          + pvs.map(pvItem).join('');
-      }
-      const dont = vids.length
-        ? ` · dont ${vids.length} débat${vids.length > 1 ? 's' : ''} filmé${vids.length > 1 ? 's' : ''} 🎥`
-        : '';
-      sourcesHtml = `<div class="sources">
-        <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length}${dont}</div>
-        ${groups}</div>`;
-    }
+    const durationText = fmtDuration(t0);
+    conv.insertAdjacentHTML('beforeend',
+      renderAnswerMsg(question, data.answer, buildSourcesHtml(srcs), durationText));
 
-    conv.insertAdjacentHTML('beforeend', `
-      <div class="msg">
-        <div class="msg-role">Assistant</div>
-        <div class="msg-bubble">${renderMarkdown(data.answer)}</div>
-        ${sourcesHtml}
-        <div class="msg-actions" data-md="${encodeURIComponent(data.answer || '')}" data-q="${encodeURIComponent(question || '')}">
-          <button class="msg-act" type="button" onclick="copyAnswer(this)">Copier</button>
-          <button class="msg-act" type="button" onclick="downloadAnswer(this)">Exporter (.md)</button>
-          <button class="msg-act" type="button" onclick="shareAnswer(this)">Partager</button>
-        </div>
-      </div>`);
+    // Persiste l'échange complet pour restitution au rechargement.
+    saveTurn({ question, answer: data.answer, sources: srcs, duration: durationText });
 
   } catch (err) {
+    clearInterval(timerId);
     document.getElementById(loadingId).remove();
     conv.insertAdjacentHTML('beforeend', `
       <div class="msg">
@@ -428,10 +465,10 @@ async function submitQuestion() {
           Impossible d'obtenir une réponse. ${escapeHtml(err.message)}<br>
           <small>Vérifiez que le backend est démarré (${API_URL}).</small>
         </div>
+        <div class="msg-time">${fmtDuration(t0)}</div>
       </div>`);
   }
 
-  stopChatTimer();
   isLoading = false;
   document.getElementById('askBtn').disabled = false;
   window.scrollTo(0, document.body.scrollHeight);
@@ -1061,12 +1098,40 @@ function doShare(title, text, url, btn) {
   }
 }
 
+// Partage de LA RÉPONSE (son contenu), pas un lien qui relancerait le chat chez
+// le destinataire. Sur mobile : feuille de partage native avec le fichier .md
+// (mêmes données que « Exporter »). Sinon : partage du texte, ou copie en repli.
 function shareAnswer(btn) {
-  const q = decodeURIComponent(btn.closest('.msg-actions').dataset.q || '');
-  const url = q ? `${shareBaseUrl()}?q=${encodeURIComponent(q)}` : shareBaseUrl();
-  const text = q ? `Question aux procès-verbaux du Conseil communal de Schaerbeek : « ${q} »`
-                 : 'PV Explorer — procès-verbaux du Conseil communal de Schaerbeek';
-  doShare('PV Explorer — Conseil communal de Schaerbeek', text, url, btn);
+  const actions = btn.closest('.msg-actions');
+  const md = decodeURIComponent(actions.dataset.md || '');
+  const q = decodeURIComponent(actions.dataset.q || '');
+  const orig = btn.textContent;
+  const flash = (msg) => { btn.textContent = msg; setTimeout(() => { btn.textContent = orig; }, 1800); };
+  const title = 'PV Explorer — réponse du Conseil communal de Schaerbeek';
+  const text = q ? `Réponse aux procès-verbaux du Conseil communal de Schaerbeek — question : « ${q} »` : title;
+  if (!md) { flash('Rien à partager'); return; }
+
+  // 1) Partage de fichier natif (mobile/desktop compatibles) — partage le .md.
+  try {
+    const file = new File([md], 'reponse-pv-schaerbeek.md', { type: 'text/markdown' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title, text })
+        .then(() => flash('Partagé ✓'))
+        .catch((err) => { if (!err || err.name !== 'AbortError') copyShare(md, () => flash('Réponse copiée ✓')); });
+      return;
+    }
+  } catch (e) { /* File/canShare indisponible → replis ci-dessous */ }
+
+  // 2) Repli : partage du texte de la réponse (toujours pas de lien « relance »).
+  if (navigator.share) {
+    navigator.share({ title, text: md })
+      .then(() => flash('Partagé ✓'))
+      .catch((err) => { if (!err || err.name !== 'AbortError') copyShare(md, () => flash('Réponse copiée ✓')); });
+    return;
+  }
+
+  // 3) Repli desktop sans Web Share : copie de la réponse dans le presse-papier.
+  copyShare(md, () => flash('Réponse copiée ✓'));
 }
 
 function shareStats(btn) {

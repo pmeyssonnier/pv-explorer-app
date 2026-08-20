@@ -406,15 +406,14 @@ body {
 
 /* Petit chrono au-dessus de la conversation : « En cours depuis X s » pendant
    l'appel, puis « Durée d'exécution : X s » une fois la réponse arrivée. */
-.chat-timer {
-  font-size: 13px; color: var(--encre-soft);
+/* Durée d'exécution — attachée à chaque réponse (plus de bandeau global épinglé) */
+.msg-time {
+  font-size: 12px; color: var(--encre-soft);
   font-variant-numeric: tabular-nums;
-  margin: 0 2px 12px; padding: 5px 10px;
-  border-left: 3px solid var(--bordeaux);
-  background: color-mix(in srgb, var(--bordeaux) 8%, transparent);
-  border-radius: 0 6px 6px 0;
+  margin-top: 10px;
 }
-.chat-timer.running { color: var(--bordeaux); font-weight: 600; }
+/* Compteur vivant dans la bulle de chargement */
+.msg-time-live { margin-top: 8px; color: var(--bordeaux); font-weight: 600; }
 
 /* Barre d'actions de l'onglet Statistiques (bouton Partager, aligné à droite). */
 .stats-toolbar { display: flex; justify-content: flex-end; margin-bottom: 10px; }
