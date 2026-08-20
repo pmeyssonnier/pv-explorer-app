@@ -18,7 +18,7 @@ let isLoading = false;
 // Version : source unique = le backend (GET /health → { version }). La constante
 // locale n'est qu'un REPLI affiché si le backend est injoignable (hors-ligne, ou
 // réveil du service Render). Garder cette valeur vaguement à jour, sans plus.
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.3.0';
 let appVersion = APP_VERSION;
 const SETTINGS_KEY = 'pv_settings';
 const SETTINGS_DEFAULTS = {
@@ -361,6 +361,19 @@ async function submitQuestion() {
     if (settings.order === 'date') srcs = srcs.slice().sort((a, b) => a.date < b.date ? 1 : -1);
     if (srcs.length) {
       const items = srcs.map(s => {
+        // Débat filmé (vidéo) : lien « ▶ voir le débat » vers l'instant exact.
+        if (s.source_type === 'video_conseil') {
+          const ref = s.url
+            ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat · ${formatDate(s.date)}</a>`
+            : `<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débat du ${formatDate(s.date)}`;
+          return `
+        <div class="source-item source-video">
+          <div class="source-ref">${ref}</div>
+          <div class="source-titre">${escapeHtml(s.titre)}</div>
+          ${s.decision ? `<div class="source-decision">${escapeHtml(s.decision)}</div>` : ''}
+        </div>`;
+        }
+        // Délibération (PV) : lien vers le PDF officiel.
         const seance = s.url
           ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}</a>`
           : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}`;
@@ -372,7 +385,7 @@ async function submitQuestion() {
         </div>`;
       }).join('');
       sourcesHtml = `<div class="sources">
-        <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length} délibérations</div>
+        <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length}</div>
         ${items}</div>`;
     }
 

@@ -27,8 +27,11 @@ class Source(BaseModel):
     titre: str
     decision: str
     score: float
-    # Lien vers le PDF officiel du PV (résolu par date depuis le JSON) — None si absent.
+    # Lien : PDF officiel du PV (résolu par date) OU deep-link vidéo pour un débat
+    # filmé (métadonnée) — None si absent.
     url: Optional[str] = None
+    # Type de source : "pv" (délibération, défaut) ou "video_conseil" (débat filmé).
+    source_type: str = "pv"
 
 
 class AnswerResponse(BaseModel):

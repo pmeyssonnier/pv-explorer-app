@@ -632,6 +632,13 @@ body {
 .pv-pdf-link:hover { text-decoration: underline; }
 .pv-pdf-link .icon { color: var(--or); }
 
+/* Source « débat filmé » : liseré distinct + lien vers l'instant de la vidéo. */
+.source-item.source-video { border-left-color: var(--bordeaux); }
+.source-video .source-ref { white-space: normal; }
+.video-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+.video-link:hover { text-decoration: underline; }
+.video-link .icon { width: 13px; height: 13px; color: var(--bordeaux); vertical-align: 0; }
+
 /* ── RENDU MARKDOWN DES RÉPONSES DU CHAT ── */
 .msg-bubble p { margin: 0 0 10px; }
 .msg-bubble p:last-child { margin-bottom: 0; }

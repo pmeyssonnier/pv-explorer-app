@@ -34,7 +34,7 @@ alternative — `railway.json` est fourni.)*
 
 ## Fonctionnalités
 
-**💬 Chat (RAG)** — questions en langage naturel, réponses **sourcées** (date + numéro de point) rendues en **Markdown** (tableaux, listes, gras). Filtre par commune et par **année** détectée dans la question. Réponses **exportables** (copier / `.md`).
+**💬 Chat (RAG)** — questions en langage naturel, réponses **sourcées** (date + numéro de point) rendues en **Markdown** (tableaux, listes, gras). Filtre par commune et par **année** détectée dans la question. Réponses **exportables** (copier / `.md`), **partageables** (lien profond), et posables **à la voix** (dictée). Les sources incluent, quand elles existent, un lien **« ▶ voir le débat »** vers l'instant exact de la vidéo du conseil (source `video_conseil`).
 
 **📊 Statistiques** — exploration par **drill-down** : *Activité par année → par mois*. Les **4 KPI** (séances, points, votes, montants engagés) et les **thématiques** (avec le montant engagé par thème) se recalculent au périmètre affiché. **Cascade** : cliquer un PV affine les indicateurs à cette séance ; cliquer une thématique filtre les PV concernés. **Liste des procès-verbaux** groupée par année (récent d'abord), chaque PV lié à son **PDF officiel** sur `1030.be` (`source_url`).
 
@@ -118,6 +118,11 @@ python index_pv.py --commune schaerbeek --input pv_conseil_schaerbeek.json
 
 # Plus tard : Evere (le JSON doit d'abord être produit par la pipeline — voir scraping/README.md)
 python index_pv.py --commune evere --input pv_conseil_evere.json
+
+# Chapitrage vidéo des conseils (débats filmés → liens « ▶ voir le débat »).
+# JSON produit par pipeline/extract_video_chapters.py ; upsert idempotent,
+# détecté automatiquement (source_type "video_conseil").
+python index_pv.py --commune schaerbeek --input pv_video_conseil_schaerbeek.json
 ```
 
 - **Ne pas** utiliser `--reset` pour ajouter une commune : il vide **tout**
