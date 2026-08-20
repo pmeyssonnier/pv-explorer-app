@@ -163,6 +163,62 @@ Thématiques : {', '.join(point.get('thematiques') or [])}"""
     return {"id": chunk_id, "metadata": metadata}
 
 
+# Libellés lisibles des types de points du chapitrage vidéo.
+_VIDEO_TYPE_LABELS = {
+    "demande": "Demande", "motion": "Motion", "question": "Question",
+    "interpellation": "Interpellation", "prise_acte": "Prise d'acte",
+    "approbation": "Approbation", "taxe": "Taxe", "reglement": "Règlement",
+    "point": "Point à l'ordre du jour",
+}
+
+
+def video_point_to_chunk(point: dict, seance: dict, commune: str) -> dict:
+    """Transforme un point de chapitrage vidéo (YouTube) en chunk indexable.
+
+    Source COMPLÉMENTAIRE aux PV : capte les débats (motions, questions,
+    demandes), souvent absents des PV. `source_type="video_conseil"` et l'`url`
+    porte le deep-link vers l'instant exact de la vidéo (…&t=SECONDESs), pour un
+    lien « ▶ voir le débat » dans les sources. ID stable → upsert idempotent.
+    """
+    commune_nom = commune.capitalize()
+    date = seance.get("date", "date inconnue")
+    titre = (point.get("titre_fr") or point.get("titre") or "").strip()
+    ptype = point.get("type") or "point"
+    auteur = (point.get("auteur") or "").strip()
+    start = int(point.get("start_s") or 0)
+    deeplink = point.get("deeplink") or seance.get("video_url", "")
+
+    label = _VIDEO_TYPE_LABELS.get(ptype, "Point à l'ordre du jour")
+    par = (f" à la demande de {auteur}"
+           if auteur and ptype in ("demande", "question", "motion", "interpellation")
+           else "")
+    chunk_text = (
+        f"Conseil communal de {commune_nom} du {date} — point débattu en séance (vidéo).\n"
+        f"Titre : {titre}\n"
+        f"Type : {label}{par}."
+    )
+
+    chunk_id = f"video-{seance.get('video_id', 'x')}-{start}"
+    decision = label + (f" · {auteur}" if auteur else "")
+
+    metadata = {
+        "chunk_text": chunk_text,          # champ vectorisé
+        "commune": commune,
+        "date": date,
+        "year": int(date[:4]) if date[:4].isdigit() else 0,
+        "source_type": "video_conseil",    # distingue des délibérations (PV)
+        "sp": 0,                           # non applicable
+        "titre": titre[:500],
+        "decision": decision,              # ex. « Motion · Elias AMMI »
+        "type": ptype,
+        "auteur": auteur,
+        "url": deeplink,                   # deep-link vers l'instant de la vidéo
+        "video_id": seance.get("video_id", "") or "",
+        "start_s": start,
+    }
+    return {"id": chunk_id, "metadata": metadata}
+
+
 def load_chunks(json_path: Path, default_commune: str) -> list[dict]:
     """Charge le JSON des PV et le transforme en liste de chunks.
 
@@ -177,10 +233,18 @@ def load_chunks(json_path: Path, default_commune: str) -> list[dict]:
 
     chunks = []
     for seance in db.get("seances", []):
-        seance_meta = seance.get("seance", {})
-        commune = (seance_meta.get("commune") or default_commune).strip().lower()
-        for point in seance.get("points", []):
-            chunks.append(point_to_chunk(point, seance_meta, commune))
+        if seance.get("video_id"):
+            # JSON du chapitrage vidéo (extract_video_chapters.py) : séance à plat
+            # avec video_id/points → chunks « video_conseil ».
+            commune = default_commune.strip().lower()
+            for point in seance.get("points", []):
+                chunks.append(video_point_to_chunk(point, seance, commune))
+        else:
+            # JSON PV classique : {"seance": {...}, "points": [...]}.
+            seance_meta = seance.get("seance", {})
+            commune = (seance_meta.get("commune") or default_commune).strip().lower()
+            for point in seance.get("points", []):
+                chunks.append(point_to_chunk(point, seance_meta, commune))
     return chunks
 
 

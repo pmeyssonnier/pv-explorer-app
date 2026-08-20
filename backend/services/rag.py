@@ -222,13 +222,18 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
                 continue
             meta = h["metadata"]
             date_str = str(meta.get("date", ""))
+            source_type = str(meta.get("source_type") or "pv")
+            # url : deep-link vidéo (porté par la métadonnée pour les débats
+            # filmés), sinon lien PDF du PV résolu par date.
+            url = meta.get("url") or url_map.get(date_str)
             sources.append(Source(
                 date=date_str,
                 sp=int(float(meta.get("sp") or 0)),
                 titre=str(meta.get("titre", "")),
                 decision=str(meta.get("decision", "")),
                 score=round(float(h["score"]), 3),
-                url=url_map.get(date_str),
+                url=url,
+                source_type=source_type,
             ))
             if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
                 break
