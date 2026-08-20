@@ -334,6 +334,76 @@ body {
   .trend-input { flex: 1 1 100%; }
 }
 
+/* ── INTERVENTIONS PAR ÉLU·E ─────────────────────────────────────────────── */
+.elus-panel { margin-bottom: 30px; padding-bottom: 24px; border-bottom: 2px solid var(--papier-dark); }
+.elus-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.elu-select {
+  background: var(--blanc); border: 1px solid var(--ligne); border-radius: 4px;
+  padding: 10px 12px; font-family: var(--corps); font-size: 15px; color: var(--encre);
+  outline: none; transition: border-color 0.15s; max-width: 100%;
+}
+.elu-select:focus { border-color: var(--or); }
+.elu-select-name { flex: 1 1 260px; min-width: 0; }
+
+.elu-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; margin: 18px 0 2px; }
+.elu-name { font-family: var(--display); font-weight: 600; font-size: 21px; color: var(--bordeaux); }
+.elu-role {
+  font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--ligne); color: var(--encre-soft); background: var(--papier-dark);
+}
+.elu-role-college { color: var(--bordeaux); border-color: var(--bordeaux-clair); }
+.elu-summary {
+  background: var(--papier-dark); border-radius: 4px; padding: 11px 14px;
+  font-size: 13.5px; color: var(--encre-soft); margin: 8px 0 4px;
+}
+.elu-summary strong { color: var(--bordeaux); font-size: 16px; }
+
+.elu-year {
+  font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--bordeaux);
+  margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 1px solid var(--ligne);
+}
+.elu-item { display: flex; gap: 12px; padding: 9px 2px; border-bottom: 1px solid var(--ligne); }
+.elu-item:last-child { border-bottom: none; }
+.elu-date {
+  flex: 0 0 66px; font-size: 12.5px; color: var(--encre-soft);
+  font-variant-numeric: tabular-nums; padding-top: 3px;
+}
+.elu-body { flex: 1 1 auto; min-width: 0; }
+.elu-badge {
+  display: inline-block; font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; padding: 2px 7px; border-radius: 5px; margin-right: 6px; vertical-align: 1px;
+}
+.elu-badge.b-q { background: color-mix(in srgb, var(--bordeaux) 15%, transparent); color: var(--bordeaux); }
+.elu-badge.b-d { background: color-mix(in srgb, var(--or) 22%, transparent); color: #8a5e10; }
+.elu-badge.b-m { background: color-mix(in srgb, var(--vert) 20%, transparent); color: var(--vert); }
+.elu-badge.b-v { background: color-mix(in srgb, var(--bordeaux-clair) 20%, transparent); color: var(--bordeaux-clair); }
+.elu-sp { font-size: 11.5px; color: var(--encre-soft); font-weight: 600; }
+.elu-titre { font-size: 14px; color: var(--encre); margin-top: 3px; }
+.elu-rep { font-size: 12.5px; color: var(--encre-soft); margin-top: 2px; }
+.elu-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px; }
+.elu-link {
+  display: inline-flex; align-items: center; gap: 4px; font-size: 12px;
+  color: var(--bordeaux); text-decoration: none;
+}
+.elu-link:hover { text-decoration: underline; }
+.elu-link .icon { width: 13px; height: 13px; vertical-align: 0; }
+.elu-link-video { color: #c0392b; }
+:root[data-theme="dark"] .elu-link-video,
+:root:not([data-theme="light"]) .elu-link-video { color: var(--or); }
+
+.elu-repond { margin-top: 22px; border-top: 1px solid var(--ligne); padding-top: 12px; }
+.elu-repond > summary {
+  cursor: pointer; font-size: 14px; color: var(--encre); list-style: revert;
+}
+.elu-repond > summary strong { color: var(--bordeaux); }
+.elu-repond-hint { color: var(--encre-soft); font-size: 12.5px; font-weight: 400; }
+.elu-note { font-size: 12px; color: var(--encre-soft); margin-top: 14px; font-style: italic; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .elu-badge.b-d { color: var(--or-light); }
+}
+:root[data-theme="dark"] .elu-badge.b-d { color: var(--or-light); }
+
 /* Petit chrono au-dessus de la conversation : « En cours depuis X s » pendant
    l'appel, puis « Durée d'exécution : X s » une fois la réponse arrivée. */
 .chat-timer {

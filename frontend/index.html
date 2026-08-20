@@ -127,6 +127,20 @@
       <div id="trendResult"></div>
     </div>
 
+    <div class="elus-panel">
+      <h3><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Interventions par élu·e</h3>
+      <p class="trend-intro">Recherche <strong>structurée et exhaustive</strong> : choisissez un·e élu·e → la liste complète de ses interventions, <strong>indépendante de la formulation</strong> (contrairement au chat). Les rôles diffèrent : les <strong>conseiller·ère·s</strong> déposent questions, demandes et motions ; les membres du <strong>Collège</strong> (échevin·e·s, bourgmestre) répondent en séance.</p>
+      <div class="elus-bar">
+        <select id="eluRole" class="elu-select" aria-label="Filtrer par rôle" onchange="populateElus()">
+          <option value="all">Tous les rôles</option>
+          <option value="conseiller">Conseiller·ère·s</option>
+          <option value="college">Collège (échevin·e·s)</option>
+        </select>
+        <select id="eluSelect" class="elu-select elu-select-name" aria-label="Choisir un·e élu·e" onchange="loadElu(this.value)"></select>
+      </div>
+      <div id="eluResult"></div>
+    </div>
+
     <div id="statsContent">
       <div class="loading"><span>Chargement des statistiques</span><span class="dots"><span></span><span></span><span></span></span></div>
     </div>

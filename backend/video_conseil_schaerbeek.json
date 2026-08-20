@@ -1,0 +1,562 @@
+{
+  "source": "video_conseil_schaerbeek",
+  "channel": "@1030be",
+  "seances": [
+    {
+      "date": "2026-02-11",
+      "video_id": "2Iv7zt2sSnA",
+      "video_url": "https://www.youtube.com/watch?v=2Iv7zt2sSnA",
+      "titre_video": "Conseil communal du 11/02/2026 - Gemeenteraad van 11/02/2026",
+      "duree_s": 14279,
+      "points": [
+        {
+          "titre": "La situation du Théâtre Océan Nord - Demande de Madame Mona Molitor - De situatie van het Océan Nord Theater - Verzoek van Mevrouw Mona Molitor",
+          "titre_fr": "La situation du Théâtre Océan Nord - Demande de Madame Mona Molitor",
+          "type": "demande",
+          "auteur": "Mona Molitor",
+          "start_s": 2000,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=2000s"
+        },
+        {
+          "titre": "Situation des personnes sans-chez-soi et mesures prises par la commune - Demande de Madame Kirsten Crick - e situatie van dakloze personen en de maatregelen die door de gemeente zijn genomen - Verzoek van Mevrouw Kirsten Crick",
+          "titre_fr": "Situation des personnes sans-chez-soi et mesures prises par la commune - Demande de Madame Kirsten Crick",
+          "type": "demande",
+          "auteur": "Kirsten Crick",
+          "start_s": 4425,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=4425s"
+        },
+        {
+          "titre": "Contrat de gestion de l'ASBL \"Harmonisation Sociale Schaerbeekoise\" 2026-2030 - Convention - Approbation - Beheersovereenkomst voor de VZW \"Harmonisation Sociale Schaerbeekoise\" 2026-2030 - Overeenkomst - Goedkeuring",
+          "titre_fr": "Contrat de gestion de l'ASBL \"Harmonisation Sociale Schaerbeekoise\" 2026-2030 - Convention - Approbation",
+          "type": "approbation",
+          "auteur": null,
+          "start_s": 7630,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=7630s"
+        },
+        {
+          "titre": "ASBL \"Œuvres des Colonies Scolaires de Schaerbeek\" en abrégé OCS - Comptes 2023 et 2024 - Prise d'acte - VZW \"Oeuvres des Colonies Scolaires de Schaerbeek\" in afkorting OCS - Rekeningen 2023 en 2024 - Akte nemen",
+          "titre_fr": "ASBL \"Œuvres des Colonies Scolaires de Schaerbeek\" en abrégé OCS - Comptes 2023 et 2024 - Prise d'acte",
+          "type": "prise_acte",
+          "auteur": null,
+          "start_s": 8168,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=8168s"
+        },
+        {
+          "titre": "Taxe sur l'extension temporaire des terrasses et le placement de terrasses sur des emplacements de stationnement sans permis d’urbanisme – Exercice d’imposition 2026 – Renouvellement - Belasting op de tijdelijke uitbreiding van terrassen en het plaatsen van terrassen op parkeerplaatsen zonder stedenbouwkundige vergunning - Aanslagjaar 2026 – Hernieuwing",
+          "titre_fr": "Taxe sur l'extension temporaire des terrasses et le placement de terrasses sur des emplacements de stationnement sans permis d’urbanisme - Exercice d’imposition 2026 - Renouvellement",
+          "type": "taxe",
+          "auteur": null,
+          "start_s": 8378,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=8378s"
+        },
+        {
+          "titre": "Les problèmes de mobilité dans la rue Floris et dans la rue Gallait (Demande de Monsieur Georges VERZIN) - Mobiliteitsproblemen in de Floris- en de Gallaitstraat (Verzoek van de heer Georges VERZIN)",
+          "titre_fr": "Les problèmes de mobilité dans la rue Floris et dans la rue Gallait (Demande de Monsieur Georges VERZIN)",
+          "type": "demande",
+          "auteur": "Georges VERZIN",
+          "start_s": 9280,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=9280s"
+        },
+        {
+          "titre": "Motion en soutien au peuple iranien et contre la répression exercée par les autorités en place (Motion de Monsieur Elias AMMI) - Motie ter ondersteuning van het Iraanse volk en tegen de onderdrukking door de huidige autoriteiten (Motie van de heer Elias AMMI)",
+          "titre_fr": "Motion en soutien au peuple iranien et contre la répression exercée par les autorités en place (Motion de Monsieur Elias AMMI)",
+          "type": "motion",
+          "auteur": "Elias AMMI",
+          "start_s": 10253,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=10253s"
+        },
+        {
+          "titre": "Schaerbeek s'engage pour le 8 mars et l'égalité (Motion de Madame Leila LAHSSAINI)- Schaarbeek zet zich in op 8 maart voor de gelijkheid (Motie van Mevrouw Leila LAHSSAINI)",
+          "titre_fr": "Schaerbeek s'engage pour le 8 mars et l'égalité (Motion de Madame Leila LAHSSAINI)- Schaarbeek zet zich in op 8 maart voor de gelijkheid (Motie van Mevrouw Leila LAHSSAINI)",
+          "type": "motion",
+          "auteur": "Leila LAHSSAINI",
+          "start_s": 11308,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=11308s"
+        },
+        {
+          "titre": "La lutte contre le harcèlement scolaire à Schaerbeek (Question de Madame Naïma BELKHATIR) - De strijd tegen pesten op school in Schaarbeek (Vraag van Mevrouw Naïma BELKHATIR)",
+          "titre_fr": "La lutte contre le harcèlement scolaire à Schaerbeek (Question de Madame Naïma BELKHATIR)",
+          "type": "question",
+          "auteur": "Naïma BELKHATIR",
+          "start_s": 12360,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=12360s"
+        },
+        {
+          "titre": "Le E-sport à Schaerbeek (Question de Monsieur Salih DEMIRHAN) - E-sport in Schaarbeek (Vraag van de heer Salih DEMIRHAN)",
+          "titre_fr": "Le E-sport à Schaerbeek (Question de Monsieur Salih DEMIRHAN) - E-sport in Schaarbeek (Vraag van de heer Salih DEMIRHAN)",
+          "type": "question",
+          "auteur": "Salih DEMIRHAN",
+          "start_s": 12990,
+          "deeplink": "https://www.youtube.com/watch?v=2Iv7zt2sSnA&t=12990s"
+        }
+      ]
+    },
+    {
+      "date": "2024-11-20",
+      "video_id": "cyNnXeeSy3Y",
+      "video_url": "https://www.youtube.com/watch?v=cyNnXeeSy3Y",
+      "titre_video": "Conseil communal du 20/11/2024 - Gemeenteraad van 20/11/2024",
+      "duree_s": 10830,
+      "points": [
+        {
+          "titre": "Début du streaming - Begin van streaming",
+          "titre_fr": "Début du streaming - Begin van streaming",
+          "type": "point",
+          "auteur": null,
+          "start_s": 840,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=840s"
+        },
+        {
+          "titre": "Mise à l'honneur des conseillers communaux sortant - Huldiging van de uittredende gemeenteraadsleden",
+          "titre_fr": "Mise à l'honneur des conseillers communaux sortant - Huldiging van de uittredende gemeenteraadsleden",
+          "type": "point",
+          "auteur": null,
+          "start_s": 1080,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=1080s"
+        },
+        {
+          "titre": "CPAS - Charte d’engagement pour la prévention et la lutte contre les violences sexistes et sexuelles en politique - Handvest voor het voorkomen en bestrijden van gendergerelateerd en seksueel geweld in de politiek",
+          "titre_fr": "CPAS - Charte d’engagement pour la prévention et la lutte contre les violences sexistes et sexuelles en politique - Handvest voor het voorkomen en bestrijden van gendergerelateerd en seksueel geweld in de politiek",
+          "type": "point",
+          "auteur": null,
+          "start_s": 4393,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=4393s"
+        },
+        {
+          "titre": "Règlement fixant les centimes additionnels communaux au précompte immobilier - Exercice d'imposition 2025 - Reglement vaststellend de gemeentelijke opcentiemen geheven op de onroerende voorheffing - Aanslagjaar 2025",
+          "titre_fr": "Règlement fixant les centimes additionnels communaux au précompte immobilier - Exercice d'imposition 2025 - Reglement vaststellend de gemeentelijke opcentiemen geheven op de onroerende voorheffing",
+          "type": "point",
+          "auteur": null,
+          "start_s": 6360,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=6360s"
+        },
+        {
+          "titre": "Taxe sur la malpropreté publique et les faits générateurs de salissures sur les voies et lieux publics ou visibles de ceux-ci ainsi que sur les conteneurs à déchets commerciaux - Exercices 2025 à 2027 – Modification - Belasting op de openbare vervuiling of de oorzaken van vervuiling van de openbare wegen en plaatsen of zichtbaar vanaf deze alsmede op containers voor commercieel afval - Aanslagjaren 2025 tot 2027 – Wijziging",
+          "titre_fr": "Taxe sur la malpropreté publique et les faits générateurs de salissures sur les voies et lieux publics ou visibles de ceux-ci ainsi que sur les conteneurs à déchets commerciaux - Exercices 2025 à 2027 - Modification",
+          "type": "taxe",
+          "auteur": null,
+          "start_s": 7620,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=7620s"
+        },
+        {
+          "titre": "Taxe sur les immeubles inachevés - Exercices 2025 à 2029 – Renouvellement et modification - Belasting op de onafgewerkte gebouwen - Aanslagjaren 2025 tot 2029 – Hernieuwing en wijziging",
+          "titre_fr": "Taxe sur les immeubles inachevés - Exercices 2025 à 2029 - Renouvellement et modification",
+          "type": "taxe",
+          "auteur": null,
+          "start_s": 7725,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=7725s"
+        },
+        {
+          "titre": "Soutien financier pour le travail d'activation mené par le Comité de quartier Bienfaiteurs-Weldoeners sur la place des Bienfaiteurs - Approbation - Financiële steun voor de activeringswerkzaamheden van het buurtcomité Bienfaiteurs-Weldoeners op het Plein van de Weldoeners - Goedkeuring",
+          "titre_fr": "Soutien financier pour le travail d'activation mené par le Comité de quartier Bienfaiteurs-Weldoeners sur la place des Bienfaiteurs - Approbation - Financiële steun voor de activeringswerkzaamheden van het buurtcomité Bienfaiteurs-Weldoeners op het Plein van de Weldoeners",
+          "type": "approbation",
+          "auteur": null,
+          "start_s": 7905,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=7905s"
+        },
+        {
+          "titre": "Bail emphytéotique pour la crèche \"Courte échelle\" sise chaussée de Haecht, 176 entre la Commune de Schaerbeek et le CPAS de Schaerbeek - Erfpacht voor het kinderdagverblijf \"Korte schaal\" gelegen Haachtsesteenweg, 176 tussen de gemeente Schaarbeek en het ocmw van Schaarbeek",
+          "titre_fr": "Bail emphytéotique pour la crèche \"Courte échelle\" sise chaussée de Haecht, 176 entre la Commune de Schaerbeek et le CPAS de Schaerbeek - Erfpacht voor het kinderdagverblijf \"Korte schaal\" gelegen Haachtsesteenweg, 176 tussen de gemeente Schaarbeek en het ocmw van Schaarbeek",
+          "type": "point",
+          "auteur": null,
+          "start_s": 8085,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=8085s"
+        },
+        {
+          "titre": "Marché public de services pour l’externalisation partielle de la tâche de vidange des corbeilles de voirie pendant les week-ends dans la commune de Schaerbeek - Choix de la procédure de passation et fixation des conditions du marché - Engagement de la procédure - Approbation - Overheidsopdracht voor diensten voor de gedeeltelijke uitbesteding van het leegmaken van de vuilnisbakken langs de weg tijdens het weekend in de gemeente Schaarbeek -Keuze van de plaatsingsprocedure en vastlegging van de voorwaarden van de opdracht - Goedkeuring",
+          "titre_fr": "Marché public de services pour l’externalisation partielle de la tâche de vidange des corbeilles de voirie pendant les week-ends dans la commune de Schaerbeek - Choix de la procédure de passation et fixation des conditions du marché - Engagement de la procédure - Approbation - Overheidsopdracht voor diensten voor de gedeeltelijke uitbesteding van het leegmaken van de vuilnisbakken langs de weg tijdens het weekend in de gemeente Schaarbeek -Keuze van de plaatsingsprocedure en vastlegging van de voorwaarden van de opdracht",
+          "type": "approbation",
+          "auteur": null,
+          "start_s": 8145,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=8145s"
+        },
+        {
+          "titre": "Approbation du bilan final du plan Handicap 2021-2023 - Goedkeuring van het eindverslag over het gehandicaptenplan 2021-2023",
+          "titre_fr": "Approbation du bilan final du plan Handicap 2021-2023",
+          "type": "approbation",
+          "auteur": null,
+          "start_s": 9525,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=9525s"
+        },
+        {
+          "titre": "Courrier concernant les rénovations de façades ( Leila Lahsani )",
+          "titre_fr": "Courrier concernant les rénovations de façades ( Leila Lahsani )",
+          "type": "point",
+          "auteur": null,
+          "start_s": 10140,
+          "deeplink": "https://www.youtube.com/watch?v=cyNnXeeSy3Y&t=10140s"
+        }
+      ]
+    },
+    {
+      "date": "2024-04-24",
+      "video_id": "vIC7JnNLPUA",
+      "video_url": "https://www.youtube.com/watch?v=vIC7JnNLPUA",
+      "titre_video": "Conseil communal du 24/04/2024 - Gemeenteraad van 24/04/2024'",
+      "duree_s": 6513,
+      "points": [
+        {
+          "titre": "Début du streaming - Begin van streaming",
+          "titre_fr": "Début du streaming - Begin van streaming",
+          "type": "point",
+          "auteur": null,
+          "start_s": 360,
+          "deeplink": "https://www.youtube.com/watch?v=vIC7JnNLPUA&t=360s"
+        },
+        {
+          "titre": "L'extension des atteintes graves à la circulation automobile : le Collège compte-t-il transformer Schaerbeek en une campagne aussi déconnectée et inanimée qui lui? - Demande de Madame Fatiha Ahcini - De uitbreiding van ernstige verkeersovertredingen : is het College van plan om van Schaarbeek een campagne te maken die net zo verbrokkeld en levenloos is als zijzelf? - Verzoek van Mevrouw Fatiha Ahcini",
+          "titre_fr": "L'extension des atteintes graves à la circulation automobile : le Collège compte-t-il transformer Schaerbeek en une campagne aussi déconnectée et inanimée qui lui? - Demande de Madame Fatiha Ahcini",
+          "type": "demande",
+          "auteur": "Fatiha Ahcini",
+          "start_s": 435,
+          "deeplink": "https://www.youtube.com/watch?v=vIC7JnNLPUA&t=435s"
+        },
+        {
+          "titre": "Pourquoi le Collège communal pousse-t-il Schaerbeek toujours plus profondément dans le précipice? - Demande de Madame Houaria Ouazrhrari - Waarom duwt het College, Schaarbeek steeds verder de afgrond in? - Verzoek van Mevrouw Houaria Ouazrhrari",
+          "titre_fr": "Pourquoi le Collège communal pousse-t-il Schaerbeek toujours plus profondément dans le précipice? - Demande de Madame Houaria Ouazrhrari - Waarom duwt het College, Schaarbeek steeds verder de afgrond in?",
+          "type": "demande",
+          "auteur": "Houaria Ouazrhrari",
+          "start_s": 2270,
+          "deeplink": "https://www.youtube.com/watch?v=vIC7JnNLPUA&t=2270s"
+        },
+        {
+          "titre": "Augmentation considérable du volume de trafic sur l'avenue Eugène Demolder en raison de Good Move - Demande de Monsieur Matthias Kohnen - De enorme toegenomen verkeersdrukte in de Eugène Demolderlaan als gevolg van Good Move - Verzoek van de heer Matthias Kohnen",
+          "titre_fr": "Augmentation considérable du volume de trafic sur l'avenue Eugène Demolder en raison de Good Move - Demande de Monsieur Matthias Kohnen",
+          "type": "demande",
+          "auteur": "Matthias Kohnen",
+          "start_s": 3840,
+          "deeplink": "https://www.youtube.com/watch?v=vIC7JnNLPUA&t=3840s"
+        }
+      ]
+    },
+    {
+      "date": "2023-07-03",
+      "video_id": "_SRfpiqEDVE",
+      "video_url": "https://www.youtube.com/watch?v=_SRfpiqEDVE",
+      "titre_video": "Conseil communal du 03/07/2023 - Gemeenteraad van 03/07/2023",
+      "duree_s": 11133,
+      "points": []
+    },
+    {
+      "date": "2023-05-31",
+      "video_id": "s11qpQcfXT4",
+      "video_url": "https://www.youtube.com/watch?v=s11qpQcfXT4",
+      "titre_video": "Conseil communal du 31/05/2023 - Gemeenteraad van 31/05/2023",
+      "duree_s": 27618,
+      "points": [
+        {
+          "titre": "Début du streaming - Begin van streaming",
+          "titre_fr": "Début du streaming - Begin van streaming",
+          "type": "point",
+          "auteur": null,
+          "start_s": 1531,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=1531s"
+        },
+        {
+          "titre": "Nouveau règlement d'ordre intérieur (ROI) du Conseil communal – amendements · Nieuw huishoudelijk reglement van de gemeenteraad – aanpassingen",
+          "titre_fr": "Nouveau règlement d'ordre intérieur (ROI) du Conseil communal - amendements · Nieuw huishoudelijk reglement van de gemeenteraad - aanpassingen",
+          "type": "point",
+          "auteur": null,
+          "start_s": 2090,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=2090s"
+        },
+        {
+          "titre": "Plan Habitat Logement durable - Duurzaam Plan Huisvesting - Goedkeuring",
+          "titre_fr": "Plan Habitat Logement durable - Duurzaam Plan Huisvesting",
+          "type": "approbation",
+          "auteur": null,
+          "start_s": 7780,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=7780s"
+        },
+        {
+          "titre": "Marché public de service assurances - Overheidsopdracht voor diensten met als voorwerp de verzekeringen van de gemeente Schaarbeek",
+          "titre_fr": "Marché public de service assurances - Overheidsopdracht voor diensten met als voorwerp de verzekeringen van de gemeente Schaarbeek",
+          "type": "point",
+          "auteur": null,
+          "start_s": 9880,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=9880s"
+        },
+        {
+          "titre": "Vote conseil avril - April stemming gemeenteraad",
+          "titre_fr": "Vote conseil avril - April stemming gemeenteraad",
+          "type": "point",
+          "auteur": null,
+          "start_s": 10420,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=10420s"
+        },
+        {
+          "titre": "Garantie d'accès physique aux services de l'administration communale - De garanties voor fysieke toegang aan de diensten van het gemeente ( Leila Lahssaini",
+          "titre_fr": "Garantie d'accès physique aux services de l'administration communale",
+          "type": "point",
+          "auteur": null,
+          "start_s": 10787,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=10787s"
+        },
+        {
+          "titre": "Conséquences du réaménagement des arrêts STIB - Gevolgen van de reorganisatie van de MIVB stopt - Done SONMEZ",
+          "titre_fr": "Conséquences du réaménagement des arrêts STIB - Gevolgen van de reorganisatie van de MIVB stopt - Done SONMEZ",
+          "type": "point",
+          "auteur": null,
+          "start_s": 11580,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=11580s"
+        },
+        {
+          "titre": "Manque d'activité culturelles et familiales - Gebrek aan culturele en familieactiviteiten - Naima Belkhatir",
+          "titre_fr": "Manque d'activité culturelles et familiales - Gebrek aan culturele en familieactiviteiten - Naima Belkhatir",
+          "type": "point",
+          "auteur": null,
+          "start_s": 12145,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=12145s"
+        },
+        {
+          "titre": "Cours de natation - Zwemlessen - Yuri de Belder",
+          "titre_fr": "Cours de natation - Zwemlessen - Yuri de Belder",
+          "type": "point",
+          "auteur": null,
+          "start_s": 12565,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=12565s"
+        },
+        {
+          "titre": "Vote. en comité secret - Geheime stemming",
+          "titre_fr": "Vote. en comité secret - Geheime stemming",
+          "type": "point",
+          "auteur": null,
+          "start_s": 12840,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=12840s"
+        },
+        {
+          "titre": "Début conseil 2 - Begin van gemeenteraads 2",
+          "titre_fr": "Début conseil 2 - Begin van gemeenteraads 2",
+          "type": "point",
+          "auteur": null,
+          "start_s": 13740,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=13740s"
+        },
+        {
+          "titre": "Démission Leticia Sere - Prise d'acte - Ontslag van Mevrouw Leticia Sere uit haar functies als gemeenteraadslid",
+          "titre_fr": "Démission Leticia Sere - Prise d'acte - Ontslag van Mevrouw Leticia Sere uit haar functies als gemeenteraadslid",
+          "type": "prise_acte",
+          "auteur": null,
+          "start_s": 13800,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=13800s"
+        },
+        {
+          "titre": "Contrôle interne - Interne controle - Charter interne controle - Goedkeuring",
+          "titre_fr": "Contrôle interne - Interne controle - Charter interne controle",
+          "type": "approbation",
+          "auteur": null,
+          "start_s": 14070,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=14070s"
+        },
+        {
+          "titre": "Politique communale de stationnement - Reglement betreffende het gemeentelijk parkeerbeleid",
+          "titre_fr": "Politique communale de stationnement - Reglement betreffende het gemeentelijk parkeerbeleid",
+          "type": "point",
+          "auteur": null,
+          "start_s": 14490,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=14490s"
+        },
+        {
+          "titre": "Renouvellement campagne VisitPass - Herlancering van de VisitPass-campagne en toekenning",
+          "titre_fr": "Renouvellement campagne VisitPass - Herlancering van de VisitPass-campagne en toekenning",
+          "type": "point",
+          "auteur": null,
+          "start_s": 18690,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=18690s"
+        },
+        {
+          "titre": "Bâtiment \" Ecuries van de tram \" - Convention d'occupation - Gebouw \"Ecuries van de Tram\" gelegen Rubensstraat, 95",
+          "titre_fr": "Bâtiment \" Ecuries van de tram \" - Convention d'occupation - Gebouw \"Ecuries van de Tram\" gelegen Rubensstraat, 95",
+          "type": "point",
+          "auteur": null,
+          "start_s": 19456,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=19456s"
+        },
+        {
+          "titre": "Occupation précaire du bien par ASBL ANIMAR - Bezetting ten tijdelijke titel van het pand gelegen Hoogvorststraat 8-14",
+          "titre_fr": "Occupation précaire du bien par ASBL ANIMAR - Bezetting ten tijdelijke titel van het pand gelegen Hoogvorststraat 8-14",
+          "type": "point",
+          "auteur": null,
+          "start_s": 20120,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=20120s"
+        },
+        {
+          "titre": "Procedure de modification du Plan Particulier Affectation n°19 ( Gare du Nord ) - Wijzigingsprocedure van het Bijzonder Bestemmingsplan n°19 \"Westwijk van het Noordstation\"",
+          "titre_fr": "Procedure de modification du Plan Particulier Affectation n°19 ( Gare du Nord ) - Wijzigingsprocedure van het Bijzonder Bestemmingsplan n°19 \"Westwijk van het Noordstation\"",
+          "type": "point",
+          "auteur": null,
+          "start_s": 20220,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=20220s"
+        },
+        {
+          "titre": "Centre culturel de Schaerbeek - Convention Annuelle 2023 - Centre culturel de Schaerbeek asbl - Overeenkomst 2023 - Goedkeuring",
+          "titre_fr": "Centre culturel de Schaerbeek - Convention Annuelle 2023 - Centre culturel de Schaerbeek asbl",
+          "type": "approbation",
+          "auteur": null,
+          "start_s": 21825,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=21825s"
+        },
+        {
+          "titre": "Urban Sessions Brussels - Convention de partenariat - Organisatie van het evenement \"Urban Sessions-Brussels\"",
+          "titre_fr": "Urban Sessions Brussels - Convention de partenariat - Organisatie van het evenement \"Urban Sessions-Brussels\"",
+          "type": "point",
+          "auteur": null,
+          "start_s": 22560,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=22560s"
+        },
+        {
+          "titre": "Vote - Stemming",
+          "titre_fr": "Vote - Stemming",
+          "type": "point",
+          "auteur": null,
+          "start_s": 23131,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=23131s"
+        },
+        {
+          "titre": "Garantir deux tournées par semaine de collecte de sac blanc et orange - Het verzekeren van twee rondes per week voor de inzameling van de witte en oranje zakken -( Motie Leila Lahssaini )",
+          "titre_fr": "Garantir deux tournées par semaine de collecte de sac blanc et orange",
+          "type": "motion",
+          "auteur": null,
+          "start_s": 23600,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=23600s"
+        },
+        {
+          "titre": "Travaux Evenepoel et chantier VRT - Evenepoel en VRT werkt - Matthieu Degrez",
+          "titre_fr": "Travaux Evenepoel et chantier VRT - Evenepoel en VRT werkt - Matthieu Degrez",
+          "type": "point",
+          "auteur": null,
+          "start_s": 23880,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=23880s"
+        },
+        {
+          "titre": "Organisation des activités durant les vacances scolaires pour les éléves néerlandophone - Organisatie van activiteiten tijdens de schoolvakanties voor Nederlandstalige leerlingen - Naima Belkhatir",
+          "titre_fr": "Organisation des activités durant les vacances scolaires pour les éléves néerlandophone - Organisatie van activiteiten tijdens de schoolvakanties voor Nederlandstalige leerlingen - Naima Belkhatir",
+          "type": "point",
+          "auteur": null,
+          "start_s": 24390,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=24390s"
+        },
+        {
+          "titre": "Réouverture du Neptunium - Heropening Neptunium - Done Sonmez",
+          "titre_fr": "Réouverture du Neptunium - Heropening Neptunium - Done Sonmez",
+          "type": "point",
+          "auteur": null,
+          "start_s": 25440,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=25440s"
+        },
+        {
+          "titre": "Projet de réaménagement des boulevards Lambermont et Wahis - Lambermont en Wahis boulevards herontwikkelingsproject - Motion Matthieu Degrez",
+          "titre_fr": "Projet de réaménagement des boulevards Lambermont et Wahis - Lambermont en Wahis boulevards herontwikkelingsproject - Motion Matthieu Degrez",
+          "type": "point",
+          "auteur": null,
+          "start_s": 25680,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=25680s"
+        },
+        {
+          "titre": "Vote - Stemming",
+          "titre_fr": "Vote - Stemming",
+          "type": "point",
+          "auteur": null,
+          "start_s": 27180,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=27180s"
+        },
+        {
+          "titre": "Vote en comité secret - Geheime stemming",
+          "titre_fr": "Vote en comité secret - Geheime stemming",
+          "type": "point",
+          "auteur": null,
+          "start_s": 27300,
+          "deeplink": "https://www.youtube.com/watch?v=s11qpQcfXT4&t=27300s"
+        }
+      ]
+    },
+    {
+      "date": "2022-12-21",
+      "video_id": "Um268bXuzs8",
+      "video_url": "https://www.youtube.com/watch?v=Um268bXuzs8",
+      "titre_video": "Conseil Communal du 21/12/2022 - Gemeenteraad van 21/12/2022",
+      "duree_s": 18884,
+      "points": []
+    },
+    {
+      "date": "2022-10-19",
+      "video_id": "C-XUq3JlMEE",
+      "video_url": "https://www.youtube.com/watch?v=C-XUq3JlMEE",
+      "titre_video": "Conseil communal du 19/10/2022 - Gemeenteraad van 19/10/2022",
+      "duree_s": 11360,
+      "points": []
+    },
+    {
+      "date": "2022-09-28",
+      "video_id": "DECl5my2UP0",
+      "video_url": "https://www.youtube.com/watch?v=DECl5my2UP0",
+      "titre_video": "Conseil communal du 28/09/2022 - Gemeenteraad van 28/09/2022",
+      "duree_s": 10559,
+      "points": []
+    },
+    {
+      "date": "2022-06-29",
+      "video_id": "PKW7Tm6f6bU",
+      "video_url": "https://www.youtube.com/watch?v=PKW7Tm6f6bU",
+      "titre_video": "Conseil communal du 29/06/2022 - Gemeenteraad van 29/06/2022",
+      "duree_s": 17195,
+      "points": []
+    },
+    {
+      "date": "2022-06-01",
+      "video_id": "Ku2BooC0J5I",
+      "video_url": "https://www.youtube.com/watch?v=Ku2BooC0J5I",
+      "titre_video": "Conseil communal du 01/06/2022 - Gemeenteraad van 01/06/2022",
+      "duree_s": 15538,
+      "points": []
+    },
+    {
+      "date": "2022-04-27",
+      "video_id": "FwXgevSPpSU",
+      "video_url": "https://www.youtube.com/watch?v=FwXgevSPpSU",
+      "titre_video": "Conseil communal du 27/04/2022 - Gemeenteraad van 27/04/2022",
+      "duree_s": 11027,
+      "points": []
+    },
+    {
+      "date": "2022-03-30",
+      "video_id": "pkHLOgvGkuA",
+      "video_url": "https://www.youtube.com/watch?v=pkHLOgvGkuA",
+      "titre_video": "Conseil communal du 30/03/2022 - Gemeenteraad van 30/03/2022",
+      "duree_s": 17776,
+      "points": []
+    },
+    {
+      "date": "2022-01-26",
+      "video_id": "Ac9M0Fmhu6s",
+      "video_url": "https://www.youtube.com/watch?v=Ac9M0Fmhu6s",
+      "titre_video": "Conseil communal du 26/01/2022 - Gemeenteraad van 26/01/2022",
+      "duree_s": 10577,
+      "points": []
+    },
+    {
+      "date": "2021-12-21",
+      "video_id": "58CBrDBmoGk",
+      "video_url": "https://www.youtube.com/watch?v=58CBrDBmoGk",
+      "titre_video": "Conseil communal du 21/12/2021 - Gemeenteraad van 21/12/2021",
+      "duree_s": 18267,
+      "points": []
+    },
+    {
+      "date": "2021-11-24",
+      "video_id": "qIOKqJDZNSI",
+      "video_url": "https://www.youtube.com/watch?v=qIOKqJDZNSI",
+      "titre_video": "Conseil communal du 24/11/2021 - Gemeenteraad van 24/11/2021",
+      "duree_s": 10969,
+      "points": []
+    },
+    {
+      "date": "2021-10-27",
+      "video_id": "w9HTzPtDGXs",
+      "video_url": "https://www.youtube.com/watch?v=w9HTzPtDGXs",
+      "titre_video": "Conseil communal du 27/10/2021 - Gemeenteraad van 27/10/2021",
+      "duree_s": 14634,
+      "points": []
+    }
+  ]
+}
