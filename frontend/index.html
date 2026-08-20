@@ -146,22 +146,42 @@
 
 </main>
 
-<!-- ── BARRE DE SAISIE (visible en mode chat) ── -->
+<!-- ── BARRE DE SAISIE (visible en mode chat) ──
+     Composer en carte : ligne 1 = la question ; ligne 2 = mode d'interrogation
+     (Rapide / Réflexion) · commune · micro · bouton d'envoi (révélé dès qu'il y
+     a du texte). Pas de « + » : rien à joindre (fichier/photo). -->
 <div class="ask-bar" id="askBar">
-  <div class="ask-inner">
-    <select class="commune-select" id="communeSelect" aria-label="Filtrer par commune" title="Filtrer par commune">
-      <option value="">Toutes les communes</option>
-      <option value="schaerbeek">Schaerbeek</option>
-      <option value="evere" disabled>Evere (bientôt)</option>
-    </select>
+  <div class="ask-card" id="askCard">
     <input type="text" class="ask-input" id="askInput"
            placeholder="Posez votre question sur les procès-verbaux…"
+           oninput="onAskInput()"
            onkeydown="if(event.key==='Enter') submitQuestion()">
-    <button class="mic-btn" id="micBtn" type="button" onclick="toggleDictation(this)"
-            aria-label="Dicter la question" title="Dicter la question" style="display:none">
-      <svg class="icon" aria-hidden="true"><use href="#ico-mic"/></svg>
-    </button>
-    <button class="ask-btn" id="askBtn" onclick="submitQuestion()"><svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg><span>Demander</span></button>
+    <div class="ask-controls">
+      <div class="mode-seg" id="modeSeg" role="tablist" aria-label="Mode de réponse">
+        <button type="button" data-mode="rapide" onclick="setMode('rapide')" role="tab"
+                title="Réponse rapide (modèle léger)">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 11-13h-7z"/></svg>
+          <span>Rapide</span>
+        </button>
+        <button type="button" data-mode="reflexion" onclick="setMode('reflexion')" role="tab"
+                title="Analyse approfondie (modèle précis)">
+          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12c.6.5 1 1.3 1 2h6c0-.7.4-1.5 1-2a7 7 0 0 0-4-12Z"/></svg>
+          <span>Réflexion</span>
+        </button>
+      </div>
+      <span class="ask-spacer"></span>
+      <button class="mic-btn" id="micBtn" type="button" onclick="toggleDictation(this)"
+              aria-label="Dicter la question" title="Dicter la question" style="display:none">
+        <svg class="icon" aria-hidden="true"><use href="#ico-mic"/></svg>
+      </button>
+      <button class="send-btn" id="askBtn" type="button" onclick="submitQuestion()"
+              aria-label="Envoyer la question" title="Envoyer">
+        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </button>
+    </div>
   </div>
   <div class="mic-hint" id="micHint" role="status" aria-live="polite" hidden></div>
 </div>
@@ -191,6 +211,15 @@
     <section class="settings-sec">
       <h3>Recherche (chat)</h3>
       <div class="set-row">
+        <div class="set-top"><span>Commune</span></div>
+        <select class="commune-select" id="communeSelect" aria-label="Filtrer par commune">
+          <option value="">Toutes les communes</option>
+          <option value="schaerbeek">Schaerbeek</option>
+          <option value="evere" disabled>Evere (bientôt)</option>
+        </select>
+        <div class="set-hint">Périmètre de recherche des procès-verbaux.</div>
+      </div>
+      <div class="set-row">
         <div class="set-top"><span>Sources affichées</span><b id="valMaxSources">15</b></div>
         <input type="range" id="setMaxSources" min="5" max="30" step="1" oninput="updateSetting('maxSources', +this.value)">
         <div class="set-hint">Nombre de sources listées sous la réponse.</div>
@@ -206,11 +235,7 @@
         <div class="set-hint">Masque les sources sous ce score (0 = désactivé).</div>
       </div>
       <div class="set-row">
-        <div class="set-top"><span>Modèle</span></div>
-        <select id="setModel" onchange="updateSetting('model', this.value)">
-          <option value="claude-sonnet-4-6">Sonnet — précis (défaut)</option>
-          <option value="claude-haiku-4-5-20251001">Haiku — rapide / économe</option>
-        </select>
+        <div class="set-hint set-note">Le choix du modèle se fait via <b>Rapide</b> / <b>Réflexion</b>, sous la barre de question.</div>
       </div>
       <div class="set-row">
         <div class="set-top"><span>Ordre des sources</span></div>

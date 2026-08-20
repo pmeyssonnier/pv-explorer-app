@@ -505,50 +505,78 @@ body {
   bottom: 0; left: 0; right: 0;
   background: var(--papier);
   border-top: 1px solid var(--ligne);
-  padding: 16px 24px;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
 }
-.ask-inner {
-  max-width: 860px;
+/* Composer en carte : question (ligne 1) au-dessus des contrôles (ligne 2). */
+.ask-card {
+  max-width: 760px;
   margin: 0 auto;
-  display: flex;
-  gap: 10px;
-}
-.ask-input {
-  flex: 1;
-  min-width: 0;
   background: var(--blanc);
   border: 1px solid var(--ligne);
-  border-radius: 4px;
-  padding: 15px 16px;
+  border-radius: 16px;
+  padding: 4px 6px 8px;
+  transition: border-color 0.15s;
+}
+.ask-card:focus-within { border-color: var(--or); }
+.ask-input {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 12px 12px 8px;
   font-family: var(--corps);
   font-size: 16px;              /* 16px = pas de zoom auto iOS au focus */
   color: var(--encre);
   outline: none;
-  transition: border-color 0.15s;
 }
-.ask-input:focus { border-color: var(--or); }
+.ask-input::placeholder { color: var(--encre-soft); }
+.ask-controls { display: flex; align-items: center; gap: 8px; padding: 0 2px 0 6px; }
+.ask-spacer { flex: 1 1 auto; }
+/* Segment « mode d'interrogation » : Rapide / Réflexion (remplace le choix de
+   modèle, retiré des Options). */
+.mode-seg {
+  display: inline-flex; flex: 0 0 auto;
+  background: var(--papier-dark); border-radius: 999px; padding: 3px; gap: 2px;
+}
+.mode-seg button {
+  border: none; background: none; color: var(--encre-soft);
+  font-family: var(--corps); font-weight: 600; font-size: 13px;
+  padding: 7px 12px; border-radius: 999px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  transition: color .15s, background .15s;
+}
+.mode-seg button.on { background: var(--blanc); color: var(--bordeaux); box-shadow: 0 1px 3px rgba(60,30,20,.14); }
+.mode-seg .icon { width: 14px; height: 14px; vertical-align: 0; }
 .commune-select {
-  background: var(--blanc);
-  border: 1px solid var(--ligne);
-  border-radius: 4px;
-  padding: 0 12px;
+  flex: 0 1 auto; min-width: 0;
+  background: var(--papier-dark);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 8px 10px;
   font-family: var(--corps);
-  font-size: 14px;
-  color: var(--encre);
+  font-size: 13px; font-weight: 600;
+  color: var(--encre-soft);
   outline: none;
   cursor: pointer;
-  flex: 0 0 auto;
 }
 .commune-select:focus { border-color: var(--or); }
-/* Mobile : la saisie passe en pleine largeur sur sa propre ligne (au-dessus),
-   le sélecteur de commune et le bouton se partagent la ligne du dessous. */
+/* Dans le panneau Options, le filtre commune s'affiche en pleine largeur. */
+.settings-panel .commune-select { width: 100%; }
+/* Bouton d'envoi (rond) — révélé dès qu'il y a du texte à envoyer. */
+.send-btn {
+  flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%;
+  border: none; background: var(--brand); color: #f7f3ec;
+  display: none; align-items: center; justify-content: center; cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.ask-bar.has-text .send-btn { display: inline-flex; }
+.send-btn .icon { width: 20px; height: 20px; vertical-align: 0; }
+.send-btn:hover { background: var(--bordeaux-dark); }
+.send-btn:active { transform: scale(.93); }
+.send-btn:disabled { opacity: .5; cursor: not-allowed; }
 @media (max-width: 560px) {
-  .ask-bar { padding: 12px 14px; }
-  .ask-inner { flex-wrap: wrap; }
-  .ask-input { flex: 1 1 100%; order: -1; }
-  .commune-select { flex: 1 1 auto; max-width: none; padding: 12px; }
-  .ask-btn { flex: 0 0 auto; padding: 12px 20px; }
-  .main { padding-bottom: 170px; }   /* barre sur 2 lignes : plus de marge basse */
+  .ask-bar { padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .mode-seg button { padding: 7px 10px; }
+  .main { padding-bottom: 168px; }   /* composer sur 2 lignes : marge basse */
 }
 .ask-btn {
   background: var(--brand);
@@ -569,8 +597,8 @@ body {
 /* Bouton micro (dictée vocale) — révélé par JS seulement si le navigateur gère
    la reconnaissance vocale. Pulse en rouge « enregistrement » pendant l'écoute. */
 .mic-btn {
-  flex: 0 0 auto; width: 48px;
-  background: var(--blanc); border: 1px solid var(--ligne); border-radius: 4px;
+  flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%;
+  background: var(--blanc); border: 1px solid var(--ligne);
   color: var(--bordeaux); cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center;
   transition: background .15s, border-color .15s, color .15s;
