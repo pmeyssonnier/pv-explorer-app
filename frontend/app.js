@@ -1046,12 +1046,40 @@ function doShare(title, text, url, btn) {
   }
 }
 
+// Partage de LA RÉPONSE (son contenu), pas un lien qui relancerait le chat chez
+// le destinataire. Sur mobile : feuille de partage native avec le fichier .md
+// (mêmes données que « Exporter »). Sinon : partage du texte, ou copie en repli.
 function shareAnswer(btn) {
-  const q = decodeURIComponent(btn.closest('.msg-actions').dataset.q || '');
-  const url = q ? `${shareBaseUrl()}?q=${encodeURIComponent(q)}` : shareBaseUrl();
-  const text = q ? `Question aux procès-verbaux du Conseil communal de Schaerbeek : « ${q} »`
-                 : 'PV Explorer — procès-verbaux du Conseil communal de Schaerbeek';
-  doShare('PV Explorer — Conseil communal de Schaerbeek', text, url, btn);
+  const actions = btn.closest('.msg-actions');
+  const md = decodeURIComponent(actions.dataset.md || '');
+  const q = decodeURIComponent(actions.dataset.q || '');
+  const orig = btn.textContent;
+  const flash = (msg) => { btn.textContent = msg; setTimeout(() => { btn.textContent = orig; }, 1800); };
+  const title = 'PV Explorer — réponse du Conseil communal de Schaerbeek';
+  const text = q ? `Réponse aux procès-verbaux du Conseil communal de Schaerbeek — question : « ${q} »` : title;
+  if (!md) { flash('Rien à partager'); return; }
+
+  // 1) Partage de fichier natif (mobile/desktop compatibles) — partage le .md.
+  try {
+    const file = new File([md], 'reponse-pv-schaerbeek.md', { type: 'text/markdown' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title, text })
+        .then(() => flash('Partagé ✓'))
+        .catch((err) => { if (!err || err.name !== 'AbortError') copyShare(md, () => flash('Réponse copiée ✓')); });
+      return;
+    }
+  } catch (e) { /* File/canShare indisponible → replis ci-dessous */ }
+
+  // 2) Repli : partage du texte de la réponse (toujours pas de lien « relance »).
+  if (navigator.share) {
+    navigator.share({ title, text: md })
+      .then(() => flash('Partagé ✓'))
+      .catch((err) => { if (!err || err.name !== 'AbortError') copyShare(md, () => flash('Réponse copiée ✓')); });
+    return;
+  }
+
+  // 3) Repli desktop sans Web Share : copie de la réponse dans le presse-papier.
+  copyShare(md, () => flash('Réponse copiée ✓'));
 }
 
 function shareStats(btn) {
