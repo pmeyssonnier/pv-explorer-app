@@ -377,13 +377,14 @@ async function submitQuestion() {
         const seance = s.url
           ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}</a>`
           : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}`;
-        // Séance filmée (sans chapitrage précis) → lien vers la vidéo (début).
+        // Séance filmée (sans chapitrage précis) → lien vers la vidéo (début),
+        // sur sa propre ligne pour ne pas élargir la colonne (débordement mobile).
         const vid = s.video_url
-          ? ` <a class="video-session-link" href="${s.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la vidéo de la séance"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>vidéo</a>`
+          ? `<br><a class="video-session-link" href="${s.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la vidéo de la séance"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo</a>`
           : '';
         return `
         <div class="source-item">
-          <div class="source-ref">${seance}${vid}<br>Point SP ${s.sp}</div>
+          <div class="source-ref">${seance}<br>Point SP ${s.sp}${vid}</div>
           <div class="source-titre">${escapeHtml(s.titre)}</div>
           <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
         </div>`;
