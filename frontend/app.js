@@ -58,7 +58,6 @@ function renderSettings() {
   set('setMaxSources', settings.maxSources); txt('valMaxSources', settings.maxSources);
   set('setTopK', settings.topK); txt('valTopK', settings.topK);
   set('setScoreMin', settings.scoreMin); txt('valScoreMin', (+settings.scoreMin).toFixed(2));
-  set('setModel', settings.model);
   set('setOrder', settings.order);
   txt('appVersion', appVersion);
 }
@@ -81,6 +80,34 @@ async function fetchVersion() {
 fetchVersion();
 
 applyTheme();   // le <head> a déjà posé le thème ; on confirme après chargement d'app.js
+
+// ── MODE D'INTERROGATION (Rapide / Réflexion) ──
+// Remplace le sélecteur de modèle (retiré des Options) : le mode PILOTE le
+// paramètre `model` envoyé au backend. Rapide = modèle léger (Haiku), Réflexion
+// = modèle précis (Sonnet). Persisté comme le reste des réglages.
+const MODEL_RAPIDE = 'claude-haiku-4-5-20251001';
+const MODEL_REFLEXION = 'claude-sonnet-4-6';
+function currentMode() { return settings.model === MODEL_RAPIDE ? 'rapide' : 'reflexion'; }
+function setMode(mode) {
+  settings.model = (mode === 'rapide') ? MODEL_RAPIDE : MODEL_REFLEXION;
+  saveSettings();
+  syncModeUI();
+}
+function syncModeUI() {
+  const m = currentMode();
+  document.querySelectorAll('#modeSeg button').forEach(b =>
+    b.classList.toggle('on', b.dataset.mode === m));
+}
+syncModeUI();
+
+// Révèle le bouton d'envoi dès qu'il y a une question à envoyer (sinon caché ;
+// le micro reste disponible). Appelé aussi après remplissage programmatique
+// (dictée, reposer une question) et après envoi (champ vidé).
+function onAskInput() {
+  const input = document.getElementById('askInput');
+  const bar = document.getElementById('askBar');
+  if (input && bar) bar.classList.toggle('has-text', input.value.trim().length > 0);
+}
 
 // ── ONGLETS ──
 function switchTab(tab) {
@@ -105,6 +132,7 @@ function reuseQuestion(el) {
   if (!q) return;
   const input = document.getElementById('askInput');
   input.value = q;
+  onAskInput();
   input.focus();
   try { input.setSelectionRange(q.length, q.length); } catch (e) {}
   window.scrollTo(0, document.body.scrollHeight);
@@ -262,6 +290,7 @@ function newSearch() {
   clearConversation();
   const input = document.getElementById('askInput');
   if (input) input.value = '';
+  onAskInput();
   renderHistory();
   window.scrollTo(0, 0);
 }
@@ -350,6 +379,7 @@ function toggleDictation(btn) {
       let txt = '';
       for (let i = 0; i < e.results.length; i++) txt += e.results[i][0].transcript;
       input.value = base + txt;
+      onAskInput();
     };
     dictation.onerror = (e) => {
       errored = true;
@@ -388,6 +418,7 @@ async function submitQuestion() {
   document.getElementById('newSearchBtn').style.display = '';
   saveHistory(question);
   input.value = '';
+  onAskInput();
 
   const conv = document.getElementById('conversation');
 
