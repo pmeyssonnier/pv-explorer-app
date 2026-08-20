@@ -215,27 +215,32 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
     # « je ne trouve pas »). Sinon on filtre sous le seuil de pertinence.
     not_found = "je ne trouve pas" in answer_text.lower()
     sources = []
-    if not not_found:
-        url_map = _pdf_url_map()
-        for h in norm:
-            if h["score"] < score_min:
-                continue
-            meta = h["metadata"]
-            date_str = str(meta.get("date", ""))
-            source_type = str(meta.get("source_type") or "pv")
-            # url : deep-link vidéo (porté par la métadonnée pour les débats
-            # filmés), sinon lien PDF du PV résolu par date.
-            url = meta.get("url") or url_map.get(date_str)
-            sources.append(Source(
-                date=date_str,
-                sp=int(float(meta.get("sp") or 0)),
-                titre=str(meta.get("titre", "")),
-                decision=str(meta.get("decision", "")),
-                score=round(float(h["score"]), 3),
-                url=url,
-                source_type=source_type,
-            ))
-            if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
-                break
+    url_map = _pdf_url_map()
+    for h in norm:
+        if h["score"] < score_min:
+            continue
+        meta = h["metadata"]
+        source_type = str(meta.get("source_type") or "pv")
+        # Sur une réponse « je ne trouve pas », on masque les délibérations (PV)
+        # pour ne pas afficher de fausses sources — MAIS on garde les DÉBATS
+        # VIDÉO : le lien « ▶ voir le débat » reste utile même quand le contenu
+        # n'est pas transcrit (le point a bien été abordé au Conseil).
+        if not_found and source_type != "video_conseil":
+            continue
+        date_str = str(meta.get("date", ""))
+        # url : deep-link vidéo (porté par la métadonnée pour les débats filmés),
+        # sinon lien PDF du PV résolu par date.
+        url = meta.get("url") or url_map.get(date_str)
+        sources.append(Source(
+            date=date_str,
+            sp=int(float(meta.get("sp") or 0)),
+            titre=str(meta.get("titre", "")),
+            decision=str(meta.get("decision", "")),
+            score=round(float(h["score"]), 3),
+            url=url,
+            source_type=source_type,
+        ))
+        if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
+            break
 
     return AnswerResponse(answer=answer_text, sources=sources)
