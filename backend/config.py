@@ -17,7 +17,7 @@ except ImportError:
 
 # Version applicative — SOURCE UNIQUE, exposée par GET /health et lue par le
 # frontend (le menu Options l'affiche). Bumper ici seulement.
-VERSION = "1.4.0"
+VERSION = "1.5.0"
 
 # ── Pinecone / modèle ───────────────────────────────────────────────────────
 INDEX_NAME = "pv-explorer"
