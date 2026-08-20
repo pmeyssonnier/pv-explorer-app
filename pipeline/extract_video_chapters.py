@@ -47,7 +47,8 @@ NL_START = re.compile(
 # Points procéduraux à IGNORER (aucune valeur de recherche ; deep-link inutile).
 NOISE = re.compile(
     r"^(d[ée]but|begin|vote|stemming|geheim|comit[ée]\s+secret|fin\b|einde|"
-    r"mise à l|huldiging)", re.I)
+    r"mise à l|huldiging|abonnez|suivez|r[ée][ée]cout|facebook|instagram|newsletter)",
+    re.I)
 
 # Timestamps d'une description : « HH:MM:SS Titre » ou « MM:SS Titre ».
 TS_RE = re.compile(r"^\s*(\d{1,2}):(\d{2})(?::(\d{2}))?\s+(.+?)\s*$")
