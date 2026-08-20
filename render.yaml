@@ -10,6 +10,14 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'
     healthCheckPath: /health
+    # N'auto-déploie le backend QUE si des fichiers backend (ou cette config)
+    # changent. Sans ce filtre, chaque push sur main — y compris purement
+    # frontend — redéployait l'API, provoquant une brève fenêtre de 502 (tier
+    # gratuit). Les fichiers de données vivent dans backend/ → couverts aussi.
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false          # à saisir manuellement dans le dashboard (secret)
