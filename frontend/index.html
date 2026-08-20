@@ -154,6 +154,8 @@
   <div class="ask-card" id="askCard">
     <input type="text" class="ask-input" id="askInput"
            placeholder="Posez votre question sur les procès-verbaux…"
+           autocomplete="off" autocapitalize="sentences" spellcheck="true"
+           enterkeyhint="send" data-form-type="other" data-lpignore="true" data-1p-ignore
            oninput="onAskInput()"
            onkeydown="if(event.key==='Enter') submitQuestion()">
     <div class="ask-controls">
