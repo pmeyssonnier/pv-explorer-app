@@ -18,7 +18,7 @@ let isLoading = false;
 // Version : source unique = le backend (GET /health → { version }). La constante
 // locale n'est qu'un REPLI affiché si le backend est injoignable (hors-ligne, ou
 // réveil du service Render). Garder cette valeur vaguement à jour, sans plus.
-const APP_VERSION = '1.3.0';
+const APP_VERSION = '1.4.0';
 let appVersion = APP_VERSION;
 const SETTINGS_KEY = 'pv_settings';
 const SETTINGS_DEFAULTS = {
@@ -89,7 +89,7 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('panel-' + tab).classList.add('active');
   document.getElementById('askBar').style.display = (tab === 'chat') ? 'block' : 'none';
-  if (tab === 'stats') loadStats();
+  if (tab === 'stats') { loadStats(); loadElus(); }
 }
 
 // ── SUGGESTIONS ──
@@ -770,6 +770,154 @@ async function loadStats() {
   } catch (err) {
     container.innerHTML = `<div class="error-box">Impossible de charger les statistiques. ${escapeHtml(err.message)}</div>`;
   }
+}
+
+// ── INTERVENTIONS PAR ÉLU·E (agrégation structurée via /elus, /elu/{key}) ──
+// La recherche sémantique du chat est sensible à la formulation et non
+// exhaustive ; cette vue liste TOUTES les interventions d'une personne.
+let elusData = null;        // liste complète [{key,nom,role,depose,repond}]
+let elusLoaded = false;
+
+async function loadElus() {
+  if (elusLoaded) return;
+  const sel = document.getElementById('eluSelect');
+  if (!sel) return;
+  try {
+    const res = await fetch(API_URL + '/elus');
+    if (!res.ok) throw new Error('Erreur ' + res.status);
+    elusData = (await res.json()).elus || [];
+    elusLoaded = true;
+    populateElus();
+  } catch (err) {
+    sel.innerHTML = '<option value="">Indisponible</option>';
+  }
+}
+
+// (Re)remplit le sélecteur d'élu·e selon le filtre de rôle courant.
+function populateElus() {
+  const sel = document.getElementById('eluSelect');
+  const role = (document.getElementById('eluRole') || {}).value || 'all';
+  if (!sel || !elusData) return;
+  const prev = sel.value;
+  const list = elusData.filter(e => role === 'all' || e.role === role);
+  sel.innerHTML = list.map(e => {
+    const n = e.role === 'college' ? e.repond + e.depose : e.depose;
+    return `<option value="${e.key}">${escapeHtml(e.nom)} (${n})</option>`;
+  }).join('');
+  // Conserver la sélection si elle reste visible, sinon prendre la 1re entrée.
+  if (list.some(e => e.key === prev)) sel.value = prev;
+  if (sel.value) loadElu(sel.value);
+  else document.getElementById('eluResult').innerHTML = '';
+}
+
+const TYPE_BADGE = {
+  'Question orale': 'b-q',
+  'Demande': 'b-d',
+  'Motion': 'b-m',
+  'Débat filmé': 'b-v',
+};
+
+async function loadElu(key) {
+  const box = document.getElementById('eluResult');
+  if (!key) { box.innerHTML = ''; return; }
+  box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
+  try {
+    const res = await fetch(API_URL + '/elu/' + encodeURIComponent(key));
+    if (!res.ok) throw new Error('Erreur ' + res.status);
+    renderElu(await res.json());
+  } catch (err) {
+    box.innerHTML = `<div class="error-box">Impossible de charger cette fiche. ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function eluDeposeRow(it) {
+  const cls = TYPE_BADGE[it.type_label] || 'b-d';
+  const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
+  const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
+  // Lien : deep-link « ▶ Voir le débat » pour un point filmé, sinon PDF du PV
+  // et, si la séance a été filmée, un lien léger « ▶ vidéo ».
+  let links = '';
+  if (it.type === 'video' && it.url) {
+    links = `<a class="elu-link elu-link-video" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
+  } else {
+    if (it.url) links += `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
+    if (it.video_url) links += `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo</a>`;
+  }
+  const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
+  return `<div class="elu-item">
+    <div class="elu-date">${formatDate(it.date)}</div>
+    <div class="elu-body">
+      ${badge}${sp}
+      <div class="elu-titre">${escapeHtml(it.titre)}</div>
+      ${rep}
+      ${links ? `<div class="elu-links">${links}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+function eluRepondRow(it) {
+  const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
+  const link = it.url ? `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>` : '';
+  return `<div class="elu-item">
+    <div class="elu-date">${formatDate(it.date)}</div>
+    <div class="elu-body">
+      ${sp}
+      <div class="elu-titre">${escapeHtml(it.titre)}</div>
+      ${link ? `<div class="elu-links">${link}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+// Regroupe une liste d'items (triés récent→ancien) par année et produit le HTML.
+function groupByYear(items, rowFn) {
+  const groups = [];
+  let cur = null;
+  items.forEach(it => {
+    const y = (it.date || '').slice(0, 4) || '—';
+    if (!cur || cur.year !== y) { cur = { year: y, rows: [] }; groups.push(cur); }
+    cur.rows.push(it);
+  });
+  return groups.map(g =>
+    `<div class="elu-year">${g.year}</div>` + g.rows.map(rowFn).join('')
+  ).join('');
+}
+
+function renderElu(d) {
+  const box = document.getElementById('eluResult');
+  const c = d.counts;
+  const roleLabel = d.role === 'college'
+    ? 'Collège (échevin·e / bourgmestre)'
+    : 'Conseiller·ère';
+  const parts = [];
+  if (c.questions) parts.push(`${c.questions} question${c.questions > 1 ? 's' : ''} orale${c.questions > 1 ? 's' : ''}`);
+  if (c.demandes) parts.push(`${c.demandes} demande${c.demandes > 1 ? 's' : ''}`);
+  if (c.motions) parts.push(`${c.motions} motion${c.motions > 1 ? 's' : ''}`);
+  if (c.videos) parts.push(`${c.videos} débat${c.videos > 1 ? 's' : ''} filmé${c.videos > 1 ? 's' : ''}`);
+
+  let html = `<div class="elu-head">
+    <div class="elu-name">${escapeHtml(d.nom)}</div>
+    <span class="elu-role elu-role-${d.role}">${roleLabel}</span>
+  </div>`;
+
+  if (c.depose) {
+    html += `<div class="elu-summary"><strong>${c.depose}</strong> intervention${c.depose > 1 ? 's' : ''} déposée${c.depose > 1 ? 's' : ''}${parts.length ? ' · ' + parts.join(' · ') : ''}</div>`;
+    html += `<div class="elu-list">${groupByYear(d.depose, eluDeposeRow)}</div>`;
+  }
+
+  if (c.repond) {
+    html += `<details class="elu-repond"${c.depose ? '' : ' open'}>
+      <summary><strong>${c.repond}</strong> réponse${c.repond > 1 ? 's' : ''} en séance <span class="elu-repond-hint">(activité de Collège)</span></summary>
+      <div class="elu-list">${groupByYear(d.repond, eluRepondRow)}</div>
+    </details>`;
+  }
+
+  if (!c.depose && !c.repond) {
+    html += `<div class="trend-empty">Aucune intervention identifiée.</div>`;
+  }
+
+  html += `<p class="elu-note">Agrégation déterministe depuis les procès-verbaux (2012–2026) et le chapitrage des séances filmées. Attribution : question orale → 1er intervenant ; demande → auteur du titre ou 1er intervenant ; motion → auteur nommé dans le titre. Liste indicative, non exhaustive des prises de parole en débat.</p>`;
+
+  box.innerHTML = html;
 }
 
 // ── ÉVOLUTION D'UN THÈME (agrégation exhaustive via /trend) ──
