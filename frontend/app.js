@@ -987,6 +987,8 @@ async function loadStats() {
 let elusData = null;        // liste complète [{key,nom,role,depose,repond}]
 let elusLoaded = false;
 let pendingEluKey = null;   // élu·e à présélectionner depuis un lien partagé (?elu=)
+let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltrer sans refetch)
+let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
 
 async function loadElus() {
   if (elusLoaded) return;
@@ -1023,7 +1025,10 @@ function populateElus() {
     sel.value = prev;
   }
   if (sel.value) loadElu(sel.value);
-  else document.getElementById('eluResult').innerHTML = '';
+  else {
+    document.getElementById('eluResult').innerHTML = '';
+    document.getElementById('eluYear').hidden = true;
+  }
 }
 
 // Partage : lien profond vers l'onglet Par élu·e, sur la fiche sélectionnée.
@@ -1058,7 +1063,7 @@ const TYPE_ACTOR_LABEL = {
 
 async function loadElu(key) {
   const box = document.getElementById('eluResult');
-  if (!key) { box.innerHTML = ''; return; }
+  if (!key) { box.innerHTML = ''; document.getElementById('eluYear').hidden = true; return; }
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   try {
     const res = await fetch(API_URL + '/elu/' + encodeURIComponent(key));
@@ -1067,6 +1072,38 @@ async function loadElu(key) {
   } catch (err) {
     box.innerHTML = `<div class="error-box">Impossible de charger cette fiche. ${escapeHtml(err.message)}</div>`;
   }
+}
+
+// Années distinctes (dépôts + réponses), triées récent → ancien.
+function eluYears(d) {
+  const ys = new Set();
+  (d.depose || []).forEach(it => { if (it.date) ys.add(it.date.slice(0, 4)); });
+  (d.repond || []).forEach(it => { if (it.date) ys.add(it.date.slice(0, 4)); });
+  return [...ys].sort((a, b) => b.localeCompare(a));
+}
+
+// (Re)remplit le filtre d'année pour la fiche courante ; conserve l'année
+// sélectionnée si elle existe encore pour cette personne, sinon "Toutes".
+function populateEluYearSelect(d) {
+  const sel = document.getElementById('eluYear');
+  if (!sel) return;
+  const years = eluYears(d);
+  if (!years.length) { sel.innerHTML = ''; sel.hidden = true; return; }
+  if (!years.includes(eluYearFilter)) eluYearFilter = 'all';
+  sel.hidden = false;
+  sel.innerHTML = '<option value="all">Toutes les années</option>' +
+    years.map(y => `<option value="${y}">${y}</option>`).join('');
+  sel.value = eluYearFilter;
+}
+
+function onEluYearChange() {
+  eluYearFilter = document.getElementById('eluYear').value;
+  if (currentEluData) renderElu(currentEluData);
+}
+
+function filterByYear(items, year) {
+  if (year === 'all') return items;
+  return items.filter(it => (it.date || '').slice(0, 4) === year);
 }
 
 function eluDeposeRow(it, nom) {
@@ -1129,36 +1166,46 @@ function groupByYear(items, rowFn) {
 }
 
 function renderElu(d) {
+  currentEluData = d;
+  populateEluYearSelect(d);
+
   const box = document.getElementById('eluResult');
-  const c = d.counts;
+  const depose = filterByYear(d.depose || [], eluYearFilter);
+  const repond = filterByYear(d.repond || [], eluYearFilter);
   const roleLabel = d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
     : 'Conseiller·ère';
+  const nQuestions = depose.filter(it => it.type === 'question_orale').length;
+  const nDemandes = depose.filter(it => it.type === 'demande_habitant').length;
+  const nMotions = depose.filter(it => it.type === 'motion').length;
+  const nVideos = depose.filter(it => it.type === 'video').length;
   const parts = [];
-  if (c.questions) parts.push(`${c.questions} question${c.questions > 1 ? 's' : ''} orale${c.questions > 1 ? 's' : ''}`);
-  if (c.demandes) parts.push(`${c.demandes} demande${c.demandes > 1 ? 's' : ''}`);
-  if (c.motions) parts.push(`${c.motions} motion${c.motions > 1 ? 's' : ''}`);
-  if (c.videos) parts.push(`${c.videos} débat${c.videos > 1 ? 's' : ''} filmé${c.videos > 1 ? 's' : ''}`);
+  if (nQuestions) parts.push(`${nQuestions} question${nQuestions > 1 ? 's' : ''} orale${nQuestions > 1 ? 's' : ''}`);
+  if (nDemandes) parts.push(`${nDemandes} demande${nDemandes > 1 ? 's' : ''}`);
+  if (nMotions) parts.push(`${nMotions} motion${nMotions > 1 ? 's' : ''}`);
+  if (nVideos) parts.push(`${nVideos} débat${nVideos > 1 ? 's' : ''} filmé${nVideos > 1 ? 's' : ''}`);
 
   let html = `<div class="elu-head">
     <div class="elu-name">${escapeHtml(d.nom)}</div>
     <span class="elu-role elu-role-${d.role}">${roleLabel}</span>
   </div>`;
 
-  if (c.depose) {
-    html += `<div class="elu-summary"><strong>${c.depose}</strong> intervention${c.depose > 1 ? 's' : ''} déposée${c.depose > 1 ? 's' : ''}${parts.length ? ' · ' + parts.join(' · ') : ''}</div>`;
-    html += `<div class="elu-list">${groupByYear(d.depose, it => eluDeposeRow(it, d.nom))}</div>`;
+  if (depose.length) {
+    html += `<div class="elu-summary"><strong>${depose.length}</strong> intervention${depose.length > 1 ? 's' : ''} déposée${depose.length > 1 ? 's' : ''}${parts.length ? ' · ' + parts.join(' · ') : ''}</div>`;
+    html += `<div class="elu-list">${groupByYear(depose, it => eluDeposeRow(it, d.nom))}</div>`;
   }
 
-  if (c.repond) {
-    html += `<details class="elu-repond"${c.depose ? '' : ' open'}>
-      <summary><strong>${c.repond}</strong> réponse${c.repond > 1 ? 's' : ''} en séance <span class="elu-repond-hint">(activité de Collège)</span></summary>
-      <div class="elu-list">${groupByYear(d.repond, it => eluRepondRow(it, d.nom))}</div>
+  if (repond.length) {
+    html += `<details class="elu-repond"${depose.length ? '' : ' open'}>
+      <summary><strong>${repond.length}</strong> réponse${repond.length > 1 ? 's' : ''} en séance <span class="elu-repond-hint">(activité de Collège)</span></summary>
+      <div class="elu-list">${groupByYear(repond, it => eluRepondRow(it, d.nom))}</div>
     </details>`;
   }
 
-  if (!c.depose && !c.repond) {
-    html += `<div class="trend-empty">Aucune intervention identifiée.</div>`;
+  if (!depose.length && !repond.length) {
+    html += eluYearFilter === 'all'
+      ? `<div class="trend-empty">Aucune intervention identifiée.</div>`
+      : `<div class="trend-empty">Aucune intervention en ${escapeHtml(eluYearFilter)}.</div>`;
   }
 
   html += `<p class="elu-note">Agrégation déterministe depuis les procès-verbaux (2012–2026) et le chapitrage des séances filmées. Attribution : question orale → 1er intervenant ; demande → auteur du titre ou 1er intervenant ; motion → auteur nommé dans le titre. Liste indicative, non exhaustive des prises de parole en débat.</p>`;
