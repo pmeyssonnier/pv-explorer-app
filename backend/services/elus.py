@@ -37,7 +37,8 @@ _VIDEO_PATH = os.path.join(
 # ── Normalisation des noms ───────────────────────────────────────────────────
 # Civilités en tête de nom (répétables : « M. le … »).
 _CIV = re.compile(
-    r"^(?:M\.?|Mme\.?|Mr\.?|Monsieur|Madame|Mlle|Dr\.?|de\s+heer|Mevrouw|Mevr\.?|Dhr\.?|Mijnheer)\s+",
+    r"^(?:MM\.?|Messieurs|M\.?|Mme\.?|Mr\.?|Monsieur|Madame|Mesdames|Mlle|Dr\.?|"
+    r"de\s+heer|Mevrouw|Mevr\.?|Dhr\.?|Mijnheer)\s+",
     re.I,
 )
 # Auteur mentionné dans le titre d'une demande/motion (« Motion de M. Axel Bernard »).
@@ -49,8 +50,9 @@ _AUTHOR_IN_TITLE = re.compile(
 # Mots de rôle/fonction : jamais un nom de personne à eux seuls.
 _ROLE_WORDS = {
     "bourgmestre", "echevin", "echevine", "president", "presidente", "secretaire",
-    "conseiller", "conseillere", "ff", "schepen", "burgemeester", "voorzitter",
-    "college", "le", "la", "les", "du", "des", "au", "the", "puis", "ensuite", "alors",
+    "communal", "communale", "conseiller", "conseillere", "ff", "schepen",
+    "burgemeester", "voorzitter", "college", "le", "la", "les", "du", "des", "au",
+    "the", "puis", "ensuite", "alors",
 }
 # Particules de nom conservées en minuscules à l'affichage.
 _PARTICLES = {"de", "du", "des", "van", "von", "den", "der", "ter", "ten",
@@ -169,6 +171,21 @@ def _build_name_registry(pv: list, video: list) -> set:
     return pairs
 
 
+def _best_display_variant(variants: dict, key: str) -> str:
+    """Choisit la meilleure variante brute pour l'affichage : on préfère
+    celles qui se terminent bien par le nom de famille (la clé), donc déjà
+    dans le bon ordre « Prénom Nom » (une variante en ordre inversé, ex.
+    « Verzin Georges », se termine par le prénom et est donc écartée ici) et
+    sans mot répété (artefact d'extraction, ex. « Bernard BERNARD »). Parmi
+    les variantes admissibles, la plus complète (mots, puis longueur)."""
+    def admissible(v):
+        toks = [_norm_tok(t) for t in v.split()]
+        return bool(toks) and toks[-1] == key and len(set(toks)) == len(toks)
+
+    pool = [v for v in variants if admissible(v)] or list(variants)
+    return max(pool, key=lambda v: (len(v.split()), len(v)))
+
+
 def _titlecase(name: str) -> str:
     """Casse d'affichage homogène : « DEGREZ » → « Degrez », particules en
     minuscules (« Yvan de Beauffort »)."""
@@ -189,6 +206,26 @@ def _looks_like_name(s: str) -> bool:
     séance (bourgmestre/bourgmestre_ff) sont censées contenir un nom de
     personne (≤ 4 mots), pas une phrase entière mal extraite du PV."""
     return bool(s) and 1 <= len(s.split()) <= 4
+
+
+def _split_person_names(raw: str) -> list:
+    """Découpe une mention potentiellement composée (« X et Y », « Bourgmestre
+    X », « MM. X et Y ») en noms de personnes individuels, en écartant les
+    mots de rôle purs (une part réduite à zéro mot après filtrage, ex. « le
+    Bourgmestre » seul, est silencieusement ignorée : pas de nom à en tirer
+    sans les métadonnées de séance, voir `_respondents`). Utilisé partout où
+    une mention brute (intervenant, répondant, auteur) peut en réalité
+    désigner plusieurs personnes ou porter un rôle collé au nom — jamais un
+    simple split() naïf."""
+    names = []
+    for part in _RESP_SPLIT.split(raw or ""):
+        c = _clean(part).strip()
+        if not c:
+            continue
+        toks = [t for t in c.split() if not _is_role_token(t)]
+        if toks:
+            names.append(" ".join(toks))
+    return names
 
 
 def _respondents(raw: str, seance: dict) -> list:
@@ -224,16 +261,28 @@ _TYPE_LABEL = {
 }
 
 
+def _first_named_intervenant(interv: list):
+    """1er intervenant clairement attribuable à UNE personne : ignore les
+    entrées de rôle pur (« Secrétaire communal ») et les mentions composées
+    (« MM. Bouhjar et El Arnouki », ambiguës quant à qui est réellement le
+    1er intervenant) plutôt que de les prendre à la lettre."""
+    for raw in interv or []:
+        names = _split_person_names(raw)
+        if len(names) == 1:
+            return names[0]
+    return None
+
+
 def _author_of(point: dict):
     """Nom de l'auteur·e d'un point PV selon son type (None si non attribuable)."""
     typ = point.get("type")
     title = point.get("titre") or ""
     interv = point.get("intervenants") or []
     if typ == "question_orale":
-        return interv[0] if interv else None
+        return _first_named_intervenant(interv)
     if typ == "demande_habitant":
         m = _AUTHOR_IN_TITLE.search(title)
-        return m.group(1) if m else (interv[0] if interv else None)
+        return m.group(1) if m else _first_named_intervenant(interv)
     if typ == "motion":
         m = _AUTHOR_IN_TITLE.search(title)
         return m.group(1) if m else None
@@ -350,17 +399,21 @@ def _build_index() -> dict:
     for s in pv:
         for p in s.get("points", []):
             for interv in (p.get("intervenants") or []):
-                k = _key(interv, pairs)
-                if k in people:
-                    add_variant(k, interv)
+                # Une entrée d'intervenant·e peut elle-même être composée
+                # (« MM. Bouhjar et El Arnouki ») ou porter un rôle collé au
+                # nom (« Bourgmestre Audrey Henry ») : on la découpe comme
+                # n'importe quelle autre mention brute avant utilisation,
+                # jamais telle quelle (sinon le fragment de rôle/la mention
+                # à plusieurs personnes pollue le nom affiché de qui que ce
+                # soit dont la clé correspond au dernier mot).
+                for name in _split_person_names(interv):
+                    k = _key(name, pairs)
+                    if k in people:
+                        add_variant(k, name)
 
     index = {}
     for k, d in people.items():
-        variants = d["variants"]
-        # Nom d'affichage : la variante la plus complète, casse homogénéisée
-        # (sauf complément manuel pour les cas absents de toutes les sources).
-        best = max(variants, key=lambda v: (len(v.split()), len(v)))
-        nom = _DISPLAY_NAME_OVERRIDES.get(k) or _titlecase(best)
+        nom = _DISPLAY_NAME_OVERRIDES.get(k) or _titlecase(_best_display_variant(d["variants"], k))
         d["depose"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         d["repond"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         index[k] = {
