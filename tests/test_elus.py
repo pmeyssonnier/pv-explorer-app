@@ -26,6 +26,71 @@ def test_key_matches_pv_surname_and_video_fullname():
     assert elus._key("Noël, Bourgmestre") == "noel"
 
 
+def test_key_resolves_reversed_name_order_via_pairs():
+    # Le PV mélange « Prénom Nom » et « Nom Prénom » selon les séances/sources,
+    # ce qui scindait une même personne en deux fiches (ex. Verzin à 64
+    # interventions + un doublon « Georges » à 2 -- bug signalé en prod).
+    pairs = elus._build_name_registry(
+        elus.load_db().get("seances", []), elus._load_video()
+    )
+    assert elus._key("Georges Verzin", pairs) == "verzin"
+    assert elus._key("Verzin Georges", pairs) == "verzin"
+    assert elus._key("VERZIN GEORGES", pairs) == "verzin"
+    assert elus._key("Nimal Frederic", pairs) == "nimal"
+    # Un même mot peut être le nom de famille d'une personne et le prénom
+    # d'une autre (« Bernard ») : sans preuve de paire inversée, on ne
+    # fusionne pas à tort (Axel Bernard != Bernard Tassier).
+    assert elus._key("Bernard Tassier", pairs) == "tassier"
+    assert elus._key("Axel Bernard", pairs) == "bernard"
+
+
+def test_elus_list_has_no_reversed_name_duplicates():
+    keys = {e["key"] for e in elus.elus_list()}
+    # Ces clés n'existaient que par scission incorrecte (ordre « Nom Prénom »
+    # pris pour le nom de famille) : elles ne doivent plus apparaître.
+    assert "georges" not in keys
+    assert "frederic" not in keys
+    assert "vincent" not in keys
+    assert "(ff)" not in keys
+    assert "ff" not in keys
+
+
+def test_key_resolves_reversed_particle_surname():
+    # Nom à particule composé (« Van den Hove », « De Brabant ») lui aussi
+    # mélangé dans les deux ordres selon les sources.
+    assert elus._key("Van den Hove Quentin") == "hove"
+    assert elus._key("Quentin Van den Hove") == "hove"
+    assert elus._key("De Brabant Martin") == "brabant"
+    assert elus._key("Martin de Brabant") == "brabant"
+    # Nom à particule seul (sans prénom) : pas un ordre inversé.
+    assert elus._key("de Brabant") == "brabant"
+    assert elus._key("Van den Hove") == "hove"
+
+
+def test_is_role_token_handles_parentheses():
+    # « Jodogne (Bourgmestre ff) » ne doit pas produire une clé "(ff)" à part
+    # -- le rôle entre parenthèses doit être reconnu comme les autres.
+    assert elus._is_role_token("(ff)")
+    assert elus._is_role_token("(Bourgmestre")
+    assert elus._is_role_token("ff)")
+
+
+def test_respondents_rejects_implausible_seance_metadata():
+    # Garde-fou contre un artefact d'extraction PDF : bourgmestre_ff contenant
+    # une phrase entière mal extraite ne doit jamais devenir un "nom".
+    seance = {
+        "bourgmestre_ff": (
+            "De werking van de burgerinterpellaties-Vraag van Mevrouw "
+            "Houaria Ouazrhari Madame Ouazrhari expose son point Madame la"
+        ),
+    }
+    assert elus._respondents("Bourgmestre ff", seance) == []
+
+
+def test_clean_strips_trailing_period():
+    assert elus._clean("Diana Dolce.") == "Diana Dolce"
+
+
 def test_titlecase_particles_and_caps():
     assert elus._titlecase("DEGREZ") == "Degrez"
     assert elus._titlecase("Yvan de Beauffort") == "Yvan de Beauffort"

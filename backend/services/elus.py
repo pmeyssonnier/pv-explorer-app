@@ -72,19 +72,92 @@ def _clean(raw: str) -> str:
     while prev != s:
         prev = s
         s = _CIV.sub("", s).strip()
-    return s
+    return s.rstrip(".")
 
 
 def _is_role_token(tok: str) -> bool:
-    t = _strip_accents(tok).lower().strip(".'’-")
-    return t in _ROLE_WORDS or bool(re.fullmatch(r"f\.?f\.?", tok, re.I))
+    # Parenthèses incluses : « (ff) », « (Bourgmestre » (rôle entre
+    # parenthèses, ex. « Jodogne (Bourgmestre ff) ») doivent être reconnus
+    # comme des mots de rôle au même titre que sans parenthèses.
+    t = _strip_accents(tok).lower().strip(".'’-()")
+    return t in _ROLE_WORDS or bool(re.fullmatch(r"f\.?f\.?", t, re.I))
 
 
-def _key(name: str) -> str:
-    """Clé d'identité = nom de famille (dernier mot), accent-strippé/minuscule.
-    Rapproche « Georges VERZIN » (vidéo) et « Verzin » (PV) → « verzin »."""
+def _norm_tok(tok: str) -> str:
+    return _strip_accents(tok).lower().strip("-'’.")
+
+
+def _key(name: str, pairs: set | None = None) -> str:
+    """Clé d'identité = nom de famille, accent-strippé/minuscule.
+    Rapproche « Georges VERZIN » (vidéo) et « Verzin » (PV) → « verzin ».
+
+    Par défaut (sans registre) on suppose l'ordre « Prénom Nom » et on
+    prend le dernier mot. Mais le PV mélange les deux ordres selon les
+    séances (« Georges Verzin » / « Verzin Georges »), ce qui scindait une
+    même personne en deux fiches (ex. Verzin à 64 interventions + un
+    doublon « Georges » à 2). Un registre de paires (prénom, nom) déjà
+    observées sans ambiguïté ailleurs dans le corpus (`_build_name_registry`)
+    permet de reconnaître l'ordre inversé et de retrouver le vrai nom de
+    famille, quel que soit le mot qui le porte dans cette mention-ci. On ne
+    s'appuie jamais sur « ce mot est un nom de famille connu » tout seul :
+    un même mot peut être le nom de famille d'une personne et le prénom
+    d'une autre (ex. « Bernard » : nom de famille d'Axel Bernard, prénom du
+    bourgmestre Bernard Clerfayt) — seule la paire complète est fiable.
+    """
     toks = [t for t in re.split(r"\s+", _clean(name)) if t]
-    return _strip_accents(toks[-1]).lower().strip("-'’.") if toks else ""
+    if not toks:
+        return ""
+    normed = [_norm_tok(t) for t in toks]
+    # Nom à particule en tête suivi d'autres mots (prénom) : ordre inversé
+    # « (particule) Nom Prénom » (ex. « Van den Hove Quentin »,
+    # « De Brabant Martin »). Le nom de famille se termine au premier mot
+    # suivant la particule ; s'il ne reste rien après (« de Brabant » seul),
+    # ce n'est pas un ordre inversé et le dernier mot ci-dessous convient déjà.
+    if normed[0] in _PARTICLES and len(normed) > 1:
+        j = 0
+        while j < len(normed) and normed[j] in _PARTICLES:
+            j += 1
+        if j < len(normed) and j + 1 < len(normed):
+            return normed[j]
+    if len(normed) == 2 and pairs:
+        a, b = normed
+        if (b, a) in pairs:  # ordre inversé (« Nom Prénom ») détecté
+            return a
+    return normed[-1]
+
+
+def _build_name_registry(pv: list, video: list) -> set:
+    """Déduit du corpus les paires (prénom, nom) non ambiguës, pour lever
+    l'ambiguïté d'ordre dans `_key`. Signal fiable : une mention à deux
+    mots où un seul est tout en majuscules (« Georges VERZIN » → prénom
+    Georges, nom de famille VERZIN, comme dans les PV officiels)."""
+    pairs: set = set()
+
+    def add_from(raw):
+        toks = [t for t in _clean(raw).split() if t]
+        if len(toks) == 2:
+            caps = [t.isupper() and len(t) > 1 for t in toks]
+            if sum(caps) == 1:
+                idx = caps.index(True)
+                sn, fn = _norm_tok(toks[idx]), _norm_tok(toks[1 - idx])
+                pairs.add((fn, sn))
+
+    for s in pv:
+        meta = s.get("seance", {}) or {}
+        for p in s.get("points", []):
+            for interv in (p.get("intervenants") or []):
+                add_from(interv)
+            for name in _respondents(p.get("repondant") or "", meta):
+                add_from(name)
+            author = _author_of(p)
+            if author:
+                add_from(author)
+    for s in video:
+        for p in s.get("points", []):
+            author = p.get("auteur")
+            if author:
+                add_from(author)
+    return pairs
 
 
 def _titlecase(name: str) -> str:
@@ -102,6 +175,13 @@ def _titlecase(name: str) -> str:
     return " ".join(out)
 
 
+def _looks_like_name(s: str) -> bool:
+    """Garde-fou contre les artefacts d'extraction PDF : les métadonnées de
+    séance (bourgmestre/bourgmestre_ff) sont censées contenir un nom de
+    personne (≤ 4 mots), pas une phrase entière mal extraite du PV."""
+    return bool(s) and 1 <= len(s.split()) <= 4
+
+
 def _respondents(raw: str, seance: dict) -> list:
     """Noms de personnes extraits d'un champ « repondant » (composé possible).
     Un rôle seul est résolu via les métadonnées de séance (bourgmestre / ff)."""
@@ -116,11 +196,13 @@ def _respondents(raw: str, seance: dict) -> list:
             continue
         low = _strip_accents(c).lower()  # rôle seul → résolution via la séance
         if "ff" in low or "f.f" in low:
-            if seance.get("bourgmestre_ff"):
-                names.append(seance["bourgmestre_ff"])
+            bff = seance.get("bourgmestre_ff")
+            if bff and _looks_like_name(bff):
+                names.append(bff)
         elif "bourgmestre" in low or "burgemeester" in low:
-            if seance.get("bourgmestre"):
-                names.append(seance["bourgmestre"])
+            b = seance.get("bourgmestre")
+            if b and _looks_like_name(b):
+                names.append(b)
     return names
 
 
@@ -184,6 +266,8 @@ def _role_of(n_depose: int, n_repond: int) -> str:
 
 def _build_index() -> dict:
     pv = load_db().get("seances", [])
+    video = _load_video()
+    pairs = _build_name_registry(pv, video)
     people = defaultdict(lambda: {"variants": defaultdict(int), "depose": [], "repond": []})
 
     def add_variant(k, name):
@@ -201,7 +285,7 @@ def _build_index() -> dict:
             if author:
                 last = author.split()[-1] if author.split() else ""
                 if last and not _is_role_token(last):
-                    k = _key(author)
+                    k = _key(author, pairs)
                     if k:
                         add_variant(k, author)
                         people[k]["depose"].append({
@@ -215,7 +299,7 @@ def _build_index() -> dict:
                         })
             resp_raw = p.get("repondant")
             for name in _respondents(resp_raw, meta):
-                k = _key(name)
+                k = _key(name, pairs)
                 if not k:
                     continue
                 add_variant(k, name)
@@ -226,13 +310,13 @@ def _build_index() -> dict:
                     "url": meta.get("source_url"),
                 })
 
-    for s in _load_video():
+    for s in video:
         date = s.get("date")
         for p in s.get("points", []):
             author = p.get("auteur")
             if not author:
                 continue
-            k = _key(author)
+            k = _key(author, pairs)
             if not k:
                 continue
             add_variant(k, author)
