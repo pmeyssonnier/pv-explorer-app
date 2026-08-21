@@ -46,7 +46,10 @@ MAX_VIDEOS = None          # None = toutes les séances ; un entier pour un test
 # Clients YouTube à essayer pour l'extraction par vidéo (dans cet ordre) : le
 # client "web" par défaut est celui qui déclenche le plus le mur anti-bot sur
 # IP cloud ; android/tv/web_safari le contournent le plus souvent.
-PLAYER_CLIENTS = "android,tv,web_safari,web"
+# ⚠️ yt-dlp attend une LISTE de noms (pas une chaîne unique avec virgules :
+# passée telle quelle elle est vue comme UN SEUL nom de client, invalide →
+# "Skipping unsupported client" et repli silencieux sur le client par défaut).
+PLAYER_CLIENTS = ["android", "tv", "web_safari", "web"]
 RETRIES = 3          # tentatives par vidéo avant d'abandonner
 RETRY_WAIT_S = 5      # pause entre tentatives (secondes)
 
@@ -206,7 +209,7 @@ def main():
     ydl_opts = {
         "quiet": True,
         "skip_download": True,
-        "extractor_args": {"youtube": {"player_client": [PLAYER_CLIENTS]}},
+        "extractor_args": {"youtube": {"player_client": PLAYER_CLIENTS}},
     }
 
     seances = []
