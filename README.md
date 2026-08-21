@@ -74,7 +74,9 @@ alternative — `railway.json` est fourni.)*
 │   ├── audit_completeness.py          → audit de complétude hors-ligne (sans LLM)
 │   ├── reextract_targeted.py          → re-extraction ciblée des séances à trous
 │   ├── patch_multi_communes.py
-│   └── PV_Schaerbeek_scrapper.ipynb   → notebook d'orchestration (Colab)
+│   ├── PV_Schaerbeek_scrapper.ipynb   → notebook d'orchestration (Colab)
+│   ├── extract_video_chapters.py      → chapitrage vidéo (YouTube @1030be)
+│   └── extract_video_chapters.ipynb   → notebook Colab (script à jour, télécharge et exécute)
 ├── tests/                    → suite pytest (fonctions pures + routes HTTP)
 ├── render.yaml               → Blueprint Render (déploiement backend)
 ├── ruff.toml · pytest.ini    → lint + config de tests
@@ -169,6 +171,18 @@ python index_pv.py --commune evere --input pv_conseil_evere.json
 # détecté automatiquement (source_type "video_conseil").
 python index_pv.py --commune schaerbeek --input pv_video_conseil_schaerbeek.json
 ```
+
+> 🎬 **Chapitrage vidéo (débats filmés)** : le JSON ci-dessus est produit par
+> `pipeline/extract_video_chapters.py`, à lancer dans **Colab** (YouTube y est
+> joignable, contrairement à certains sites qui bloquent les IP cloud) :
+>
+> [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pmeyssonnier/pv-explorer-app/blob/main/pipeline/extract_video_chapters.ipynb)
+>
+> Le notebook télécharge et exécute toujours la **dernière version** du
+> script depuis le dépôt (aucune copie à tenir à jour). Il produit deux
+> fichiers à committer dans `backend/` : `video_conseil_schaerbeek.json`
+> (chapitres, lu directement par le backend — pas de réindexation requise
+> pour l'onglet « Par élu·e ») et `video_sessions.json` (liens « ▶ vidéo »).
 
 - **Ne pas** utiliser `--reset` pour ajouter une commune : il vide **tout**
   l'index. L'upsert par ID est idempotent → une simple réindexation suffit.
