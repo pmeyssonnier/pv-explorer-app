@@ -250,6 +250,11 @@
           <option value="date">Par date (récent d'abord)</option>
         </select>
       </div>
+      <div class="set-row">
+        <div class="set-top"><span>Questions en cache</span><b id="valCacheSize">15</b></div>
+        <input type="range" id="setCacheSize" min="3" max="30" step="1" oninput="updateSetting('cacheSize', +this.value)">
+        <div class="set-hint">Nombre de « questions récentes » gardées, avec leur réponse (pas de nouvel appel en recliquant dessus). Au-delà, la plus ancienne est retirée.</div>
+      </div>
     </section>
 
     <section class="settings-sec settings-about">
