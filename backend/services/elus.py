@@ -335,7 +335,15 @@ def _sig():
 
 
 def _role_of(n_depose: int, n_repond: int) -> str:
-    """Étiquette de rôle dominante, dérivée de l'activité (indicatif)."""
+    """Étiquette de rôle dominante, dérivée de l'activité (indicatif).
+
+    Le champ "répondant" d'un point n'est renseigné que par le membre du
+    Collège qui a répondu ; une personne qui répond au moins une fois et
+    ne dépose jamais de point est donc, structurellement, un·e échevin·e
+    ou le bourgmestre, même avec peu de séances (ex. mandat écourté).
+    """
+    if n_repond > 0 and n_depose == 0:
+        return "college"
     if n_repond >= 8 and n_repond > n_depose:
         return "college"      # échevin·e / bourgmestre (répond en séance)
     return "conseiller"       # conseiller·ère (dépose des points)

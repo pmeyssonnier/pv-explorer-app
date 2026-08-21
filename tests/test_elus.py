@@ -211,6 +211,33 @@ def test_echevin_has_college_role_and_answers():
     assert d["counts"]["repond"] > d["counts"]["depose"]
 
 
+def test_role_of_college_even_with_few_answers_and_no_deposits():
+    # Le champ « répondant » n'est renseigné que par un membre du Collège :
+    # répondre au moins une fois sans jamais déposer suffit à qualifier
+    # « college », même avec un petit nombre de réponses (ex. mandat
+    # écourté) — le seuil de 8 réponses ne doit s'appliquer qu'en cas
+    # d'activité mixte (dépôts ET réponses).
+    assert elus._role_of(0, 1) == "college"
+    assert elus._role_of(0, 3) == "college"
+    # Activité mixte avec peu de réponses : signal trop faible, on reste
+    # prudent et on garde « conseiller » (ex. présidence ponctuelle de séance).
+    assert elus._role_of(10, 1) == "conseiller"
+    assert elus._role_of(0, 0) == "conseiller"
+
+
+def test_college_member_with_few_answers_counted_correctly_in_list():
+    # Régression : Bertrand Dhuyvetter (0 dépôt, 3 réponses) était classé
+    # « conseiller » (seuil de 8 non atteint), ce qui faisait aussi
+    # afficher "(0)" dans le sélecteur côté frontend (n = depose pour un
+    # rôle non-college). Doit être « college » avec 3 interventions.
+    lst = elus.elus_list()
+    d = next((e for e in lst if e["key"] == "dhuyvetter"), None)
+    assert d is not None
+    assert d["role"] == "college"
+    assert d["depose"] == 0
+    assert d["repond"] == 3
+
+
 def test_case_insensitive_key():
     assert elus.elu_detail("VERZIN")["key"] == "verzin"
 
