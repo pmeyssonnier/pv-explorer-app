@@ -18,7 +18,7 @@ from config import (
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
-from utils.video import video_session_map
+from utils.video import video_session_map, video_chunk_counts
 from services.pinecone_service import get_pinecone_index
 from services.statistics import load_db
 
@@ -267,6 +267,7 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
     seen_points = set()      # dédoublonnage par point (voir _point_key)
     url_map = _pdf_url_map()
     session_map = video_session_map()
+    chunk_counts = video_chunk_counts()
     for h in norm:
         if h["score"] < score_min:
             continue
@@ -294,8 +295,10 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
         # plein milieu du débat) et on reconstruit systématiquement le lien vers
         # le DÉBUT du point — cohérent avec le titre affiché (toujours celui du
         # point, jamais celui d'un extrait précis).
+        n_extraits = None
         if source_type == "video_conseil":
             url = _point_video_url(point_key) or meta.get("url")
+            n_extraits = chunk_counts.get(point_key)
         else:
             url = meta.get("url") or url_map.get(date_str)
         # Lien « voir la séance » (vidéo, début) pour une délibération dont la
@@ -311,6 +314,7 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
             url=url,
             source_type=source_type,
             video_url=video_url,
+            n_extraits=n_extraits,
         ))
         if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
             break
