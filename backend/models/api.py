@@ -35,6 +35,11 @@ class Source(BaseModel):
     # Lien vers la vidéo de la séance (début) quand elle a été filmée — pour un
     # « ▶ voir la séance » sur une délibération, même sans chapitrage. None sinon.
     video_url: Optional[str] = None
+    # Nombre d'extraits de transcript disponibles pour ce point (débat vidéo
+    # uniquement, None sinon) — donne une idée de la longueur du débat. PAS un
+    # nombre d'intervenant·e·s : aucune diarisation, un extrait est un simple
+    # découpage par tranche de texte, indépendant des changements de personne.
+    n_extraits: Optional[int] = None
 
 
 class AnswerResponse(BaseModel):

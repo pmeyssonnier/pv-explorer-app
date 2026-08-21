@@ -242,9 +242,14 @@ function renderAnswerMsg(question, answer, sourcesHtml, durationText) {
 function buildSourcesHtml(srcs) {
   if (!srcs || !srcs.length) return '';
   const videoItem = s => {
+    // Nombre d'extraits de transcript indexés pour ce point — donne une idée
+    // de la longueur du débat. PAS un nombre d'intervenant·e·s (aucune
+    // diarisation) : on l'affiche donc en « extraits », jamais « intervenants ».
+    const extraits = (s.n_extraits && s.n_extraits > 1)
+      ? ` <span class="video-extraits">(${s.n_extraits} extraits)</span>` : '';
     const ref = s.url
-      ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat · ${formatDate(s.date)}</a>`
-      : `<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débat du ${formatDate(s.date)}`;
+      ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat · ${formatDate(s.date)}</a>${extraits}`
+      : `<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débat du ${formatDate(s.date)}${extraits}`;
     return `
     <div class="source-item source-video">
       <div class="source-ref">${ref}</div>

@@ -786,6 +786,7 @@ body {
 .video-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
 .video-link:hover { text-decoration: underline; }
 .video-link .icon { width: 13px; height: 13px; color: var(--bordeaux); vertical-align: 0; }
+.video-extraits { font-size: 12px; color: var(--encre-soft); font-weight: 400; }
 
 /* Petit lien « ▶ vidéo » (séance filmée) accolé à une délibération. */
 .video-session-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; font-size: 11px; white-space: nowrap; }
