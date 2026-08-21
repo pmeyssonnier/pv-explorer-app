@@ -484,11 +484,12 @@ def test_seance_detail_lists_every_point_including_unattributed():
     assert d is not None
     assert d["date"] == "2026-04-22"
     assert d["n_points"] == len(d["points"])
-    # Doit correspondre exactement au nombre de points du PV brut (59) : tous
-    # les chapitres vidéo de cette séance se fusionnent avec leur point PV
-    # correspondant, aucun ne reste en entrée « Débat filmé » séparée.
-    assert d["n_points"] == 59
-    assert not any(p["type"] == "video" for p in d["points"])
+    # Au moins les 59 points du PV brut, plus les chapitres vidéo collectifs
+    # (sans auteur·e individuel·le) dont le seuil de fusion plus strict
+    # (0.6, voir _match_pv_point) ne trouve pas de correspondance assez sûre
+    # — affichés à part plutôt que silencieusement omis (voir
+    # test_seance_detail_merges_collective_video_chapter_without_author).
+    assert d["n_points"] >= 59
     unattributed = [p for p in d["points"] if not p["demandeur"] and not p["repondant"]]
     assert unattributed  # ex. « Hommage à M. Jacques Bouvier »
 
@@ -532,6 +533,45 @@ def test_seance_detail_resolves_demandeur_from_title_without_de():
     it = next(p for p in d["points"] if p["sp"] == 75)
     assert it["demandeur"] == "Salih Demirhan"
     assert it["video_precise"] is True
+
+
+def test_seance_detail_merges_collective_video_chapter_without_author():
+    # Cas réel signalé : SP 36 (27/05/2026), motion collective du Collège
+    # sur le maintien de l'hôpital Paul Brien — le chapitre vidéo n'a pas
+    # d'auteur·e individuel·le (motion collective), donc pas de "clé
+    # personne" pour restreindre les candidats comme pour les points avec
+    # demandeur·se. Sans repli sur une comparaison au titre de TOUTE la
+    # séance, ce chapitre (et ~59% des chapitres vidéo du corpus, tous les
+    # points collectifs sans auteur·e) était silencieusement omis de cette
+    # vue — ni fusionné, ni même affiché à part.
+    d = elus.seance_detail("2026-05-27")
+    it = next(p for p in d["points"] if p["sp"] == 36)
+    assert it["type"] == "motion"
+    assert it["video_precise"] is True
+    assert "&t=" in it["video_url"]
+    # Aucun chapitre vidéo n'a dû être perdu : au moins celui-ci, fusionné.
+    assert not any(p["type"] == "video" and "Paul Brien" in p["titre"] for p in d["points"])
+
+
+def test_match_pv_point_higher_threshold_for_large_candidate_pool():
+    # Le seuil par défaut (0.35, calibré pour un petit nombre de candidats
+    # déjà restreints par personne) donnerait trop de faux positifs sur un
+    # grand bassin de candidats nombreux (points collectifs, comparés à TOUS
+    # les points de la séance) — un seuil plus élevé est nécessaire.
+    candidates = [{"titre": "Les rodéos urbains"}, {"titre": "Les nuisances dues aux travaux du siège de la VRT"}]
+    video_titre = "Le non-remplacement d'une Echevine en 2024 (Motion de Monsieur Cédric MAHIEU)"
+    assert elus._match_pv_point(video_titre, candidates, threshold=0.6) is None
+    # Un bon candidat (score élevé par inclusion) reste trouvé même avec le
+    # seuil relevé, y compris parmi plusieurs candidats (pas de raccourci
+    # "candidat unique").
+    candidates2 = [
+        {"titre": "Modification du cadre du personnel"},
+        {"titre": "Les rodéos urbains"},
+    ]
+    assert elus._match_pv_point(
+        "Modification du cadre du personnel - Wijziging van de personeelsformatie",
+        candidates2, threshold=0.6,
+    ) == candidates2[0]
 
 
 def test_seance_detail_flags_postponed_points():

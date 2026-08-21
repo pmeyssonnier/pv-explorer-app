@@ -405,17 +405,22 @@ def _norm_title(t: str) -> str:
     return re.sub(r"[^a-z0-9 ]", " ", _strip_accents(t or "").lower())
 
 
-def _match_pv_point(video_titre: str, candidates: list) -> dict | None:
-    """Retrouve, parmi les points PV déposés par la même personne à la même
-    date, celui qui correspond au point vidéo (même sujet) — pour fusionner
-    en UNE intervention plutôt que d'en afficher deux (« Demande »/« Motion »
-    + « Débat filmé ») pour le même point, quand la séance a été filmée ET
-    chapitrée. Les titres PV sont souvent plus courts que les titres de
-    chapitrage vidéo (qui ajoutent « Demande de M./Mme X » + la traduction
-    NL) : une simple inclusion de chaîne suffit la plupart du temps ; en cas
-    d'ambiguïté (plusieurs points déposés le même jour par la même personne),
-    on utilise la similarité textuelle avec un seuil prudent — jamais de
-    fusion à l'aveugle (mieux vaut deux entrées séparées qu'une fusion fausse)."""
+def _match_pv_point(video_titre: str, candidates: list, threshold: float = 0.35) -> dict | None:
+    """Retrouve, parmi des points PV candidats, celui qui correspond au point
+    vidéo (même sujet) — pour fusionner en UNE intervention plutôt que d'en
+    afficher deux (« Demande »/« Motion » + « Débat filmé ») pour le même
+    point, quand la séance a été filmée ET chapitrée. Les titres PV sont
+    souvent plus courts que les titres de chapitrage vidéo (qui ajoutent
+    « Demande de M./Mme X » + la traduction NL) : une simple inclusion de
+    chaîne suffit la plupart du temps ; en cas d'ambiguïté, on utilise la
+    similarité textuelle avec un seuil prudent — jamais de fusion à
+    l'aveugle (mieux vaut deux entrées séparées qu'une fusion fausse).
+
+    `threshold` doit être plus élevé quand `candidates` n'est pas déjà
+    restreint à la même personne (chapitres collectifs sans auteur·e
+    individuel·le, comparés à TOUS les points de la séance — bassin de
+    candidats bien plus large, donc plus de risque de score élevé fortuit) :
+    voir seance_detail, validé empiriquement à 0.6 sur le corpus réel."""
     if len(candidates) == 1:
         return candidates[0]
     vn = _norm_title(video_titre)
@@ -429,7 +434,7 @@ def _match_pv_point(video_titre: str, candidates: list) -> dict | None:
     pool = contains if contains else candidates
     best = max(pool, key=lambda c: difflib.SequenceMatcher(None, vn, _norm_title(c["titre"])).ratio())
     score = difflib.SequenceMatcher(None, vn, _norm_title(best["titre"])).ratio()
-    return best if score >= 0.35 else None
+    return best if score >= threshold else None
 
 
 def _build_all():
@@ -838,23 +843,35 @@ def seance_detail(date: str):
     if video_seance:
         for vp in video_seance.get("points", []):
             vauthor = vp.get("auteur")
-            if not vauthor or _is_non_person_video_author(vauthor):
-                continue
-            vk = _key(vauthor, pairs)
-            if not vk:
-                continue
-            candidates = [pt for pt in points if pt["_author_key"] == vk]
             titre = vp.get("titre_fr") or vp.get("titre") or ""
-            match = _match_pv_point(titre, candidates) if candidates else None
             deeplink = vp.get("deeplink")
+            if vauthor and not _is_non_person_video_author(vauthor):
+                vk = _key(vauthor, pairs)
+                candidates = [pt for pt in points if pt["_author_key"] == vk] if vk else []
+                match = _match_pv_point(titre, candidates) if candidates else None
+            else:
+                # Chapitre collectif (motion/point du collège sans auteur·e
+                # individuel·le nommé·e, ex. « point_urgent ») : impossible
+                # de restreindre par personne, donc comparaison au titre de
+                # TOUS les points de la séance (hors chapitres déjà ajoutés
+                # ci-dessous, jamais entre eux) — seuil bien plus élevé
+                # (0.6 au lieu de 0.35) car le bassin de candidats est
+                # nettement plus large, validé empiriquement sur le corpus
+                # réel (au-dessus, correspondances toujours correctes ;
+                # en-dessous, non fiable). Sans cette branche, ~59% des
+                # chapitres vidéo (ceux sans auteur·e, ex. motions
+                # collectives du Collège) étaient silencieusement omis de
+                # cette vue plutôt que fusionnés ou même affichés à part.
+                pv_points = [pt for pt in points if pt["type"] != "video"]
+                match = _match_pv_point(titre, pv_points, threshold=0.6) if pv_points else None
             if match is not None:
                 if deeplink:
                     match["video_url"] = deeplink
                     match["video_precise"] = True
             else:
-                # Chapitre vidéo sans point PV correspondant identifié :
-                # affiché à part plutôt que silencieusement omis (rare, voir
-                # _match_pv_point — jamais de fusion à l'aveugle).
+                # Chapitre vidéo sans point PV correspondant identifié avec
+                # confiance : affiché à part plutôt que silencieusement omis
+                # (voir _match_pv_point — jamais de fusion à l'aveugle).
                 points.append({
                     "sp": 0,
                     "type": "video",
