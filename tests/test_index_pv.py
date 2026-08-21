@@ -60,6 +60,19 @@ def test_chunk_text_contient_le_contexte():
     assert "65 000" in txt                         # montant formaté espaces
 
 
+def test_chunk_text_priorise_le_titre_avant_le_gabarit_generique():
+    """Le titre (élément le plus distinctif, ex. le nom d'une ASBL) doit
+    précéder les champs très répétitifs d'un point à l'autre (rubrique,
+    décision, thématiques) : sinon le gabarit administratif générique domine
+    le texte vectorisé et rapproche à tort des points sans rapport (ex. deux
+    ASBL différentes ayant chacune leurs comptes « pris acte »)."""
+    c = point_to_chunk(_point(), _seance(), "schaerbeek")
+    txt = c["metadata"]["chunk_text"]
+    assert txt.index("Rénovation de l'école 1") < txt.index("Rubrique")
+    assert txt.index("Rénovation de l'école 1") < txt.index("Décision")
+    assert txt.index("Rénovation de l'école 1") < txt.index("Thématiques")
+
+
 def test_chunk_year_zero_si_date_absente():
     c = point_to_chunk(_point(), {"id": "PV-X", "date": "date inconnue"}, "schaerbeek")
     assert c["metadata"]["year"] == 0

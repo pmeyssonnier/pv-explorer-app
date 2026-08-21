@@ -129,11 +129,21 @@ def point_to_chunk(point: dict, seance: dict, commune: str) -> dict:
     repondant = point.get("repondant")
     rep_str = f"\nRépondant : {repondant}" if repondant else ""
 
-    # Le texte qui sera vectorisé et recherché
-    chunk_text = f"""Séance du Conseil communal de {commune_nom} du {date}.
-Point SP {point.get('sp','?')} — {point.get('rubrique','')} / {point.get('sous_rubrique','')}
-Titre : {point.get('titre','')}
+    # Le texte qui sera vectorisé et recherché. Le titre (élément le plus
+    # distinctif — souvent le seul endroit qui nomme précisément le sujet du
+    # point, ex. le nom d'une ASBL) est placé EN TÊTE, avant le gabarit
+    # administratif (rubrique/décision/vote/thématiques) qui, lui, se répète
+    # quasi à l'identique d'un point à l'autre pour toute une catégorie de
+    # points (ex. « Comptes annuels ASBL » : même rubrique Finances/Contrôle,
+    # même décision « PREND ACTE », mêmes thématiques). Sans ce réordonnancement,
+    # ce gabarit répétitif dominait le texte et rapprochait dans l'espace des
+    # embeddings des points sans rapport (ex. deux ASBL différentes) dès que
+    # la requête elle-même était générique (« ASBL X de Schaerbeek »).
+    chunk_text = f"""{point.get('titre','')}
+
+Séance du Conseil communal de {commune_nom} du {date} — Point SP {point.get('sp','?')}.
 Résumé : {point.get('resume','')}
+Rubrique : {point.get('rubrique','')} / {point.get('sous_rubrique','')}
 Décision : {point.get('decision','')}
 Vote : {format_vote(point.get('vote'))}{montant_str}{interv_str}{rep_str}
 Thématiques : {', '.join(point.get('thematiques') or [])}"""
