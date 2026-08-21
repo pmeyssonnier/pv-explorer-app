@@ -214091,8 +214091,8 @@
           "sous_rubrique": "Fiscalité locale",
           "titre": "Prime Be Home Schaerbeekoise – Exercices d'impositions 2026 à 2027 – Modifications et renouvellement",
           "resume": "Modification et renouvellement du règlement de la prime Be Home Schaerbeekoise pour les années 2026 et 2027. Prime destinée à encourager l'accès à la propriété. Montants : 150 € pour 2026 et 160 € pour 2027. Prime accordée une fois par ménage aux propriétaires occupants domiciliés dans la commune et redevables du précompte immobilier",
-          "intervenants": [],
-          "repondant": null,
+          "intervenants": ["Madame Jodogne", "Madame Belkhatir", "Monsieur Verzin", "Monsieur Degrez", "Monsieur Ammi"],
+          "repondant": "Monsieur Mahieu",
           "decision": "APPROUVÉ",
           "vote": {
             "type": "vote_nominal",
