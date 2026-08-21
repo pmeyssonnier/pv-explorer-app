@@ -717,6 +717,16 @@ def _is_reportee(decision) -> bool:
     return _strip_accents(decision or "").strip().lower().startswith("report")
 
 
+def _thematique_label(t: str) -> str:
+    """Étiquette d'affichage d'une thématique (slug interne, ex.
+    « transports_publics ») : espaces au lieu des soulignés, casse
+    homogène. Plus de 4500 valeurs distinctes dans le corpus (souvent
+    rares/spécifiques) : pas de dictionnaire de correction des accents
+    (perdus dans les slugs), simple normalisation."""
+    s = (t or "").replace("_", " ").replace("-", " ").strip()
+    return s[:1].upper() + s[1:] if s else s
+
+
 # Libellés d'affichage homogènes pour le champ « decision » du PV, dont la
 # graphie brute varie (casse, accents, coquilles ponctuelles — ex. « PRENDS
 # POUR INFORMATION », « PRENDRE ACTE »). Clé = texte sans accents/minuscule.
@@ -829,6 +839,8 @@ def seance_detail(date: str):
             "repondant": repondant,
             "reporte": _is_reportee(p.get("decision")),
             "decision": _decision_summary(p.get("decision"), p.get("vote")),
+            "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
+            "montant_eur": p.get("montant_eur"),
             "url": meta.get("source_url"),
             "video_url": session_map.get(date),
             "video_precise": False,
@@ -881,6 +893,8 @@ def seance_detail(date: str):
                     "repondant": None,
                     "reporte": False,
                     "decision": None,
+                    "thematiques": [],
+                    "montant_eur": None,
                     "url": deeplink,
                     "video_url": vp.get("video_url") or video_seance.get("video_url"),
                     "video_precise": False,

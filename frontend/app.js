@@ -1341,6 +1341,10 @@ function seancePointRow(it) {
   const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
   // Déjà signalé via le badge « Reporté » ci-dessus, pas besoin de répéter.
   const decision = (it.decision && !it.reporte) ? `<div class="elu-decision">${escapeHtml(it.decision)}</div>` : '';
+  const montant = (it.montant_eur !== null && it.montant_eur !== undefined)
+    ? `<div class="elu-montant">Montant engagé : ${fmtMontant(it.montant_eur)}</div>` : '';
+  const tags = (it.thematiques && it.thematiques.length)
+    ? `<div class="elu-tags">${it.thematiques.map(t => `<span class="elu-tag">${escapeHtml(t)}</span>`).join('')}</div>` : '';
   return `<div class="elu-item">
     <div class="elu-body">
       ${badge}${reporteBadge}${sp}
@@ -1348,6 +1352,8 @@ function seancePointRow(it) {
       ${demandeur}
       ${rep}
       ${decision}
+      ${montant}
+      ${tags}
       ${links ? `<div class="elu-links">${links}</div>` : ''}
     </div>
   </div>`;
