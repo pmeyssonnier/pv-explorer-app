@@ -29,6 +29,12 @@
 #  plus anciennes n'ont pas d'horodatage (0 point). Il n'y a PAS de sous-titres
 #  sur ces vidéos → la transcription des débats (couche 2) nécessiterait un ASR
 #  (Whisper), non couvert ici.
+#
+#  AJOUT MANUEL D'UNE SÉANCE (repérée à la main sur YouTube, hors scan
+#  automatique /videos + /streams — titre non standard, playlist…) :
+#      seance = build_seance_entry("https://www.youtube.com/watch?v=XXXXXXXXXXX")
+#      seances = merge_seance(seances, seance)   # upsert par video_id
+#  Voir pipeline/extract_video_chapters.ipynb, cellule ④.
 # ══════════════════════════════════════════════════════════════════════════
 import json
 import re
@@ -202,32 +208,84 @@ def list_council_videos():
     return council[:MAX_VIDEOS] if MAX_VIDEOS else council
 
 
-def main():
-    council = list_council_videos()
-    print(f"Séances de conseil : {len(council)}")
-
+def _fetch_video_info(vid):
+    """Métadonnées yt-dlp d'une vidéo (clients alternatifs + relances — voir
+    PLAYER_CLIENTS / RETRIES). Lève la dernière exception après RETRIES
+    tentatives infructueuses (bot-check ponctuel, vidéo privée…)."""
     ydl_opts = {
         "quiet": True,
         "skip_download": True,
         "extractor_args": {"youtube": {"player_client": PLAYER_CLIENTS}},
     }
+    last_err = None
+    for attempt in range(1, RETRIES + 1):
+        try:
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                return ydl.extract_info(f"https://www.youtube.com/watch?v={vid}", download=False)
+        except Exception as ex:
+            last_err = ex
+            if attempt < RETRIES:
+                time.sleep(RETRY_WAIT_S)
+    raise last_err
+
+
+def _video_id_from(url_or_id):
+    """Accepte une URL YouTube (watch?v=, youtu.be/, /live/, /shorts/) ou un
+    ID brut (11 caractères) — retourne l'ID."""
+    m = re.search(r"(?:v=|youtu\.be/|/live/|/shorts/)([A-Za-z0-9_-]{11})", url_or_id)
+    return m.group(1) if m else url_or_id.strip()
+
+
+def build_seance_entry(url_or_id, date=None):
+    """Construit UNE entrée de séance (même forme que celles de main()) à
+    partir d'une URL/ID vidéo repérée manuellement (ex. hors scan automatique
+    /videos + /streams — titre non standard, playlist, etc.).
+
+    `date` (« AAAA-MM-JJ ») est déduite du titre de la vidéo si absente ; à
+    fournir explicitement si le titre ne contient pas de date JJ/MM/AAAA."""
+    vid = _video_id_from(url_or_id)
+    v = _fetch_video_info(vid)
+    d = date or iso_date(v.get("title") or "")
+    if not d:
+        raise ValueError(
+            'Date introuvable dans le titre — passe date="AAAA-MM-JJ" explicitement.')
+
+    points = points_from_chapters(v, vid)
+    method = "chapitres"
+    if not points:
+        points = points_from_description(v, vid)
+        method = "description"
+    print(f"  {d}  →  {len(points)} points ({method})")
+
+    return {
+        "date": d,
+        "video_id": vid,
+        "video_url": f"https://www.youtube.com/watch?v={vid}",
+        "titre_video": v.get("title"),
+        "duree_s": v.get("duration"),
+        "points": points,
+    }
+
+
+def merge_seance(seances, new_entry):
+    """Insère/remplace une séance par video_id (idempotent : relancer sur la
+    même vidéo la met juste à jour) ; garde la liste triée (récent d'abord)."""
+    out = [s for s in seances if s.get("video_id") != new_entry.get("video_id")]
+    out.append(new_entry)
+    out.sort(key=lambda s: s["date"], reverse=True)
+    return out
+
+
+def main():
+    council = list_council_videos()
+    print(f"Séances de conseil : {len(council)}")
 
     seances = []
     for i, c in enumerate(council, 1):
-        v = None
-        last_err = None
-        for attempt in range(1, RETRIES + 1):
-            try:
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    v = ydl.extract_info(
-                        f"https://www.youtube.com/watch?v={c['id']}", download=False)
-                break
-            except Exception as ex:                  # bot-check ponctuel, vidéo privée…
-                last_err = ex
-                if attempt < RETRIES:
-                    time.sleep(RETRY_WAIT_S)
-        if v is None:
-            print(f"  ⚠ {c['date']} : échec après {RETRIES} tentatives ({str(last_err)[:70]})")
+        try:
+            v = _fetch_video_info(c["id"])
+        except Exception as ex:                       # bot-check ponctuel, vidéo privée…
+            print(f"  ⚠ {c['date']} : échec après {RETRIES} tentatives ({str(ex)[:70]})")
             continue
 
         points = points_from_chapters(v, c["id"])
