@@ -374,6 +374,15 @@ _MANUAL_AUTHOR_OVERRIDES = {
     # intervenant·e·s et le répondant au PV, SP60 non — complété manuellement
     # à l'identique.
     ("2025-06-25", 60): "Saït Köse et Ibrahim Dönmez et Elias Ammi et Yvan de Beauffort et Abobakre Bouhjar",
+    # SP21/SP23/SP24 débattus conjointement avec SP22 (même dossier — le
+    # règlement d'allocation aux habitants expropriés de la rue du Progrès,
+    # présenté par le conseil comme un seul paquet de 4 points) : SP22 liste
+    # déjà les intervenant·e·s et le répondant au PV (Köksal, Lahssaini,
+    # Degrez, Jodogne, Durant / Eraly), les 3 autres non — complétés
+    # manuellement à l'identique.
+    ("2025-04-23", 21): "Sadik Köksal et Leila Lahssaini et Matthieu Degrez et Cécile Jodogne et Isabelle Durant",
+    ("2025-04-23", 23): "Sadik Köksal et Leila Lahssaini et Matthieu Degrez et Cécile Jodogne et Isabelle Durant",
+    ("2025-04-23", 24): "Sadik Köksal et Leila Lahssaini et Matthieu Degrez et Cécile Jodogne et Isabelle Durant",
 }
 
 
