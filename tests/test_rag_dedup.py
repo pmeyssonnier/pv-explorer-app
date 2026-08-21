@@ -6,7 +6,7 @@ index_pv.video_point_to_chunks), qui partagent le même id de base avec un
 suffixe « -t<sous_start> » pour les extraits de transcript. `_point_key()`
 regroupe ces chunks pour qu'une seule source soit affichée par point.
 """
-from services.rag import _hit_id, _point_key
+from services.rag import _hit_id, _point_key, _point_video_url
 
 
 def test_point_key_strips_transcript_suffix():
@@ -51,3 +51,36 @@ def test_hit_id_from_object_attribute():
 
 def test_hit_id_missing_returns_empty_string():
     assert _hit_id({"score": 0.9}) == ""
+
+
+def test_point_video_url_from_title_chunk_key():
+    assert (_point_video_url("video-sA80qmUc9VY-2125")
+            == "https://www.youtube.com/watch?v=sA80qmUc9VY&t=2125s")
+
+
+def test_point_video_url_same_for_any_transcript_subchunk_of_the_point():
+    """Peu importe QUEL sous-chunk a été le mieux classé, le lien reconstruit
+    pointe toujours vers le DÉBUT du point (pas le sous-segment lui-même)."""
+    for chunk_id in [
+        "video-sA80qmUc9VY-2125",
+        "video-sA80qmUc9VY-2125-t2252",
+        "video-sA80qmUc9VY-2125-t3364",
+    ]:
+        assert (_point_video_url(_point_key(chunk_id))
+                == "https://www.youtube.com/watch?v=sA80qmUc9VY&t=2125s")
+
+
+def test_point_video_url_handles_hyphenated_video_id():
+    """Un video_id YouTube peut lui-même contenir des tirets (ex. -UIRlJYM26M) —
+    le regex glouton doit quand même isoler correctement le start_s final."""
+    assert (_point_video_url("video--UIRlJYM26M-3240")
+            == "https://www.youtube.com/watch?v=-UIRlJYM26M&t=3240s")
+
+
+def test_point_video_url_none_for_pv_id():
+    assert _point_video_url("PV-2020-01-29_SP12") is None
+
+
+def test_point_video_url_none_for_empty():
+    assert _point_video_url("") is None
+    assert _point_video_url(None) is None
