@@ -252,6 +252,23 @@ body {
   transition: all 0.15s;
 }
 .suggestion:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
+.suggestion-history { position: relative; padding-right: 30px; }
+.suggestion-remove {
+  position: absolute;
+  top: 50%; right: 6px;
+  transform: translateY(-50%);
+  width: 18px; height: 18px;
+  line-height: 16px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+}
+.suggestion-remove:hover { opacity: 1; background: rgba(0, 0, 0, 0.12); }
 
 /* ── DRILL-DOWN STATS (Année → Mois → Séance) ── */
 .scope-line {
