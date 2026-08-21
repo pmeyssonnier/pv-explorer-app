@@ -254,6 +254,46 @@ def test_ouazrhari_merged_and_org_authors_absent_from_index():
         assert org_key not in idx
 
 
+# ── Fusion PV/vidéo du même point ────────────────────────────────────────────
+def test_match_pv_point_single_candidate():
+    c = {"titre": "Le plan Good Move"}
+    assert elus._match_pv_point("Le plan Good Move (Demande de Mme X)", [c]) is c
+
+
+def test_match_pv_point_containment_among_several():
+    wrong = {"titre": "Le chantier de la VRT"}
+    right = {"titre": "Le plan Good Move"}
+    assert elus._match_pv_point(
+        "Le plan Good Move (Demande de Madame X) - Good Move (Verzoek van Mevrouw X)",
+        [wrong, right],
+    ) is right
+
+
+def test_match_pv_point_no_good_candidate_returns_none():
+    # Aucun des candidats ne correspond au sujet du point vidéo (cas réel du
+    # corpus) : mieux vaut ne pas fusionner (deux entrées séparées) qu'une
+    # fusion fausse.
+    candidates = [{"titre": "Les rodéos urbains"},
+                  {"titre": "Les nuisances dues aux travaux du siège de la VRT"}]
+    video_titre = "Le non-remplacement d'une Echevine en 2024 (Motion de Monsieur Cédric MAHIEU)"
+    assert elus._match_pv_point(video_titre, candidates) is None
+
+
+def test_pv_and_video_same_point_merged_into_one_intervention():
+    # Cas réel signalé : un point déposé (PV) dont la séance a aussi été
+    # chapitrée en vidéo apparaissait deux fois (« Demande » + « Débat
+    # filmé ») pour le même sujet. Doit maintenant n'être qu'UNE seule
+    # intervention, avec le lien vidéo précis (l'instant du point) plutôt
+    # que le lien générique de début de séance.
+    d = elus.elu_detail("genevois")
+    assert d is not None
+    assert d["counts"]["depose"] == 1
+    it = d["depose"][0]
+    assert it["type"] == "demande_habitant"
+    assert it["url"] and it["url"].endswith(".pdf")          # lien PV
+    assert "&t=" in (it["video_url"] or "")                  # lien vidéo précis, pas générique
+
+
 # ── Intégrité du fichier de chapitrage vidéo ─────────────────────────────────
 def test_video_chapters_file_valid():
     path = ROOT / "backend" / "video_conseil_schaerbeek.json"
