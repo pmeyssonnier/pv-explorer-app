@@ -122,7 +122,8 @@ function switchTab(tab) {
 
 // ── SUGGESTIONS ──
 function askSuggestion(el) {
-  document.getElementById('askInput').value = el.textContent;
+  const text = el.querySelector('.suggestion-text');
+  document.getElementById('askInput').value = text ? text.textContent : el.textContent;
   submitQuestion();
 }
 
@@ -160,6 +161,17 @@ function clearHistory() {
   try { localStorage.removeItem(HIST_KEY); } catch (e) {}
   renderHistory();
 }
+// Retire une seule question de l'historique (bouton « × » sur son chip),
+// sans déclencher le clic du chip (qui la reposerait).
+function removeHistoryItem(event, btn) {
+  event.stopPropagation();
+  const textEl = btn.closest('.suggestion-history')?.querySelector('.suggestion-text');
+  const q = textEl ? textEl.textContent : '';
+  if (!q) return;
+  const h = getHistory().filter(x => x.toLowerCase() !== q.toLowerCase());
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch (e) {}
+  renderHistory();
+}
 function renderHistory() {
   const block = document.getElementById('historyBlock');
   const chips = document.getElementById('historyChips');
@@ -168,7 +180,10 @@ function renderHistory() {
   if (!h.length) { block.style.display = 'none'; chips.innerHTML = ''; return; }
   block.style.display = '';
   chips.innerHTML = h.map(q =>
-    `<span class="suggestion" onclick="askSuggestion(this)">${escapeHtml(q)}</span>`
+    `<span class="suggestion suggestion-history" onclick="askSuggestion(this)">` +
+      `<span class="suggestion-text">${escapeHtml(q)}</span>` +
+      `<button class="suggestion-remove" type="button" onclick="removeHistoryItem(event, this)" aria-label="Supprimer cette question">×</button>` +
+    `</span>`
   ).join('');
 }
 
