@@ -368,6 +368,12 @@ _MANUAL_AUTHOR_OVERRIDES = {
     # prime d'accompagnement social ») : SP7 liste déjà les 5 intervenant·e·s
     # au PV et le même répondant, SP6 non — complété manuellement à l'identique.
     ("2025-09-24", 6): "Cécile Jodogne et Naïma Belkhatir et Georges Verzin et Matthieu Degrez et Elias Ammi",
+    # SP60 débattu conjointement avec SP59 (même règlement sport, chiffres
+    # cités dans le débat — 75.277,98€ → 190.571,27€, réductions, âge 21→18 —
+    # correspondant exactement au résumé PV de SP60) : SP59 liste déjà les
+    # intervenant·e·s et le répondant au PV, SP60 non — complété manuellement
+    # à l'identique.
+    ("2025-06-25", 60): "Saït Köse et Ibrahim Dönmez et Elias Ammi et Yvan de Beauffort et Abobakre Bouhjar",
 }
 
 

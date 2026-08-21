@@ -211302,8 +211302,8 @@
           "sous_rubrique": "Tarification",
           "titre": "Nouvelle tarification des infrastructures sportives communales - Saison 2025/2026 - Approbation",
           "resume": "Approbation d'une nouvelle tarification des infrastructures sportives communales pour la saison 2025/2026 incluant: nouvelle formule de tarification, nouvelle catégorie handisport, changement de la catégorie d'âge (tarification adulte à partir de 18 ans au lieu de 21 ans), différenciation tarif Schaerbeekois/non-Schaerbeekois, augmentation des tarifs après 19h et week-ends, différenciation occupation permanente/ponctuelle, différenciation selon taille infrastructure, plafond 100€/heure, système de facturation annuelle et à l'avance, suppression gratuité moins de 18 ans pour clubs conventionnés, réductions de 2500€ ou 7500€ selon critères. Estimations: recettes actuelles 75.277,98€, nouvelles recettes 190.571,27€ (sans réductions), ou 110.983,23€ avec réductions et conventions.",
-          "intervenants": [],
-          "repondant": null,
+          "intervenants": ["Monsieur Köse", "Monsieur Dömnez", "Monsieur Ammi", "Monsieur De Beauffort", "Monsieur Bouhjar"],
+          "repondant": "Monsieur Bouhjar",
           "decision": "APPROUVÉ",
           "vote": {
             "type": "vote_nominal",
