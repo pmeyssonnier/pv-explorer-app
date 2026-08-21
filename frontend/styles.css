@@ -159,7 +159,7 @@ body {
 .header-inner {
   max-width: var(--content);
   margin: 0 auto;
-  padding: clamp(18px, 4vw, 30px) var(--pad-x) clamp(16px, 3.2vw, 24px);
+  padding: clamp(12px, 2.6vw, 20px) var(--pad-x) clamp(10px, 2vw, 16px);
 }
 .header-eyebrow {
   font-size: 11px;
@@ -167,18 +167,18 @@ body {
   text-transform: uppercase;
   color: var(--or-light);
   font-weight: 600;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 .header h1 {
   font-family: var(--display);
-  font-size: clamp(22px, 5.2vw, 40px);   /* mobile compact → grand sur tablette/PC */
+  font-size: clamp(19px, 4vw, 30px);   /* mobile compact → grand sur tablette/PC */
   font-weight: 900;
   line-height: 1.06;
   letter-spacing: -0.01em;
 }
 .header p {
-  margin-top: 10px;
-  font-size: clamp(13.5px, 1.4vw, 15px);
+  margin-top: 6px;
+  font-size: clamp(13px, 1.3vw, 14.5px);
   color: rgba(255,253,249,0.82);
   max-width: 60ch;
 }
@@ -868,7 +868,7 @@ body {
 
 /* ── ICÔNES ──────────────────────────────────────────────────── */
 .icon { width: 1.05em; height: 1.05em; flex: none; vertical-align: -0.15em; }
-.header-mark { width: 46px; height: 46px; display: block; margin-bottom: 14px; }
+.header-mark { width: 34px; height: 34px; display: block; margin-bottom: 10px; }
 .tab { display: inline-flex; align-items: center; gap: 7px; }
 .tab .icon { width: 15px; height: 15px; vertical-align: 0; }
 .ask-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
