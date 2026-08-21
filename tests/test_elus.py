@@ -104,6 +104,20 @@ def test_display_name_enriched_from_intervenants_list():
     assert d2["nom"] == "Dominique Decoux"
 
 
+def test_display_name_override_for_names_absent_from_sources():
+    # « Malingreau » n'apparaît que par son seul nom de famille dans le PV
+    # (aucune source ne donne son prénom) : complété manuellement.
+    d = elus.elu_detail("malingreau")
+    assert d is not None
+    assert d["nom"] == "Alain Malingreau"
+    d2 = elus.elu_detail("smeysters")
+    assert d2 is not None
+    assert d2["nom"] == "Christine Smeysters"
+    d3 = elus.elu_detail("sobieski")
+    assert d3 is not None
+    assert d3["nom"] == "Christine Sobieski"
+
+
 def test_titlecase_particles_and_caps():
     assert elus._titlecase("DEGREZ") == "Degrez"
     assert elus._titlecase("Yvan de Beauffort") == "Yvan de Beauffort"

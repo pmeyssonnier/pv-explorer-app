@@ -58,6 +58,15 @@ _PARTICLES = {"de", "du", "des", "van", "von", "den", "der", "ter", "ten",
 # Séparateurs d'un répondant composé (« X et Y », « X puis Y »…).
 _RESP_SPLIT = re.compile(r"\s+et\s+|\s+en\s+|\s+puis\s+|\s+ensuite\s+|&|,|;|/|\+", re.I)
 
+# Prénoms connus mais absents de toutes les sources PV/vidéo (la personne
+# n'y est jamais mentionnée que par son seul nom de famille) : complétés
+# manuellement, clé = _key() du nom de famille.
+_DISPLAY_NAME_OVERRIDES = {
+    "malingreau": "Alain Malingreau",
+    "smeysters": "Christine Smeysters",
+    "sobieski": "Christine Sobieski",
+}
+
 
 def _strip_accents(s: str) -> str:
     return "".join(c for c in unicodedata.normalize("NFD", s)
@@ -348,9 +357,10 @@ def _build_index() -> dict:
     index = {}
     for k, d in people.items():
         variants = d["variants"]
-        # Nom d'affichage : la variante la plus complète, casse homogénéisée.
+        # Nom d'affichage : la variante la plus complète, casse homogénéisée
+        # (sauf complément manuel pour les cas absents de toutes les sources).
         best = max(variants, key=lambda v: (len(v.split()), len(v)))
-        nom = _titlecase(best)
+        nom = _DISPLAY_NAME_OVERRIDES.get(k) or _titlecase(best)
         d["depose"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         d["repond"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         index[k] = {
