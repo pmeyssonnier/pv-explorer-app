@@ -1339,12 +1339,15 @@ function seancePointRow(it) {
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
   const demandeur = it.demandeur ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(it.demandeur)}</div>` : '';
   const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
+  // Déjà signalé via le badge « Reporté » ci-dessus, pas besoin de répéter.
+  const decision = (it.decision && !it.reporte) ? `<div class="elu-decision">${escapeHtml(it.decision)}</div>` : '';
   return `<div class="elu-item">
     <div class="elu-body">
       ${badge}${reporteBadge}${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}
+      ${decision}
       ${links ? `<div class="elu-links">${links}</div>` : ''}
     </div>
   </div>`;

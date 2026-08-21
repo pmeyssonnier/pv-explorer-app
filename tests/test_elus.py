@@ -558,6 +558,43 @@ def test_is_reportee_case_and_accent_insensitive():
     assert elus._is_reportee("") is False
 
 
+def test_decision_summary_unanimous_vote():
+    # Cas réel : SP 77 (27/05/2026), désignation d'un représentant à
+    # l'ASBL GELS — décidé à l'unanimité, sans intervenant·e listé·e.
+    d = elus.seance_detail("2026-05-27")
+    it = next(p for p in d["points"] if p["sp"] == 77)
+    assert it["decision"] == "Décidé à l'unanimité"
+
+
+def test_decision_summary_recorded_vote_shows_counts():
+    d = elus.seance_detail("2026-05-27")
+    it = next(p for p in d["points"] if p["sp"] == 1)
+    assert it["decision"] == "Décidé (24 pour, 0 contre, 5 abstentions)"
+
+
+def test_decision_summary_reported_point():
+    d = elus.seance_detail("2026-05-27")
+    it = next(p for p in d["points"] if p["sp"] == 51)
+    assert it["decision"] == "Reporté"
+
+
+def test_decision_summary_normalizes_rare_spelling_variants():
+    # Coquilles/variantes ponctuelles observées dans le corpus (casse,
+    # verbe conjugué différemment) doivent produire le même libellé.
+    assert elus._decision_summary("PRENDS POUR INFORMATION", None) == "Pris pour information"
+    assert elus._decision_summary("PRENDRE ACTE", None) == "Pris acte"
+    assert elus._decision_summary("BESLIST", {"type": "unanimite"}) == "Décidé à l'unanimité"
+
+
+def test_decision_summary_falls_back_to_homogeneous_case_for_unknown_text():
+    assert elus._decision_summary("PREND ACTE + DÉROGATION ART.12", None) == "Prend acte + dérogation art.12"
+
+
+def test_decision_summary_none_when_no_decision():
+    assert elus._decision_summary("", None) is None
+    assert elus._decision_summary(None, None) is None
+
+
 def test_seance_detail_points_sorted_by_sp():
     d = elus.seance_detail("2026-04-22")
     sps = [p["sp"] for p in d["points"]]

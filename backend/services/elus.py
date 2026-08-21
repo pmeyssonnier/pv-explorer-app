@@ -712,6 +712,61 @@ def _is_reportee(decision) -> bool:
     return _strip_accents(decision or "").strip().lower().startswith("report")
 
 
+# Libellés d'affichage homogènes pour le champ « decision » du PV, dont la
+# graphie brute varie (casse, accents, coquilles ponctuelles — ex. « PRENDS
+# POUR INFORMATION », « PRENDRE ACTE »). Clé = texte sans accents/minuscule.
+_DECISION_LABELS = {
+    "approuve": "Approuvé",
+    "decide": "Décidé",
+    "decidé": "Décidé",
+    "debat": "Débat",
+    "reporte": "Reporté",
+    "prend acte": "Pris acte",
+    "prendre acte": "Pris acte",
+    "prend pour information": "Pris pour information",
+    "prendre pour information": "Pris pour information",
+    "prends pour information": "Pris pour information",
+    "prises pour information": "Pris pour information",
+    "arrete": "Arrêté",
+    "nomme": "Nommé",
+    "admet": "Admis",
+    "beslist": "Décidé",
+    "minute de silence": "Minute de silence",
+}
+
+
+def _decision_summary(decision, vote):
+    """Résumé lisible de l'issue d'un point (décision + vote quand il y en a
+    un), pour indiquer explicitement, selon chaque cas, pourquoi il n'y a
+    par exemple ni répondant·e ni débat filmé à trouver (point voté sans
+    discussion, reporté, pris pour information...) plutôt que de laisser
+    croire à une recherche infructueuse. None si la décision est vide."""
+    d = (decision or "").strip()
+    if not d:
+        return None
+    norm = _strip_accents(d).lower()
+    label = _DECISION_LABELS.get(norm)
+    if not label:
+        # Repli pour les variantes rares/coquilles non répertoriées
+        # (ex. « PREND ACTE + DÉROGATION ART.12 ») : casse homogène.
+        label = d[:1].upper() + d[1:].lower()
+    vote = vote if isinstance(vote, dict) else {}
+    vtype = vote.get("type")
+    if vtype == "unanimite":
+        return f"{label} à l'unanimité"
+    if vtype == "vote_nominal":
+        pour = vote.get("pour")
+        contre = vote.get("contre") or 0
+        abst = vote.get("abstentions") or 0
+        bits = []
+        if pour is not None:
+            bits.append(f"{pour} pour")
+        bits.append(f"{contre} contre")
+        bits.append(f"{abst} abstention{'s' if abst != 1 else ''}")
+        return f"{label} ({', '.join(bits)})"
+    return label
+
+
 def seances_list() -> list:
     """Liste des séances (PV), la plus récente en premier — pour la
     navigation par année dans l'onglet « Séances »."""
@@ -768,6 +823,7 @@ def seance_detail(date: str):
             "demandeur": resolve(author) if author_key else None,
             "repondant": repondant,
             "reporte": _is_reportee(p.get("decision")),
+            "decision": _decision_summary(p.get("decision"), p.get("vote")),
             "url": meta.get("source_url"),
             "video_url": session_map.get(date),
             "video_precise": False,
@@ -807,6 +863,7 @@ def seance_detail(date: str):
                     "demandeur": resolve(vauthor),
                     "repondant": None,
                     "reporte": False,
+                    "decision": None,
                     "url": deeplink,
                     "video_url": vp.get("video_url") or video_seance.get("video_url"),
                     "video_precise": False,
