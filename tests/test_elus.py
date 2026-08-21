@@ -575,6 +575,20 @@ def test_manual_author_overrides_for_point_normal():
         assert it["video_precise"] is True
 
 
+def test_manual_author_override_joint_debate_two_names():
+    # SP32 (15/10/2025, "Subside exceptionnel à l'asbl Xtreme Team Parkour")
+    # est débattu conjointement avec SP31 ("... WAPA International") par
+    # deux intervenants (Clerfayt puis Van den Hove, transcript vidéo) —
+    # SP31 liste déjà les deux au PV, SP32 avait "intervenants": [] avant
+    # correction manuelle. Override à deux noms ("X et Y") : la clé
+    # d'agrégation par personne (_point_author) utilise la 1ère personne,
+    # mais l'affichage résout et joint les deux (comme "repondant").
+    d = elus.seance_detail("2025-10-15")
+    it = next(p for p in d["points"] if p["sp"] == 32)
+    assert it["demandeur"] == "Bernard Clerfayt et Quentin van den Hove"
+    assert it["repondant"] == "Abobakre Bouhjar"
+
+
 def test_match_pv_point_higher_threshold_for_large_candidate_pool():
     # Le seuil par défaut (0.35, calibré pour un petit nombre de candidats
     # déjà restreints par personne) donnerait trop de faux positifs sur un
