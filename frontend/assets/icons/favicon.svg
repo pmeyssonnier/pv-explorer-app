@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="pv-explorer">
-  <!-- fond bordeaux -->
-  <rect width="32" height="32" rx="7" fill="#6d2233"/>
+  <!-- fond terracotta -->
+  <rect width="32" height="32" rx="7" fill="#c1653f"/>
   <!-- page de procès-verbal -->
   <rect x="7.5" y="6" width="13" height="16.5" rx="1.7" fill="#f7f3ec"/>
-  <rect x="10" y="9.6" width="8" height="1.6" rx="0.8" fill="#c8952b"/>
+  <rect x="10" y="9.6" width="8" height="1.6" rx="0.8" fill="#c9b7a4"/>
   <rect x="10" y="12.7" width="8" height="1.4" rx="0.7" fill="#c9b7a4"/>
   <rect x="10" y="15.4" width="5.6" height="1.4" rx="0.7" fill="#c9b7a4"/>
-  <!-- loupe (halo bordeaux pour détacher de la page) -->
-  <circle cx="20.6" cy="20" r="6.6" fill="#6d2233"/>
-  <circle cx="20.6" cy="20" r="4.5" fill="none" stroke="#c8952b" stroke-width="2.3"/>
-  <line x1="24.1" y1="23.5" x2="27" y2="26.4" stroke="#c8952b" stroke-width="2.3" stroke-linecap="round"/>
+  <!-- loupe (halo terracotta pour détacher de la page) -->
+  <circle cx="20.6" cy="20" r="6.6" fill="#c1653f"/>
+  <circle cx="20.6" cy="20" r="4.5" fill="none" stroke="#fdf8f2" stroke-width="2.3"/>
+  <line x1="24.1" y1="23.5" x2="27" y2="26.4" stroke="#fdf8f2" stroke-width="2.3" stroke-linecap="round"/>
 </svg>
