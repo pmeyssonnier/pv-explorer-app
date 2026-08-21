@@ -1046,6 +1046,16 @@ const TYPE_BADGE = {
   'Débat filmé': 'b-v',
 };
 
+// Terme utilisé pour désigner qui a soulevé le point, selon son type — affiché
+// au-dessus du/de la répondant·e pour que chaque ligne se comprenne seule
+// (ex. sur une capture d'écran, sans le contexte de la page).
+const TYPE_ACTOR_LABEL = {
+  'Question orale': 'Auteur·e de la question',
+  'Demande': 'Demandeur·se',
+  'Motion': 'Auteur·e de la motion',
+  'Débat filmé': 'Intervenant·e',
+};
+
 async function loadElu(key) {
   const box = document.getElementById('eluResult');
   if (!key) { box.innerHTML = ''; return; }
@@ -1059,7 +1069,7 @@ async function loadElu(key) {
   }
 }
 
-function eluDeposeRow(it) {
+function eluDeposeRow(it, nom) {
   const cls = TYPE_BADGE[it.type_label] || 'b-d';
   const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
@@ -1072,26 +1082,33 @@ function eluDeposeRow(it) {
     if (it.url) links += `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
     if (it.video_url) links += `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo</a>`;
   }
+  const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
+  const demandeur = nom ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(nom)}</div>` : '';
   const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
       ${badge}${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
+      ${demandeur}
       ${rep}
       ${links ? `<div class="elu-links">${links}</div>` : ''}
     </div>
   </div>`;
 }
 
-function eluRepondRow(it) {
+function eluRepondRow(it, nom) {
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   const link = it.url ? `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>` : '';
+  const demandeur = it.demandeur ? `<div class="elu-demandeur">Demandé par : ${escapeHtml(it.demandeur)}</div>` : '';
+  const rep = nom ? `<div class="elu-rep">Répondant·e : ${escapeHtml(nom)}</div>` : '';
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
       ${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
+      ${demandeur}
+      ${rep}
       ${link ? `<div class="elu-links">${link}</div>` : ''}
     </div>
   </div>`;
@@ -1130,13 +1147,13 @@ function renderElu(d) {
 
   if (c.depose) {
     html += `<div class="elu-summary"><strong>${c.depose}</strong> intervention${c.depose > 1 ? 's' : ''} déposée${c.depose > 1 ? 's' : ''}${parts.length ? ' · ' + parts.join(' · ') : ''}</div>`;
-    html += `<div class="elu-list">${groupByYear(d.depose, eluDeposeRow)}</div>`;
+    html += `<div class="elu-list">${groupByYear(d.depose, it => eluDeposeRow(it, d.nom))}</div>`;
   }
 
   if (c.repond) {
     html += `<details class="elu-repond"${c.depose ? '' : ' open'}>
       <summary><strong>${c.repond}</strong> réponse${c.repond > 1 ? 's' : ''} en séance <span class="elu-repond-hint">(activité de Collège)</span></summary>
-      <div class="elu-list">${groupByYear(d.repond, eluRepondRow)}</div>
+      <div class="elu-list">${groupByYear(d.repond, it => eluRepondRow(it, d.nom))}</div>
     </details>`;
   }
 
