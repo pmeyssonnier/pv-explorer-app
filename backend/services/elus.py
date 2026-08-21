@@ -357,6 +357,12 @@ _MANUAL_AUTHOR_OVERRIDES = {
     ("2026-04-22", 12): "Matthieu Degrez",
     ("2026-04-22", 13): "Georges Verzin",
     ("2026-04-22", 15): "Quentin Van den Hove",
+    # SP32 débattu conjointement avec SP31 (même échange, même réponse de
+    # l'échevin Bouhjar) : SP31 liste déjà les deux intervenants au PV
+    # (Clerfayt + van de Hove), SP32 non — complété manuellement à
+    # l'identique. Forme jointe « X et Y » (voir _point_author, résolue par
+    # personne pour l'affichage comme pour « repondant »).
+    ("2025-10-15", 32): "Bernard Clerfayt et Quentin Van den Hove",
 }
 
 
@@ -365,14 +371,23 @@ def _point_author(point: dict, pairs: set, date: str | None = None):
     un mot de rôle seul comme dernier mot, ex. « Secrétaire communal »).
     Factorisé pour être partagé entre l'agrégation par personne (_build_all)
     et la vue par séance (seance_detail), qui doivent s'accorder sur qui est
-    le/la demandeur·se d'un point donné."""
+    le/la demandeur·se d'un point donné.
+
+    Une override manuelle peut nommer plusieurs personnes (« X et Y »,
+    débat conjoint avec un autre point) : la clé (utilisée pour l'agrégation
+    par personne) est alors celle de la 1ère personne nommée, mais le texte
+    complet est renvoyé tel quel — à charge de l'appelant·e de le
+    redécouper pour l'affichage (voir seance_detail, comme pour
+    « repondant »)."""
     author = _MANUAL_AUTHOR_OVERRIDES.get((date, point.get("sp"))) or _author_of(point)
     if not author:
         return None, None
-    last = author.split()[-1] if author.split() else ""
+    names = _split_person_names(author) or [author]
+    primary = names[0]
+    last = primary.split()[-1] if primary.split() else ""
     if not last or _is_role_token(last):
         return author, None
-    return author, _key(author, pairs)
+    return author, _key(primary, pairs)
 
 
 # ── Construction de l'index (cache par mtime des deux fichiers sources) ───────
@@ -840,6 +855,9 @@ def seance_detail(date: str):
     points = []
     for p in seance.get("points", []):
         author, author_key = _point_author(p, pairs, date)
+        author_names = _split_person_names(author) if author_key else []
+        author_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in author_names))))
+        demandeur = " et ".join(author_resolved) if author_resolved else None
         resp_names = _respondents(p.get("repondant"), meta)
         resp_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in resp_names))))
         repondant = " et ".join(resp_resolved) if resp_resolved else (
@@ -850,7 +868,7 @@ def seance_detail(date: str):
             "type": p.get("type"),
             "type_label": _TYPE_LABEL.get(p.get("type"), "Point"),
             "titre": p.get("titre") or "",
-            "demandeur": resolve(author) if author_key else None,
+            "demandeur": demandeur,
             "repondant": repondant,
             "reporte": _is_reportee(p.get("decision")),
             "decision": _decision_summary(p.get("decision"), p.get("vote")),

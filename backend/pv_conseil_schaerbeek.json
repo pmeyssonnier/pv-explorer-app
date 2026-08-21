@@ -215397,8 +215397,8 @@
           "sous_rubrique": "Sports",
           "titre": "Subside exceptionnel à l'asbl Xtreme Team Parkour - Approbation",
           "resume": "Octroi d'un subside exceptionnel de 1.500 € à l'asbl Xtreme Team Parkour pour promotion du sport pour tous.",
-          "intervenants": [],
-          "repondant": null,
+          "intervenants": ["Clerfayt", "van de Hove"],
+          "repondant": "Bouhjar",
           "decision": "DÉCIDE",
           "vote": {
             "type": "unanimite",
