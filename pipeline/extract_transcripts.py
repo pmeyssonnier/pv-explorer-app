@@ -17,8 +17,11 @@
 #    2. Le chargement de pipeline/prototype_transcript.py (parse_vtt,
 #       fetch_transcript_segments) — même mécanisme fetch-and-exec.
 #    3. Ce script (idem), puis :
-#         data = run_batch(min_date="2025-01-01")
+#         data = run_batch()                       # toutes les séances chapitrées
+#         data = run_batch(min_date="2023-01-01")   # ou une plage plus ciblée
 #       → écrit /content/video_conseil_schaerbeek.json, prêt à committer.
+#       Idempotent : les séances déjà enrichies sont ignorées par défaut, donc
+#       relancer avec un min_date plus ancien ne refait pas le travail déjà fait.
 # ══════════════════════════════════════════════════════════════════════════
 import json
 import urllib.request
@@ -64,14 +67,27 @@ def enrich_seance_transcript(seance, lang="fr-orig"):
     return seance
 
 
-def run_batch(min_date="2025-01-01", lang="fr-orig"):
+def run_batch(min_date="2000-01-01", lang="fr-orig", skip_done=True):
     """Enrichit toutes les séances chapitrées du dépôt dont la date >= min_date
     (séances SANS points ignorées — rien à aligner), fusionne avec les données
-    actuelles, écrit le résultat prêt à committer dans /content/."""
+    actuelles, écrit le résultat prêt à committer dans /content/.
+
+    Par défaut (skip_done=True), une séance déjà enrichie (au moins un point
+    porte déjà un transcript, ex. lors d'un run précédent limité à 2025-2026)
+    est ignorée : relancer le batch avec un min_date plus ancien pour couvrir
+    de nouvelles séances ne refait pas inutilement le travail déjà fait (et
+    limite le nombre d'appels YouTube, donc le risque de blocage anti-bot).
+    Repasser skip_done=False pour forcer un ré-enrichissement complet."""
     data = json.loads(urllib.request.urlopen(BACKEND_RAW + "video_conseil_schaerbeek.json").read())
     seances = data["seances"]
-    todo = [s for s in seances if s["points"] and s["date"] >= min_date]
-    print(f"{len(todo)} séances à enrichir (>= {min_date})")
+
+    def already_done(s):
+        return skip_done and any(p.get("transcript") for p in s["points"])
+
+    todo = [s for s in seances if s["points"] and s["date"] >= min_date and not already_done(s)]
+    n_skipped = sum(1 for s in seances if s["points"] and s["date"] >= min_date and already_done(s))
+    print(f"{len(todo)} séances à enrichir (>= {min_date})"
+          + (f", {n_skipped} déjà enrichies ignorées" if n_skipped else ""))
 
     for i, s in enumerate(todo, 1):
         try:
