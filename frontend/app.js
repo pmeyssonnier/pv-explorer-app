@@ -1318,13 +1318,17 @@ function renderSeanceYearList() {
 function seancePointRow(it) {
   const cls = TYPE_BADGE[it.type_label] || 'b-d';
   const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
+  // Point reporté à une séance ultérieure : jamais débattu ce jour-là, donc
+  // pas de lien vidéo générique à proposer (il n'y a rien à y voir sur ce
+  // point précis) — seul le PV reste pertinent.
+  const reporteBadge = it.reporte ? `<span class="elu-badge b-report">Reporté</span>` : '';
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   let links = '';
   if (it.type === 'video' && it.url) {
     links = `<a class="elu-link elu-link-video" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
   } else {
     if (it.url) links += `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
-    if (it.video_url) {
+    if (it.video_url && !it.reporte) {
       const label = it.video_precise ? '▶ Voir le débat' : '▶ vidéo';
       const title = it.video_precise
         ? 'Voir le débat sur YouTube (au bon moment)'
@@ -1337,7 +1341,7 @@ function seancePointRow(it) {
   const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
   return `<div class="elu-item">
     <div class="elu-body">
-      ${badge}${sp}
+      ${badge}${reporteBadge}${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}

@@ -463,6 +463,7 @@ body {
 .elu-badge.b-d { background: color-mix(in srgb, var(--or) 22%, transparent); color: var(--bordeaux-dark); }
 .elu-badge.b-m { background: color-mix(in srgb, var(--vert) 20%, transparent); color: var(--vert); }
 .elu-badge.b-v { background: color-mix(in srgb, var(--bordeaux-clair) 20%, transparent); color: var(--bordeaux-clair); }
+.elu-badge.b-report { background: color-mix(in srgb, var(--encre-soft) 18%, transparent); color: var(--encre-soft); font-style: italic; }
 .elu-sp { font-size: 11.5px; color: var(--encre-soft); font-weight: 600; }
 .elu-titre { font-size: 14px; color: var(--encre); margin-top: 3px; }
 .elu-demandeur { font-size: 12.5px; color: var(--encre-soft); margin-top: 2px; }
