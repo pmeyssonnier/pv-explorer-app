@@ -113,6 +113,9 @@ def test_display_name_override_for_names_absent_from_sources():
     d2 = elus.elu_detail("smeysters")
     assert d2 is not None
     assert d2["nom"] == "Christine Smeysters"
+    d3 = elus.elu_detail("sobieski")
+    assert d3 is not None
+    assert d3["nom"] == "Christine Sobieski"
 
 
 def test_titlecase_particles_and_caps():

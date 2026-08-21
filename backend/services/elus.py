@@ -64,6 +64,7 @@ _RESP_SPLIT = re.compile(r"\s+et\s+|\s+en\s+|\s+puis\s+|\s+ensuite\s+|&|,|;|/|\+
 _DISPLAY_NAME_OVERRIDES = {
     "malingreau": "Alain Malingreau",
     "smeysters": "Christine Smeysters",
+    "sobieski": "Christine Sobieski",
 }
 
 
