@@ -107,6 +107,23 @@ def _point_key(chunk_id: str) -> str:
     return _TRANSCRIPT_SUFFIX.sub("", chunk_id) if chunk_id else chunk_id
 
 
+# Reconstruit le deep-link vers le DÉBUT du point (pas le sous-segment de
+# transcript le mieux classé, potentiellement plusieurs minutes plus tard).
+# Le titre affiché pour une source vidéo est toujours celui du POINT (jamais
+# celui d'un extrait précis) — le lien doit rester cohérent avec ce titre.
+# `.+` est glouton : il capture correctement un video_id contenant lui-même
+# des tirets (ex. "-UIRlJYM26M"), le `-\d+$` final n'ancrant que le start_s.
+_POINT_ID_RE = re.compile(r"^video-(.+)-(\d+)$")
+
+
+def _point_video_url(point_key: str):
+    m = _POINT_ID_RE.match(point_key or "")
+    if not m:
+        return None
+    video_id, start = m.group(1), m.group(2)
+    return f"https://www.youtube.com/watch?v={video_id}&t={start}s"
+
+
 def _clamp(val, default, lo, hi, cast):
     """Borne un override optionnel (menu Options) : None → défaut ; sinon cast
     puis clip dans [lo, hi]. Toute valeur invalide retombe sur le défaut."""
@@ -271,9 +288,16 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
         if point_key:
             seen_points.add(point_key)
         date_str = str(meta.get("date", ""))
-        # url : deep-link vidéo (porté par la métadonnée pour les débats filmés),
-        # sinon lien PDF du PV résolu par date.
-        url = meta.get("url") or url_map.get(date_str)
+        # url : deep-link vidéo (porté par la métadonnée pour les délibérations),
+        # sinon lien PDF du PV résolu par date. Pour un DÉBAT VIDÉO, on ignore le
+        # `url` du chunk (qui peut être celui d'un sous-segment de transcript, en
+        # plein milieu du débat) et on reconstruit systématiquement le lien vers
+        # le DÉBUT du point — cohérent avec le titre affiché (toujours celui du
+        # point, jamais celui d'un extrait précis).
+        if source_type == "video_conseil":
+            url = _point_video_url(point_key) or meta.get("url")
+        else:
+            url = meta.get("url") or url_map.get(date_str)
         # Lien « voir la séance » (vidéo, début) pour une délibération dont la
         # séance a été filmée — même sans chapitrage (couverture des séances
         # non chapitrées). None pour les débats vidéo (déjà un deep-link précis).
