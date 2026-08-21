@@ -29,9 +29,12 @@ scripts sont conçus pour tourner dans Colab**, avec Google Drive monté pour
 persister les PDF et le JSON. Ils ne fonctionneront pas depuis un runner
 GitHub/Render ni depuis l'environnement Claude Code (accès réseau restreint).
 
-Cellules Colab type :
+Cellules Colab type (dépendances listées dans `requirements-scraping.txt` et
+`requirements-pipeline.txt` à la racine du dépôt — non épinglées, voir ces
+fichiers) :
 ```python
-!pip install requests beautifulsoup4 selenium tqdm pdfplumber anthropic --quiet
+!pip install -r requirements-scraping.txt -r requirements-pipeline.txt --quiet
+!apt install -y chromium-chromedriver --quiet   # binaire pour Selenium, pas une dépendance pip
 from google.colab import drive; drive.mount('/content/drive')
 ```
 
