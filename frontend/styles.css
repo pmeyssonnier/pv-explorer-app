@@ -1,16 +1,19 @@
 /* ═══════════════════════════════════════════════════════════════
-   IDENTITÉ VISUELLE — inspirée des couleurs de Schaerbeek
-   Bordeaux institutionnel + or + papier chaud
+   IDENTITÉ VISUELLE — « Épuré »
+   Un seul accent (terracotta), réservé aux éléments interactifs et aux
+   accroches ; plus de bloc de couleur plein en bannière (fond neutre,
+   comme le reste de l'app — voir .header plus bas). --or unifié sur le
+   même accent que --bordeaux (un seul ton, pas un rouge + un or séparés).
    Display : Fraunces (serif à caractère, chaleureux mais sérieux)
    Corps   : Inter (lisibilité administrative)
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --brand: #6d2233;              /* rouge « fond fort » (header/boutons) — texte clair dessus */
-  --bordeaux: #6d2233;           /* accent texte/marques — s'éclaircit en thème sombre */
-  --bordeaux-dark: #4d1523;
-  --bordeaux-clair: #8f3a4b;
-  --or: #c8952b;
-  --or-light: #e8c874;
+  --brand: #c1653f;              /* accent « fond fort » (petits boutons/puces) — texte clair dessus */
+  --bordeaux: #c1653f;           /* accent texte/marques — s'éclaircit en thème sombre */
+  --bordeaux-dark: #96492c;
+  --bordeaux-clair: #d9855f;
+  --or: #c1653f;                 /* unifié avec --bordeaux : un seul accent */
+  --or-light: #e6b294;
   --papier: #f7f3ec;
   --papier-dark: #ece5d8;
   --encre: #2a221f;
@@ -36,10 +39,10 @@
    sauf choix « clair » explicite) et choix « sombre » explicite. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bordeaux: #e2929f;
-    --bordeaux-clair: #c06e7c;
-    --or: #e0b64f;
-    --or-light: #f0d78e;
+    --bordeaux: #e2916c;
+    --bordeaux-clair: #c9764f;
+    --or: #e2916c;
+    --or-light: #f0c7a8;
     --papier: #17130f;
     --papier-dark: #241d17;
     --encre: #f0e9de;
@@ -50,10 +53,10 @@
   }
 }
 :root[data-theme="dark"] {
-  --bordeaux: #e2929f;
-  --bordeaux-clair: #c06e7c;
-  --or: #e0b64f;
-  --or-light: #f0d78e;
+  --bordeaux: #e2916c;
+  --bordeaux-clair: #c9764f;
+  --or: #e2916c;
+  --or-light: #f0c7a8;
   --papier: #17130f;
   --papier-dark: #241d17;
   --encre: #f0e9de;
@@ -75,20 +78,23 @@ body {
 }
 
 /* ── EN-TÊTE ─────────────────────────────────────────────────── */
+/* Épuré : plus de bloc de couleur plein — fond neutre (comme le reste de
+   l'app), un simple filet en bas. L'accent ne reste que sur l'accroche
+   (eyebrow) et le repère du logo (cercle de la loupe). */
 .header {
-  background: var(--brand);
-  color: #f7f3ec;
-  border-bottom: 3px solid var(--or);
+  background: var(--blanc);
+  color: var(--encre);
+  border-bottom: 1px solid var(--ligne);
   position: relative;
 }
 .header-icons { position: absolute; top: 18px; right: 20px; display: flex; gap: 8px; }
 .icon-btn {
-  background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.25);
-  color: #fff; width: 40px; height: 40px; border-radius: 11px;
+  background: var(--papier-dark); border: 1px solid var(--ligne);
+  color: var(--encre); width: 40px; height: 40px; border-radius: 11px;
   display: inline-flex; align-items: center; justify-content: center;
   cursor: pointer; transition: background 0.15s;
 }
-.icon-btn:hover { background: rgba(255,255,255,0.26); }
+.icon-btn:hover { background: var(--ligne); }
 .icon-btn .icon { width: 20px; height: 20px; }
 
 /* ── PANNEAU ⚙️ OPTIONS ──
@@ -190,7 +196,7 @@ body {
   font-size: 11px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--or-light);
+  color: var(--bordeaux);
   font-weight: 600;
   margin-bottom: 6px;
 }
@@ -204,7 +210,7 @@ body {
 .header p {
   margin-top: 6px;
   font-size: clamp(13px, 1.3vw, 14.5px);
-  color: rgba(255,253,249,0.82);
+  color: var(--encre-soft);
   max-width: 60ch;
 }
 
@@ -452,7 +458,7 @@ body {
   letter-spacing: .04em; padding: 2px 7px; border-radius: 5px; margin-right: 6px; vertical-align: 1px;
 }
 .elu-badge.b-q { background: color-mix(in srgb, var(--bordeaux) 15%, transparent); color: var(--bordeaux); }
-.elu-badge.b-d { background: color-mix(in srgb, var(--or) 22%, transparent); color: #8a5e10; }
+.elu-badge.b-d { background: color-mix(in srgb, var(--or) 22%, transparent); color: var(--bordeaux-dark); }
 .elu-badge.b-m { background: color-mix(in srgb, var(--vert) 20%, transparent); color: var(--vert); }
 .elu-badge.b-v { background: color-mix(in srgb, var(--bordeaux-clair) 20%, transparent); color: var(--bordeaux-clair); }
 .elu-sp { font-size: 11.5px; color: var(--encre-soft); font-weight: 600; }
