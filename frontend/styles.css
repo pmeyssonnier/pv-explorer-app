@@ -81,46 +81,52 @@ body {
   border-bottom: 3px solid var(--or);
   position: relative;
 }
-.gear-btn {
-  position: absolute; top: 18px; right: 20px;
+.header-icons { position: absolute; top: 18px; right: 20px; display: flex; gap: 8px; }
+.icon-btn {
   background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.25);
   color: #fff; width: 40px; height: 40px; border-radius: 11px;
   display: inline-flex; align-items: center; justify-content: center;
   cursor: pointer; transition: background 0.15s;
 }
-.gear-btn:hover { background: rgba(255,255,255,0.26); }
-.gear-btn .icon { width: 20px; height: 20px; }
+.icon-btn:hover { background: rgba(255,255,255,0.26); }
+.icon-btn .icon { width: 20px; height: 20px; }
 
-/* ── PANNEAU ⚙️ OPTIONS ── */
+/* ── PANNEAU ⚙️ OPTIONS ──
+   Fenêtre modale centrée sur tablette/PC (inchangé) ; tiroir remontant du bas
+   sur mobile (≤560px, cf. media query plus bas) — pattern plus naturel au
+   doigt, testé au préalable comme prototype. Le panneau s'affiche toujours
+   (plus de display:none) et transitionne en opacité/transform, pour que
+   l'animation de tiroir puisse jouer (un display:none→flex ne s'anime pas). */
 .settings-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-  display: none; align-items: flex-start; justify-content: center;
+  display: flex; align-items: flex-start; justify-content: center;
   padding: 40px 16px; z-index: 100;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
 }
-.settings-overlay.open { display: flex; }
+.settings-overlay.open { opacity: 1; pointer-events: auto; }
 .settings-panel {
   background: var(--papier); border: 1px solid var(--ligne); border-radius: 20px;
-  width: 100%; max-width: 560px; max-height: 90vh; overflow: auto;
+  width: 100%; max-width: 560px; max-height: 90vh;
   box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  display: flex; flex-direction: column; overflow: hidden;
 }
+.settings-handle-zone { display: none; }   /* visible seulement en tiroir mobile */
 .settings-head {
   display: flex; align-items: center; justify-content: space-between;
   padding: 22px 26px; border-bottom: 1px solid var(--ligne);
-  position: sticky; top: 0; background: var(--papier); z-index: 1;
+  background: var(--papier); flex-shrink: 0;
 }
 .settings-head h2 { font-family: var(--display); font-size: 24px; }
 .settings-close {
   border: none; background: var(--papier-dark); color: var(--encre);
   width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 19px;
 }
+.settings-scroll { overflow-y: auto; }
 .settings-sec { padding: 22px 26px; border-bottom: 1px solid var(--ligne); }
 .settings-sec h3 {
   font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--or); margin-bottom: 16px; font-weight: 600;
 }
-.seg { display: inline-flex; border: 1px solid var(--ligne); border-radius: 22px; overflow: hidden; }
-.seg button { border: none; background: none; padding: 9px 20px; font: inherit; font-size: 14.5px; color: var(--encre-soft); cursor: pointer; }
-.seg button.on { background: var(--brand); color: #f7f3ec; }
 .set-row { display: flex; flex-direction: column; gap: 8px; margin-bottom: 22px; }
 .set-row:last-child { margin-bottom: 0; }
 .set-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 15.5px; }
@@ -137,16 +143,32 @@ body {
 /* Mobile : on garde le panneau confortable sur tablette/PC mais on COMPACTE
    tout (marges, titres, contrôles, texte) pour que ça tienne sans déborder. */
 @media (max-width: 560px) {
-  /* Portrait : on maximise la hauteur utile et on resserre l'espacement pour
-     que tout le panneau tienne sans (ou presque sans) défilement. */
-  .settings-overlay { padding: 12px 10px; align-items: center; }
-  .settings-panel { max-height: 94vh; border-radius: 16px; }
-  .settings-head { padding: 12px 16px; }
+  /* Tiroir remontant du bas plutôt que fenêtre centrée : plus naturel au
+     doigt (pattern mobile standard), poignée glissable pour fermer. */
+  .settings-overlay { align-items: flex-end; padding: 0; }
+  .settings-panel {
+    max-width: none; max-height: 85vh; border-radius: 20px 20px 0 0;
+    transform: translateY(100%); transition: transform 0.28s cubic-bezier(.32,.72,0,1);
+  }
+  .settings-overlay.open .settings-panel { transform: translateY(0); }
+  .settings-panel.dragging { transition: none; }
+  /* touch-action: none SEULEMENT sur la poignée — sinon le geste de glisser
+     pour fermer empêche aussi le défilement tactile normal du contenu
+     (curseurs, sections), qui ne laisserait alors plus que la croix comme
+     moyen de fermeture fiable au doigt. */
+  .settings-handle-zone {
+    display: flex; justify-content: center; padding: 10px 0 6px; flex-shrink: 0;
+    touch-action: none; cursor: grab;
+  }
+  .settings-handle-bar { width: 38px; height: 4px; border-radius: 3px; background: var(--ligne); }
+  .settings-scroll { touch-action: pan-y; padding-bottom: env(safe-area-inset-bottom, 14px); }
+
+  /* Espacement resserré pour que tout tienne sans déborder. */
+  .settings-head { padding: 4px 16px 12px; }
   .settings-head h2 { font-size: 19px; }
   .settings-close { width: 32px; height: 32px; font-size: 16px; }
   .settings-sec { padding: 12px 16px; }
   .settings-sec h3 { font-size: 11.5px; margin-bottom: 8px; }
-  .seg button { padding: 7px 14px; font-size: 13px; }
   .set-row { gap: 5px; margin-bottom: 9px; }
   .set-top { font-size: 14px; }
   .set-top b { font-size: 15px; }
@@ -155,6 +177,9 @@ body {
   .settings-panel select { padding: 9px 10px; font-size: 14.5px; }
   .settings-about { font-size: 13px; }
   .settings-reset { padding: 7px 14px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-overlay, .settings-panel { transition: none; }
 }
 .header-inner {
   max-width: var(--content);

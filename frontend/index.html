@@ -44,9 +44,14 @@
 </svg>
 
 <header class="header">
-  <button class="gear-btn" type="button" onclick="openSettings()" aria-label="Options" title="Options">
-    <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
-  </button>
+  <div class="header-icons">
+    <button class="icon-btn" type="button" id="themeBtn" onclick="cycleTheme()" aria-label="Thème" title="Thème">
+      <svg class="icon" id="themeIcon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"></svg>
+    </button>
+    <button class="icon-btn" type="button" onclick="openSettings()" aria-label="Options" title="Options">
+      <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+    </button>
+  </div>
   <div class="header-inner">
     <svg class="header-mark" viewBox="0 0 64 64" aria-hidden="true">
       <rect x="15" y="12" width="26" height="33" rx="3.4" fill="#f7f3ec"/>
@@ -202,65 +207,59 @@
 
 <!-- ── PANNEAU ⚙️ OPTIONS ── -->
 <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
-  <div class="settings-panel" role="dialog" aria-modal="true" aria-label="Options">
+  <div class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-label="Options">
+    <div class="settings-handle-zone" id="settingsHandle"><div class="settings-handle-bar"></div></div>
     <div class="settings-head">
       <h2>Options</h2>
       <button class="settings-close" type="button" onclick="closeSettings()" aria-label="Fermer">✕</button>
     </div>
 
-    <section class="settings-sec">
-      <h3>Apparence</h3>
-      <div class="seg" id="themeSeg">
-        <button type="button" data-v="light" onclick="updateSetting('theme','light')">Clair</button>
-        <button type="button" data-v="dark" onclick="updateSetting('theme','dark')">Sombre</button>
-        <button type="button" data-v="auto" onclick="updateSetting('theme','auto')">Auto</button>
-      </div>
-    </section>
+    <div class="settings-scroll">
+      <section class="settings-sec">
+        <h3>Recherche (chat)</h3>
+        <div class="set-row">
+          <div class="set-top"><span>Commune</span></div>
+          <select class="commune-select" id="communeSelect" aria-label="Filtrer par commune">
+            <option value="schaerbeek" selected>Schaerbeek</option>
+            <option value="">Toutes les communes</option>
+            <option value="evere" disabled>Evere (bientôt)</option>
+          </select>
+          <div class="set-hint">Périmètre de recherche des procès-verbaux.</div>
+        </div>
+        <div class="set-row">
+          <div class="set-top"><span>Sources affichées</span><b id="valMaxSources">15</b></div>
+          <input type="range" id="setMaxSources" min="5" max="30" step="1" oninput="updateSetting('maxSources', +this.value)">
+          <div class="set-hint">Nombre de sources listées sous la réponse.</div>
+        </div>
+        <div class="set-row">
+          <div class="set-top"><span>Étendue de recherche</span><b id="valTopK">30</b></div>
+          <input type="range" id="setTopK" min="10" max="50" step="5" oninput="updateSetting('topK', +this.value)">
+          <div class="set-hint">Passages lus par Claude. Plus = plus complet, plus lent.</div>
+        </div>
+        <div class="set-row">
+          <div class="set-top"><span>Seuil de pertinence</span><b id="valScoreMin">0.00</b></div>
+          <input type="range" id="setScoreMin" min="0" max="0.9" step="0.05" oninput="updateSetting('scoreMin', +this.value)">
+          <div class="set-hint">Masque les sources sous ce score (0 = désactivé).</div>
+        </div>
+        <div class="set-row">
+          <div class="set-top"><span>Ordre des sources</span></div>
+          <select id="setOrder" onchange="updateSetting('order', this.value)">
+            <option value="relevance">Par pertinence</option>
+            <option value="date">Par date (récent d'abord)</option>
+          </select>
+        </div>
+        <div class="set-row">
+          <div class="set-top"><span>Questions en cache</span><b id="valCacheSize">15</b></div>
+          <input type="range" id="setCacheSize" min="3" max="30" step="1" oninput="updateSetting('cacheSize', +this.value)">
+          <div class="set-hint">Nombre de « questions récentes » gardées, avec leur réponse (pas de nouvel appel en recliquant dessus). Au-delà, la plus ancienne est retirée.</div>
+        </div>
+      </section>
 
-    <section class="settings-sec">
-      <h3>Recherche (chat)</h3>
-      <div class="set-row">
-        <div class="set-top"><span>Commune</span></div>
-        <select class="commune-select" id="communeSelect" aria-label="Filtrer par commune">
-          <option value="schaerbeek" selected>Schaerbeek</option>
-          <option value="">Toutes les communes</option>
-          <option value="evere" disabled>Evere (bientôt)</option>
-        </select>
-        <div class="set-hint">Périmètre de recherche des procès-verbaux.</div>
-      </div>
-      <div class="set-row">
-        <div class="set-top"><span>Sources affichées</span><b id="valMaxSources">15</b></div>
-        <input type="range" id="setMaxSources" min="5" max="30" step="1" oninput="updateSetting('maxSources', +this.value)">
-        <div class="set-hint">Nombre de sources listées sous la réponse.</div>
-      </div>
-      <div class="set-row">
-        <div class="set-top"><span>Étendue de recherche</span><b id="valTopK">30</b></div>
-        <input type="range" id="setTopK" min="10" max="50" step="5" oninput="updateSetting('topK', +this.value)">
-        <div class="set-hint">Passages lus par Claude. Plus = plus complet, plus lent.</div>
-      </div>
-      <div class="set-row">
-        <div class="set-top"><span>Seuil de pertinence</span><b id="valScoreMin">0.00</b></div>
-        <input type="range" id="setScoreMin" min="0" max="0.9" step="0.05" oninput="updateSetting('scoreMin', +this.value)">
-        <div class="set-hint">Masque les sources sous ce score (0 = désactivé).</div>
-      </div>
-      <div class="set-row">
-        <div class="set-top"><span>Ordre des sources</span></div>
-        <select id="setOrder" onchange="updateSetting('order', this.value)">
-          <option value="relevance">Par pertinence</option>
-          <option value="date">Par date (récent d'abord)</option>
-        </select>
-      </div>
-      <div class="set-row">
-        <div class="set-top"><span>Questions en cache</span><b id="valCacheSize">15</b></div>
-        <input type="range" id="setCacheSize" min="3" max="30" step="1" oninput="updateSetting('cacheSize', +this.value)">
-        <div class="set-hint">Nombre de « questions récentes » gardées, avec leur réponse (pas de nouvel appel en recliquant dessus). Au-delà, la plus ancienne est retirée.</div>
-      </div>
-    </section>
-
-    <section class="settings-sec settings-about">
-      <span>PV Explorer — version <strong id="appVersion"></strong></span>
-      <button class="settings-reset" type="button" onclick="resetSettings()">Réinitialiser</button>
-    </section>
+      <section class="settings-sec settings-about">
+        <span>PV Explorer — version <strong id="appVersion"></strong></span>
+        <button class="settings-reset" type="button" onclick="resetSettings()">Réinitialiser</button>
+      </section>
+    </div>
   </div>
 </div>
 

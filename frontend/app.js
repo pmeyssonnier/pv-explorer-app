@@ -32,14 +32,40 @@ function loadSettings() {
 let settings = loadSettings();
 function saveSettings() { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (e) {} }
 
+// Icône thème séparée du ⚙️ (en-tête) : un tap change directement l'apparence
+// — action fréquente — sans ouvrir le tiroir d'Options, qui ne porte plus
+// que les réglages de recherche (plus rarement modifiés).
+const THEME_ICONS = {
+  light: '<circle cx="12" cy="12" r="4.2"/><path d="M12 3v2.4M12 18.6V21M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M3 12h2.4M18.6 12H21M4.9 19.1l1.7-1.7M17.4 6.6l1.7-1.7"/>',
+  dark: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.8 6.8 0 0 0 10.5 10.5Z"/>',
+  auto: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17Z" fill="currentColor" stroke="none"/>',
+};
+const THEME_LABELS = { light: 'clair', dark: 'sombre', auto: 'auto' };
+const THEME_ORDER = ['light', 'dark', 'auto'];
+
 function applyTheme() {
   if (settings.theme === 'light' || settings.theme === 'dark')
     document.documentElement.setAttribute('data-theme', settings.theme);
   else
     document.documentElement.removeAttribute('data-theme');   // « auto » → préférence OS
+  const icon = document.getElementById('themeIcon');
+  if (icon) icon.innerHTML = THEME_ICONS[settings.theme] || THEME_ICONS.auto;
+  const btn = document.getElementById('themeBtn');
+  if (btn) {
+    const label = `Thème : ${THEME_LABELS[settings.theme] || 'auto'}`;
+    btn.setAttribute('aria-label', label);
+    btn.setAttribute('title', label + ' (appuyer pour changer)');
+  }
+}
+function cycleTheme() {
+  updateSetting('theme', THEME_ORDER[(THEME_ORDER.indexOf(settings.theme) + 1) % THEME_ORDER.length]);
 }
 function openSettings() { renderSettings(); document.getElementById('settingsOverlay').classList.add('open'); }
-function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
+function closeSettings() {
+  const panel = document.getElementById('settingsPanel');
+  if (panel) panel.style.transform = '';   // efface un éventuel reliquat de glissement interrompu
+  document.getElementById('settingsOverlay').classList.remove('open');
+}
 function updateSetting(key, val) {
   settings[key] = val; saveSettings();
   if (key === 'theme') applyTheme();
@@ -54,8 +80,6 @@ function resetSettings() {
 function renderSettings() {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
   const txt = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  document.querySelectorAll('#themeSeg button').forEach(b =>
-    b.classList.toggle('on', b.dataset.v === settings.theme));
   set('setMaxSources', settings.maxSources); txt('valMaxSources', settings.maxSources);
   set('setTopK', settings.topK); txt('valTopK', settings.topK);
   set('setScoreMin', settings.scoreMin); txt('valScoreMin', (+settings.scoreMin).toFixed(2));
@@ -63,6 +87,37 @@ function renderSettings() {
   set('setCacheSize', settings.cacheSize); txt('valCacheSize', settings.cacheSize);
   txt('appVersion', appVersion);
 }
+
+// Glisser la poignée du tiroir (mobile) vers le bas pour le fermer — pattern
+// natif des bottom sheets. Sans effet sur tablette/PC (poignée masquée par
+// CSS, donc jamais de pointerdown dessus).
+(function initSettingsDrag() {
+  const handle = document.getElementById('settingsHandle');
+  const panel = document.getElementById('settingsPanel');
+  if (!handle || !panel) return;
+  const THRESHOLD = 90;
+  let startY = null, dragging = false;
+
+  handle.addEventListener('pointerdown', e => {
+    dragging = true; startY = e.clientY;
+    panel.classList.add('dragging');
+    handle.setPointerCapture(e.pointerId);
+  });
+  handle.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    panel.style.transform = `translateY(${Math.max(0, e.clientY - startY)}px)`;
+  });
+  const release = e => {
+    if (!dragging) return;
+    dragging = false;
+    panel.classList.remove('dragging');
+    const dy = Math.max(0, e.clientY - startY);
+    panel.style.transform = '';
+    if (dy > THRESHOLD) closeSettings();
+  };
+  handle.addEventListener('pointerup', release);
+  handle.addEventListener('pointercancel', release);
+})();
 
 // Récupère la version auprès du backend (source unique). Silencieux en cas
 // d'échec : on garde le repli local `APP_VERSION`. Met à jour l'affichage même
