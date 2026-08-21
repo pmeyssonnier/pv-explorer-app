@@ -19,6 +19,12 @@
 #      # + un runtime JS pour yt-dlp (recommandé) :
 #      curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh
 #
+#  ANTI-BOT-CHECK (« Sign in to confirm you're not a bot ») : les IP cloud
+#  (Colab) déclenchent parfois ce mur sur le client YouTube "web" par défaut.
+#  PLAYER_CLIENTS force des clients alternatifs (android/tv/web_safari) qui le
+#  contournent le plus souvent ; RETRIES relance automatiquement une vidéo qui
+#  échoue (le mur est intermittent, pas systématique).
+#
 #  LIMITES connues : seules les séances récentes sont chapitrées ; les vidéos
 #  plus anciennes n'ont pas d'horodatage (0 point). Il n'y a PAS de sous-titres
 #  sur ces vidéos → la transcription des débats (couche 2) nécessiterait un ASR
@@ -36,6 +42,13 @@ TABS = ("/videos", "/streams")
 OUT_PATH = "/content/pv_video_conseil_schaerbeek.json"
 SESSIONS_PATH = "/content/video_sessions.json"   # date → URL vidéo (à committer dans backend/)
 MAX_VIDEOS = None          # None = toutes les séances ; un entier pour un test
+
+# Clients YouTube à essayer pour l'extraction par vidéo (dans cet ordre) : le
+# client "web" par défaut est celui qui déclenche le plus le mur anti-bot sur
+# IP cloud ; android/tv/web_safari le contournent le plus souvent.
+PLAYER_CLIENTS = "android,tv,web_safari,web"
+RETRIES = 3          # tentatives par vidéo avant d'abandonner
+RETRY_WAIT_S = 5      # pause entre tentatives (secondes)
 
 # Indices « néerlandais » : servent à couper la moitié NL du titre bilingue.
 NL_START = re.compile(
@@ -190,14 +203,28 @@ def main():
     council = list_council_videos()
     print(f"Séances de conseil : {len(council)}")
 
+    ydl_opts = {
+        "quiet": True,
+        "skip_download": True,
+        "extractor_args": {"youtube": {"player_client": [PLAYER_CLIENTS]}},
+    }
+
     seances = []
     for i, c in enumerate(council, 1):
-        try:
-            with yt_dlp.YoutubeDL({"quiet": True, "skip_download": True}) as ydl:
-                v = ydl.extract_info(
-                    f"https://www.youtube.com/watch?v={c['id']}", download=False)
-        except Exception as ex:                      # bot-check ponctuel, vidéo privée…
-            print(f"  ⚠ {c['date']} : échec ({str(ex)[:70]})")
+        v = None
+        last_err = None
+        for attempt in range(1, RETRIES + 1):
+            try:
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    v = ydl.extract_info(
+                        f"https://www.youtube.com/watch?v={c['id']}", download=False)
+                break
+            except Exception as ex:                  # bot-check ponctuel, vidéo privée…
+                last_err = ex
+                if attempt < RETRIES:
+                    time.sleep(RETRY_WAIT_S)
+        if v is None:
+            print(f"  ⚠ {c['date']} : échec après {RETRIES} tentatives ({str(last_err)[:70]})")
             continue
 
         points = points_from_chapters(v, c["id"])
