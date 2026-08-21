@@ -5,6 +5,7 @@ AnswerResponse prêt à sérialiser et lève HTTPException sur les erreurs exter
 (recherche ou génération) pour préserver les codes/messages exacts de l'API.
 """
 import os
+import re
 from typing import Optional
 
 import anthropic
@@ -74,6 +75,36 @@ def _hit_score(h) -> float:
     if isinstance(h, dict):
         return float(h.get("_score") or h.get("score") or 0.0)
     return 0.0
+
+
+def _hit_id(h) -> str:
+    """ID d'un hit Pinecone, robuste aux variantes de SDK (voir _hit_score)."""
+    try:
+        return str(h["_id"])
+    except (KeyError, TypeError):
+        pass
+    for attr in ("id", "_id"):
+        v = getattr(h, attr, None)
+        if v is not None:
+            return str(v)
+    if isinstance(h, dict):
+        return str(h.get("id") or h.get("_id") or "")
+    return ""
+
+
+# Un point de chapitrage vidéo peut produire PLUSIEURS chunks indexés (un
+# chunk « titre » + un chunk par sous-segment de transcript aligné — voir
+# index_pv.video_point_to_chunks), qui partagent le même id de base
+# (video-<id>-<start>) avec un suffixe « -t<sous_start> » pour les extraits
+# de transcript. _point_key() retire ce suffixe pour regrouper ces chunks
+# sous UNE seule source affichée (sinon le même point apparaîtrait plusieurs
+# fois dans la liste des sources). Sans effet sur les PV (un seul chunk par
+# point, id sans ce suffixe).
+_TRANSCRIPT_SUFFIX = re.compile(r"-t\d+$")
+
+
+def _point_key(chunk_id: str) -> str:
+    return _TRANSCRIPT_SUFFIX.sub("", chunk_id) if chunk_id else chunk_id
 
 
 def _clamp(val, default, lo, hi, cast):
@@ -170,7 +201,7 @@ def answer(question_raw: str, commune_raw: Optional[str], *,
     norm = []
     for h in matches:
         fields = h.get("fields", h.get("metadata", {})) if hasattr(h, "get") else {}
-        norm.append({"metadata": fields, "score": _hit_score(h)})
+        norm.append({"metadata": fields, "score": _hit_score(h), "id": _hit_id(h)})
 
     # 2. Construire le contexte et interroger Claude.
     # Les extraits et la question (non fiable) sont isolés dans des balises :
@@ -216,6 +247,7 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
     # « je ne trouve pas »). Sinon on filtre sous le seuil de pertinence.
     not_found = "je ne trouve pas" in answer_text.lower()
     sources = []
+    seen_points = set()      # dédoublonnage par point (voir _point_key)
     url_map = _pdf_url_map()
     session_map = video_session_map()
     for h in norm:
@@ -229,6 +261,15 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
         # n'est pas transcrit (le point a bien été abordé au Conseil).
         if not_found and source_type != "video_conseil":
             continue
+        # Un même point peut avoir produit plusieurs chunks (titre + extraits
+        # de transcript) : norm est trié par score décroissant, donc le premier
+        # chunk rencontré pour un point est le mieux classé — n'afficher QUE
+        # celui-là (sinon le même point apparaîtrait plusieurs fois côté UI).
+        point_key = _point_key(h.get("id", ""))
+        if point_key and point_key in seen_points:
+            continue
+        if point_key:
+            seen_points.add(point_key)
         date_str = str(meta.get("date", ""))
         # url : deep-link vidéo (porté par la métadonnée pour les débats filmés),
         # sinon lien PDF du PV résolu par date.
