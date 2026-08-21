@@ -23,7 +23,7 @@ let appVersion = APP_VERSION;
 const SETTINGS_KEY = 'pv_settings';
 const SETTINGS_DEFAULTS = {
   theme: 'auto', maxSources: 15, topK: 30, scoreMin: 0,
-  model: 'claude-sonnet-4-6', order: 'relevance',
+  model: 'claude-sonnet-4-6', order: 'relevance', cacheSize: 15,
 };
 function loadSettings() {
   try { return Object.assign({}, SETTINGS_DEFAULTS, JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}')); }
@@ -43,11 +43,12 @@ function closeSettings() { document.getElementById('settingsOverlay').classList.
 function updateSetting(key, val) {
   settings[key] = val; saveSettings();
   if (key === 'theme') applyTheme();
+  if (key === 'cacheSize') { trimCaches(); renderHistory(); }
   renderSettings();
 }
 function resetSettings() {
   settings = Object.assign({}, SETTINGS_DEFAULTS);
-  saveSettings(); applyTheme(); renderSettings();
+  saveSettings(); applyTheme(); trimCaches(); renderHistory(); renderSettings();
 }
 // Reflète l'état courant dans les contrôles du panneau.
 function renderSettings() {
@@ -59,6 +60,7 @@ function renderSettings() {
   set('setTopK', settings.topK); txt('valTopK', settings.topK);
   set('setScoreMin', settings.scoreMin); txt('valScoreMin', (+settings.scoreMin).toFixed(2));
   set('setOrder', settings.order);
+  set('setCacheSize', settings.cacheSize); txt('valCacheSize', settings.cacheSize);
   txt('appVersion', appVersion);
 }
 
@@ -144,8 +146,9 @@ function reuseQuestion(el) {
 }
 
 // ── HISTORIQUE PERSISTANT DES QUESTIONS (localStorage) ──
+// Nombre de questions gardées (chips + réponses en cache, voir plus bas) :
+// réglable dans Options ("Questions en cache"), settings.cacheSize.
 const HIST_KEY = 'pv_explorer_history';
-const HIST_MAX = 12;
 
 function getHistory() {
   try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
@@ -156,7 +159,7 @@ function saveHistory(q) {
   if (!q) return;
   let h = getHistory().filter(x => x.toLowerCase() !== q.toLowerCase());
   h.unshift(q);
-  h = h.slice(0, HIST_MAX);
+  h = h.slice(0, settings.cacheSize);
   try { localStorage.setItem(HIST_KEY, JSON.stringify(h)); } catch (e) {}
   renderHistory();
 }
@@ -198,7 +201,6 @@ function renderHistory() {
 // seulement le libellé, contrairement à HIST_KEY) pour la restituer sans
 // rappeler l'API quand on reclique une question déjà posée.
 const ANSWER_CACHE_KEY = 'pv_explorer_answer_cache';
-const ANSWER_CACHE_MAX = HIST_MAX;
 
 function getAnswerCache() {
   try { return JSON.parse(localStorage.getItem(ANSWER_CACHE_KEY) || '[]'); }
@@ -209,8 +211,16 @@ function cacheAnswer(question, answer, sources, duration) {
   if (!q) return;
   let c = getAnswerCache().filter(t => t.question.toLowerCase() !== q.toLowerCase());
   c.unshift({ question: q, answer, sources, duration });
-  c = c.slice(0, ANSWER_CACHE_MAX);
+  c = c.slice(0, settings.cacheSize);
   try { localStorage.setItem(ANSWER_CACHE_KEY, JSON.stringify(c)); } catch (e) {}
+}
+// Réapplique la limite courante aux deux stockages (appelé quand on change
+// le réglage « Questions en cache » : sans ça, une réduction ne prendrait
+// effet qu'à la prochaine question posée, pas immédiatement).
+function trimCaches() {
+  const n = settings.cacheSize;
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(getHistory().slice(0, n))); } catch (e) {}
+  try { localStorage.setItem(ANSWER_CACHE_KEY, JSON.stringify(getAnswerCache().slice(0, n))); } catch (e) {}
 }
 function findCachedAnswer(question) {
   const q = (question || '').trim().toLowerCase();
