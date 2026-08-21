@@ -211,6 +211,33 @@ def test_echevin_has_college_role_and_answers():
     assert d["counts"]["repond"] > d["counts"]["depose"]
 
 
+def test_role_of_college_even_with_few_answers_and_no_deposits():
+    # Le champ « répondant » n'est renseigné que par un membre du Collège :
+    # répondre au moins une fois sans jamais déposer suffit à qualifier
+    # « college », même avec un petit nombre de réponses (ex. mandat
+    # écourté) — le seuil de 8 réponses ne doit s'appliquer qu'en cas
+    # d'activité mixte (dépôts ET réponses).
+    assert elus._role_of(0, 1) == "college"
+    assert elus._role_of(0, 3) == "college"
+    # Activité mixte avec peu de réponses : signal trop faible, on reste
+    # prudent et on garde « conseiller » (ex. présidence ponctuelle de séance).
+    assert elus._role_of(10, 1) == "conseiller"
+    assert elus._role_of(0, 0) == "conseiller"
+
+
+def test_college_member_with_few_answers_counted_correctly_in_list():
+    # Régression : Bertrand Dhuyvetter (0 dépôt, 3 réponses) était classé
+    # « conseiller » (seuil de 8 non atteint), ce qui faisait aussi
+    # afficher "(0)" dans le sélecteur côté frontend (n = depose pour un
+    # rôle non-college). Doit être « college » avec 3 interventions.
+    lst = elus.elus_list()
+    d = next((e for e in lst if e["key"] == "dhuyvetter"), None)
+    assert d is not None
+    assert d["role"] == "college"
+    assert d["depose"] == 0
+    assert d["repond"] == 3
+
+
 def test_case_insensitive_key():
     assert elus.elu_detail("VERZIN")["key"] == "verzin"
 
@@ -252,6 +279,46 @@ def test_ouazrhari_merged_and_org_authors_absent_from_index():
     assert "ouazrhari" in idx
     for org_key in ("clad", "greentech vzw", "gemeente schaarbeek"):
         assert org_key not in idx
+
+
+# ── Fusion PV/vidéo du même point ────────────────────────────────────────────
+def test_match_pv_point_single_candidate():
+    c = {"titre": "Le plan Good Move"}
+    assert elus._match_pv_point("Le plan Good Move (Demande de Mme X)", [c]) is c
+
+
+def test_match_pv_point_containment_among_several():
+    wrong = {"titre": "Le chantier de la VRT"}
+    right = {"titre": "Le plan Good Move"}
+    assert elus._match_pv_point(
+        "Le plan Good Move (Demande de Madame X) - Good Move (Verzoek van Mevrouw X)",
+        [wrong, right],
+    ) is right
+
+
+def test_match_pv_point_no_good_candidate_returns_none():
+    # Aucun des candidats ne correspond au sujet du point vidéo (cas réel du
+    # corpus) : mieux vaut ne pas fusionner (deux entrées séparées) qu'une
+    # fusion fausse.
+    candidates = [{"titre": "Les rodéos urbains"},
+                  {"titre": "Les nuisances dues aux travaux du siège de la VRT"}]
+    video_titre = "Le non-remplacement d'une Echevine en 2024 (Motion de Monsieur Cédric MAHIEU)"
+    assert elus._match_pv_point(video_titre, candidates) is None
+
+
+def test_pv_and_video_same_point_merged_into_one_intervention():
+    # Cas réel signalé : un point déposé (PV) dont la séance a aussi été
+    # chapitrée en vidéo apparaissait deux fois (« Demande » + « Débat
+    # filmé ») pour le même sujet. Doit maintenant n'être qu'UNE seule
+    # intervention, avec le lien vidéo précis (l'instant du point) plutôt
+    # que le lien générique de début de séance.
+    d = elus.elu_detail("genevois")
+    assert d is not None
+    assert d["counts"]["depose"] == 1
+    it = d["depose"][0]
+    assert it["type"] == "demande_habitant"
+    assert it["url"] and it["url"].endswith(".pdf")          # lien PV
+    assert "&t=" in (it["video_url"] or "")                  # lien vidéo précis, pas générique
 
 
 # ── Intégrité du fichier de chapitrage vidéo ─────────────────────────────────

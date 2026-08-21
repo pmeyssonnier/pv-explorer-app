@@ -24,6 +24,7 @@ redéploiement). Les consommateurs ne font que LIRE le dict → partage sûr.
 import os
 import re
 import json
+import difflib
 import unicodedata
 from collections import defaultdict
 
@@ -334,10 +335,49 @@ def _sig():
 
 
 def _role_of(n_depose: int, n_repond: int) -> str:
-    """Étiquette de rôle dominante, dérivée de l'activité (indicatif)."""
+    """Étiquette de rôle dominante, dérivée de l'activité (indicatif).
+
+    Le champ "répondant" d'un point n'est renseigné que par le membre du
+    Collège qui a répondu ; une personne qui répond au moins une fois et
+    ne dépose jamais de point est donc, structurellement, un·e échevin·e
+    ou le bourgmestre, même avec peu de séances (ex. mandat écourté).
+    """
+    if n_repond > 0 and n_depose == 0:
+        return "college"
     if n_repond >= 8 and n_repond > n_depose:
         return "college"      # échevin·e / bourgmestre (répond en séance)
     return "conseiller"       # conseiller·ère (dépose des points)
+
+
+def _norm_title(t: str) -> str:
+    return re.sub(r"[^a-z0-9 ]", " ", _strip_accents(t or "").lower())
+
+
+def _match_pv_point(video_titre: str, candidates: list) -> dict | None:
+    """Retrouve, parmi les points PV déposés par la même personne à la même
+    date, celui qui correspond au point vidéo (même sujet) — pour fusionner
+    en UNE intervention plutôt que d'en afficher deux (« Demande »/« Motion »
+    + « Débat filmé ») pour le même point, quand la séance a été filmée ET
+    chapitrée. Les titres PV sont souvent plus courts que les titres de
+    chapitrage vidéo (qui ajoutent « Demande de M./Mme X » + la traduction
+    NL) : une simple inclusion de chaîne suffit la plupart du temps ; en cas
+    d'ambiguïté (plusieurs points déposés le même jour par la même personne),
+    on utilise la similarité textuelle avec un seuil prudent — jamais de
+    fusion à l'aveugle (mieux vaut deux entrées séparées qu'une fusion fausse)."""
+    if len(candidates) == 1:
+        return candidates[0]
+    vn = _norm_title(video_titre)
+    contains = []
+    for c in candidates:
+        cn = _norm_title(c["titre"])
+        if cn and (cn in vn or vn in cn):
+            contains.append(c)
+    if len(contains) == 1:
+        return contains[0]
+    pool = contains if contains else candidates
+    best = max(pool, key=lambda c: difflib.SequenceMatcher(None, vn, _norm_title(c["titre"])).ratio())
+    score = difflib.SequenceMatcher(None, vn, _norm_title(best["titre"])).ratio()
+    return best if score >= 0.35 else None
 
 
 def _build_index() -> dict:
@@ -351,6 +391,11 @@ def _build_index() -> dict:
 
     pdf_by_date = {}
     session_map = video_session_map()
+    # (clé personne, date) -> entrées PV « déposées » de ce jour-là, pour
+    # retrouver depuis la boucle vidéo (ci-dessous) le point PV correspondant
+    # à un point de chapitrage vidéo, et les fusionner en une seule
+    # intervention (voir _match_pv_point).
+    pv_lookup = defaultdict(list)
 
     for s in pv:
         meta = s.get("seance", {}) or {}
@@ -364,7 +409,7 @@ def _build_index() -> dict:
                     k = _key(author, pairs)
                     if k:
                         add_variant(k, author)
-                        people[k]["depose"].append({
+                        entry = {
                             "date": date,
                             "sp": p.get("sp") or 0,
                             "type": p.get("type"),
@@ -372,7 +417,9 @@ def _build_index() -> dict:
                             "repondant": (p.get("repondant") or "").strip() or None,
                             "url": meta.get("source_url"),
                             "video_url": session_map.get(date),
-                        })
+                        }
+                        people[k]["depose"].append(entry)
+                        pv_lookup[(k, date)].append(entry)
             resp_raw = p.get("repondant")
             for name in _respondents(resp_raw, meta):
                 k = _key(name, pairs)
@@ -396,13 +443,26 @@ def _build_index() -> dict:
             if not k:
                 continue
             add_variant(k, author)
+            titre = p.get("titre_fr") or p.get("titre") or ""
+            deeplink = p.get("deeplink")
+            candidates = pv_lookup.get((k, date))
+            match = _match_pv_point(titre, candidates) if candidates else None
+            if match is not None:
+                # Même point que ce point PV (même personne, même date, même
+                # sujet) : une seule intervention, avec le lien vidéo précis
+                # (l'instant exact du point) plutôt que le lien de séance
+                # générique — au lieu d'une 2e entrée « Débat filmé » pour
+                # la même chose.
+                if deeplink:
+                    match["video_url"] = deeplink
+                continue
             people[k]["depose"].append({
                 "date": date,
                 "sp": 0,
                 "type": "video",
-                "titre": p.get("titre_fr") or p.get("titre") or "",
+                "titre": titre,
                 "repondant": None,
-                "url": p.get("deeplink"),
+                "url": deeplink,
                 "video_url": s.get("video_url"),
             })
 
