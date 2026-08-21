@@ -706,6 +706,12 @@ def _resolve_display_name(name: str, pairs: set, nom_by_key: dict):
     return _titlecase(_clean(name)) or None
 
 
+def _is_reportee(decision) -> bool:
+    """Point renvoyé à une séance ultérieure (« REPORTÉ ») : jamais débattu
+    ce jour-là, donc jamais de répondant·e ni de débat filmé à en attendre."""
+    return _strip_accents(decision or "").strip().lower().startswith("report")
+
+
 def seances_list() -> list:
     """Liste des séances (PV), la plus récente en premier — pour la
     navigation par année dans l'onglet « Séances »."""
@@ -761,6 +767,7 @@ def seance_detail(date: str):
             "titre": p.get("titre") or "",
             "demandeur": resolve(author) if author_key else None,
             "repondant": repondant,
+            "reporte": _is_reportee(p.get("decision")),
             "url": meta.get("source_url"),
             "video_url": session_map.get(date),
             "video_precise": False,
@@ -799,6 +806,7 @@ def seance_detail(date: str):
                     "titre": titre,
                     "demandeur": resolve(vauthor),
                     "repondant": None,
+                    "reporte": False,
                     "url": deeplink,
                     "video_url": vp.get("video_url") or video_seance.get("video_url"),
                     "video_precise": False,

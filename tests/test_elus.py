@@ -534,6 +534,30 @@ def test_seance_detail_resolves_demandeur_from_title_without_de():
     assert it["video_precise"] is True
 
 
+def test_seance_detail_flags_postponed_points():
+    # Cas réel signalé : SP 51 (27/05/2026), question d'Elias Ammi sur les
+    # repas gratuits, a été REPORTÉE — jamais débattue ce jour-là, donc pas
+    # de répondant·e ni de débat filmé à en attendre. La box du point doit
+    # pouvoir l'indiquer plutôt que de laisser croire à un point non traité.
+    d = elus.seance_detail("2026-05-27")
+    it = next(p for p in d["points"] if p["sp"] == 51)
+    assert it["demandeur"] == "Elias Ammi"
+    assert it["reporte"] is True
+    assert it["repondant"] is None
+    # Un point normalement débattu (décision autre que "reporté") ne l'est pas.
+    not_reported = next(p for p in d["points"] if p["sp"] == 1)
+    assert not_reported["reporte"] is False
+
+
+def test_is_reportee_case_and_accent_insensitive():
+    assert elus._is_reportee("REPORTÉ") is True
+    assert elus._is_reportee("Reporté") is True
+    assert elus._is_reportee("reporte") is True
+    assert elus._is_reportee("APPROUVÉ") is False
+    assert elus._is_reportee(None) is False
+    assert elus._is_reportee("") is False
+
+
 def test_seance_detail_points_sorted_by_sp():
     d = elus.seance_detail("2026-04-22")
     sps = [p["sp"] for p in d["points"]]
