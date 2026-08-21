@@ -123,7 +123,10 @@ function switchTab(tab) {
 // ── SUGGESTIONS ──
 function askSuggestion(el) {
   const text = el.querySelector('.suggestion-text');
-  document.getElementById('askInput').value = text ? text.textContent : el.textContent;
+  const question = (text ? text.textContent : el.textContent).trim();
+  const cached = findCachedAnswer(question);
+  if (cached) { showCachedAnswer(cached); return; }
+  document.getElementById('askInput').value = question;
   submitQuestion();
 }
 
@@ -185,6 +188,48 @@ function renderHistory() {
       `<button class="suggestion-remove" type="button" onclick="removeHistoryItem(event, this)" aria-label="Supprimer cette question">×</button>` +
     `</span>`
   ).join('');
+}
+
+// ── CACHE DES RÉPONSES DÉJÀ OBTENUES (localStorage) ──
+// Les chips « Vos questions récentes » ne sont visibles que quand le fil est
+// vide (page d'accueil, ou après « Nouvelle recherche » qui le vide
+// justement) : cliquer un chip ne peut donc jamais retrouver une réponse
+// encore affichée à l'écran. On garde ici la RÉPONSE elle-même (pas
+// seulement le libellé, contrairement à HIST_KEY) pour la restituer sans
+// rappeler l'API quand on reclique une question déjà posée.
+const ANSWER_CACHE_KEY = 'pv_explorer_answer_cache';
+const ANSWER_CACHE_MAX = HIST_MAX;
+
+function getAnswerCache() {
+  try { return JSON.parse(localStorage.getItem(ANSWER_CACHE_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function cacheAnswer(question, answer, sources, duration) {
+  const q = (question || '').trim();
+  if (!q) return;
+  let c = getAnswerCache().filter(t => t.question.toLowerCase() !== q.toLowerCase());
+  c.unshift({ question: q, answer, sources, duration });
+  c = c.slice(0, ANSWER_CACHE_MAX);
+  try { localStorage.setItem(ANSWER_CACHE_KEY, JSON.stringify(c)); } catch (e) {}
+}
+function findCachedAnswer(question) {
+  const q = (question || '').trim().toLowerCase();
+  if (!q) return null;
+  return getAnswerCache().find(t => t.question.toLowerCase() === q) || null;
+}
+// Réaffiche une réponse déjà obtenue, sans requête réseau : même échange
+// qu'avant, restitué instantanément (et reversé dans la conversation/
+// l'historique, comme un échange normal).
+function showCachedAnswer(turn) {
+  document.getElementById('introCard').style.display = 'none';
+  document.getElementById('newSearchBtn').style.display = '';
+  const conv = document.getElementById('conversation');
+  conv.insertAdjacentHTML('beforeend',
+    renderQuestionMsg(turn.question) +
+    renderAnswerMsg(turn.question, turn.answer, buildSourcesHtml(turn.sources || []), turn.duration || ''));
+  saveTurn(turn);
+  saveHistory(turn.question);
+  window.scrollTo(0, document.body.scrollHeight);
 }
 
 // ── PERSISTANCE DE LA CONVERSATION (questions + réponses) ──
@@ -513,6 +558,9 @@ async function submitQuestion() {
 
     // Persiste l'échange complet pour restitution au rechargement.
     saveTurn({ question, answer: data.answer, sources: srcs, duration: durationText });
+    // Garde aussi la réponse en cache : recliquer cette question dans « Vos
+    // questions récentes » la restituera sans rappeler l'API.
+    cacheAnswer(question, data.answer, srcs, durationText);
 
   } catch (err) {
     clearInterval(timerId);
