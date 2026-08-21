@@ -605,6 +605,25 @@ def test_manual_author_override_joint_debate_five_names():
     assert it["repondant"] == "Cédric Mahieu"
 
 
+def test_manual_author_override_joint_debate_repondant_also_intervenant():
+    # SP60 (25/06/2025, "Nouvelle tarification des infrastructures
+    # sportives") est débattu conjointement avec SP59 ("Règlement général
+    # pour l'occupation de locaux et terrains communaux") — les chiffres
+    # cités dans le transcript (75.277,98€ → 190.571,27€, réductions, âge
+    # 21→18) correspondent exactement au résumé PV de SP60. SP59 liste déjà
+    # les intervenant·e·s et le répondant au PV, SP60 avait
+    # "intervenants": [] avant correction manuelle à l'identique. Cas
+    # particulier : l'échevin répondant (Bouhjar) figure aussi parmi les
+    # intervenant·e·s (il participe au débat en plus d'y répondre).
+    d = elus.seance_detail("2025-06-25")
+    it = next(p for p in d["points"] if p["sp"] == 60)
+    assert it["demandeur"] == (
+        "Saït Köse et Ibrahim Dönmez et Elias Ammi et "
+        "Yvan de Beauffort et Abobakre Bouhjar"
+    )
+    assert it["repondant"] == "Abobakre Bouhjar"
+
+
 def test_match_pv_point_higher_threshold_for_large_candidate_pool():
     # Le seuil par défaut (0.35, calibré pour un petit nombre de candidats
     # déjà restreints par personne) donnerait trop de faux positifs sur un
