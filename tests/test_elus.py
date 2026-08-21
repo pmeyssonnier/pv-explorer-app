@@ -229,6 +229,31 @@ def test_endpoint_elu_detail_and_404():
     assert client.get("/elu/nom-inexistant-xyz").status_code == 404
 
 
+# ── Coquilles et auteur·e·s non-personnes (chapitrage vidéo) ────────────────
+def test_key_normalizes_known_typo():
+    # « Houaria Ouazrhrari » (coquille dans un titre de chapitre vidéo) doit
+    # rejoindre la même fiche que la graphie correcte, pas en créer une à part.
+    assert elus._key("Houaria Ouazrhrari") == elus._key("Houaria Ouazrhari") == "ouazrhari"
+
+
+def test_non_person_video_authors_excluded():
+    # Ces « auteur·e·s » de chapitrage vidéo sont en réalité des organismes
+    # (contre-signataires de points de convention/partenariat), jamais des
+    # personnes : ils ne doivent produire aucune fiche.
+    for org in ("CLAD", "Greentech VZW", "Gemeente Schaarbeek"):
+        assert elus._is_non_person_video_author(org)
+    keys = {e["key"] for e in elus.elus_list()}
+    assert not keys & {"clad", "vzw", "schaarbeek"}
+
+
+def test_ouazrhari_merged_and_org_authors_absent_from_index():
+    idx = elus._index()
+    assert "ouazrhrari" not in idx
+    assert "ouazrhari" in idx
+    for org_key in ("clad", "greentech vzw", "gemeente schaarbeek"):
+        assert org_key not in idx
+
+
 # ── Intégrité du fichier de chapitrage vidéo ─────────────────────────────────
 def test_video_chapters_file_valid():
     path = ROOT / "backend" / "video_conseil_schaerbeek.json"
