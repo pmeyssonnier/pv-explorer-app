@@ -589,6 +589,22 @@ def test_manual_author_override_joint_debate_two_names():
     assert it["repondant"] == "Abobakre Bouhjar"
 
 
+def test_manual_author_override_joint_debate_five_names():
+    # SP6 (24/09/2025, "Prime Be Home Schaerbeekoise") est débattu
+    # conjointement avec SP7 ("Primes d'accompagnement social") — le
+    # transcript vidéo le dit explicitement (« nous mêlons deux points »).
+    # SP7 liste déjà 5 intervenant·e·s + répondant au PV, SP6 avait
+    # "intervenants": [] avant correction manuelle à l'identique. Vérifie
+    # que l'override à N noms (N > 2) résout et joint chaque personne.
+    d = elus.seance_detail("2025-09-24")
+    it = next(p for p in d["points"] if p["sp"] == 6)
+    assert it["demandeur"] == (
+        "Cécile Jodogne et Naïma Belkhatir et Georges Verzin et "
+        "Matthieu Degrez et Elias Ammi"
+    )
+    assert it["repondant"] == "Cédric Mahieu"
+
+
 def test_match_pv_point_higher_threshold_for_large_candidate_pool():
     # Le seuil par défaut (0.35, calibré pour un petit nombre de candidats
     # déjà restreints par personne) donnerait trop de faux positifs sur un

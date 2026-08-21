@@ -363,6 +363,11 @@ _MANUAL_AUTHOR_OVERRIDES = {
     # l'identique. Forme jointe « X et Y » (voir _point_author, résolue par
     # personne pour l'affichage comme pour « repondant »).
     ("2025-10-15", 32): "Bernard Clerfayt et Quentin Van den Hove",
+    # SP6 débattu conjointement avec SP7 (le conseil l'annonce explicitement :
+    # « nous mêlons deux points, celle sur la prime biome et celle sur la
+    # prime d'accompagnement social ») : SP7 liste déjà les 5 intervenant·e·s
+    # au PV et le même répondant, SP6 non — complété manuellement à l'identique.
+    ("2025-09-24", 6): "Cécile Jodogne et Naïma Belkhatir et Georges Verzin et Matthieu Degrez et Elias Ammi",
 }
 
 
