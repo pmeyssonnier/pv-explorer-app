@@ -624,6 +624,26 @@ def test_manual_author_override_joint_debate_repondant_also_intervenant():
     assert it["repondant"] == "Abobakre Bouhjar"
 
 
+def test_manual_author_override_joint_debate_three_sibling_points():
+    # SP21/SP23/SP24 (23/04/2025) sont débattus conjointement avec SP22
+    # ("Convention relative à la gestion des immeubles expropriés de la rue
+    # du Progrès") — le conseil traite les 4 points comme un seul dossier
+    # (règlement d'allocation aux locataires expropriés par Infrabel). SP22
+    # liste déjà les intervenant·e·s et le répondant au PV, les 3 autres
+    # avaient "intervenants": [] avant correction manuelle à l'identique.
+    # Cas particulier : un même override (3 points, même clé de personnes)
+    # appliqué à plusieurs points d'une même séance.
+    d = elus.seance_detail("2025-04-23")
+    expected = (
+        "Sadik Köksal et Leila Lahssaini et Matthieu Degrez et "
+        "Cécile Jodogne et Isabelle Durant"
+    )
+    for sp in (21, 23, 24):
+        it = next(p for p in d["points"] if p["sp"] == sp)
+        assert it["demandeur"] == expected
+        assert it["repondant"] == "Thomas Eraly"
+
+
 def test_match_pv_point_higher_threshold_for_large_candidate_pool():
     # Le seuil par défaut (0.35, calibré pour un petit nombre de candidats
     # déjà restreints par personne) donnerait trop de faux positifs sur un

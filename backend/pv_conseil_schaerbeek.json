@@ -207524,8 +207524,8 @@
           "sous_rubrique": "Règlements",
           "titre": "Abrogation du règlement organisant les modalités d'octroi d'une allocation pour les locataires des immeubles sis 214-270 rue du Progrès",
           "resume": "Abrogation du règlement de 2010 modifié en 2011 concernant l'allocation aux locataires des immeubles rue du Progrès suite au retrait de la demande de permis d'urbanisme Quadrilatère et à la nouvelle demande de 2021 qui ne nécessite plus la démolition des 28 immeubles.",
-          "intervenants": [],
-          "repondant": null,
+          "intervenants": ["Koksal", "Lahssaini", "Degrez", "Jodogne", "Durant"],
+          "repondant": "Eraly",
           "decision": "DÉCIDE",
           "vote": {
             "type": "vote_nominal",
@@ -207579,8 +207579,8 @@
           "sous_rubrique": "Infrabel - Avenant 1",
           "titre": "Convention relative à la reconstruction du front bâti de la rue du Progrès à conclure avec la SA Infrabel - Avenant 1 - Approbation",
           "resume": "Approbation des termes de l'avenant n°1 à la convention relative à la reconstruction du front bâti de la rue du Progrès avec la SA Infrabel, suite à la modification du tracé du projet PX L.36N/L.50 qui ne nécessite plus la démolition des 28 immeubles rue du Progrès 214 à 270.",
-          "intervenants": [],
-          "repondant": null,
+          "intervenants": ["Koksal", "Lahssaini", "Degrez", "Jodogne", "Durant"],
+          "repondant": "Eraly",
           "decision": "APPROUVÉ",
           "vote": {
             "type": "vote_nominal",
@@ -207604,8 +207604,8 @@
           "sous_rubrique": "Immeubles rue du Progrès",
           "titre": "Règlement organisant les modalités d'octroi d'une allocation pour les habitants des immeubles sis rue du Progrès 214 à 270 - Approbation",
           "resume": "Adoption d'un nouveau règlement déterminant les montants des allocations pour les habitants des immeubles rue du Progrès 214, 218, 222, 224, 226, 230, 232, 234, 238-240, 244, 246, 248, 250, 252, 254, 260, 262-264, 266-268 et 270. Allocation forfaitaire de 3.000 € par chef de ménage augmentée de 500 € par enfant de moins de 18 ans. Versement du solde du fonds d'accompagnement de 306.792 € à la Commune.",
-          "intervenants": [],
-          "repondant": null,
+          "intervenants": ["Koksal", "Lahssaini", "Degrez", "Jodogne", "Durant"],
+          "repondant": "Eraly",
           "decision": "APPROUVÉ",
           "vote": {
             "type": "vote_nominal",
