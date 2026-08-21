@@ -1,0 +1,11 @@
+# Dépendances du pipeline d'extraction PDF → JSON (pipeline/), pensé pour
+# tourner dans Google Colab (voir scraping/README.md — accès réseau restreint
+# ici, jamais exécuté en CI). Contrairement à backend/requirements.txt, ces
+# versions ne sont PAS épinglées : le pipeline tourne ponctuellement (pas en
+# production continue), et aucune combinaison précise n'a été vérifiée
+# ensemble dans cet environnement — à figer toi-même (pip freeze) une fois
+# une exécution validée, si besoin de reproductibilité stricte.
+pdfplumber
+anthropic
+tqdm
+yt-dlp

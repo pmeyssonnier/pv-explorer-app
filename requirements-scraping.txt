@@ -1,0 +1,12 @@
+# Dépendances des scrapers (scraping/), pensés pour tourner dans Google Colab
+# (voir scraping/README.md — les sites communaux bloquent les IP de
+# datacenter, jamais exécuté en CI). Versions non épinglées, pour les mêmes
+# raisons que requirements-pipeline.txt.
+#
+# Selenium pilote Chromium (les liens PDF sont chargés en JavaScript) : sous
+# Colab, `!apt install chromium-chromedriver` reste nécessaire en plus de ce
+# fichier (binaire, pas une dépendance pip).
+requests
+beautifulsoup4
+selenium
+tqdm
