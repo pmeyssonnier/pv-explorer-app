@@ -98,6 +98,23 @@ def _norm_tok(tok: str) -> str:
     return _strip_accents(tok).lower().strip("-'’.")
 
 
+# Coquilles ponctuelles observées dans le chapitrage (ex. « Ouazrhrari » pour
+# « Ouazrhari ») : la clé fautive est normalisée vers la clé correcte, pour
+# éviter une fiche dupliquée. Un simple réordonnancement de mots (couvert par
+# _build_name_registry/_PARTICLES ci-dessus) ne peut pas détecter une faute
+# de frappe DANS un mot — d'où cette liste, à compléter au cas par cas.
+_KEY_ALIASES = {"ouazrhrari": "ouazrhari"}
+
+# Organismes captés à tort comme « auteur » sur des points de convention/
+# partenariat du chapitrage vidéo (le contre-signataire, pas un·e citoyen·ne
+# intervenant·e) : jamais une personne, à exclure de l'agrégation.
+_NON_PERSON_VIDEO_AUTHORS = {"clad", "greentech vzw", "gemeente schaarbeek"}
+
+
+def _is_non_person_video_author(raw: str) -> bool:
+    return _strip_accents(_clean(raw)).lower() in _NON_PERSON_VIDEO_AUTHORS
+
+
 def _key(name: str, pairs: set | None = None) -> str:
     """Clé d'identité = nom de famille, accent-strippé/minuscule.
     Rapproche « Georges VERZIN » (vidéo) et « Verzin » (PV) → « verzin ».
@@ -119,22 +136,23 @@ def _key(name: str, pairs: set | None = None) -> str:
     if not toks:
         return ""
     normed = [_norm_tok(t) for t in toks]
+    k = normed[-1]
     # Nom à particule en tête suivi d'autres mots (prénom) : ordre inversé
     # « (particule) Nom Prénom » (ex. « Van den Hove Quentin »,
     # « De Brabant Martin »). Le nom de famille se termine au premier mot
     # suivant la particule ; s'il ne reste rien après (« de Brabant » seul),
-    # ce n'est pas un ordre inversé et le dernier mot ci-dessous convient déjà.
+    # ce n'est pas un ordre inversé et le dernier mot ci-dessus convient déjà.
     if normed[0] in _PARTICLES and len(normed) > 1:
         j = 0
         while j < len(normed) and normed[j] in _PARTICLES:
             j += 1
         if j < len(normed) and j + 1 < len(normed):
-            return normed[j]
-    if len(normed) == 2 and pairs:
+            k = normed[j]
+    elif len(normed) == 2 and pairs:
         a, b = normed
         if (b, a) in pairs:  # ordre inversé (« Nom Prénom ») détecté
-            return a
-    return normed[-1]
+            k = a
+    return _KEY_ALIASES.get(k, k)
 
 
 def _build_name_registry(pv: list, video: list) -> set:
@@ -166,7 +184,7 @@ def _build_name_registry(pv: list, video: list) -> set:
     for s in video:
         for p in s.get("points", []):
             author = p.get("auteur")
-            if author:
+            if author and not _is_non_person_video_author(author):
                 add_from(author)
     return pairs
 
@@ -372,7 +390,7 @@ def _build_index() -> dict:
         date = s.get("date")
         for p in s.get("points", []):
             author = p.get("auteur")
-            if not author:
+            if not author or _is_non_person_video_author(author):
                 continue
             k = _key(author, pairs)
             if not k:
