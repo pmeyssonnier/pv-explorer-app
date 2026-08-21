@@ -506,6 +506,12 @@ body {
 .src-group .icon { width: 13px; height: 13px; color: var(--or); vertical-align: 0; }
 .src-group-video { color: var(--bordeaux); }
 .src-group-video .icon { color: var(--bordeaux); }
+/* Précise l'origine de chaque groupe (PV officiels vs séances filmées) —
+   distinction utile car les deux sources n'ont pas la même nature/fiabilité. */
+.src-group-note {
+  text-transform: none; letter-spacing: normal; font-weight: 400; font-size: 11px;
+  color: var(--encre-soft); opacity: .8;
+}
 .source-item {
   display: flex;
   align-items: flex-start;

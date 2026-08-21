@@ -270,13 +270,20 @@ function buildSourcesHtml(srcs) {
   };
   const vids = srcs.filter(s => s.source_type === 'video_conseil');
   const pvs = srcs.filter(s => s.source_type !== 'video_conseil');
+  // La sélection des sources reste par pertinence (score, réglage « Ordre des
+  // sources ») ; UNE FOIS sélectionnées, on affiche les délibérations dans un
+  // ordre de lecture naturel — date décroissante, puis n° de point (SP)
+  // croissant au sein d'une même séance — plutôt que dans l'ordre du score.
+  pvs.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.sp || 0) - (b.sp || 0)));
   let groups = '';
   if (vids.length) {
-    groups += `<div class="src-group src-group-video"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débats filmés · ${vids.length}</div>`
+    groups += `<div class="src-group src-group-video"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débats filmés · ${vids.length}`
+      + `<span class="src-group-note">— extraits des séances filmées (YouTube)</span></div>`
       + vids.map(videoItem).join('');
   }
   if (pvs.length) {
-    groups += `<div class="src-group"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Délibérations · ${pvs.length}</div>`
+    groups += `<div class="src-group"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Délibérations · ${pvs.length}`
+      + `<span class="src-group-note">— sur base des procès-verbaux officiels</span></div>`
       + pvs.map(pvItem).join('');
   }
   const dont = vids.length
