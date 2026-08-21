@@ -846,6 +846,7 @@ async function loadStats() {
 // exhaustive ; cette vue liste TOUTES les interventions d'une personne.
 let elusData = null;        // liste complète [{key,nom,role,depose,repond}]
 let elusLoaded = false;
+let pendingEluKey = null;   // élu·e à présélectionner depuis un lien partagé (?elu=)
 
 async function loadElus() {
   if (elusLoaded) return;
@@ -873,10 +874,29 @@ function populateElus() {
     const n = e.role === 'college' ? e.repond + e.depose : e.depose;
     return `<option value="${e.key}">${escapeHtml(e.nom)} (${n})</option>`;
   }).join('');
-  // Conserver la sélection si elle reste visible, sinon prendre la 1re entrée.
-  if (list.some(e => e.key === prev)) sel.value = prev;
+  // Présélection : lien partagé (?elu=) prioritaire, sinon on conserve la
+  // sélection courante si elle reste visible, sinon la 1re entrée.
+  if (pendingEluKey && list.some(e => e.key === pendingEluKey)) {
+    sel.value = pendingEluKey;
+    pendingEluKey = null;
+  } else if (list.some(e => e.key === prev)) {
+    sel.value = prev;
+  }
   if (sel.value) loadElu(sel.value);
   else document.getElementById('eluResult').innerHTML = '';
+}
+
+// Partage : lien profond vers l'onglet Par élu·e, sur la fiche sélectionnée.
+function shareElu(btn) {
+  const sel = document.getElementById('eluSelect');
+  const key = sel ? sel.value : '';
+  const opt = sel && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
+  const nom = opt ? opt.textContent.replace(/\s*\(\d+\)\s*$/, '') : '';
+  const url = key ? `${shareBaseUrl()}?tab=elus&elu=${encodeURIComponent(key)}` : `${shareBaseUrl()}?tab=elus`;
+  const text = nom
+    ? `Interventions de ${nom} au Conseil communal de Schaerbeek`
+    : 'Interventions par élu·e — Conseil communal de Schaerbeek';
+  doShare('PV Explorer — Interventions par élu·e', text, url, btn);
 }
 
 const TYPE_BADGE = {
@@ -1169,6 +1189,10 @@ function shareStats(btn) {
 function handleDeepLink() {
   const params = new URLSearchParams(location.search);
   if (params.get('tab') === 'stats') switchTab('stats');
+  if (params.get('tab') === 'elus') {
+    pendingEluKey = params.get('elu') || null;   // appliqué quand la liste est chargée
+    switchTab('elus');
+  }
   const q = params.get('q');
   if (q) {
     const input = document.getElementById('askInput');
