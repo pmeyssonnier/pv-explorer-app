@@ -175,6 +175,7 @@ function switchTab(tab) {
   document.getElementById('askBar').style.display = (tab === 'chat') ? 'block' : 'none';
   if (tab === 'stats') loadStats();
   if (tab === 'elus') loadElus();
+  if (tab === 'seances') loadSeances();
 }
 
 // ── SUGGESTIONS ──
@@ -1261,6 +1262,126 @@ function renderElu(d) {
   box.innerHTML = html;
 }
 
+// ── SÉANCES (vue complémentaire à « Par élu·e » : par PV, tous les points,
+// pas seulement ceux d'une personne) ──
+let seancesData = null;       // liste complète [{date,n_points,url,video_url}]
+let seancesLoaded = false;
+let pendingSeanceDate = null; // séance à présélectionner depuis un lien partagé (?seance=)
+let currentSeanceDetail = null;
+
+async function loadSeances() {
+  if (seancesLoaded) return;
+  const yearSel = document.getElementById('seanceYear');
+  if (!yearSel) return;
+  try {
+    const res = await fetch(API_URL + '/seances');
+    if (!res.ok) throw new Error('Erreur ' + res.status);
+    seancesData = (await res.json()).seances || [];
+    seancesLoaded = true;
+    const years = [...new Set(seancesData.map(s => s.date.slice(0, 4)))].sort((a, b) => b.localeCompare(a));
+    yearSel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+    if (pendingSeanceDate) {
+      const y = pendingSeanceDate.slice(0, 4);
+      if (years.includes(y)) yearSel.value = y;
+    }
+    renderSeanceYearList();
+    if (pendingSeanceDate && seancesData.some(s => s.date === pendingSeanceDate)) {
+      loadSeance(pendingSeanceDate);
+    }
+    pendingSeanceDate = null;
+  } catch (err) {
+    yearSel.innerHTML = '<option value="">Indisponible</option>';
+  }
+}
+
+// Liste cliquable des séances de l'année sélectionnée (la plus récente en premier).
+function renderSeanceYearList() {
+  const listEl = document.getElementById('seanceYearList');
+  const yearSel = document.getElementById('seanceYear');
+  if (!listEl || !seancesData || !yearSel.value) return;
+  const list = seancesData.filter(s => s.date.startsWith(yearSel.value));
+  listEl.innerHTML = list.map(s => {
+    const videoIcon = s.video_url ? '<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>' : '';
+    const active = s.date === (currentSeanceDetail && currentSeanceDetail.date) ? ' seance-row-active' : '';
+    return `<button type="button" class="seance-row${active}" onclick="loadSeance('${s.date}')">
+      <span class="seance-row-date">${formatDate(s.date)}</span>
+      <span class="seance-row-meta">${s.n_points} point${s.n_points > 1 ? 's' : ''}${videoIcon}</span>
+    </button>`;
+  }).join('');
+}
+
+function seancePointRow(it) {
+  const cls = TYPE_BADGE[it.type_label] || 'b-d';
+  const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
+  const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
+  let links = '';
+  if (it.type === 'video' && it.url) {
+    links = `<a class="elu-link elu-link-video" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
+  } else {
+    if (it.url) links += `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
+    if (it.video_url) {
+      const label = it.video_precise ? '▶ Voir le débat' : '▶ vidéo';
+      const title = it.video_precise
+        ? 'Voir le débat sur YouTube (au bon moment)'
+        : 'Voir la séance filmée sur YouTube (début de séance, pas de moment précis identifié pour ce point)';
+      links += `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="${title}"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>${label}</a>`;
+    }
+  }
+  const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
+  const demandeur = it.demandeur ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(it.demandeur)}</div>` : '';
+  const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
+  return `<div class="elu-item">
+    <div class="elu-body">
+      ${badge}${sp}
+      <div class="elu-titre">${escapeHtml(it.titre)}</div>
+      ${demandeur}
+      ${rep}
+      ${links ? `<div class="elu-links">${links}</div>` : ''}
+    </div>
+  </div>`;
+}
+
+async function loadSeance(date) {
+  const box = document.getElementById('seanceResult');
+  box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
+  try {
+    const res = await fetch(API_URL + '/seance/' + encodeURIComponent(date));
+    if (!res.ok) throw new Error('Erreur ' + res.status);
+    renderSeance(await res.json());
+    renderSeanceYearList();  // met en évidence la séance active dans la liste
+  } catch (err) {
+    box.innerHTML = `<div class="error-box">Impossible de charger cette séance. ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function renderSeance(d) {
+  currentSeanceDetail = d;
+  const box = document.getElementById('seanceResult');
+  let links = '';
+  if (d.url) links += `<a class="elu-link" href="${d.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
+  if (d.video_url) links += `<a class="elu-link elu-link-video" href="${d.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo (séance complète)</a>`;
+
+  let html = `<div class="elu-head">
+    <div class="elu-name">${formatDate(d.date)}</div>
+    <span class="elu-role elu-role-conseiller">${d.n_points} point${d.n_points > 1 ? 's' : ''}</span>
+  </div>`;
+  if (links) html += `<div class="elu-links seance-head-links">${links}</div>`;
+  html += `<div class="elu-list">${d.points.map(seancePointRow).join('')}</div>`;
+  html += `<p class="elu-note">Agrégation déterministe depuis le procès-verbal officiel de cette séance et le chapitrage vidéo correspondant, quand la séance a été filmée. Liste exhaustive des points à l'ordre du jour ; demandeur·se/répondant·e non affiché·e quand non attribuable individuellement (points collectifs/administratifs).</p>`;
+
+  box.innerHTML = html;
+  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function shareSeance(btn) {
+  const date = currentSeanceDetail ? currentSeanceDetail.date : '';
+  const url = date ? `${shareBaseUrl()}?tab=seances&seance=${encodeURIComponent(date)}` : `${shareBaseUrl()}?tab=seances`;
+  const text = date
+    ? `Séance du Conseil communal de Schaerbeek du ${formatDate(date)}`
+    : 'Séances du Conseil communal de Schaerbeek';
+  doShare('PV Explorer — Séances', text, url, btn);
+}
+
 // ── ÉVOLUTION D'UN THÈME (agrégation exhaustive via /trend) ──
 function trendSuggestion(el) {
   document.getElementById('trendInput').value = el.textContent;
@@ -1444,6 +1565,10 @@ function handleDeepLink() {
   if (params.get('tab') === 'elus') {
     pendingEluKey = params.get('elu') || null;   // appliqué quand la liste est chargée
     switchTab('elus');
+  }
+  if (params.get('tab') === 'seances') {
+    pendingSeanceDate = params.get('seance') || null;  // appliqué quand la liste est chargée
+    switchTab('seances');
   }
   const q = params.get('q');
   if (q) {

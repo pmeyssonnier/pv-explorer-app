@@ -42,11 +42,20 @@ _CIV = re.compile(
     r"de\s+heer|Mevrouw|Mevr\.?|Dhr\.?|Mijnheer)\s+",
     re.I,
 )
-# Auteur mentionné dans le titre d'une demande/motion (« Motion de M. Axel Bernard »).
+# Auteur mentionné dans le titre/résumé d'une demande/motion (« Motion de M.
+# Axel Bernard », mais aussi « Demande M. Demirhan » sans « de » — la
+# tournure varie selon les séances, d'où le « de/du » optionnel ci-dessous).
+# Lettre capitale de tête : classe explicite plutôt que [A-ZÀ-Ÿ]/[À-Ÿ], qui
+# inclut par erreur des minuscules accentuées (le bloc Latin-1 Supplement
+# n'est pas trié majuscules/minuscules à part — ex. « é » U+00E9 tombe dans
+# la plage À(00C0)-Ÿ(0178) ci-dessus), et faisait capter un mot lambda après
+# « Demande » employé comme verbe en milieu de phrase (« Demande également
+# aux autorités... ») plutôt que la tournure « Demande de/M./Mme X ».
+_UPPER_ACCENTS = "ÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸÑŒ"
 _AUTHOR_IN_TITLE = re.compile(
-    r"(?:Demande|Motion|Interpellation|Verzoek|Motie)\s+d[eu']?\s+"
+    r"(?:Demande|Motion|Interpellation|Verzoek|Motie)\s+(?:d[eu']?\s+)?"
     r"(?:M\.?|Mme|Monsieur|Madame|de heer|Mevrouw)?\s*"
-    r"([A-ZÀ-Ÿ][\wÀ-ÿ'’-]+(?:\s+[A-ZÀ-Ÿ][\wÀ-ÿ'’-]+){0,2})"
+    rf"([A-Z{_UPPER_ACCENTS}][\wÀ-ÿ'’-]+(?:\s+[A-Z{_UPPER_ACCENTS}][\wÀ-ÿ'’-]+){{0,2}})"
 )
 # Mots de rôle/fonction : jamais un nom de personne à eux seuls.
 _ROLE_WORDS = {
@@ -296,24 +305,63 @@ def _first_named_intervenant(interv: list):
     return None
 
 
+def _author_from_text(text: str, interv: list):
+    """Cherche « Demande/Motion de M./Mme X » dans un texte donné (titre ou
+    résumé). Si le nom capté s'arrête avant une particule en minuscule (la
+    regex ne capture que des mots capitalisés, ex. « Yvan » au lieu de
+    « Yvan de Beauffort ») et qu'un·e intervenant·e listé·e commence par ce
+    nom tronqué, on préfère la forme complète — plus fiable qu'un prénom
+    seul, sans pour autant deviner l'auteur·e à partir des intervenant·e·s."""
+    m = _AUTHOR_IN_TITLE.search(text or "")
+    if not m:
+        return None
+    name = m.group(1)
+    low = name.lower()
+    for iv in interv or []:
+        if iv.lower() != low and iv.lower().startswith(low):
+            return iv
+    return name
+
+
 def _author_of(point: dict):
-    """Nom de l'auteur·e d'un point PV selon son type (None si non attribuable)."""
+    """Nom de l'auteur·e d'un point PV selon son type (None si non attribuable).
+
+    Le nom de l'auteur·e est parfois donné dans le titre (« Demande de Mme
+    X… »), parfois seulement dans le résumé (« resume ») quand le titre
+    n'en porte pas trace — les deux champs sont donc vérifiés."""
     typ = point.get("type")
     title = point.get("titre") or ""
+    resume = point.get("resume") or ""
     interv = point.get("intervenants") or []
     if typ == "question_orale":
         return _first_named_intervenant(interv)
     if typ == "demande_habitant":
-        m = _AUTHOR_IN_TITLE.search(title)
-        return m.group(1) if m else _first_named_intervenant(interv)
+        name = _author_from_text(title, interv) or _author_from_text(resume, interv)
+        return name or _first_named_intervenant(interv)
     if typ == "motion":
-        m = _AUTHOR_IN_TITLE.search(title)
-        return m.group(1) if m else None
+        # Jamais de repli sur les intervenant·e·s (souvent collectif) : seul
+        # un texte le nommant explicitement (titre OU résumé) vaut attribution.
+        return _author_from_text(title, interv) or _author_from_text(resume, interv)
     return None
 
 
+def _point_author(point: dict, pairs: set):
+    """Auteur·e d'un point PV + sa clé, si attribuable à UNE personne (jamais
+    un mot de rôle seul comme dernier mot, ex. « Secrétaire communal »).
+    Factorisé pour être partagé entre l'agrégation par personne (_build_all)
+    et la vue par séance (seance_detail), qui doivent s'accorder sur qui est
+    le/la demandeur·se d'un point donné."""
+    author = _author_of(point)
+    if not author:
+        return None, None
+    last = author.split()[-1] if author.split() else ""
+    if not last or _is_role_token(last):
+        return author, None
+    return author, _key(author, pairs)
+
+
 # ── Construction de l'index (cache par mtime des deux fichiers sources) ───────
-_cache = {"sig": None, "index": None}
+_cache = {"sig": None, "index": None, "pairs": None, "nom_by_key": None}
 
 
 def _load_video():
@@ -384,7 +432,10 @@ def _match_pv_point(video_titre: str, candidates: list) -> dict | None:
     return best if score >= 0.35 else None
 
 
-def _build_index() -> dict:
+def _build_all():
+    """Construit l'index par personne + le registre de noms (pairs) + la map
+    clé→nom canonique, en une seule passe sur les deux fichiers sources —
+    partagés par plusieurs vues (/elu/{key} ET /seance/{date}) sans recalcul."""
     pv = load_db().get("seances", [])
     video = _load_video()
     pairs = _build_name_registry(pv, video)
@@ -406,14 +457,9 @@ def _build_index() -> dict:
         date = meta.get("date")
         pdf_by_date[date] = meta.get("source_url")
         for p in s.get("points", []):
-            author = _author_of(p)
-            author_key = None
-            if author:
-                last = author.split()[-1] if author.split() else ""
-                if last and not _is_role_token(last):
-                    author_key = _key(author, pairs)
-                    if author_key:
-                        add_variant(author_key, author)
+            author, author_key = _point_author(p, pairs)
+            if author_key:
+                add_variant(author_key, author)
 
             # Noms des répondant·e·s résolus une seule fois (rôle seul type
             # « Bourgmestre » déjà traduit en nom via _respondents) et
@@ -541,15 +587,32 @@ def _build_index() -> dict:
             "depose": d["depose"],
             "repond": d["repond"],
         }
-    return index
+    return index, pairs, nom_by_key
+
+
+def _ensure_cache():
+    sig = _sig()
+    if _cache["sig"] != sig:
+        index, pairs, nom_by_key = _build_all()
+        _cache["sig"] = sig
+        _cache["index"] = index
+        _cache["pairs"] = pairs
+        _cache["nom_by_key"] = nom_by_key
 
 
 def _index() -> dict:
-    sig = _sig()
-    if _cache["sig"] != sig:
-        _cache["index"] = _build_index()
-        _cache["sig"] = sig
+    _ensure_cache()
     return _cache["index"]
+
+
+def _pairs() -> set:
+    _ensure_cache()
+    return _cache["pairs"]
+
+
+def _nom_by_key() -> dict:
+    _ensure_cache()
+    return _cache["nom_by_key"]
 
 
 # ── API publique (consommée par le routeur) ─────────────────────────────────
@@ -623,4 +686,135 @@ def elu_detail(key: str):
         },
         "depose": [_fmt_depose(it) for it in depose],
         "repond": [_fmt_repond(it) for it in e["repond"]],
+    }
+
+
+# ── Vue par séance (onglet « Séances ») ─────────────────────────────────────
+# Complémentaire à la vue par élu·e : au lieu d'agréger toutes les
+# interventions d'UNE personne, liste TOUS les points d'UN PV donné (y
+# compris les points collectifs/administratifs sans auteur·e individuel·le
+# identifiable), avec demandeur/répondant résolus via le même registre de
+# noms canoniques (voir _build_all/_nom_by_key) pour un affichage homogène.
+
+def _resolve_display_name(name: str, pairs: set, nom_by_key: dict):
+    if not name:
+        return None
+    k = _key(name, pairs)
+    nom = nom_by_key.get(k)
+    if nom:
+        return nom
+    return _titlecase(_clean(name)) or None
+
+
+def seances_list() -> list:
+    """Liste des séances (PV), la plus récente en premier — pour la
+    navigation par année dans l'onglet « Séances »."""
+    pv = load_db().get("seances", [])
+    session_map = video_session_map()
+    out = []
+    for s in pv:
+        meta = s.get("seance", {}) or {}
+        date = meta.get("date")
+        if not date:
+            continue
+        out.append({
+            "date": date,
+            "n_points": len(s.get("points", [])),
+            "url": meta.get("source_url"),
+            "video_url": session_map.get(date),
+        })
+    out.sort(key=lambda x: x["date"], reverse=True)
+    return out
+
+
+def seance_detail(date: str):
+    """Détail d'une séance : tous les points du PV, avec pour chacun le
+    demandeur·se (auteur·e, si attribuable), le/la répondant·e, et le lien
+    vidéo — précis si un chapitre correspondant existe (même fusion
+    point-à-point que _build_all, voir _match_pv_point), sinon le lien
+    générique de séance. None si la date est inconnue."""
+    pv = load_db().get("seances", [])
+    date = (date or "").strip()
+    seance = next((s for s in pv if (s.get("seance") or {}).get("date") == date), None)
+    if not seance:
+        return None
+    meta = seance.get("seance", {}) or {}
+    pairs = _pairs()
+    nom_by_key = _nom_by_key()
+    session_map = video_session_map()
+
+    def resolve(name):
+        return _resolve_display_name(name, pairs, nom_by_key)
+
+    points = []
+    for p in seance.get("points", []):
+        author, author_key = _point_author(p, pairs)
+        resp_names = _respondents(p.get("repondant"), meta)
+        resp_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in resp_names))))
+        repondant = " et ".join(resp_resolved) if resp_resolved else (
+            _titlecase(_clean(p.get("repondant") or "")) or None
+        )
+        points.append({
+            "sp": p.get("sp") or 0,
+            "type": p.get("type"),
+            "type_label": _TYPE_LABEL.get(p.get("type"), "Point"),
+            "titre": p.get("titre") or "",
+            "demandeur": resolve(author) if author_key else None,
+            "repondant": repondant,
+            "url": meta.get("source_url"),
+            "video_url": session_map.get(date),
+            "video_precise": False,
+            "_author_key": author_key,
+        })
+
+    # Fusion avec le chapitrage vidéo de cette séance, point par point (même
+    # logique que _build_all : un chapitre vidéo dont l'auteur·e et le sujet
+    # correspondent à un point déjà listé remplace son lien générique par le
+    # lien précis, plutôt que d'apparaître comme un point séparé).
+    video_seance = next((s for s in _load_video() if s.get("date") == date), None)
+    if video_seance:
+        for vp in video_seance.get("points", []):
+            vauthor = vp.get("auteur")
+            if not vauthor or _is_non_person_video_author(vauthor):
+                continue
+            vk = _key(vauthor, pairs)
+            if not vk:
+                continue
+            candidates = [pt for pt in points if pt["_author_key"] == vk]
+            titre = vp.get("titre_fr") or vp.get("titre") or ""
+            match = _match_pv_point(titre, candidates) if candidates else None
+            deeplink = vp.get("deeplink")
+            if match is not None:
+                if deeplink:
+                    match["video_url"] = deeplink
+                    match["video_precise"] = True
+            else:
+                # Chapitre vidéo sans point PV correspondant identifié :
+                # affiché à part plutôt que silencieusement omis (rare, voir
+                # _match_pv_point — jamais de fusion à l'aveugle).
+                points.append({
+                    "sp": 0,
+                    "type": "video",
+                    "type_label": _TYPE_LABEL["video"],
+                    "titre": titre,
+                    "demandeur": resolve(vauthor),
+                    "repondant": None,
+                    "url": deeplink,
+                    "video_url": vp.get("video_url") or video_seance.get("video_url"),
+                    "video_precise": False,
+                    "_author_key": None,
+                })
+
+    for pt in points:
+        pt.pop("_author_key", None)
+    points.sort(key=lambda x: x["sp"])
+
+    video_url = (video_seance.get("video_url") if video_seance else None) or session_map.get(date)
+
+    return {
+        "date": date,
+        "url": meta.get("source_url"),
+        "video_url": video_url,
+        "n_points": len(points),
+        "points": points,
     }

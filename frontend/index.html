@@ -72,6 +72,7 @@
   <button class="tab active" onclick="switchTab('chat')" id="tab-chat"><svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg><span>Question</span></button>
   <button class="tab" onclick="switchTab('stats')" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
   <button class="tab" onclick="switchTab('elus')" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
+  <button class="tab" onclick="switchTab('seances')" id="tab-seances"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg><span>Séances</span></button>
 </nav>
 
 <main class="main">
@@ -157,6 +158,22 @@
         <select id="eluYear" class="elu-select elu-select-year" aria-label="Filtrer par année" onchange="onEluYearChange()" hidden></select>
       </div>
       <div id="eluResult"></div>
+    </div>
+  </section>
+
+  <!-- ── ONGLET SÉANCES ── -->
+  <section class="panel" id="panel-seances">
+    <div class="stats-toolbar">
+      <button class="msg-act" type="button" onclick="shareSeance(this)" title="Partager le lien vers cette séance">Partager</button>
+    </div>
+    <div class="elus-panel">
+      <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séances du Conseil communal</h3>
+      <p class="trend-intro">Parcourez les procès-verbaux <strong>séance par séance</strong> : pour chaque point à l'ordre du jour, l'objet, qui l'a déposé, qui y a répondu, et le débat filmé quand il existe.</p>
+      <div class="elus-bar">
+        <select id="seanceYear" class="elu-select" aria-label="Filtrer par année" onchange="renderSeanceYearList()"></select>
+      </div>
+      <div id="seanceYearList" class="elu-list seance-list"></div>
+      <div id="seanceResult"></div>
     </div>
   </section>
 

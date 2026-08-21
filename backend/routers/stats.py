@@ -61,3 +61,29 @@ def elu_detail(request: Request, key: str):
     if detail is None:
         raise HTTPException(status_code=404, detail="Élu·e inconnu·e")
     return detail
+
+
+@router.get("/seances")
+@limiter.limit("30/minute")
+def seances_list(request: Request):
+    """Liste des séances (PV), la plus récente en premier. Alimente la
+    navigation par année de l'onglet « Séances »."""
+    try:
+        return {"seances": elus.seances_list()}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Données non disponibles")
+
+
+@router.get("/seance/{date}")
+@limiter.limit("60/minute")
+def seance_detail(request: Request, date: str):
+    """Détail d'une séance : tous les points du PV (objet, demandeur·se,
+    répondant·e, lien PV, lien vidéo précis si un chapitre correspondant
+    existe)."""
+    try:
+        detail = elus.seance_detail(date)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Données non disponibles")
+    if detail is None:
+        raise HTTPException(status_code=404, detail="Séance inconnue")
+    return detail

@@ -178,6 +178,81 @@ def test_respondents_bourgmestre_falls_back_to_ff_when_no_titulaire():
     assert elus._respondents("Madame la Bourgmestre", seance) == ["Cécile Jodogne"]
 
 
+# ── Attribution de l'auteur·e (titre ET résumé) ──────────────────────────────
+def test_author_of_falls_back_to_resume_when_title_has_no_author_mention():
+    # Cas réel (SP 1, 22/04/2026) : le titre ne nomme personne, seul le
+    # résumé le fait — et le 1er intervenant listé ("Ringoot") n'est PAS la
+    # demandeuse (juste la 1re personne à être intervenue en débat). Avant
+    # ce correctif, ~75% des demandes (384/511) tombaient dans ce cas et
+    # étaient attribuées au hasard au 1er intervenant.
+    point = {
+        "type": "demande_habitant",
+        "titre": "Les améliorations à apporter aux transports publics du nord de Bruxelles",
+        "resume": "Demande de Madame Bernadette Dupont concernant les améliorations à apporter aux transports publics du nord de Bruxelles",
+        "intervenants": ["Madame Ringoot", "Madame Dupont", "Madame Harzé"],
+    }
+    assert elus._author_of(point) == "Bernadette Dupont"
+
+
+def test_author_of_motion_checks_resume_but_never_guesses_from_intervenants():
+    # Une motion doit rester non attribuée si ni le titre ni le résumé ne
+    # nomment explicitement l'auteur·e (jamais de repli sur les
+    # intervenant·e·s, contrairement aux demandes — motions souvent
+    # collectives, cf. docstring de _author_of).
+    point = {
+        "type": "motion",
+        "titre": "Retrait du règlement",
+        "resume": "Motion de Monsieur Georges Verzin pour ...",
+        "intervenants": ["Georges Verzin", "Bourgmestre"],
+    }
+    assert elus._author_of(point) == "Georges Verzin"
+
+    point_no_mention = {
+        "type": "motion",
+        "titre": "Retrait du règlement",
+        "resume": "Le Collège présente un amendement.",
+        "intervenants": ["Georges Verzin", "Cédric Mahieu"],
+    }
+    assert elus._author_of(point_no_mention) is None
+
+
+def test_author_from_text_prefers_full_name_over_particle_truncation():
+    # La regex ne capture que des mots capitalisés : « Demande de Monsieur
+    # Yvan de Beauffort » ne capte que « Yvan » (la particule « de » en
+    # minuscules arrête la capture). Cas réel : 12 mentions concernées dans
+    # le corpus. Un·e intervenant·e listé·e commençant par ce nom tronqué
+    # donne la forme complète, plus fiable qu'un prénom seul.
+    point = {
+        "type": "demande_habitant",
+        "titre": "Le plan régional de stationnement de la Région Bruxelloise",
+        "resume": "Demande de Monsieur Yvan de Beauffort concernant le plan régional de stationnement de la Région Bruxelloise.",
+        "intervenants": ["Yvan de Beauffort", "Denis Grimberghs"],
+    }
+    assert elus._author_of(point) == "Yvan de Beauffort"
+
+
+def test_author_in_title_matches_without_de_between_demande_and_name():
+    # Cas réel (SP 75, 22/04/2026) : « Demande M. DEMIRHAN » — pas de « de »
+    # entre « Demande » et la civilité, contrairement à « Demande de M. X ».
+    # Le « de/du » de la tournure standard doit donc être optionnel.
+    assert elus._AUTHOR_IN_TITLE.search("Aménagements (Demande M. DEMIRHAN)").group(1) == "DEMIRHAN"
+    assert elus._AUTHOR_IN_TITLE.search("Sujet (Demande Mme DOUHRI)").group(1) == "DOUHRI"
+
+
+def test_author_in_title_does_not_capture_lowercase_accented_word():
+    # Régression du même correctif : rendre le « de » optionnel a d'abord eu
+    # pour effet de bord de capter un mot lambda après un « Demande » employé
+    # comme verbe en milieu de phrase (« Demande également aux autorités... »)
+    # — la classe [A-ZÀ-Ÿ]/[À-Ÿ] inclut par erreur des minuscules accentuées
+    # (« é » U+00E9 tombe dans la plage À(00C0)-Ÿ(0178)). Cas réel exact.
+    text = (
+        "Motion demandant la libération immédiate et inconditionnelle de trois "
+        "prisonniers politiques. Demande également aux autorités fédérales "
+        "belges d'intervenir."
+    )
+    assert elus._AUTHOR_IN_TITLE.search(text) is None
+
+
 # ── Liste des élu·e·s ────────────────────────────────────────────────────────
 def test_elus_list_shape_and_sort():
     lst = elus.elus_list()
@@ -199,10 +274,12 @@ def test_verzin_is_conseiller_with_expected_activity():
     assert c["questions"] >= 25
     assert c["demandes"] >= 20
     assert c["videos"] >= 1
-    # INVARIANT clé : les motions ne sont attribuées que si l'auteur·e est nommé·e
-    # dans le titre — on ne devine jamais depuis les intervenants (motions souvent
-    # collectives). Verzin n'a donc aucune motion faussement attribuée.
-    assert c["motions"] == 0
+    # INVARIANT clé : les motions ne sont attribuées que si l'auteur·e est
+    # nommé·e explicitement (titre OU résumé) — on ne devine jamais depuis
+    # les intervenant·e·s (motions souvent collectives). Verzin a 3 motions
+    # dont il est nommément l'auteur au résumé (ex. « Motion de Monsieur
+    # Georges VERZIN... »), aucune de plus.
+    assert c["motions"] == 3
 
 
 def test_detail_items_sorted_recent_first():
@@ -382,6 +459,105 @@ def test_repondant_display_name_is_canonicalized_not_raw_pv_text():
     # Répondant composé (plusieurs personnes) : chaque nom canonisé, joint
     # par « et », pas la juxtaposition brute du PV.
     assert it2["repondant"] == "Vincent Vanhalewyn et Martin de Brabant"
+
+
+# ── Vue par séance (onglet « Séances ») ──────────────────────────────────────
+def test_seances_list_shape_and_sort():
+    lst = elus.seances_list()
+    assert lst and isinstance(lst, list)
+    for s in lst:
+        assert set(s) >= {"date", "n_points", "url", "video_url"}
+        assert s["n_points"] > 0
+    dates = [s["date"] for s in lst]
+    assert dates == sorted(dates, reverse=True)  # plus récente en premier
+
+
+def test_seance_detail_unknown_date_returns_none():
+    assert elus.seance_detail("1999-01-01") is None
+
+
+def test_seance_detail_lists_every_point_including_unattributed():
+    # Cas réel : chaque point du PV doit apparaître, y compris ceux sans
+    # demandeur·se individuel·le identifiable (points collectifs/administratifs,
+    # ex. approbations de convention) — pas seulement les points attribuables.
+    d = elus.seance_detail("2026-04-22")
+    assert d is not None
+    assert d["date"] == "2026-04-22"
+    assert d["n_points"] == len(d["points"])
+    # Doit correspondre exactement au nombre de points du PV brut (59) : tous
+    # les chapitres vidéo de cette séance se fusionnent avec leur point PV
+    # correspondant, aucun ne reste en entrée « Débat filmé » séparée.
+    assert d["n_points"] == 59
+    assert not any(p["type"] == "video" for p in d["points"])
+    unattributed = [p for p in d["points"] if not p["demandeur"] and not p["repondant"]]
+    assert unattributed  # ex. « Hommage à M. Jacques Bouvier »
+
+
+def test_seance_detail_demandeur_repondant_and_video_precise_match_elu_view():
+    # Même cas réel que la vue par élu·e (Yousra Douhri, 22/04/2026) : les
+    # deux vues doivent s'accorder — même registre de noms canoniques, même
+    # fusion PV/vidéo point à point (voir _match_pv_point).
+    d = elus.seance_detail("2026-04-22")
+    it = next(p for p in d["points"] if p["sp"] == 74)
+    assert it["type"] == "demande_habitant"
+    assert it["demandeur"] == "Yousra Douhri"
+    assert it["repondant"] == "Thomas Eraly"
+    assert it["video_precise"] is True
+    assert "&t=" in it["video_url"]
+
+
+def test_seance_detail_resolves_demandeur_named_only_in_resume():
+    # Régression : SP 1 de cette même séance a son auteure (Bernadette
+    # Dupont) nommée seulement dans le résumé, pas le titre ; le 1er
+    # intervenant listé ("Ringoot") n'est pas la demandeuse. Sans le
+    # correctif d'_author_of, ce point était mal attribué ET son chapitre
+    # vidéo restait une entrée "Débat filmé" séparée (la clé d'auteur ne
+    # correspondait pas), au lieu d'être fusionné.
+    d = elus.seance_detail("2026-04-22")
+    it = next(p for p in d["points"] if p["sp"] == 1)
+    assert it["demandeur"] == "Bernadette Dupont"
+    assert it["video_precise"] is True
+    assert not any(
+        p["type"] == "video" and "transports publics du nord" in p["titre"]
+        for p in d["points"]
+    )
+
+
+def test_seance_detail_resolves_demandeur_from_title_without_de():
+    # Régression : SP 75 de cette même séance, « Demande M. DEMIRHAN » (pas
+    # de « de » dans le titre) n'était pas attribué à Demirhan avant le
+    # correctif de _AUTHOR_IN_TITLE, empêchant aussi la fusion avec son
+    # chapitre vidéo.
+    d = elus.seance_detail("2026-04-22")
+    it = next(p for p in d["points"] if p["sp"] == 75)
+    assert it["demandeur"] == "Salih Demirhan"
+    assert it["video_precise"] is True
+
+
+def test_seance_detail_points_sorted_by_sp():
+    d = elus.seance_detail("2026-04-22")
+    sps = [p["sp"] for p in d["points"]]
+    assert sps == sorted(sps)
+
+
+def test_endpoint_seances_list():
+    r = client.get("/seances")
+    assert r.status_code == 200
+    body = r.json()
+    assert "seances" in body and body["seances"]
+
+
+def test_endpoint_seance_detail():
+    r = client.get("/seance/2026-04-22")
+    assert r.status_code == 200
+    body = r.json()
+    assert body["date"] == "2026-04-22"
+    assert any(p["sp"] == 74 for p in body["points"])
+
+
+def test_endpoint_seance_detail_unknown_date_404():
+    r = client.get("/seance/1999-01-01")
+    assert r.status_code == 404
 
 
 # ── Intégrité du fichier de chapitrage vidéo ─────────────────────────────────

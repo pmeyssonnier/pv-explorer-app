@@ -236,7 +236,8 @@ body {
   border-bottom: 3px solid transparent;
   transition: all 0.15s;
 }
-@media (max-width: 480px) { .tab { padding: 12px 6px; font-size: 13px; gap: 5px; } }
+.tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 480px) { .tab { padding: 12px 4px; font-size: 12px; gap: 4px; } }
 .tab:hover { color: var(--bordeaux); }
 .tab.active { color: var(--bordeaux); border-bottom-color: var(--or); }
 
@@ -476,6 +477,27 @@ body {
 .elu-link-video { color: #c0392b; }
 :root[data-theme="dark"] .elu-link-video,
 :root:not([data-theme="light"]) .elu-link-video { color: var(--or); }
+
+/* ── SÉANCES (liste cliquable par année) ─────────────────────────────────── */
+.seance-list { margin-bottom: 6px; }
+.seance-row {
+  display: flex; align-items: center; justify-content: space-between; width: 100%;
+  background: none; border: none; border-bottom: 1px solid var(--ligne);
+  padding: 10px 4px; font-family: var(--corps); font-size: 14px; color: var(--encre);
+  cursor: pointer; text-align: left; gap: 10px;
+}
+.seance-list .seance-row:last-child { border-bottom: none; }
+.seance-row:hover { color: var(--bordeaux); }
+.seance-row-active { color: var(--bordeaux); font-weight: 600; }
+.seance-row-date { font-variant-numeric: tabular-nums; }
+.seance-row-meta {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--encre-soft);
+  flex: 0 0 auto;
+}
+.seance-row-meta .icon { width: 13px; height: 13px; color: #c0392b; }
+:root[data-theme="dark"] .seance-row-meta .icon,
+:root:not([data-theme="light"]) .seance-row-meta .icon { color: var(--or); }
+.seance-head-links { margin: 10px 0 16px; }
 
 .elu-repond { margin-top: 22px; border-top: 1px solid var(--ligne); padding-top: 12px; }
 .elu-repond > summary {
