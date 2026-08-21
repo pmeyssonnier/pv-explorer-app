@@ -168,6 +168,16 @@ def test_respondents_splits_compounds_and_resolves_roles():
     assert elus._key(elus._respondents("la Bourgmestre ff", seance)[0]) == "jodogne"
 
 
+def test_respondents_bourgmestre_falls_back_to_ff_when_no_titulaire():
+    # Cas réel (séances 2019-2020) : le PV dit juste « Bourgmestre » (sans
+    # « ff »), mais la séance n'a AUCUN bourgmestre titulaire enregistré —
+    # c'est donc le/la bourgmestre f.f. qui présidait et répondait. Sans ce
+    # repli, la mention n'était pas résolue du tout (perdue).
+    seance = {"bourgmestre": None, "bourgmestre_ff": "Cécile Jodogne"}
+    assert elus._respondents("Bourgmestre", seance) == ["Cécile Jodogne"]
+    assert elus._respondents("Madame la Bourgmestre", seance) == ["Cécile Jodogne"]
+
+
 # ── Liste des élu·e·s ────────────────────────────────────────────────────────
 def test_elus_list_shape_and_sort():
     lst = elus.elus_list()
@@ -250,7 +260,9 @@ def test_repond_items_carry_demandeur_when_known():
     with_demandeur = [it for it in d["repond"] if it.get("demandeur")]
     assert with_demandeur
     it = next(x for x in d["repond"] if x["sp"] == 63 and x["date"] == "2026-03-25")
-    assert it["demandeur"] == "Yusuf YILDIZ"
+    # Nom canonisé (même casse/ordre que sur la fiche de la personne), pas le
+    # texte brut du PV (ex. « YILDIZ Yusuf » ou « Yusuf YILDIZ »).
+    assert it["demandeur"] == "Yusuf Yildiz"
     # Certaines réponses (points administratifs, sans auteur individuel
     # identifiable) n'ont légitimement pas de demandeur.
     assert any(it.get("demandeur") is None for it in d["repond"])
@@ -275,6 +287,13 @@ def test_key_normalizes_known_typo():
     # « Houaria Ouazrhrari » (coquille dans un titre de chapitre vidéo) doit
     # rejoindre la même fiche que la graphie correcte, pas en créer une à part.
     assert elus._key("Houaria Ouazrhrari") == elus._key("Houaria Ouazrhari") == "ouazrhari"
+
+
+def test_key_normalizes_erlay_typo_to_eraly():
+    # « Monsieur Erlay » (coquille ponctuelle dans un PV) doit rejoindre la
+    # fiche de Thomas Eraly, pas créer une fiche « Erlay » à 1 seule entrée.
+    assert elus._key("Monsieur Erlay") == elus._key("Eraly") == "eraly"
+    assert "erlay" not in elus._index()
 
 
 def test_non_person_video_authors_excluded():
@@ -333,6 +352,36 @@ def test_pv_and_video_same_point_merged_into_one_intervention():
     assert it["type"] == "demande_habitant"
     assert it["url"] and it["url"].endswith(".pdf")          # lien PV
     assert "&t=" in (it["video_url"] or "")                  # lien vidéo précis, pas générique
+    # Signal explicite pour le frontend (au lieu de déduire « précis » du
+    # simple fait qu'il y ait un « &t= » dans l'URL) : distingue un lien
+    # fusionné avec le chapitre vidéo d'un lien de séance générique.
+    assert it["video_precise"] is True
+
+
+def test_video_url_not_precise_when_no_chapter_match():
+    d = elus.elu_detail("verzin")
+    generic = [it for it in d["depose"] if it["type"] != "video" and it.get("video_url") and not it["video_precise"]]
+    assert generic  # Verzin a des points sans chapitre vidéo correspondant.
+    for it in generic:
+        assert "&t=" not in it["video_url"]
+
+
+def test_repondant_display_name_is_canonicalized_not_raw_pv_text():
+    # Cas réel signalé (capture d'écran) : le champ « repondant » du PV est
+    # souvent brut (juste le nom de famille, en MAJUSCULES, ordre Nom Prénom)
+    # et incohérent selon les séances — la fiche de la personne elle-même
+    # utilise toujours le nom complet, correctement casé et ordonné. Le champ
+    # affiché « Répondant·e » doit être résolu de la même façon plutôt que de
+    # recopier le texte brut du PV.
+    d = elus.elu_detail("douhri")
+    it = next(x for x in d["depose"] if x["date"] == "2026-04-22")
+    assert it["repondant"] == "Thomas Eraly"          # PV brut : « ERALY Thomas »
+
+    d2 = elus.elu_detail("degrez")
+    it2 = next(x for x in d2["depose"] if x["date"] == "2025-10-15")
+    # Répondant composé (plusieurs personnes) : chaque nom canonisé, joint
+    # par « et », pas la juxtaposition brute du PV.
+    assert it2["repondant"] == "Vincent Vanhalewyn et Martin de Brabant"
 
 
 # ── Intégrité du fichier de chapitrage vidéo ─────────────────────────────────

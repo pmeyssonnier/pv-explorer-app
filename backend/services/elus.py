@@ -104,7 +104,7 @@ def _norm_tok(tok: str) -> str:
 # éviter une fiche dupliquée. Un simple réordonnancement de mots (couvert par
 # _build_name_registry/_PARTICLES ci-dessus) ne peut pas détecter une faute
 # de frappe DANS un mot — d'où cette liste, à compléter au cas par cas.
-_KEY_ALIASES = {"ouazrhrari": "ouazrhari"}
+_KEY_ALIASES = {"ouazrhrari": "ouazrhari", "erlay": "eraly"}
 
 # Organismes captés à tort comme « auteur » sur des points de convention/
 # partenariat du chapitrage vidéo (le contre-signataire, pas un·e citoyen·ne
@@ -265,7 +265,11 @@ def _respondents(raw: str, seance: dict) -> list:
             if bff and _looks_like_name(bff):
                 names.append(bff)
         elif "bourgmestre" in low or "burgemeester" in low:
-            b = seance.get("bourgmestre")
+            # « Bourgmestre » seul (sans mention « ff ») : normalement le
+            # titulaire, mais si la séance n'en a aucun d'enregistré (champ
+            # absent), c'est que c'était le/la bourgmestre f.f. qui présidait
+            # — on retombe donc sur ce nom plutôt que de perdre la mention.
+            b = seance.get("bourgmestre") or seance.get("bourgmestre_ff")
             if b and _looks_like_name(b):
                 names.append(b)
     return names
@@ -403,36 +407,52 @@ def _build_index() -> dict:
         pdf_by_date[date] = meta.get("source_url")
         for p in s.get("points", []):
             author = _author_of(p)
+            author_key = None
             if author:
                 last = author.split()[-1] if author.split() else ""
                 if last and not _is_role_token(last):
-                    k = _key(author, pairs)
-                    if k:
-                        add_variant(k, author)
-                        entry = {
-                            "date": date,
-                            "sp": p.get("sp") or 0,
-                            "type": p.get("type"),
-                            "titre": p.get("titre") or "",
-                            "repondant": (p.get("repondant") or "").strip() or None,
-                            "url": meta.get("source_url"),
-                            "video_url": session_map.get(date),
-                        }
-                        people[k]["depose"].append(entry)
-                        pv_lookup[(k, date)].append(entry)
+                    author_key = _key(author, pairs)
+                    if author_key:
+                        add_variant(author_key, author)
+
+            # Noms des répondant·e·s résolus une seule fois (rôle seul type
+            # « Bourgmestre » déjà traduit en nom via _respondents) et
+            # réutilisés à la fois pour l'agrégation "repond" et pour
+            # l'affichage "repondant" côté "depose" — canonisés en fin de
+            # fonction (voir nom_by_key) pour un affichage homogène (casse,
+            # ordre prénom/nom, nom complet) plutôt que le texte brut du PV.
             resp_raw = p.get("repondant")
+            resp_keys = []
             for name in _respondents(resp_raw, meta):
                 k = _key(name, pairs)
                 if not k:
                     continue
                 add_variant(k, name)
+                resp_keys.append(k)
                 people[k]["repond"].append({
                     "date": date,
                     "sp": p.get("sp") or 0,
                     "titre": p.get("titre") or "",
                     "url": meta.get("source_url"),
-                    "demandeur": (author or "").strip() or None,
+                    "demandeur_key": author_key,
                 })
+
+            if author_key:
+                entry = {
+                    "date": date,
+                    "sp": p.get("sp") or 0,
+                    "type": p.get("type"),
+                    "titre": p.get("titre") or "",
+                    "repondant_keys": resp_keys,
+                    # Repli si le rôle mentionné n'a pas pu être résolu en
+                    # nom de personne (ex. « Secrétaire communal », « Président ») :
+                    # au moins une casse homogène plutôt que le texte brut du PV.
+                    "repondant_fallback": None if resp_keys else (_titlecase(_clean(resp_raw or "")) or None),
+                    "url": meta.get("source_url"),
+                    "video_url": session_map.get(date),
+                }
+                people[author_key]["depose"].append(entry)
+                pv_lookup[(author_key, date)].append(entry)
 
     for s in video:
         date = s.get("date")
@@ -456,6 +476,7 @@ def _build_index() -> dict:
                 # la même chose.
                 if deeplink:
                     match["video_url"] = deeplink
+                    match["video_precise"] = True
                 continue
             people[k]["depose"].append({
                 "date": date,
@@ -490,14 +511,32 @@ def _build_index() -> dict:
                     if k in people:
                         add_variant(k, name)
 
+    # Noms canoniques calculés UNE FOIS que toutes les variantes (dépôts,
+    # réponses, enrichissement ci-dessus) sont connues pour tout le monde —
+    # réutilisés ensuite pour résoudre "repondant"/"demandeur" en noms
+    # complets et homogènes (même casse/ordre que la fiche de la personne),
+    # plutôt que le texte brut du PV (ex. « ERALY » ou « VANHALEWYN VINCENT »).
+    nom_by_key = {
+        k: _DISPLAY_NAME_OVERRIDES.get(k) or _titlecase(_best_display_variant(d["variants"], k))
+        for k, d in people.items()
+    }
+
     index = {}
     for k, d in people.items():
-        nom = _DISPLAY_NAME_OVERRIDES.get(k) or _titlecase(_best_display_variant(d["variants"], k))
+        for entry in d["depose"]:
+            keys = entry.pop("repondant_keys", None)
+            fallback = entry.pop("repondant_fallback", None)
+            if keys is not None:
+                names = list(dict.fromkeys(nom_by_key[kk] for kk in keys if kk in nom_by_key))
+                entry["repondant"] = " et ".join(names) if names else fallback
+        for entry in d["repond"]:
+            dk = entry.pop("demandeur_key", None)
+            entry["demandeur"] = nom_by_key.get(dk) if dk else None
         d["depose"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         d["repond"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         index[k] = {
             "key": k,
-            "nom": nom,
+            "nom": nom_by_key[k],
             "role": _role_of(len(d["depose"]), len(d["repond"])),
             "depose": d["depose"],
             "repond": d["repond"],
@@ -553,6 +592,7 @@ def elu_detail(key: str):
             "repondant": it.get("repondant"),
             "url": it.get("url"),
             "video_url": it.get("video_url"),
+            "video_precise": bool(it.get("video_precise")),
         }
 
     def _fmt_repond(it):

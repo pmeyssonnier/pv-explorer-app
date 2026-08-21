@@ -1110,14 +1110,22 @@ function eluDeposeRow(it, nom) {
   const cls = TYPE_BADGE[it.type_label] || 'b-d';
   const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
-  // Lien : deep-link « ▶ Voir le débat » pour un point filmé, sinon PDF du PV
-  // et, si la séance a été filmée, un lien léger « ▶ vidéo ».
+  // Lien : deep-link « ▶ Voir le débat » pour un point filmé (débat filmé
+  // pur, ou point PV fusionné avec son chapitre vidéo — video_precise), sinon
+  // PDF du PV et, si la séance a été filmée sans chapitre précis pour CE
+  // point, un lien léger « ▶ vidéo » (généraliste, début de séance).
   let links = '';
   if (it.type === 'video' && it.url) {
     links = `<a class="elu-link elu-link-video" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
   } else {
     if (it.url) links += `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
-    if (it.video_url) links += `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo</a>`;
+    if (it.video_url) {
+      const label = it.video_precise ? '▶ Voir le débat' : '▶ vidéo';
+      const title = it.video_precise
+        ? 'Voir le débat sur YouTube (au bon moment)'
+        : 'Voir la séance filmée sur YouTube (début de séance, pas de moment précis identifié pour ce point)';
+      links += `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="${title}"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>${label}</a>`;
+    }
   }
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
   const demandeur = nom ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(nom)}</div>` : '';
