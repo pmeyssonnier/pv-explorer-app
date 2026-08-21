@@ -1011,7 +1011,11 @@ function populateElus() {
   const role = (document.getElementById('eluRole') || {}).value || 'all';
   if (!sel || !elusData) return;
   const prev = sel.value;
-  const list = elusData.filter(e => role === 'all' || e.role === role);
+  // Tri par nom de famille (la clé backend gère déjà les particules, ex.
+  // « de Fierlant » → clé « fierlant »), pas par nombre d'interventions.
+  const list = elusData.filter(e => role === 'all' || e.role === role)
+    .slice()
+    .sort((a, b) => a.key.localeCompare(b.key, 'fr'));
   sel.innerHTML = list.map(e => {
     const n = e.role === 'college' ? e.repond + e.depose : e.depose;
     return `<option value="${e.key}">${escapeHtml(e.nom)} (${n})</option>`;
