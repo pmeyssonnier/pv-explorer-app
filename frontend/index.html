@@ -151,6 +151,7 @@
           <option value="college">Collège (échevin·e·s)</option>
         </select>
         <select id="eluSelect" class="elu-select elu-select-name" aria-label="Choisir un·e élu·e" onchange="loadElu(this.value)"></select>
+        <select id="eluYear" class="elu-select elu-select-year" aria-label="Filtrer par année" onchange="onEluYearChange()" hidden></select>
       </div>
       <div id="eluResult"></div>
     </div>
