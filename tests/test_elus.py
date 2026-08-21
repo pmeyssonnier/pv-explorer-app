@@ -91,6 +91,19 @@ def test_clean_strips_trailing_period():
     assert elus._clean("Diana Dolce.") == "Diana Dolce"
 
 
+def test_display_name_enriched_from_intervenants_list():
+    # « M. Denys »/« Denys » (répondant, sans prénom) et « Luc Denys »/
+    # « Luc DENYS » (intervenants, jamais auteur·e ni répondant·e) désignent
+    # la même personne : le nom d'affichage doit reprendre le prénom connu
+    # ailleurs, sans que cela ajoute une intervention comptabilisée.
+    d = elus.elu_detail("denys")
+    assert d is not None
+    assert d["nom"] == "Luc Denys"
+    d2 = elus.elu_detail("decoux")
+    assert d2 is not None
+    assert d2["nom"] == "Dominique Decoux"
+
+
 def test_titlecase_particles_and_caps():
     assert elus._titlecase("DEGREZ") == "Degrez"
     assert elus._titlecase("Yvan de Beauffort") == "Yvan de Beauffort"

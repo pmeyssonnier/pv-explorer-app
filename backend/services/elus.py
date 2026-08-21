@@ -330,6 +330,21 @@ def _build_index() -> dict:
                 "video_url": s.get("video_url"),
             })
 
+    # Enrichissement du nom d'affichage UNIQUEMENT : certain·e·s élu·e·s
+    # n'apparaissent en tant qu'auteur·e/répondant·e (les deux seuls rôles
+    # comptabilisés) que sous leur seul nom de famille (ex. « M. Denys » en
+    # répondant), alors qu'un prénom complet existe dans la liste des
+    # intervenant·e·s du même point. On récupère ces variantes plus
+    # complètes pour l'affichage, sans jamais créer de fiche ni compter une
+    # intervention supplémentaire (une entrée en intervenant·e n'est pas en
+    # soi une intervention attribuable, cf. docstring du module).
+    for s in pv:
+        for p in s.get("points", []):
+            for interv in (p.get("intervenants") or []):
+                k = _key(interv, pairs)
+                if k in people:
+                    add_variant(k, interv)
+
     index = {}
     for k, d in people.items():
         variants = d["variants"]
