@@ -1303,10 +1303,15 @@ function renderSeanceYearList() {
   listEl.innerHTML = list.map(s => {
     const videoIcon = s.video_url ? '<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>' : '';
     const active = s.date === (currentSeanceDetail && currentSeanceDetail.date) ? ' seance-row-active' : '';
-    return `<button type="button" class="seance-row${active}" onclick="loadSeance('${s.date}')">
-      <span class="seance-row-date">${formatDate(s.date)}</span>
-      <span class="seance-row-meta">${s.n_points} point${s.n_points > 1 ? 's' : ''}${videoIcon}</span>
-    </button>`;
+    return `<div class="seance-row-wrap">
+      <button type="button" class="seance-row${active}" onclick="loadSeance('${s.date}')">
+        <span class="seance-row-date">${formatDate(s.date)}</span>
+        <span class="seance-row-meta">${s.n_points} point${s.n_points > 1 ? 's' : ''}${videoIcon}</span>
+      </button>
+      <button type="button" class="seance-row-share" onclick="shareSeanceDate('${s.date}', this)" aria-label="Partager le lien vers cette séance" title="Partager le lien vers cette séance">
+        <svg class="icon" aria-hidden="true"><use href="#ico-share"/></svg>
+      </button>
+    </div>`;
   }).join('');
 }
 
@@ -1373,13 +1378,24 @@ function renderSeance(d) {
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function shareSeance(btn) {
-  const date = currentSeanceDetail ? currentSeanceDetail.date : '';
-  const url = date ? `${shareBaseUrl()}?tab=seances&seance=${encodeURIComponent(date)}` : `${shareBaseUrl()}?tab=seances`;
-  const text = date
+function seanceShareUrl(date) {
+  return date ? `${shareBaseUrl()}?tab=seances&seance=${encodeURIComponent(date)}` : `${shareBaseUrl()}?tab=seances`;
+}
+function seanceShareText(date) {
+  return date
     ? `Séance du Conseil communal de Schaerbeek du ${formatDate(date)}`
     : 'Séances du Conseil communal de Schaerbeek';
-  doShare('PV Explorer — Séances', text, url, btn);
+}
+
+// Partage depuis le bandeau du haut : la séance actuellement ouverte, s'il y en a une.
+function shareSeance(btn) {
+  const date = currentSeanceDetail ? currentSeanceDetail.date : '';
+  doShare('PV Explorer — Séances', seanceShareText(date), seanceShareUrl(date), btn);
+}
+
+// Partage depuis la liste : une séance donnée, sans avoir à l'ouvrir d'abord.
+function shareSeanceDate(date, btn) {
+  doShare('PV Explorer — Séances', seanceShareText(date), seanceShareUrl(date), btn);
 }
 
 // ── ÉVOLUTION D'UN THÈME (agrégation exhaustive via /trend) ──
