@@ -150,7 +150,10 @@
           <option value="conseiller">Conseiller·ère·s</option>
           <option value="college">Collège (échevin·e·s)</option>
         </select>
-        <select id="eluSelect" class="elu-select elu-select-name" aria-label="Choisir un·e élu·e" onchange="loadElu(this.value)"></select>
+        <input id="eluSelect" class="elu-select elu-select-name" list="eluDatalist" autocomplete="off"
+               aria-label="Rechercher et choisir un·e élu·e" placeholder="Rechercher un·e élu·e…"
+               oninput="onEluInput()">
+        <datalist id="eluDatalist"></datalist>
         <select id="eluYear" class="elu-select elu-select-year" aria-label="Filtrer par année" onchange="onEluYearChange()" hidden></select>
       </div>
       <div id="eluResult"></div>

@@ -989,11 +989,13 @@ let elusLoaded = false;
 let pendingEluKey = null;   // élu·e à présélectionner depuis un lien partagé (?elu=)
 let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltrer sans refetch)
 let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
+let eluSelectedKey = null;  // clé actuellement chargée (l'input texte ne porte que le libellé)
+let eluLabelToKey = {};     // libellé affiché ("Nom (N)") → clé, pour résoudre la saisie/le choix
 
 async function loadElus() {
   if (elusLoaded) return;
-  const sel = document.getElementById('eluSelect');
-  if (!sel) return;
+  const input = document.getElementById('eluSelect');
+  if (!input) return;
   try {
     const res = await fetch(API_URL + '/elus');
     if (!res.ok) throw new Error('Erreur ' + res.status);
@@ -1001,46 +1003,80 @@ async function loadElus() {
     elusLoaded = true;
     populateElus();
   } catch (err) {
-    sel.innerHTML = '<option value="">Indisponible</option>';
+    input.disabled = true;
+    input.placeholder = 'Indisponible';
   }
 }
 
-// (Re)remplit le sélecteur d'élu·e selon le filtre de rôle courant.
+function eluLabel(e) {
+  const n = e.role === 'college' ? e.repond + e.depose : e.depose;
+  return `${e.nom} (${n})`;
+}
+
+// (Re)remplit la liste de suggestions (datalist) selon le filtre de rôle
+// courant ; un champ texte permet de filtrer par nom au lieu de parcourir
+// toute la liste (~90 noms), au lieu du <select> précédent.
 function populateElus() {
-  const sel = document.getElementById('eluSelect');
+  const input = document.getElementById('eluSelect');
+  const datalist = document.getElementById('eluDatalist');
   const role = (document.getElementById('eluRole') || {}).value || 'all';
-  if (!sel || !elusData) return;
-  const prev = sel.value;
+  if (!input || !datalist || !elusData) return;
+  const prevKey = eluSelectedKey;
   // Tri par nom de famille (la clé backend gère déjà les particules, ex.
   // « de Fierlant » → clé « fierlant »), pas par nombre d'interventions.
   const list = elusData.filter(e => role === 'all' || e.role === role)
     .slice()
     .sort((a, b) => a.key.localeCompare(b.key, 'fr'));
-  sel.innerHTML = list.map(e => {
-    const n = e.role === 'college' ? e.repond + e.depose : e.depose;
-    return `<option value="${e.key}">${escapeHtml(e.nom)} (${n})</option>`;
+  eluLabelToKey = {};
+  datalist.innerHTML = list.map(e => {
+    eluLabelToKey[eluLabel(e)] = e.key;
+    return `<option value="${escapeHtml(eluLabel(e))}"></option>`;
   }).join('');
   // Présélection : lien partagé (?elu=) prioritaire, sinon on conserve la
   // sélection courante si elle reste visible, sinon la 1re entrée.
+  let nextKey = null;
   if (pendingEluKey && list.some(e => e.key === pendingEluKey)) {
-    sel.value = pendingEluKey;
+    nextKey = pendingEluKey;
     pendingEluKey = null;
-  } else if (list.some(e => e.key === prev)) {
-    sel.value = prev;
+  } else if (list.some(e => e.key === prevKey)) {
+    nextKey = prevKey;
+  } else if (list.length) {
+    nextKey = list[0].key;
   }
-  if (sel.value) loadElu(sel.value);
-  else {
+  selectElu(nextKey, list);
+}
+
+// Applique une sélection par clé : renseigne l'input avec son libellé et
+// charge la fiche. `list` (optionnel) évite de re-chercher dans elusData
+// quand l'appelant l'a déjà filtrée/triée.
+function selectElu(key, list) {
+  eluSelectedKey = key;
+  const input = document.getElementById('eluSelect');
+  const entry = key ? (list || elusData || []).find(e => e.key === key) : null;
+  if (entry) {
+    input.value = eluLabel(entry);
+    loadElu(key);
+  } else {
+    input.value = '';
     document.getElementById('eluResult').innerHTML = '';
     document.getElementById('eluYear').hidden = true;
   }
 }
 
+// Déclenché à chaque frappe (y compris un choix dans la liste de
+// suggestions, qui déclenche aussi "input") : ne charge que si le texte
+// courant correspond exactement à un libellé connu.
+function onEluInput() {
+  const input = document.getElementById('eluSelect');
+  const key = eluLabelToKey[input.value];
+  if (key && key !== eluSelectedKey) selectElu(key);
+}
+
 // Partage : lien profond vers l'onglet Par élu·e, sur la fiche sélectionnée.
 function shareElu(btn) {
-  const sel = document.getElementById('eluSelect');
-  const key = sel ? sel.value : '';
-  const opt = sel && sel.selectedIndex >= 0 ? sel.options[sel.selectedIndex] : null;
-  const nom = opt ? opt.textContent.replace(/\s*\(\d+\)\s*$/, '') : '';
+  const key = eluSelectedKey;
+  const entry = key ? (elusData || []).find(e => e.key === key) : null;
+  const nom = entry ? entry.nom : '';
   const url = key ? `${shareBaseUrl()}?tab=elus&elu=${encodeURIComponent(key)}` : `${shareBaseUrl()}?tab=elus`;
   const text = nom
     ? `Interventions de ${nom} au Conseil communal de Schaerbeek`
