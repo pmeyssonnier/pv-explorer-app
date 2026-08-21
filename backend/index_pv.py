@@ -172,13 +172,20 @@ _VIDEO_TYPE_LABELS = {
 }
 
 
-def video_point_to_chunk(point: dict, seance: dict, commune: str) -> dict:
-    """Transforme un point de chapitrage vidéo (YouTube) en chunk indexable.
+def video_point_to_chunks(point: dict, seance: dict, commune: str) -> list[dict]:
+    """Transforme un point de chapitrage vidéo (YouTube) en chunk(s) indexable(s).
 
     Source COMPLÉMENTAIRE aux PV : capte les débats (motions, questions,
     demandes), souvent absents des PV. `source_type="video_conseil"` et l'`url`
     porte le deep-link vers l'instant exact de la vidéo (…&t=SECONDESs), pour un
     lien « ▶ voir le débat » dans les sources. ID stable → upsert idempotent.
+
+    Retourne TOUJOURS au moins un chunk « titre » (quoi/qui/quand — léger,
+    présent pour tout point). Si `point["transcript"]` est renseigné (sous-
+    titres auto YouTube alignés par point, voir pipeline/extract_transcripts.py),
+    ajoute un chunk par sous-segment de transcript, avec le CONTENU réel du
+    débat comme texte vectorisé et un deep-link vers l'instant précis de ce
+    sous-segment (navigation plus fine que le seul début du point).
     """
     commune_nom = commune.capitalize()
     date = seance.get("date", "date inconnue")
@@ -186,23 +193,15 @@ def video_point_to_chunk(point: dict, seance: dict, commune: str) -> dict:
     ptype = point.get("type") or "point"
     auteur = (point.get("auteur") or "").strip()
     start = int(point.get("start_s") or 0)
+    video_id = seance.get("video_id", "") or ""
     deeplink = point.get("deeplink") or seance.get("video_url", "")
 
     label = _VIDEO_TYPE_LABELS.get(ptype, "Point à l'ordre du jour")
     par = (f" à la demande de {auteur}"
            if auteur and ptype in ("demande", "question", "motion", "interpellation")
            else "")
-    chunk_text = (
-        f"Conseil communal de {commune_nom} du {date} — point débattu en séance (vidéo).\n"
-        f"Titre : {titre}\n"
-        f"Type : {label}{par}."
-    )
-
-    chunk_id = f"video-{seance.get('video_id', 'x')}-{start}"
     decision = label + (f" · {auteur}" if auteur else "")
-
-    metadata = {
-        "chunk_text": chunk_text,          # champ vectorisé
+    base_metadata = {
         "commune": commune,
         "date": date,
         "year": int(date[:4]) if date[:4].isdigit() else 0,
@@ -212,11 +211,43 @@ def video_point_to_chunk(point: dict, seance: dict, commune: str) -> dict:
         "decision": decision,              # ex. « Motion · Elias AMMI »
         "type": ptype,
         "auteur": auteur,
-        "url": deeplink,                   # deep-link vers l'instant de la vidéo
-        "video_id": seance.get("video_id", "") or "",
-        "start_s": start,
+        "video_id": video_id,
     }
-    return {"id": chunk_id, "metadata": metadata}
+
+    title_chunk = {
+        "id": f"video-{video_id or 'x'}-{start}",
+        "metadata": {
+            **base_metadata,
+            "chunk_text": (
+                f"Conseil communal de {commune_nom} du {date} — point débattu en séance (vidéo).\n"
+                f"Titre : {titre}\n"
+                f"Type : {label}{par}."
+            ),
+            "url": deeplink,                # deep-link vers l'instant de la vidéo
+            "start_s": start,
+        },
+    }
+    chunks = [title_chunk]
+
+    for seg in point.get("transcript") or []:
+        seg_start = int(seg.get("start_s") or 0)
+        texte = (seg.get("text") or "").strip()
+        if not texte:
+            continue
+        chunks.append({
+            "id": f"video-{video_id or 'x'}-{start}-t{seg_start}",
+            "metadata": {
+                **base_metadata,
+                "chunk_text": (
+                    f"Conseil communal de {commune_nom} du {date} — extrait du débat filmé.\n"
+                    f"Point : {titre} ({label}{par}).\n"
+                    f"Extrait : {texte}"
+                ),
+                "url": f"https://www.youtube.com/watch?v={video_id}&t={seg_start}s",
+                "start_s": seg_start,
+            },
+        })
+    return chunks
 
 
 def load_chunks(json_path: Path, default_commune: str) -> list[dict]:
@@ -238,7 +269,7 @@ def load_chunks(json_path: Path, default_commune: str) -> list[dict]:
             # avec video_id/points → chunks « video_conseil ».
             commune = default_commune.strip().lower()
             for point in seance.get("points", []):
-                chunks.append(video_point_to_chunk(point, seance, commune))
+                chunks.extend(video_point_to_chunks(point, seance, commune))
         else:
             # JSON PV classique : {"seance": {...}, "points": [...]}.
             seance_meta = seance.get("seance", {})
