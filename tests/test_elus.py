@@ -104,6 +104,41 @@ def test_display_name_enriched_from_intervenants_list():
     assert d2["nom"] == "Dominique Decoux"
 
 
+def test_split_person_names_handles_role_prefix_and_compounds():
+    # Un intervenant peut porter un rôle collé au nom, ou désigner plusieurs
+    # personnes à la fois : jamais un simple split() naïf.
+    assert elus._split_person_names("Bourgmestre Audrey Henry") == ["Audrey Henry"]
+    assert elus._split_person_names("MM. Bouhjar et El Arnouki") == ["Bouhjar", "El Arnouki"]
+    assert elus._split_person_names("Secrétaire communal") == []
+    assert elus._split_person_names("Messieurs Verzin et de Beauffort") == ["Verzin", "de Beauffort"]
+
+
+def test_display_name_prefers_correct_order_and_rejects_junk_variants():
+    # Une mention en ordre inversé (« Verzin Georges ») ou un artefact
+    # d'extraction avec mot répété (« Bernard BERNARD ») ne doivent jamais
+    # gagner face à une variante déjà en bon ordre.
+    variants = {"Verzin Georges": 1, "Georges Verzin": 5, "VERZIN GEORGES": 1}
+    assert elus._best_display_variant(variants, "verzin") == "Georges Verzin"
+    variants2 = {"Bernard BERNARD": 3, "Axel Bernard": 1}
+    assert elus._best_display_variant(variants2, "bernard") == "Axel Bernard"
+
+
+def test_elus_list_has_no_role_word_or_compound_display_names():
+    # Régression : l'enrichissement du nom d'affichage via la liste des
+    # intervenant·e·s (test_display_name_enriched_from_intervenants_list)
+    # traitait autrefois chaque mention telle quelle, laissant fuiter des
+    # rôles collés (« Bourgmestre Clerfayt ») et des mentions à plusieurs
+    # personnes (« Messieurs Verzin et de Beauffort ») comme "meilleur" nom.
+    lst = elus.elus_list()
+    keys = {e["key"] for e in lst}
+    assert "communal" not in keys  # « Secrétaire communal » n'est pas une personne
+    for e in lst:
+        toks = [elus._norm_tok(t) for t in e["nom"].split()]
+        assert toks[-1] == e["key"], e  # ordre « Prénom (particule) Nom »
+        assert len(set(toks)) == len(toks), e  # pas de mot répété (artefact)
+        assert not any(elus._is_role_token(t) for t in e["nom"].split()), e
+
+
 def test_display_name_override_for_names_absent_from_sources():
     # « Malingreau » n'apparaît que par son seul nom de famille dans le PV
     # (aucune source ne donne son prénom) : complété manuellement.
