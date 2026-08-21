@@ -116,7 +116,8 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('panel-' + tab).classList.add('active');
   document.getElementById('askBar').style.display = (tab === 'chat') ? 'block' : 'none';
-  if (tab === 'stats') { loadStats(); loadElus(); }
+  if (tab === 'stats') loadStats();
+  if (tab === 'elus') loadElus();
 }
 
 // ── SUGGESTIONS ──
