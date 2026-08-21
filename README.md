@@ -84,6 +84,51 @@ alternative — `railway.json` est fourni.)*
 
 ---
 
+## 0. Clés & variables d'environnement
+
+Récapitulatif de tout ce qu'il faut fournir au clonage du dépôt. **Seules 2
+vraies clés secrètes** sont nécessaires ; le reste, ce sont des réglages.
+
+### Backend (Render / local via `.env` — voir `backend/.env.example`)
+
+| Variable | Type | Rôle | Où l'obtenir / valeur |
+|---|---|---|---|
+| `ANTHROPIC_API_KEY` | 🔒 secret | Réponses Claude (`/ask`) | https://console.anthropic.com |
+| `PINECONE_API_KEY` | 🔒 secret | Recherche vectorielle + indexation | https://app.pinecone.io |
+| `ALLOWED_ORIGINS` | réglage | Origines CORS autorisées | URL(s) exacte(s) du frontend, séparées par des virgules |
+| `PV_JSON_PATH` | réglage | Chemin du JSON des PV | défaut `pv_conseil_schaerbeek.json` |
+| `SCORE_MIN` | réglage (optionnel) | Seuil de pertinence | défaut `0.0` (désactivé) |
+
+> Sur **Render**, les deux secrets sont marqués `sync:false` dans `render.yaml`
+> → à **saisir à la main** dans le dashboard. En **local**, copie le modèle :
+> `cp backend/.env.example backend/.env` puis remplis-le (jamais committé).
+
+### Prérequis Pinecone (pas des variables — à créer côté service)
+
+- Un index nommé **`pv-explorer`**, namespace **`pv`**, embeddings intégrés
+  **`multilingual-e5-large`** (le nom d'index est la constante `INDEX_NAME`
+  dans `backend/config.py`).
+- **Peupler** l'index avec `python backend/index_pv.py` (voir §1). Les données
+  (`pv_conseil_schaerbeek.json`, `video_conseil_schaerbeek.json`,
+  `video_sessions.json`) sont **déjà dans le dépôt** — rien à re-télécharger.
+
+### Frontend (Vercel) — **aucune clé**
+
+- Le frontend est statique. Seul ajustement, **dans le code** (pas un secret) :
+  `API_PROD` en haut de `frontend/app.js` doit pointer vers l'URL de ton backend.
+
+### GitHub Actions (CI)
+
+| Workflow | Secret requis |
+|---|---|
+| `ci.yml` (ruff + pytest) | **aucun** |
+| `index-pinecone.yml` (indexation depuis Actions) | `PINECONE_API_KEY` — *Settings → Secrets and variables → Actions* (uniquement si tu indexes via GitHub plutôt qu'en local/Colab) |
+
+> ⚠️ **Ne committe jamais ces clés** (le `.gitignore` bloque `.env`). Au clonage,
+> **génère des clés neuves** et révoque toute clé qui aurait pu être exposée.
+
+---
+
 ## 1. Indexer les PV dans Pinecone
 
 En local :
