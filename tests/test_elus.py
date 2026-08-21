@@ -242,6 +242,20 @@ def test_case_insensitive_key():
     assert elus.elu_detail("VERZIN")["key"] == "verzin"
 
 
+def test_repond_items_carry_demandeur_when_known():
+    # Chaque ligne de réponse doit pouvoir s'afficher seule, hors contexte de
+    # page (ex. capture d'écran) : elle porte donc le nom de la personne à
+    # l'origine du point, quand la question/demande est attribuable.
+    d = elus.elu_detail("nimal")
+    with_demandeur = [it for it in d["repond"] if it.get("demandeur")]
+    assert with_demandeur
+    it = next(x for x in d["repond"] if x["sp"] == 63 and x["date"] == "2026-03-25")
+    assert it["demandeur"] == "Yusuf YILDIZ"
+    # Certaines réponses (points administratifs, sans auteur individuel
+    # identifiable) n'ont légitimement pas de demandeur.
+    assert any(it.get("demandeur") is None for it in d["repond"])
+
+
 # ── Endpoints HTTP ───────────────────────────────────────────────────────────
 def test_endpoint_elus_list():
     r = client.get("/elus")

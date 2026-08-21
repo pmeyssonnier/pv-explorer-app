@@ -431,6 +431,7 @@ def _build_index() -> dict:
                     "sp": p.get("sp") or 0,
                     "titre": p.get("titre") or "",
                     "url": meta.get("source_url"),
+                    "demandeur": (author or "").strip() or None,
                 })
 
     for s in video:
@@ -560,6 +561,7 @@ def elu_detail(key: str):
             "sp": it["sp"],
             "titre": it["titre"],
             "url": it.get("url"),
+            "demandeur": it.get("demandeur"),
         }
 
     depose = e["depose"]
