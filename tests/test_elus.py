@@ -553,6 +553,28 @@ def test_seance_detail_merges_collective_video_chapter_without_author():
     assert not any(p["type"] == "video" and "Paul Brien" in p["titre"] for p in d["points"])
 
 
+def test_manual_author_overrides_for_point_normal():
+    # Cas réels signalés (22/04/2026) : les points de type "point_normal"
+    # (administratifs/collectifs, ex. approbation de convention) ne sont
+    # jamais attribués automatiquement — le champ "intervenants" y mélange
+    # sans distinction citoyen·ne·s/conseiller·ère·s à l'origine de la
+    # discussion et membres du Collège qui la président, donc pas de règle
+    # générale fiable (voir _author_of). Ces 3 cas ont été vérifiés
+    # individuellement (PV + transcript vidéo) et ajoutés manuellement.
+    d = elus.seance_detail("2026-04-22")
+    cases = {
+        12: "Matthieu Degrez",   # ASBL PRO VELO — seul intervenant listé au PV
+        13: "Georges Verzin",    # Théâtre de La Balsamine — 1er intervenant listé
+        15: "Quentin van den Hove",  # Cimetière parcelle 26 — intervenants vide au
+        # PV, retrouvé dans le transcript vidéo ("je vois monsieur Quentin
+        # Vandenov qui... veut prendre la parole").
+    }
+    for sp, nom in cases.items():
+        it = next(p for p in d["points"] if p["sp"] == sp)
+        assert it["demandeur"] == nom
+        assert it["video_precise"] is True
+
+
 def test_match_pv_point_higher_threshold_for_large_candidate_pool():
     # Le seuil par défaut (0.35, calibré pour un petit nombre de candidats
     # déjà restreints par personne) donnerait trop de faux positifs sur un

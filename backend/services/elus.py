@@ -345,13 +345,28 @@ def _author_of(point: dict):
     return None
 
 
-def _point_author(point: dict, pairs: set):
+# Attribution manuelle ponctuelle, vérifiée individuellement (PV + transcript
+# vidéo), pour des points normalement jamais attribués automatiquement — type
+# "point_normal" (administratif/collectif) : le champ « intervenants » y
+# mélange sans distinction citoyen·ne·s/conseiller·ère·s à l'origine de la
+# discussion et membres du Collège qui la président ou y répondent, donc pas
+# de règle générale fiable (contrairement à question_orale/demande_habitant/
+# motion, voir _author_of) — seuls des cas confirmés individuellement sont
+# ajoutés ici. Clé = (date, sp).
+_MANUAL_AUTHOR_OVERRIDES = {
+    ("2026-04-22", 12): "Matthieu Degrez",
+    ("2026-04-22", 13): "Georges Verzin",
+    ("2026-04-22", 15): "Quentin Van den Hove",
+}
+
+
+def _point_author(point: dict, pairs: set, date: str | None = None):
     """Auteur·e d'un point PV + sa clé, si attribuable à UNE personne (jamais
     un mot de rôle seul comme dernier mot, ex. « Secrétaire communal »).
     Factorisé pour être partagé entre l'agrégation par personne (_build_all)
     et la vue par séance (seance_detail), qui doivent s'accorder sur qui est
     le/la demandeur·se d'un point donné."""
-    author = _author_of(point)
+    author = _MANUAL_AUTHOR_OVERRIDES.get((date, point.get("sp"))) or _author_of(point)
     if not author:
         return None, None
     last = author.split()[-1] if author.split() else ""
@@ -462,7 +477,7 @@ def _build_all():
         date = meta.get("date")
         pdf_by_date[date] = meta.get("source_url")
         for p in s.get("points", []):
-            author, author_key = _point_author(p, pairs)
+            author, author_key = _point_author(p, pairs, date)
             if author_key:
                 add_variant(author_key, author)
 
@@ -824,7 +839,7 @@ def seance_detail(date: str):
 
     points = []
     for p in seance.get("points", []):
-        author, author_key = _point_author(p, pairs)
+        author, author_key = _point_author(p, pairs, date)
         resp_names = _respondents(p.get("repondant"), meta)
         resp_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in resp_names))))
         repondant = " et ".join(resp_resolved) if resp_resolved else (
