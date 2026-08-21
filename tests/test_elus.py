@@ -635,6 +635,28 @@ def test_decision_summary_none_when_no_decision():
     assert elus._decision_summary(None, None) is None
 
 
+def test_thematique_label_normalizes_slug():
+    assert elus._thematique_label("transports_publics") == "Transports publics"
+    assert elus._thematique_label("mobilite-verte") == "Mobilite verte"
+    assert elus._thematique_label("") == ""
+    assert elus._thematique_label(None) == ""
+
+
+def test_seance_detail_exposes_thematiques_and_montant():
+    # Cas réel (27/05/2026) : un compte ASBL avec montant négatif (déficit)
+    # doit être affiché tel quel, pas filtré comme un montant "hors budget"
+    # (cette exclusion, voir _is_excluded_amount, ne concerne que les
+    # agrégats /stats et /trend, jamais l'affichage d'un point individuel).
+    d = elus.seance_detail("2026-05-27")
+    it = next(p for p in d["points"] if p["sp"] == 9)
+    assert it["montant_eur"] == -20809.92
+    assert it["thematiques"] == ["Comptes annuels", "Sports", "Cooperation associative"]
+    # Un point sans montant renseigné : None, pas 0 ni absent.
+    it77 = next(p for p in d["points"] if p["sp"] == 77)
+    assert it77["montant_eur"] is None
+    assert it77["thematiques"]
+
+
 def test_seance_detail_points_sorted_by_sp():
     d = elus.seance_detail("2026-04-22")
     sps = [p["sp"] for p in d["points"]]
