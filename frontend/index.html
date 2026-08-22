@@ -160,16 +160,13 @@
 
   <!-- ── ONGLET SÉANCES ── -->
   <section class="panel" id="panel-seances">
-    <div class="stats-toolbar">
-      <button class="msg-act" type="button" data-click="shareSeance" title="Partager le lien vers cette séance">Partager</button>
-    </div>
     <div class="elus-panel">
       <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séances du Conseil communal</h3>
       <p class="trend-intro">Parcourez les procès-verbaux <strong>séance par séance</strong> : pour chaque point à l'ordre du jour, l'objet, qui l'a déposé, qui y a répondu, et le débat filmé quand il existe.</p>
       <div class="elus-bar">
         <select id="seanceYear" class="elu-select" aria-label="Filtrer par année"></select>
+        <select id="seanceList" class="elu-select elu-select-name" aria-label="Choisir une séance"></select>
       </div>
-      <div id="seanceYearList" class="elu-list seance-list"></div>
       <div id="seanceResult"></div>
     </div>
   </section>

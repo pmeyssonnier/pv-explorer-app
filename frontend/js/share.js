@@ -11,10 +11,13 @@ export function copyShare(payload, cb) {
 }
 
 // Partage via la feuille native (mobile) si dispo, sinon copie du lien. Le
-// bouton confirme brièvement (« Partagé ✓ » / « Lien copié ✓ »).
+// bouton confirme brièvement (« Partagé ✓ » / « Lien copié ✓ »). innerHTML
+// (pas textContent) pour restaurer correctement un bouton icône-seule (SVG) —
+// textContent d'un tel bouton est "" avant le 1er partage, donc le restaurer
+// l'effacerait définitivement.
 export function doShare(title, text, url, btn) {
-  const orig = btn ? btn.textContent : '';
-  const flash = (msg) => { if (btn) { btn.textContent = msg; setTimeout(() => { btn.textContent = orig; }, 1800); } };
+  const orig = btn ? btn.innerHTML : '';
+  const flash = (msg) => { if (btn) { btn.innerHTML = msg; setTimeout(() => { btn.innerHTML = orig; }, 1800); } };
   if (navigator.share) {
     navigator.share({ title, text, url }).then(() => flash('Partagé ✓')).catch((err) => {
       if (err && err.name === 'AbortError') return;           // annulé par l'utilisateur

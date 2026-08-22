@@ -39,9 +39,13 @@ export async function loadSeances() {
       const y = pendingSeanceDate.slice(0, 4);
       if (years.includes(y)) yearSel.value = y;
     }
-    renderSeanceYearList();
+    // Lien partagé (?seance=…) : charge directement cette séance — son
+    // propre chargement peuple ensuite la liste (voir loadSeance), pas
+    // besoin d'un 2e appel réseau pour la présélection "plus récente".
     if (pendingSeanceDate && seancesData.some(s => s.date === pendingSeanceDate)) {
-      loadSeance(pendingSeanceDate);
+      await loadSeance(pendingSeanceDate, { scroll: true });
+    } else {
+      renderSeanceYearList();
     }
     pendingSeanceDate = null;
   } catch (err) {
@@ -49,26 +53,30 @@ export async function loadSeances() {
   }
 }
 
-// Liste cliquable des séances de l'année sélectionnée (la plus récente en premier).
+// Liste des séances de l'année sélectionnée (la plus récente en premier),
+// en menu déroulant compact plutôt qu'une liste de lignes (gain de place).
+// Présélectionne la séance déjà affichée si elle appartient à cette année,
+// sinon la plus récente — et la charge si ce n'est pas déjà celle affichée
+// (ex. après un changement d'année ; sans effet en boucle après un
+// loadSeance() qui vient d'aboutir, puisqu'il correspond déjà).
 export function renderSeanceYearList() {
-  const listEl = document.getElementById('seanceYearList');
+  const sel = document.getElementById('seanceList');
   const yearSel = document.getElementById('seanceYear');
-  if (!listEl || !seancesData || !yearSel.value) return;
+  if (!sel || !seancesData || !yearSel.value) return;
   const list = seancesData.filter(s => s.date.startsWith(yearSel.value));
-  listEl.innerHTML = list.map(s => {
-    const videoIcon = s.video_url ? '<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>' : '';
-    const active = s.date === (currentSeanceDetail && currentSeanceDetail.date) ? ' seance-row-active' : '';
-    return `<div class="seance-row-wrap">
-      <button type="button" class="seance-row${active}" data-click="loadSeance" data-arg="${escapeHtml(s.date)}">
-        <span class="seance-row-date">${formatDate(s.date)}</span>
-        <span class="seance-row-meta">${s.n_points} point${s.n_points > 1 ? 's' : ''}${videoIcon}</span>
-      </button>
-      <button type="button" class="seance-row-share" data-click="shareSeanceDate" data-arg="${escapeHtml(s.date)}" aria-label="Partager le lien vers cette séance" title="Partager le lien vers cette séance">
-        <svg class="icon" aria-hidden="true"><use href="#ico-share"/></svg>
-      </button>
-    </div>`;
+  sel.innerHTML = list.map(s => {
+    const video = s.video_url ? ' ▶' : '';
+    return `<option value="${escapeHtml(s.date)}">${escapeHtml(formatDate(s.date))} — ${s.n_points} point${s.n_points > 1 ? 's' : ''}${video}</option>`;
   }).join('');
+  const preselect = (currentSeanceDetail && list.some(s => s.date === currentSeanceDetail.date))
+    ? currentSeanceDetail.date
+    : (list[0] && list[0].date);
+  if (!preselect) return;
+  sel.value = preselect;
+  if (!currentSeanceDetail || currentSeanceDetail.date !== preselect) loadSeance(preselect);
 }
+// Sélection manuelle dans le menu déroulant des séances.
+export function onSeanceListChange(sel) { if (sel.value) loadSeance(sel.value, { scroll: true }); }
 
 // Un point a un lien vers le débat filmé quand c'est un chapitre vidéo
 // autonome (type "video", pas de point PV associé), ou quand un chapitre
@@ -117,14 +125,18 @@ function seancePointRow(it) {
   </div>`;
 }
 
-export async function loadSeance(date) {
+// `opts.scroll` : fait défiler jusqu'au résultat — uniquement pour une
+// action délibérée (choix explicite dans le menu, lien partagé), jamais
+// pour une présélection automatique (ouverture de l'onglet, changement
+// d'année) qui ne doit pas faire sauter la page sous l'utilisateur·rice.
+export async function loadSeance(date, opts = {}) {
   const box = document.getElementById('seanceResult');
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   try {
     const res = await fetch(API_URL + '/seance/' + encodeURIComponent(date));
     if (!res.ok) throw new Error('Erreur ' + res.status);
-    renderSeance(await res.json());
-    renderSeanceYearList();  // met en évidence la séance active dans la liste
+    renderSeance(await res.json(), !!opts.scroll);
+    renderSeanceYearList();  // synchronise le menu déroulant (option/année sélectionnées)
   } catch (err) {
     box.innerHTML = `<div class="error-box">Impossible de charger cette séance. ${escapeHtml(err.message)}</div>`;
   }
@@ -256,7 +268,7 @@ function onSeanceFilterReset() {
   refreshSeanceFilteredView();
 }
 
-function renderSeance(d) {
+function renderSeance(d, scroll) {
   currentSeanceDetail = d;
   seanceTypeFilter = 'all';
   seanceThemeFilter = 'all';
@@ -276,6 +288,9 @@ function renderSeance(d) {
   <div class="elu-head">
     <div class="elu-name">${formatDate(d.date)}</div>
     <span class="elu-role elu-role-conseiller">${d.n_points} point${d.n_points > 1 ? 's' : ''}</span>
+    <button type="button" class="seance-share-btn" data-click="shareSeance" aria-label="Partager le lien vers cette séance" title="Partager le lien vers cette séance">
+      <svg class="icon" aria-hidden="true"><use href="#ico-share"/></svg>
+    </button>
   </div>`;
   if (links) html += `<div class="elu-links seance-head-links">${links}</div>`;
   html += `<div class="elu-list" id="seancePointsList"></div>`;
@@ -291,7 +306,7 @@ function renderSeance(d) {
   if (personSel) personSel.addEventListener('change', () => onSeancePersonFilterChange(personSel));
   if (resetBtn) resetBtn.addEventListener('click', onSeanceFilterReset);
   refreshSeanceFilteredView();
-  box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (scroll) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function seanceShareUrl(date) {
@@ -303,13 +318,8 @@ function seanceShareText(date) {
     : 'Séances du Conseil communal de Schaerbeek';
 }
 
-// Partage depuis le bandeau du haut : la séance actuellement ouverte, s'il y en a une.
+// Partage la séance actuellement affichée (bouton dans son en-tête).
 export function shareSeance(btn) {
   const date = currentSeanceDetail ? currentSeanceDetail.date : '';
-  doShare('PV Explorer — Séances', seanceShareText(date), seanceShareUrl(date), btn);
-}
-
-// Partage depuis la liste : une séance donnée, sans avoir à l'ouvrir d'abord.
-export function shareSeanceDate(date, btn) {
   doShare('PV Explorer — Séances', seanceShareText(date), seanceShareUrl(date), btn);
 }

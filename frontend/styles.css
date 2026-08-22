@@ -493,32 +493,13 @@ body {
 :root[data-theme="dark"] .elu-link-video,
 :root:not([data-theme="light"]) .elu-link-video { color: var(--or); }
 
-/* ── SÉANCES (liste cliquable par année) ─────────────────────────────────── */
-.seance-list { margin-bottom: 6px; }
-.seance-row-wrap { display: flex; align-items: stretch; border-bottom: 1px solid var(--ligne); }
-.seance-list .seance-row-wrap:last-child { border-bottom: none; }
-.seance-row {
-  display: flex; align-items: center; justify-content: space-between; flex: 1 1 auto; min-width: 0;
-  background: none; border: none;
-  padding: 10px 4px; font-family: var(--corps); font-size: 14px; color: var(--encre);
-  cursor: pointer; text-align: left; gap: 10px;
+/* ── SÉANCES (choix par menu déroulant + en-tête de la séance affichée) ──── */
+.seance-share-btn {
+  flex: 0 0 auto; margin-left: auto; display: flex; align-items: center; justify-content: center;
+  background: none; border: none; padding: 4px 8px; color: var(--encre-soft); cursor: pointer;
 }
-.seance-row:hover { color: var(--bordeaux); }
-.seance-row-active { color: var(--bordeaux); font-weight: 600; }
-.seance-row-date { font-variant-numeric: tabular-nums; }
-.seance-row-meta {
-  display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--encre-soft);
-  flex: 0 0 auto;
-}
-.seance-row-meta .icon { width: 13px; height: 13px; color: #c0392b; }
-:root[data-theme="dark"] .seance-row-meta .icon,
-:root:not([data-theme="light"]) .seance-row-meta .icon { color: var(--or); }
-.seance-row-share {
-  flex: 0 0 auto; display: flex; align-items: center; justify-content: center;
-  background: none; border: none; padding: 0 8px; color: var(--encre-soft); cursor: pointer;
-}
-.seance-row-share:hover { color: var(--bordeaux); }
-.seance-row-share .icon { width: 15px; height: 15px; }
+.seance-share-btn:hover { color: var(--bordeaux); }
+.seance-share-btn .icon { width: 16px; height: 16px; }
 .seance-head-links { margin: 10px 0 16px; }
 
 .elu-repond { margin-top: 22px; border-top: 1px solid var(--ligne); padding-top: 12px; }
