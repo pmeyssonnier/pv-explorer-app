@@ -153,7 +153,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 8997,
+    "total_points": 9000,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -212,7 +212,7 @@
           "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
           "sous_rubrique": "Assemblées",
           "titre": "Lauréats du travail - Remise d'un titre honorifique à 5 citoyens schaerbeekois",
-          "resume": "Remise des Insignes du Travail à 5 citoyens schaerbeekois : Insigne d'Honneur d'Or à André VANSTEYVOORT, Insigne d'Honneur d'Argent à Etienne HENNE et Pascal GUSTIN, Insigne d'Honneur de Bronze à Susan MOLNAR et Jeanine CLAEYS",
+          "resume": "Remise des Insignes du Travail à 4 citoyens schaerbeekois : Insigne d'Honneur d'Or à André Vansteyvoort, Insigne d'Honneur d'Argent à Etienne Henne et Pascal Gustin, Insigne d'Honneur de Bronze à Susan Molnar et Jeanine Claeys.",
           "intervenants": [],
           "repondant": null,
           "decision": "PREND POUR INFORMATION",
@@ -223,7 +223,9 @@
             "abstentions": 0
           },
           "montant_eur": null,
-          "thematiques": [],
+          "thematiques": [
+            "honneur_distinction"
+          ],
           "source_file": "pv-2010-09-29-sp.pdf"
         },
         {
@@ -234,12 +236,15 @@
           "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
           "sous_rubrique": "Assemblées",
           "titre": "Evaluation du bilan de majorité",
-          "resume": "Évaluation du bilan de majorité avec interventions et débat",
+          "resume": "Débat sur l'évaluation du bilan de majorité. Interventions de Courtheoux, El Arnouki, Durant, Köksal, Essaidi, Noël, Denys, Bourgmestre ff, Vriamont, Grimberghs, Özturk, Dönmez, Bouhjar, Vanhalewyn, Lahlali, de Beauffort, Van Gorp, Clerfayt, Verzin et Denys.",
           "intervenants": [
             "Courtheoux",
             "El Arnouki",
             "Durant",
             "Köksal",
+            "Essaidi",
+            "Noël",
+            "Denys",
             "Vriamont",
             "Grimberghs",
             "Özturk",
@@ -248,9 +253,11 @@
             "Vanhalewyn",
             "Lahlali",
             "de Beauffort",
-            "Van Gorp"
+            "Van Gorp",
+            "Clerfayt",
+            "Verzin"
           ],
-          "repondant": "Essaidi, Noël, Denys, Jodogne, Clerfayt, Verzin, Denys",
+          "repondant": "Essaidi, Noël, Denys, Bourgmestre ff, Clerfayt, Verzin, Denys",
           "decision": "DÉBAT",
           "vote": {
             "type": null,
@@ -259,7 +266,9 @@
             "abstentions": 0
           },
           "montant_eur": null,
-          "thematiques": [],
+          "thematiques": [
+            "bilan_gouvernement"
+          ],
           "source_file": "pv-2010-09-29-sp.pdf"
         },
         {
@@ -643,10 +652,10 @@
           "page": 26,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Association de fait Racing Personnel Communal de Schaerbeek - RPC",
+          "rubrique": "Association de fait Racing Personnel Communal",
           "sous_rubrique": "Comptes 2008",
-          "titre": "Association de fait Racing Personnel Communal de Schaerbeek - RPC - Comptes 2008 - Prendre acte",
-          "resume": "Prise d'acte des comptes 2008 de l'Association de fait Racing Personnel Communal de Schaerbeek - RPC affichant un bénéfice de 1.392 € pour l'exercice et un montant des avoirs de 2.836,19 €",
+          "titre": "Association de fait \"Racing Personnel Communal de Schaerbeek - RPC\" - Comptes 2008 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2008 de l'Association de fait \"Racing Personnel Communal de Schaerbeek – R.P.C.\" affichant un bénéfice de 1.392 € et des avoirs de 2.836,19 €",
           "intervenants": [],
           "repondant": null,
           "decision": "PREND ACTE",
@@ -656,11 +665,11 @@
             "contre": 0,
             "abstentions": 0
           },
-          "montant_eur": null,
+          "montant_eur": 3200,
           "thematiques": [
-            "comptes",
             "association",
-            "personnel"
+            "comptes_2008",
+            "personnel_communal"
           ],
           "source_file": "pv-2010-09-29-sp.pdf"
         },
@@ -2529,10 +2538,10 @@
           "page": 130,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Contrats de quartier",
-          "sous_rubrique": "",
-          "titre": "Fixation des valeurs locatives des biens suivants - Immeuble communal sis rue Navez 2A",
-          "resume": "Adoption des valeurs locatives fixées par le Géomètre communal pour l'immeuble sis rue Navez, 2A : 3 appartements avec loyers variant de 367,94 à 593,53 euros/mois",
+          "rubrique": "Domaines",
+          "sous_rubrique": "Fixation valeurs locatives",
+          "titre": "Fixation des valeurs locatives - Immeuble communal rue Navez 2A",
+          "resume": "Adoption des valeurs locatives fixées par le Géomètre communal pour l'immeuble sis rue Navez, 2A : 3 appartements (1er étage 63,64 m² - 367,94 €/mois, 2ème étage 63,64 m² - 367,94 €/mois, 3-4ème étages duplex 102,66 m² - 593,53 €/mois).",
           "intervenants": [],
           "repondant": null,
           "decision": "APPROUVÉ",
@@ -2545,8 +2554,8 @@
           "montant_eur": null,
           "thematiques": [
             "immobilier",
-            "location",
-            "valeur_locative"
+            "valeurs_locatives",
+            "location_bien_communal"
           ],
           "source_file": "pv-2010-09-29-sp.pdf"
         },
@@ -2913,6 +2922,92 @@
             "education",
             "rentre_scolaire",
             "enseignement"
+          ],
+          "source_file": "pv-2010-09-29-sp.pdf"
+        },
+        {
+          "sp": 96.2,
+          "page": 146,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Achats",
+          "titre": "Bibliothèque communal francophone Sésame - Acquisition de mobilier et d'équipement pour la création d'un centre d'apprentissage - Mode de passation et fixation des conditions du marché",
+          "resume": "Prise pour information de la décision du Collège du 28 septembre 2010 de passer un marché par procédure négociée sans publicité pour l'acquisition de mobilier et d'équipement à la Bibliothèque Sésame. Dépense estimée à 46.280,97 € HT ou 56.000,00 € TTC (21% TVA), financée par subsides et imputée à l'article 767/741-EQ-98/14 du budget extraordinaire 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 56000,
+          "thematiques": [
+            "mobilier",
+            "equipement",
+            "bibliotheque",
+            "marche_public"
+          ],
+          "source_file": "pv-2010-09-29-sp.pdf"
+        },
+        {
+          "sp": 96.3,
+          "page": 148,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Explosion de 3 immeubles à l'angle des rues Gaucheret (n°197 et 199) et Destouvelles (n°35) - Mise en œuvre du plan d'urgence et d'intervention communal - Crédits urgents",
+          "resume": "Suite à l'explosion et l'effondrement d'immeubles à l'angle des rues Gaucheret et Destouvelles le 25 septembre 2010, mise en œuvre du plan d'urgence communal et réquisition d'une entreprise privée. Vote du crédit urgent de 140.000 € pour couvrir les frais d'intervention en extrême urgence, imputé à l'article 922/140IN-11/-51 du budget ordinaire 2010, à recouvrer auprès des responsables.",
+          "intervenants": [
+            "M. Dönmez",
+            "Mme Durant"
+          ],
+          "repondant": "Mme la Bourgmestre ff, Mme Essaidi",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 140000,
+          "thematiques": [
+            "sinistre",
+            "explosion",
+            "securite_publique",
+            "urgence",
+            "budget"
+          ],
+          "source_file": "pv-2010-09-29-sp.pdf"
+        },
+        {
+          "sp": 96.4,
+          "page": 150,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Complexe Tamines, rue Stephenson 80-84 - Travaux d'aménagement des installations de chauffage et ventilation - Mode de passation et fixation des conditions du marché",
+          "resume": "Modification du mode de passation d'un marché de travaux pour l'aménagement des installations de chauffage et ventilation au complexe Tamines. Passage à une procédure négociée sans publicité auprès de quatre soumissionnaires et une entreprise supplémentaire. Les appels d'offres précédents (28 juin et 20 août 2010) ont été abandonnés, les prix étant inacceptables par rapport à l'estimation initiale de 150.000 €. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "travaux_construction",
+            "chauffage",
+            "ventilation",
+            "marche_public",
+            "infrastructure"
           ],
           "source_file": "pv-2010-09-29-sp.pdf"
         }
