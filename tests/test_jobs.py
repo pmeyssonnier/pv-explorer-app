@@ -54,6 +54,38 @@ def test_get_job_unknown_returns_none():
     assert jobs.get_job("does-not-exist") is None
 
 
+def test_progress_field_present_while_pending_then_absent_once_done():
+    import threading
+    release = threading.Event()
+
+    def fn(progress_cb=None):
+        progress_cb({"stage": "working", "chunk": 1, "total_chunks": 5})
+        release.wait(timeout=2.0)
+        return "ok"
+
+    job_id = jobs.start_job(fn)
+    deadline = time.time() + 2.0
+    job = jobs.get_job(job_id)
+    while time.time() < deadline and job.get("progress") is None:
+        time.sleep(0.01)
+        job = jobs.get_job(job_id)
+    assert job["status"] == "pending"
+    assert job["progress"] == {"stage": "working", "chunk": 1, "total_chunks": 5}
+
+    release.set()
+    done = _wait_done(job_id)
+    assert done == {"status": "done", "result": "ok"}
+    assert "progress" not in done   # le dict "done" ne garde plus la trace d'avancement
+
+
+def test_progress_not_injected_when_function_does_not_accept_it():
+    # Ne doit pas planter : start_job détecte l'absence de `progress_cb` dans
+    # la signature et ne le passe simplement pas.
+    job_id = jobs.start_job(lambda: "no progress param here")
+    job = _wait_done(job_id)
+    assert job == {"status": "done", "result": "no progress param here"}
+
+
 def test_fifo_eviction_caps_job_count():
     # L'éviction se décide à l'INSERTION (taille du dict), indépendamment de
     # l'état "pending"/"done" — pas besoin d'attendre les threads de fond ici.

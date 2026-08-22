@@ -128,7 +128,7 @@ def _job_status(job_id: str):
     if job is None:
         raise HTTPException(status_code=404, detail="Tâche inconnue ou expirée.")
     if job["status"] == "pending":
-        return {"status": "pending"}
+        return {"status": "pending", "progress": job.get("progress")}
     if job["status"] == "error":
         raise HTTPException(status_code=job["code"], detail=job["detail"])
     return {"status": "done", **job["result"]}

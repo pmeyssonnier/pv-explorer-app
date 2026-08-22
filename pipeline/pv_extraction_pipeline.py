@@ -64,7 +64,7 @@ import math
 import unicodedata
 from pathlib import Path
 from datetime import datetime, date as _date
-from typing import Optional
+from typing import Callable, Optional
 
 import pdfplumber
 import anthropic
@@ -644,7 +644,13 @@ def _recover_missing_points(pages: list[dict], report: dict,
     return recovered
 
 
-def process_pdf(pdf_path: Path) -> Optional[dict]:
+def process_pdf(pdf_path: Path, progress_cb: Optional[Callable[[dict], None]] = None) -> Optional[dict]:
+    """`progress_cb`, si fourni, est appelé avec un petit dict d'avancement à
+    chaque étape notable (extraction du PDF, puis après CHAQUE chunk envoyé à
+    Claude) — utilisé par l'intégration admin (services/pv_integration.py)
+    pour afficher une progression réelle côté navigateur plutôt qu'un simple
+    minuteur. Optionnel et sans effet sur l'extraction elle-même (le run
+    Colab historique ne le passe pas)."""
     log = get_logger()
     log.info(f"\n{'='*60}")
     log.info(f"Traitement : {pdf_path.name}")
@@ -666,6 +672,8 @@ def process_pdf(pdf_path: Path) -> Optional[dict]:
 
     chunks = chunk_pages(pages, CONFIG["CHUNK_SIZE"])
     log.info(f"  Chunks : {len(chunks)} × {CONFIG['CHUNK_SIZE']} pages")
+    if progress_cb:
+        progress_cb({"stage": "extraction", "pages": len(pages), "chunk": 0, "total_chunks": len(chunks), "points_so_far": 0})
 
     all_points = []
     seance_date = meta["date"]
@@ -674,6 +682,9 @@ def process_pdf(pdf_path: Path) -> Optional[dict]:
         points, seance_date = _extract_chunk_points(chunk, seance_date)
         log.info(f"    → {len(points)} points extraits")
         all_points.extend(p for p in (normalize_point(p) for p in points) if p is not None)
+        if progress_cb:
+            progress_cb({"stage": "extraction", "pages": len(pages), "chunk": i + 1,
+                         "total_chunks": len(chunks), "points_so_far": len(all_points)})
 
     if not all_points:
         log.warning("  Aucun point extrait")
@@ -681,6 +692,8 @@ def process_pdf(pdf_path: Path) -> Optional[dict]:
 
     deduped = _dedup_by_sp(all_points)
     log.info(f"  Points dédupliqués : {len(all_points)} → {len(deduped)}")
+    if progress_cb:
+        progress_cb({"stage": "verification", "pages": len(pages), "points_so_far": len(deduped)})
 
     # GREFFE 2 : contrôle de complétude (regex vs LLM) + récupération ciblée.
     check = verify_completeness(pages, deduped)

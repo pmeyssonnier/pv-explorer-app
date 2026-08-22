@@ -13,6 +13,7 @@ d'usage, et évite une dépendance/infra de plus pour un besoin aussi rare.
 Les tâches tournent dans un thread réel (pas asyncio) car process_pdf/
 commit_file/index_chunks sont des appels bloquants (I/O réseau synchrone).
 """
+import inspect
 import threading
 import uuid
 from typing import Callable, Optional
@@ -27,15 +28,30 @@ def start_job(fn: Callable, *args, **kwargs) -> str:
     interroger via get_job(). Le statut passe à "error" si `fn` lève
     ValueError (422 côté route) ou RuntimeError (500 côté route) — toute
     autre exception est aplatie en 500 générique (jamais de traceback
-    interne exposé au client)."""
+    interne exposé au client).
+
+    Si `fn` accepte un paramètre `progress_cb`, il lui est injecté
+    automatiquement (détecté via sa signature — pas besoin que l'appelant le
+    fournisse) : les fonctions cibles l'appellent avec un petit dict
+    d'avancement, stocké dans le job et renvoyé par get_job() tant que le
+    statut reste "pending" — voir services/pv_integration.py."""
     job_id = uuid.uuid4().hex
     with _lock:
-        _jobs[job_id] = {"status": "pending"}
+        _jobs[job_id] = {"status": "pending", "progress": None}
         while len(_jobs) > _MAX_JOBS:
             oldest = next(iter(_jobs))
             if oldest == job_id:
                 break
             _jobs.pop(oldest, None)
+
+    def _report_progress(data: dict) -> None:
+        with _lock:
+            job = _jobs.get(job_id)
+            if job is not None and job["status"] == "pending":
+                job["progress"] = data
+
+    if "progress_cb" in inspect.signature(fn).parameters:
+        kwargs = {**kwargs, "progress_cb": _report_progress}
 
     def run():
         try:
