@@ -9,9 +9,11 @@ let seancesLoaded = false;
 let pendingSeanceDate = null; // séance à présélectionner depuis un lien partagé (?seance=)
 let currentSeanceDetail = null;
 // Filtres de la séance affichée (réinitialisés à chaque nouvelle séance
-// chargée) : 'all', un type_label ("Motion", "Question orale", …), ou
-// 'reporte' (pseudo-type — un point reporté peut être de n'importe quel
-// type réel, filtré séparément des types).
+// chargée) : 'all', un type_label ("Motion", "Question orale", …), ou un
+// pseudo-type transversal — 'reporte' (point reporté, peut être de
+// n'importe quel type réel) ou 'debat_filme' (a un lien vers le débat filmé,
+// voir hasDebateLink) — qui se superpose aux types réels (détail dans
+// seanceTypeFilterOptions).
 let seanceTypeFilter = 'all';
 let seanceThemeFilter = 'all';
 // Personne (demandeur·se OU répondant·e) impliquée dans le point — un même
@@ -68,12 +70,19 @@ export function renderSeanceYearList() {
   }).join('');
 }
 
+// Un point a un lien vers le débat filmé quand c'est un chapitre vidéo
+// autonome (type "video", pas de point PV associé), ou quand un chapitre
+// vidéo a été apparié précisément à ce point (video_precise). Un point
+// reporté n'a jamais rien été débattu ce jour-là. Fonction partagée entre
+// le rendu de la ligne (lien affiché) et le filtre "Débat filmé" (voir
+// seanceTypeFilterOptions/pointMatchesFilters) — même définition partout.
+function hasDebateLink(it) {
+  return (it.type === 'video' && !!it.url) || !!(it.video_url && it.video_precise && !it.reporte);
+}
+
 function seancePointRow(it) {
   const cls = TYPE_BADGE[it.type_label] || 'b-d';
   const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
-  // Point reporté à une séance ultérieure : jamais débattu ce jour-là, donc
-  // pas de lien vidéo générique à proposer (il n'y a rien à y voir sur ce
-  // point précis).
   const reporteBadge = it.reporte ? `<span class="elu-badge b-report">Reporté</span>` : '';
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   // Pas de lien "PV (PDF)" par point : c'est le même PDF de séance pour tous
@@ -82,14 +91,9 @@ function seancePointRow(it) {
   // un accès direct à ce point précis dans le PDF. Même raisonnement pour la
   // vidéo générique (video_precise=false) : lien vers le DÉBUT de la séance,
   // pas ce point précis — déjà proposé une fois au-dessus (vidéo complète).
-  // Seul un lien vidéo réellement spécifique à ce point (deep-link précis,
-  // ou chapitre vidéo autonome) est affiché ici.
-  let links = '';
-  if (it.type === 'video' && it.url) {
-    links = `<a class="elu-link elu-link-video" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
-  } else if (it.video_url && it.video_precise && !it.reporte) {
-    links = `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
-  }
+  const links = hasDebateLink(it)
+    ? `<a class="elu-link elu-link-video" href="${it.type === 'video' ? it.url : it.video_url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`
+    : '';
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
   const demandeur = it.demandeur ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(it.demandeur)}</div>` : '';
   const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
@@ -126,16 +130,28 @@ export async function loadSeance(date) {
   }
 }
 
-// Types réellement présents dans la séance (jamais une liste figée : ex.
-// "Débat filmé" n'apparaît que si un chapitre vidéo autonome existe) +
-// "Reporté" si au moins un point l'est. Ordre stable, indépendant du tri
-// d'apparition dans la liste.
-const _TYPE_FILTER_ORDER = ['Point', 'Motion', 'Question orale', 'Demande', 'Débat filmé'];
+// Types réellement présents dans la séance (jamais une liste figée), avec
+// leur nombre de points, plus deux pseudo-types transversaux qui se
+// superposent aux types réels plutôt que de les remplacer (un point compte
+// dans son type ET dans "Débat filmé"/"Reporté" s'il l'est aussi — même
+// logique que les compteurs de thématiques, où la somme peut dépasser le
+// total) :
+//   "debat_filme" : tout point avec un lien vers le débat (voir
+//                   hasDebateLink), quel que soit son type réel — pas
+//                   seulement les chapitres vidéo autonomes.
+//   "reporte"     : un point reporté peut être de n'importe quel type réel.
+// Ordre stable, indépendant du tri d'apparition dans la liste.
+const _TYPE_FILTER_ORDER = ['Point', 'Motion', 'Question orale', 'Demande'];
 function seanceTypeFilterOptions(points) {
-  const present = new Set(points.map(p => p.type_label));
-  const types = _TYPE_FILTER_ORDER.filter(t => present.has(t));
-  const opts = types.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`);
-  if (points.some(p => p.reporte)) opts.push('<option value="reporte">Reporté</option>');
+  const opts = [];
+  _TYPE_FILTER_ORDER.forEach(t => {
+    const n = points.filter(p => p.type_label === t).length;
+    if (n) opts.push(`<option value="${escapeHtml(t)}">${escapeHtml(t)} (${n})</option>`);
+  });
+  const nDebat = points.filter(hasDebateLink).length;
+  if (nDebat) opts.push(`<option value="debat_filme">Débat filmé (${nDebat})</option>`);
+  const nReporte = points.filter(p => p.reporte).length;
+  if (nReporte) opts.push(`<option value="reporte">Reporté (${nReporte})</option>`);
   return opts.join('');
 }
 // Thématiques réellement présentes dans la séance, triées, avec le nombre
@@ -162,8 +178,10 @@ function seancePersonFilterOptions(points) {
   return names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)} (${counts.get(n)})</option>`).join('');
 }
 function pointMatchesFilters(p) {
-  const typeOk = seanceTypeFilter === 'all'
-    || (seanceTypeFilter === 'reporte' ? p.reporte : p.type_label === seanceTypeFilter);
+  const typeOk = seanceTypeFilter === 'all' ? true
+    : seanceTypeFilter === 'reporte' ? p.reporte
+    : seanceTypeFilter === 'debat_filme' ? hasDebateLink(p)
+    : p.type_label === seanceTypeFilter;
   const themeOk = seanceThemeFilter === 'all' || (p.thematiques || []).includes(seanceThemeFilter);
   const personOk = seancePersonFilter === 'all'
     || p.demandeur === seancePersonFilter || p.repondant === seancePersonFilter;
