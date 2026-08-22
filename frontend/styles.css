@@ -75,6 +75,21 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
+
+/* ── FOCUS CLAVIER — système global ──────────────────────────────────────
+   :focus-visible (pas :focus) : l'anneau n'apparaît qu'à la navigation
+   clavier, jamais au clic souris/tactile. Règle unique en amont de toute
+   règle plus spécifique (ex. .msg-question .msg-bubble:focus-visible plus
+   bas), qui reste prioritaire par spécificité si besoin d'un style dédié. */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--or);
+  outline-offset: 3px;
+}
 body {
   background: var(--papier);
   color: var(--encre);
