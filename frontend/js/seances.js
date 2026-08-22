@@ -69,18 +69,16 @@ function seancePointRow(it) {
   // Pas de lien "PV (PDF)" par point : c'est le même PDF de séance pour tous
   // les points (pas d'ancre par SP), déjà proposé une fois au-dessus de la
   // liste (voir renderSeance) — le répéter à chaque point suggérerait à tort
-  // un accès direct à ce point précis dans le PDF.
+  // un accès direct à ce point précis dans le PDF. Même raisonnement pour la
+  // vidéo générique (video_precise=false) : lien vers le DÉBUT de la séance,
+  // pas ce point précis — déjà proposé une fois au-dessus (vidéo complète).
+  // Seul un lien vidéo réellement spécifique à ce point (deep-link précis,
+  // ou chapitre vidéo autonome) est affiché ici.
   let links = '';
   if (it.type === 'video' && it.url) {
     links = `<a class="elu-link elu-link-video" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
-  } else {
-    if (it.video_url && !it.reporte) {
-      const label = it.video_precise ? '▶ Voir le débat' : '▶ vidéo';
-      const title = it.video_precise
-        ? 'Voir le débat sur YouTube (au bon moment)'
-        : 'Voir la séance filmée sur YouTube (début de séance, pas de moment précis identifié pour ce point)';
-      links += `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="${title}"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>${label}</a>`;
-    }
+  } else if (it.video_url && it.video_precise && !it.reporte) {
+    links = `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
   }
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
   const demandeur = it.demandeur ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(it.demandeur)}</div>` : '';
