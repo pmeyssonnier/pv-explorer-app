@@ -249,6 +249,17 @@ def extract_text_from_pdf(pdf_path: Path) -> list[dict]:
             for i, page in enumerate(pdf.pages):
                 text = (page.extract_text() or "").strip()
                 pages.append({"page_num": i + 1, "text": text, "char_count": len(text)})
+                # pdfplumber construit TOUS les objets Page dès l'ouverture
+                # (pas paresseux) et met en cache les données de mise en page
+                # de chaque page dès extract_text() (chars/mots/rects) — sans
+                # ce close(), la mémoire croît linéairement avec le nombre de
+                # pages et n'est libérée qu'à la sortie du `with`. Sur un PV
+                # dense (ex. un vieux PV bilingue FR/NL, ~2x le texte), ça
+                # suffit à dépasser le RAM du tier gratuit Render et faire
+                # tuer le process en plein milieu de l'extraction — observé en
+                # production. close() est sans risque ici : `page` n'est plus
+                # utilisée après cette itération.
+                page.close()
         log.info(f"  PDF extrait : {len(pages)} pages — {sum(p['char_count'] for p in pages):,} chars")
     except Exception as e:
         log.error(f"  Erreur extraction {pdf_path.name}: {e}")
