@@ -64,10 +64,9 @@ export function renderSeanceYearList() {
   const yearSel = document.getElementById('seanceYear');
   if (!sel || !seancesData || !yearSel.value) return;
   const list = seancesData.filter(s => s.date.startsWith(yearSel.value));
-  sel.innerHTML = list.map(s => {
-    const video = s.video_url ? ' ▶' : '';
-    return `<option value="${escapeHtml(s.date)}">${escapeHtml(formatDate(s.date))}${video}</option>`;
-  }).join('');
+  sel.innerHTML = list.map(s =>
+    `<option value="${escapeHtml(s.date)}">${escapeHtml(formatDate(s.date))}</option>`
+  ).join('');
   const preselect = (currentSeanceDetail && list.some(s => s.date === currentSeanceDetail.date))
     ? currentSeanceDetail.date
     : (list[0] && list[0].date);
