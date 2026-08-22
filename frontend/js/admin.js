@@ -160,10 +160,12 @@ export async function submitAdminLogin(ev) {
   }
 }
 
-// Étape 1/2 : upload du PDF → extraction + aperçu. Peut prendre du temps
-// (plusieurs appels Claude côté serveur sur un PV dense) — bouton désactivé
-// avec un libellé d'attente plutôt qu'un simple spinner, pour que ce soit
-// clair que ça peut durer.
+// Étape 1/2 : upload du PDF → démarre l'extraction en tâche de fond côté
+// serveur (job_id), puis SONDE le statut plutôt que d'attendre une seule
+// requête bloquante — une extraction dense (plusieurs appels Claude
+// séquentiels côté serveur) dépasse le délai que tolère le proxy Render,
+// qui coupe alors la connexion (observé en prod : se manifeste comme une
+// erreur CORS trompeuse, pas un vrai souci de politique CORS).
 export async function submitAdminExtract(ev) {
   ev.preventDefault();
   const fileEl = document.getElementById('adminPdfFile');
@@ -174,7 +176,6 @@ export async function submitAdminExtract(ev) {
   if (!file) return;
   errBox.textContent = '';
   btn.disabled = true;
-  btn.textContent = 'Extraction en cours (peut prendre plusieurs minutes)…';
   try {
     const formData = new FormData();
     formData.append('file', file);
@@ -187,17 +188,40 @@ export async function submitAdminExtract(ev) {
       errBox.textContent = await _errorDetail(res);
       return;
     }
-    const data = await res.json();
+    const { job_id } = await res.json();
+    const data = await _pollJob(`/admin/seances/extract/${job_id}`, btn, 'Extraction');
     pendingSeance = data;
     pendingSourceUrl = sourceUrlEl.value.trim() || null;
     lastPublishResult = null;
     renderAdminPanel();
-  } catch {
-    errBox.textContent = 'Extraction impossible — réessayez.';
+  } catch (err) {
+    errBox.textContent = err.message || 'Extraction impossible — réessayez.';
   } finally {
     btn.disabled = false;
     btn.textContent = 'Extraire';
   }
+}
+
+// Sonde `${API_URL}${path}` toutes les 3s jusqu'à statut "done" (retourné
+// tel quel) ou une erreur (HTTPException du backend → message réel, pas
+// générique). Plafonné à 10 min pour ne jamais boucler indéfiniment si
+// quelque chose reste bloqué côté serveur.
+async function _pollJob(path, btn, label) {
+  const started = Date.now();
+  const MAX_MS = 10 * 60 * 1000;
+  while (Date.now() - started < MAX_MS) {
+    await new Promise(r => setTimeout(r, 3000));
+    const res = await fetch(API_URL + path, { credentials: 'include' });
+    if (!res.ok) throw new Error(await _errorDetail(res));
+    const data = await res.json();
+    if (data.status === 'pending') {
+      const elapsed = Math.round((Date.now() - started) / 1000);
+      if (btn) btn.textContent = `${label} en cours (${elapsed}s)…`;
+      continue;
+    }
+    return data;
+  }
+  throw new Error(`${label} : délai dépassé (10 min) — réessayez plus tard.`);
 }
 
 export function cancelAdminExtract() {
@@ -208,14 +232,16 @@ export function cancelAdminExtract() {
 
 // Étape 2/2 : publie EXACTEMENT ce que l'extraction a renvoyé (voir
 // services/pv_integration.py côté backend) — fusion réelle, commit GitHub,
-// réindexation Pinecone.
+// réindexation Pinecone. Même sondage qu'à l'extraction : un commit sur un
+// fichier de plusieurs Mo + un upsert Pinecone (retry pouvant attendre
+// jusqu'à 65s sur un 429 Pinecone) dépassent aussi facilement le délai
+// toléré par le proxy Render.
 export async function confirmAdminPublish() {
   const errBox = document.getElementById('adminPublishError');
   const btn = document.getElementById('adminPublishBtn');
   if (!pendingSeance) return;
   errBox.textContent = '';
   btn.disabled = true;
-  btn.textContent = 'Publication en cours…';
   try {
     const res = await fetch(API_URL + '/admin/seances/publish', {
       method: 'POST',
@@ -227,12 +253,13 @@ export async function confirmAdminPublish() {
       errBox.textContent = await _errorDetail(res);
       return;
     }
-    lastPublishResult = await res.json();
+    const { job_id } = await res.json();
+    lastPublishResult = await _pollJob(`/admin/seances/publish/${job_id}`, btn, 'Publication');
     pendingSeance = null;
     pendingSourceUrl = null;
     renderAdminPanel();
-  } catch {
-    errBox.textContent = 'Publication impossible — réessayez.';
+  } catch (err) {
+    errBox.textContent = err.message || 'Publication impossible — réessayez.';
   } finally {
     btn.disabled = false;
     btn.textContent = 'Confirmer et publier';

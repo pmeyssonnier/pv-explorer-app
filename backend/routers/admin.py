@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, Request, Response, 
 
 from limiter import limiter
 from models.api import AdminLoginRequest, SeancePublishRequest
-from services import pv_integration
+from services import jobs, pv_integration
 from services.auth import SESSION_TTL_S, create_session_token, verify_admin_credentials, verify_session_token
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -80,9 +80,15 @@ def me(username: str = Depends(require_admin)):
 def extract_seance(
     request: Request, file: UploadFile = File(...), username: str = Depends(require_admin),
 ):
-    """Étape 1/2 : extrait la structure de la séance depuis le PDF uploadé
-    (appelle Claude — coûte réellement, d'où le rate limit) et prévisualise la
-    fusion. NE PUBLIE RIEN — voir /admin/seances/publish."""
+    """Étape 1/2 : démarre l'extraction du PDF uploadé (appelle Claude —
+    coûte réellement, d'où le rate limit) en tâche de fond et retourne un
+    job_id immédiatement — voir GET .../extract/{job_id}. NE PUBLIE RIEN.
+
+    Ne fait PAS attendre la requête sur toute la durée de l'extraction
+    (plusieurs appels Claude séquentiels, potentiellement plusieurs minutes
+    sur un PV dense) : le proxy Render coupe la connexion avant la fin,
+    ce qui se manifeste côté navigateur comme un échec CORS trompeur (aucune
+    réponse à vérifier, pas un vrai problème de politique CORS)."""
     # Lu en sync (pas `await file.read()`) : cette route est un `def` classique,
     # comme le reste du backend — FastAPI l'exécute déjà dans un threadpool.
     raw = file.file.read(MAX_UPLOAD_BYTES + 1)
@@ -90,26 +96,39 @@ def extract_seance(
         raise HTTPException(status_code=400, detail="Fichier vide.")
     if len(raw) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail="Fichier trop volumineux (max 20 Mo).")
-    try:
-        seance_struct = pv_integration.extract_from_upload(raw, file.filename or "upload.pdf")
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-    except RuntimeError as e:
-        # ex. ANTHROPIC_API_KEY manquante côté serveur.
-        raise HTTPException(status_code=500, detail=str(e))
-    return {"seance": seance_struct, "preview": pv_integration.preview_merge(seance_struct)}
+    job_id = jobs.start_job(pv_integration.extract_and_preview, raw, file.filename or "upload.pdf")
+    return {"job_id": job_id}
+
+
+@router.get("/seances/extract/{job_id}")
+def extract_status(job_id: str, username: str = Depends(require_admin)):
+    return _job_status(job_id)
 
 
 @router.post("/seances/publish")
 @limiter.limit("10/hour")
 def publish_seance(request: Request, body: SeancePublishRequest, username: str = Depends(require_admin)):
-    """Étape 2/2 : reçoit la séance telle que renvoyée par /admin/seances/
-    extract (l'admin en a vu l'aperçu), fusionne pour de vrai, committe sur
-    GitHub et réindexe dans Pinecone."""
-    try:
-        return pv_integration.publish_seance(body.seance, body.source_url)
-    except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
-    except RuntimeError as e:
-        # ex. GITHUB_TOKEN/PINECONE_API_KEY manquante côté serveur.
-        raise HTTPException(status_code=500, detail=str(e))
+    """Étape 2/2 : démarre la publication (fusion, commit GitHub, réindexation
+    Pinecone) en tâche de fond — mêmes raisons que /extract : un commit sur un
+    fichier de plusieurs Mo + un upsert Pinecone (avec retry pouvant attendre
+    jusqu'à 65s sur un 429) dépassent facilement le délai toléré par Render.
+    Reçoit la séance telle que renvoyée par /admin/seances/extract (l'admin en
+    a vu l'aperçu)."""
+    job_id = jobs.start_job(pv_integration.publish_seance, body.seance, body.source_url)
+    return {"job_id": job_id}
+
+
+@router.get("/seances/publish/{job_id}")
+def publish_status(job_id: str, username: str = Depends(require_admin)):
+    return _job_status(job_id)
+
+
+def _job_status(job_id: str):
+    job = jobs.get_job(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail="Tâche inconnue ou expirée.")
+    if job["status"] == "pending":
+        return {"status": "pending"}
+    if job["status"] == "error":
+        raise HTTPException(status_code=job["code"], detail=job["detail"])
+    return {"status": "done", **job["result"]}
