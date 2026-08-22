@@ -49,6 +49,18 @@ DIMENSION = 1024
 BATCH_SIZE = 60         # burst plus petit = reprise sur 429 moins coûteuse
 DEFAULT_JSON = "pv_conseil_schaerbeek.json"
 
+# Version de la FORME des métadonnées écrites sur chaque vecteur (pas de la
+# donnée elle-même, ni de l'app). Pinecone n'impose aucun schéma : rien
+# n'empêche des vecteurs d'époques différentes de coexister dans le même
+# index si un futur changement (champ renommé/retypé) n'est appliqué que par
+# upsert incrémental (--only-year) plutôt qu'un --reset complet. Bumper cette
+# constante à CHAQUE changement de forme qui compte pour la lecture (rag.py) —
+# pas pour un simple ajustement du texte vectorisé. Elle permet à un script de
+# migration futur de cibler `metadata["schema_version"] < N` : ne ré-embedder
+# QUE les vecteurs obsolètes, pas tout l'index (le quota d'embedding Pinecone
+# est limité — voir RESOURCE_EXHAUSTED dans rag.py/eval_rag.py).
+SCHEMA_VERSION = 1
+
 # Plan Pinecone Starter (gratuit) : le modèle d'embedding multilingual-e5-large
 # est plafonné à 250 000 tokens/min (input_type "passage"). On cadence l'envoi
 # NETTEMENT sous ce plafond (≈ 52 %) : rouler à 80-90 % provoquait des 429 à
@@ -156,6 +168,7 @@ Thématiques : {', '.join(point.get('thematiques') or [])}"""
 
     # Métadonnées pour filtrage et affichage (Pinecone limite à ~40KB par vecteur)
     metadata = {
+        "schema_version": SCHEMA_VERSION,  # voir commentaire en tête de fichier
         "chunk_text": chunk_text,          # champ vectorisé
         "commune": commune,                # filtrage multi-commune
         "date": date,
@@ -212,6 +225,7 @@ def video_point_to_chunks(point: dict, seance: dict, commune: str) -> list[dict]
            else "")
     decision = label + (f" · {auteur}" if auteur else "")
     base_metadata = {
+        "schema_version": SCHEMA_VERSION,  # voir commentaire en tête de fichier
         "commune": commune,
         "date": date,
         "year": int(date[:4]) if date[:4].isdigit() else 0,
