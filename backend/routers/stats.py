@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException, Request, Query
 from limiter import limiter
 from services import statistics, elus
 
-router = APIRouter()
+router = APIRouter(tags=["Statistiques"])
 
 
 @router.get("/stats")
