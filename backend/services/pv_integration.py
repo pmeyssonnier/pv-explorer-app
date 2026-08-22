@@ -66,6 +66,15 @@ def extract_from_upload(pdf_bytes: bytes, filename: str) -> dict:
     return seance_struct
 
 
+def extract_and_preview(pdf_bytes: bytes, filename: str) -> dict:
+    """Combine extraction + aperçu de fusion — c'est cette fonction qui tourne
+    en tâche de fond (voir routers/admin.py + services/jobs.py), pas
+    extract_from_upload seule, pour que la route /extract renvoie un job_id
+    immédiatement plutôt que de bloquer sur toute la durée de l'extraction."""
+    seance = extract_from_upload(pdf_bytes, filename)
+    return {"seance": seance, "preview": preview_merge(seance)}
+
+
 def _load_current_db() -> dict:
     with open(PV_JSON_PATH, encoding="utf-8") as f:
         return json.load(f)
