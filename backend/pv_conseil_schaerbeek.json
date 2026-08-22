@@ -4,6 +4,7 @@
     "version": "1.0",
     "date_creation": "2026-06-05",
     "seances_incluses": [
+      "2010-02-03",
       "2010-06-23",
       "2010-09-29",
       "2010-10-27",
@@ -154,7 +155,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9067,
+    "total_points": 9127,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -178,6 +179,1668 @@
     "last_updated": "2026-08-19T11:13:43.724687"
   },
   "seances": [
+    {
+      "seance": {
+        "id": "PV-2010-02-03",
+        "date": "2010-02-03",
+        "source_file": "Pv_2010.02.03.pdf",
+        "extracted_at": "2026-08-22T17:13:13.550491",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 54,
+          "extracted": 54,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        }
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Académie de Musique Saint-Josse-ten-Noode/Schaerbeek - Mise en liquidation de la coopérative - Prendre acte - Abrogation des représentations communales - Désignation du Collège afin de représenter la commune à la liquidation",
+          "resume": "Prise d'acte du projet d'acte notarié de liquidation de la société coopérative intercommunale. Abrogation des décisions antérieures portant désignation des délégués. Charge du Collège de représenter la Commune à la signature des actes de liquidation et de constitution de l'association qui succèdera à la coopérative.",
+          "intervenants": [
+            "Lahlali"
+          ],
+          "repondant": "Verzin",
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "intercommunale",
+            "liquidation",
+            "academie_musique"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement redevance sur le stationnement en zone bleue, sur le stationnement payant et relatif aux cartes de stationnement - Modification - Approbation",
+          "resume": "Modification du règlement redevance sur le stationnement en zone bleue et le stationnement payant. Trois amendements ont été soumis au vote. Les deux premiers ont été rejetés, le troisième concernant les cartes de stationnement pour visiteurs occasionnels a été approuvé à l'unanimité. L'ensemble du règlement modifié a été approuvé par 27 voix contre 8 et 4 abstentions.",
+          "intervenants": [
+            "Guillaume",
+            "Van Gorp",
+            "Vriamont",
+            "Charels",
+            "Clerfayt",
+            "Nyssens",
+            "Dönmez",
+            "Bouhjar"
+          ],
+          "repondant": "Noël",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 8,
+            "abstentions": 4
+          },
+          "montant_eur": 22,
+          "thematiques": [
+            "stationnement",
+            "redevance",
+            "zone_bleue",
+            "parkings",
+            "amenagements_urbains"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Budget 2010 - Services ordinaire et extraordinaire - Approbation",
+          "resume": "Approbation du budget 2010 de la commune et fixation de la dotation à la zone de police pour l'année 2010 à 27.969.000 €. Le parti socialiste demande des votes séparés sur 13 articles budgétaires spécifiques et décide de voter contre le budget dans sa totalité. Deux amendements du Collège : inscription de 2.500 € pour action Haïti, inscription de 70.000 € supplémentaires pour honoraires plans d'aménagement, transfert de 200.000 € et inscription de 300.000 € pour création d'un Koban.",
+          "intervenants": [
+            "De Herde",
+            "Courtheoux",
+            "Durant",
+            "El Arnouki",
+            "Köksal",
+            "Dönmez",
+            "Vriamont",
+            "Clerfayt",
+            "Van Gorp"
+          ],
+          "repondant": "De Herde",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 12,
+            "abstentions": 0
+          },
+          "montant_eur": 27969000,
+          "thematiques": [
+            "budget_communal",
+            "dotation_police",
+            "amendements_budgetaires"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "Budget",
+          "titre": "C.P.A.S. - Modification budgétaire n°4 de l'exercice 2009 - Approbation",
+          "resume": "Approbation de la modification budgétaire n°4 du C.P.A.S. pour l'exercice 2009. Total des recettes et dépenses : 117.803.877,00 €. Cette modification n'a aucune incidence sur le montant de la dotation communale.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 9,
+            "abstentions": 3
+          },
+          "montant_eur": 117803877,
+          "thematiques": [
+            "cpas",
+            "budget_modification"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "Budget",
+          "titre": "C.P.A.S. - Budget de l'exercice 2010 - Approbation",
+          "resume": "Approbation du budget 2010 du C.P.A.S. pour 98.616.178 €. Fixation de l'intervention communale pour couvrir le manque de ressources à 28.271.171 €. Fixation de la dotation de la commune résultant de la restructuration des hôpitaux à 4.376.827 €.",
+          "intervenants": [
+            "Decoux",
+            "El Arnouki",
+            "Courtheoux",
+            "Durant",
+            "Köksal",
+            "Bouarfa"
+          ],
+          "repondant": "Decoux",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 9,
+            "abstentions": 3
+          },
+          "montant_eur": 98616178,
+          "thematiques": [
+            "cpas",
+            "budget_2010",
+            "intervention_communale",
+            "restructuration_hopitaux"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Budget",
+          "sous_rubrique": "Crédit et garanties",
+          "titre": "C.H.U. Brugmann - Octroi d'une garantie bancaire pour l'ouverture d'une ligne de crédit - Prolongation - Approbation",
+          "resume": "La commune se porte caution solidaire envers Dexia Banque pour l'avance de trésorerie du CHU Brugmann à concurrence d'un montant maximum de 51.467.519,40 €, représentant 33,33% (1/3) des montants. La garantie communale est accordée jusqu'au 31 décembre 2010, sous conditions de mise en application du plan de gestion et finalisation de la nouvelle convention relative aux objectifs de service public.",
+          "intervenants": [
+            "Van Gorp"
+          ],
+          "repondant": "De Herde",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 9
+          },
+          "montant_eur": 51467519.4,
+          "thematiques": [
+            "chu_brugmann",
+            "garantie_bancaire",
+            "credit_ligne",
+            "tresorerie",
+            "caution_solidaire"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "Convention",
+          "titre": "ASBL \"Crèches de Schaerbeek\" - Avenant à la convention - Approbation",
+          "resume": "Approbation de l'Avenant à la Convention entre la Commune et l'Asbl \"Crèche de Schaerbeek\". Mandat donné au Collège des Bourgmestre et Echevins pour signer cet avenant.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "creches",
+            "convention",
+            "asbl",
+            "avenant"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "Convention",
+          "titre": "ASBL \"Pater Baudry\" - Convention de partenariat - Approbation",
+          "resume": "Point de convention de partenariat avec l'ASBL \"Pater Baudry\".",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "partenariat",
+            "convention"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Associations",
+          "sous_rubrique": "Comptes",
+          "titre": "Association de fait \"Cercle d'Art du Personnel Communal\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 du Cercle d'Art du Personnel Communal affichant un résultat positif de 5.475,96€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5475.96,
+          "thematiques": [
+            "culture",
+            "associations",
+            "comptes_exercice"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Associations",
+          "sous_rubrique": "Comptes",
+          "titre": "Association de fait \"Yama Tsuki Karaté Do\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Association Yama Tsuki Karaté Do affichant un résultat positif de 498€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 498,
+          "thematiques": [
+            "sports",
+            "associations",
+            "comptes_exercice"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Associations",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Aide aux Familles\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl Aide aux Familles affichant un résultat positif de 277.157,24€ et un résultat cumulé de -5.940,55€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 277157.24,
+          "thematiques": [
+            "aide_social",
+            "associations",
+            "comptes_exercice"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Associations",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Atelier des Petits Pas\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl Atelier des Petits Pas affichant un bénéfice de 2.718,29€ et un résultat cumulé de 27.257,48€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2718.29,
+          "thematiques": [
+            "associations",
+            "comptes_exercice",
+            "aide_enfance"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Associations",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Atout Couleur\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl Atout Couleur affichant un bénéfice de 9.413€ et un résultat cumulé de 9.569€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 9413,
+          "thematiques": [
+            "associations",
+            "comptes_exercice"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Associations",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Cannelle\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl Cannelle affichant un résultat positif de 1.381,52€ et un résultat cumulé de 12.801,13€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1381.52,
+          "thematiques": [
+            "associations",
+            "comptes_exercice"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Associations",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Kituro Schaerbeek Rugby Club\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl Kituro Schaerbeek Rugby Club affichant un résultat positif de 11.894,42€ et un résultat cumulé de 53.087,16€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 11894.42,
+          "thematiques": [
+            "sports",
+            "rugby",
+            "associations",
+            "comptes_exercice"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Associations",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"La Maison de la Laïcité de Schaerbeek\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl La Maison de la Laïcité de Schaerbeek affichant un résultat positif de 8.734,89€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 8734.89,
+          "thematiques": [
+            "associations",
+            "culture",
+            "comptes_exercice"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'ASBL",
+          "sous_rubrique": "Comptes de l'exercice 2008",
+          "titre": "ASBL \"Le Bus Bavard\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl \"Le Bus Bavard\" affichant un bénéfice de 2.376,97€ pour l'exercice.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3800,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'ASBL",
+          "sous_rubrique": "Comptes de l'exercice 2008",
+          "titre": "ASBL \"Les Amis de la Morale Laïque de Schaerbeek\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl \"Les Amis de la Morale Laïque de Schaerbeek – AML\" affichant un résultat positif de 204,86€ pour l'exercice et un résultat cumulé de 5.356,26€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 6000,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'ASBL",
+          "sous_rubrique": "Comptes de l'exercice 2008",
+          "titre": "ASBL \"Schaerbeek Information\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl \"Schaerbeek Information\" affichant un résultat positif de 5.965,76€ pour l'exercice et un résultat cumulé de 19.935,48€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 200000,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'ASBL",
+          "sous_rubrique": "Comptes de l'exercice 2008",
+          "titre": "ASBL \"Société des Architectes Diplômés de la Ville de Bruxelles\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl \"Société des Architectes Diplômés de la Ville de Bruxelles – SADBr\" affichant un résultat positif de 12.055,29€ pour l'exercice.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'ASBL",
+          "sous_rubrique": "Comptes de l'exercice 2008",
+          "titre": "ASBL \"Sport Schaerbeekois\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl \"Sport Schaerbeekois\" affichant un résultat positif de 29.663,96€ pour l'exercice et un résultat cumulé de 15.417,90€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 38,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 34800,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes",
+            "sport"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'ASBL",
+          "sous_rubrique": "Comptes de l'exercice 2008",
+          "titre": "ASBL \"Royal Cercle Athlétique de Schaerbeek\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl \"Royal Cercle Athlétique de Schaerbeek – RCAS\" affichant un résultat positif de 1.781,14€ pour l'exercice.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5000,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes",
+            "sport"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 39,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'ASBL",
+          "sous_rubrique": "Comptes de l'exercice 2008",
+          "titre": "ASBL \"Union Belge Contre les Nuisances des Avions\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl \"Union Belge Contre les Nuisances des Avions – UBCNA\" affichant un résultat positif de 3.192,40€ pour l'exercice et un résultat cumulé de 8.966,26€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2500,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 40,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'ASBL",
+          "sous_rubrique": "Comptes de l'exercice 2008",
+          "titre": "ASBL \"Union des Locataires du Quartier Nord\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl \"Union des Locataires du Quartier Nord – ULQN\" affichant un résultat négatif de -70.443,63€ pour l'exercice et un résultat cumulé de 202.081,40€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Unis-Vers-Cité\" - Comptes de l'exercice 2008",
+          "resume": "Prise d'acte des comptes 2008 de l'Asbl Unis-Vers-Cité affichant une perte de -1.629,96€. Subside communal de 1.000€ versé sur l'article 761/332SS02/71 du budget 2008.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1000,
+          "thematiques": [
+            "comptes_asbl",
+            "subventions"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "",
+          "titre": "Acquisition de sel de déneigement - Application de l'article 249 de la nouvelle loi communale",
+          "resume": "Admission de la délibération du Collège du 22 décembre 2009 pour l'inscription d'un crédit supplémentaire de 25.000€ à l'article 875/140EQ-13/14 du budget ordinaire 2009 pour l'achat de sel de déneigement suite aux conditions hivernales exceptionnelles entre le 15 décembre 2009 et le 15 janvier 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 25000,
+          "thematiques": [
+            "neige",
+            "budget_extraordinaire",
+            "fournitures"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "",
+          "titre": "Schaerbeek Propreté & Espaces Verts - Acquisition de matériel pour les ânes du parc Josaphat - Mode de passation et fixation des conditions du marché",
+          "resume": "Prise pour information de la décision du Collège du 22 décembre 2009 de passer un marché par procédure négociée sans publicité pour l'acquisition de matériel complémentaire pour les ânes du Parc Josaphat auprès de LA MAISON DU CAVALIER Sprl. Dépense de 1.873,80€ (TVAI) imputée à l'article 766/743-EQ-98/14 du budget extraordinaire 2009, financée par fonds propres.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1873.8,
+          "thematiques": [
+            "marche_public",
+            "parc_josaphat",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 44,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "",
+          "titre": "Remplacement de la chaudière de presbytère de la paroisse Sainte Alice - Mode de passation et fixation des conditions du marché",
+          "resume": "Prise pour information de la décision du Collège du 22 décembre 2009 de passer un marché par procédure négociée sans publicité pour le remplacement de la chaudière du presbytère de la Paroisse Sainte-Alice auprès de VANDEN BERGH S.A. Dépense de 2.877,48€ (TVAI) imputée à l'article 790/724-IN-60/51 du budget extraordinaire 2009, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2877.48,
+          "thematiques": [
+            "marche_public",
+            "batiment_religieux",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Eco-Conseil",
+          "titre": "Pic de Pollution - Règlement d'administration intérieur reconnaissant la validité des dérogations délivrées par l'une des communes sur le territoire des autres communes de la Région",
+          "resume": "Approbation de l'accord conclu le 25 novembre 2009 entre le bourgmestre de Schaerbeek et les bourgmestres des dix-huit autres communes de l'arrondissement administratif de Bruxelles-Capitale reconnaissant la validité des dérogations (autorisations de circulation) en cas de pic de pollution atmosphérique durant l'hiver 2009-2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "pollution",
+            "environnement",
+            "cooperation_intercommunale"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 47,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux",
+          "sous_rubrique": "Affaires Juridiques",
+          "titre": "Autorisation d'ester en justice dans l'aff. c/S.A. BELGACOM MOBILE - Taxe sur les antennes relais de mobilophonie - Exercice 2007 - Articles de rôle : 57, 59, 61 et 64",
+          "resume": "Autorisation pour le Collège des Bourgmestre et Echevins d'interjeter appel contre le jugement rendu le 30 octobre 2009 par le Tribunal de 1ère instance de Bruxelles (32ème chambre) dans l'affaire S.A. BELGACOM MOBILE c/ Commune de Schaerbeek concernant la taxe communale sur les antennes relais de mobilophonie (exercice 2007). Le Tribunal avait annulé les taxes litigieuses et mis les dépens de 1.250€ à charge de la Commune.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 9
+          },
+          "montant_eur": 1250,
+          "thematiques": [
+            "contentieux",
+            "fiscalite_locale",
+            "telecommunications"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "FISCALITÉ",
+          "sous_rubrique": "",
+          "titre": "Autorisation d'ester en justice dans l'aff. c/S.A. BELGACOM MOBILE - Taxe sur les antennes relais de mobilophonie - Exercice 2007",
+          "resume": "Autorisation pour le Collège des Bourgmestre et Echevins d'interjeter appel contre le jugement rendu le 30 octobre 2009 par le Tribunal de 1ère instance de Bruxelles – 32ème chambre annulant la taxe communale sur les antennes relais de mobilophonie pour l'exercice 2007.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 9
+          },
+          "montant_eur": 2500,
+          "thematiques": [
+            "fiscalite",
+            "telecommunications",
+            "litiges",
+            "justice"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 52,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RESSOURCES HUMAINES",
+          "sous_rubrique": "",
+          "titre": "Accueil de jeunes en formation en alternance - Convention avec la Région de Bruxelles-Capitale - Approbation",
+          "resume": "Approbation de la convention avec la Région de Bruxelles-Capitale en vue de l'accueil de 3 jeunes en formation en alternance sur la période du 1er janvier 2010 au 31 août 2010, avec octroi d'un subside régional de 19 980,00 euros.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 19980,
+          "thematiques": [
+            "ressources_humaines",
+            "formation",
+            "emploi",
+            "jeunesse"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 53,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "",
+          "titre": "Convention relative à l'occupation du domaine public communal en vue de l'exploitation du système \"Villo\" - Approbation",
+          "resume": "Approbation de la convention avec la société JC Decaux Belgium Publicité pour l'installation et l'exploitation du système de location de vélos automatisé \"Villo\" sur le domaine public communal jusqu'au 31 décembre 2024, comprenant 21 stations et 7 dispositifs publicitaires en voirie communale.",
+          "intervenants": [
+            "Mme Nyssens",
+            "Mme la Bourgmestre ff",
+            "MM. Van Gorp",
+            "M. Clerfayt"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 29,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "infrastructures",
+            "mobilite",
+            "domaine_public",
+            "publicite"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 56,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "BÂTIMENTS",
+          "sous_rubrique": "",
+          "titre": "Parc Josaphat - Serres communales - Remplacement de la chaudière du service EEP - Mode de passation et fixation des conditions du marché",
+          "resume": "Prise pour information de la décision du Collège du 15 décembre 2009 approuvant le remplacement de la chaudière permettant la distribution d'eau chaude dans les sanitaires du service EEP sur le site des serres communales du parc Josaphat, estimé à 19 000 euros, par procédure négociée sans publicité.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 19000,
+          "thematiques": [
+            "batiments",
+            "marches_publics",
+            "infrastructures",
+            "chauffage"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 57,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Parcs et espaces verts",
+          "titre": "Parc Reine-Verte - Remise en état de infrastructures - Majoration de dépense - Approbation",
+          "resume": "Approbation de la majoration du coût des travaux visant à la remise en état partielle du parc Reine-Verte de 36.107,43 € TVA comprise, financée par le fonds politique des grandes villes.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 8
+          },
+          "montant_eur": 36107.43,
+          "thematiques": [
+            "travaux_publics",
+            "espaces_verts",
+            "finances_publiques"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 59,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Écoles",
+          "titre": "École 1 sise rue Josaphat 229 - Rénovation des sanitaires de la section maternelle - Majoration de dépense - Approbation",
+          "resume": "Approbation de la majoration du coût des travaux de rénovation des sanitaires de la section maternelle de l'école n°1 à 122.000,00 € TVA comprise, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 8
+          },
+          "montant_eur": 122000,
+          "thematiques": [
+            "travaux_publics",
+            "education",
+            "sanitaires",
+            "finances_publiques"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 60,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Écoles",
+          "titre": "École 6 sise rue de l'Agriculture 46 - Rénovation des toitures terrasses des cours de récréation - Majoration de dépense - Approbation",
+          "resume": "Approbation du nouveau montant du budget pour les travaux de rénovation des toitures terrasses de l'école 6 à 540.000 €, financée par les fonds propres.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 8
+          },
+          "montant_eur": 540000,
+          "thematiques": [
+            "travaux_publics",
+            "education",
+            "toitures",
+            "finances_publiques"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 61,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Écoles",
+          "titre": "École 14 sise rue Capronnier 1 - Projet de sécurisation - Majoration de dépense - Approbation",
+          "resume": "Approbation de la majoration de la dépense pour la réalisation d'un projet de sécurisation de l'école 14 à 8.446,31 € TVA comprise, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 8
+          },
+          "montant_eur": 8446.31,
+          "thematiques": [
+            "travaux_publics",
+            "education",
+            "securite",
+            "finances_publiques"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 62,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Bâtiments publics",
+          "titre": "Lycée Emile Max - Rénovation des anciennes écuries - Majoration de dépense - Approbation",
+          "resume": "Approbation de la majoration du coût des travaux visant à la rénovation des anciennes écuries du lycée Emile Max à 145.000,00 € TVA comprise, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 8
+          },
+          "montant_eur": 145000,
+          "thematiques": [
+            "travaux_publics",
+            "education",
+            "renovation",
+            "finances_publiques"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 64,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Contrats commerciaux",
+          "titre": "Seniorie Brems - Contrat commercial avec l'Agence Bruxelles-Propreté - Organisation du système de recyclage - Approbation",
+          "resume": "Approbation du contrat commercial avec l'Agence Bruxelles-Propreté pour l'organisation du système de recyclage à la Seniorie Brems.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "environnement",
+            "recyclage",
+            "contrats_publics"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion d'espaces",
+          "sous_rubrique": "Concession",
+          "titre": "Gestion de \"La Pergola\" sis dans le parc Josaphat - Concession - Approbation",
+          "resume": "Approbation des clauses et conditions du projet de cahier des charges pour la concession de l'exploitation de la Pergola dans le parc Josaphat à 1030 Bruxelles pour un terme de neuf ans.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gestion_espaces_publics",
+            "concession"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 66,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion d'espaces",
+          "sous_rubrique": "Horeca",
+          "titre": "Gestion d'un espace horeca dans la partie Nord du parc Josaphat (ancienne buvette Monplaisir) - Approbation",
+          "resume": "Approbation des clauses et conditions du projet de cahier des charges pour la concession de l'exploitation d'un espace horeca dans la partie Nord du Parc Josaphat à 1030 Bruxelles pour un terme de neuf ans.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gestion_espaces_publics",
+            "horeca",
+            "concession"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 67,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Egalité Hommes/Femmes",
+          "sous_rubrique": "Concession",
+          "titre": "Egalité Hommes/Femmes - Gestion de l'estaminet dans la \"Maison des Femmes\" sis 247 rue Josaphat - Approbation",
+          "resume": "Approbation des clauses et conditions du projet de cahier des charges pour la concession de l'exploitation de l'estaminet situé dans la Maison des Femmes – 247, rue Josaphat à 1030 Bruxelles pour un terme de neuf ans.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "egalite_hommes_femmes",
+            "horeca",
+            "concession"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 67,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Patrimoine et domaines",
+          "sous_rubrique": "Aliénation de terrains",
+          "titre": "Aliénation des terrains excédentaires du cimetière communal situés sur le territoire de Zaventem (Sint-Stevens-Woluwe) à la S.A. Vlaamse Landmaatschappij - Approbation",
+          "resume": "Approbation de la vente de gré à gré d'une partie de 2ha 81a 92ca de la parcelle cadastrée section B nr 219N au prix de 7€/m² à la S.A. VLAAMSE LANDMAATSCHAPPIJ, avec dispense d'inscription d'office.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 7,
+          "thematiques": [
+            "patrimoine",
+            "aliénation_terrains",
+            "cimetiere"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 69,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Jeunesse et Sports",
+          "sous_rubrique": "Conventions",
+          "titre": "ASBL \"Atout Projet\", ASBL \"Sport Schaerbeekois\" et commune de Schaerbeek - Convention - Approbation",
+          "resume": "Approbation de la convention tripartite entre l'ASBL Atout Projet, l'ASBL Sport Schaerbeekois et la commune de Schaerbeek.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 38,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "jeunesse",
+            "sports",
+            "convention"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 70,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Intégration et Prévention",
+          "sous_rubrique": "Fonds d'Impulsion",
+          "titre": "Fonds d'Impulsion à la Politique des Immigrés - Exercice 2009 - Approbation",
+          "resume": "Approbation des conventions du Fonds n° 2009/FR/0820 et de partenariat pour l'exercice 2009, ainsi que la proposition de répartition budgétaire pour les actions envisagées. Subvention de 50.874,00 € versée par la Loterie Nationale avec financement complémentaire de 63.966,00 € de la Commission Communautaire Française.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 114840,
+          "thematiques": [
+            "integration",
+            "immigration",
+            "subventions"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 47,
+          "page": 76,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Le parking payant par sms, en contradiction avec la loi?",
+          "resume": "",
+          "intervenants": [
+            "Vriamont",
+            "Bourgmestre ff"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "parking",
+            "sms"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 48,
+          "page": 76,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Rapport annuel établissant la répartition des personnes occupant un emploi public communal à Schaerbeek",
+          "resume": "",
+          "intervenants": [
+            "Vriamont",
+            "Noël"
+          ],
+          "repondant": "Noël",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "emploi_public",
+            "ressources_humaines"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 49,
+          "page": 76,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Les cartes riverains",
+          "resume": "",
+          "intervenants": [
+            "Courtheoux",
+            "Bourgmestre ff"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "cartes_riverains",
+            "stationnement"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 50,
+          "page": 76,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Les difficultés que connaissent le service Etat civil et Population au sein de notre commune",
+          "resume": "",
+          "intervenants": [
+            "Özkara",
+            "Guillaume"
+          ],
+          "repondant": "Guillaume",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "etat_civil",
+            "population",
+            "services_administratifs"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 51,
+          "page": 77,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "L'impact de la Campagne de régularisation des sans-papiers",
+          "resume": "",
+          "intervenants": [
+            "de Beauffort",
+            "Guillaume",
+            "Essaidi"
+          ],
+          "repondant": "Guillaume, Essaidi",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "sans_papiers",
+            "regularisation"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 52,
+          "page": 77,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "L'état des lieux des travaux au parc Josaphat",
+          "resume": "",
+          "intervenants": [
+            "de Beauffort",
+            "De Herde"
+          ],
+          "repondant": "De Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "parc_josaphat",
+            "travaux",
+            "espaces_verts"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 53,
+          "page": 77,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Les mesures prises ou à prendre en cas de pics de pollution",
+          "resume": "",
+          "intervenants": [
+            "Kaddour",
+            "Bourgmestre ff"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "pollution",
+            "environnement"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 54,
+          "page": 77,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Les nuisances aéronautiques de Brussels Airport",
+          "resume": "",
+          "intervenants": [
+            "de Beauffort",
+            "Guillaume"
+          ],
+          "repondant": "Guillaume",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "nuisances_aeroportuaires",
+            "brussels_airport"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 46.2,
+          "page": 70,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Services du Secrétaire Communal",
+          "sous_rubrique": "Assemblées",
+          "titre": "IBDE - Assemblée générale et Conseil d'administration - Délégation de la commune - Remplacement de Monsieur Mohamed EL KHATTABI",
+          "resume": "Désignation de Monsieur Vincent VANHALEWYN en remplacement de Monsieur Mohamed EL KHATTABI comme candidat de la commune au sein de l'assemblée générale et du conseil d'Administration de l'IBDE.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "assemblees",
+            "delegations"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 46.3,
+          "page": 71,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Voirie",
+          "titre": "Réaménagement des trottoirs de l'avenue Dailly - Mode de passation et fixation des conditions du marché - Modification",
+          "resume": "Approbation de la version corrigée des divers documents d'adjudication relatifs aux travaux de rénovation des trottoirs de l'avenue Dailly, comprenant le cahier spécial des charges, les plans, les métrés descriptif, récapitulatif et estimatif et le plan général de sécurité et de santé (PGSS).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "voirie",
+            "trottoirs",
+            "travaux",
+            "subventions"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 50.2,
+          "page": 76,
+          "urgence": false,
+          "type": "motion",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Le soutien à apporter aux sinistrés d'Haïti",
+          "resume": "",
+          "intervenants": [
+            "Courtheoux",
+            "Bourgmestre ff"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "haiti",
+            "aide_humanitaire"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 54.2,
+          "page": 77,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Le courrier de la poste envoyé aux habitants concernant la nouvelle réglementation des boîtes aux lettres",
+          "resume": "",
+          "intervenants": [
+            "Kaddour",
+            "Bourgmestre ff"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "boites_aux_lettres",
+            "poste"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 54.3,
+          "page": 77,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "L'adhésion à ONSSAPL à partir de 2010, pour les pensions du personnel statutaire",
+          "resume": "",
+          "intervenants": [
+            "Vriamont",
+            "De Herde"
+          ],
+          "repondant": "De Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "pensions",
+            "personnel_statutaire",
+            "onssapl"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        },
+        {
+          "sp": 54.4,
+          "page": 78,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "La pénurie de sel d'épandage",
+          "resume": "",
+          "intervenants": [
+            "Özkara",
+            "De Herde"
+          ],
+          "repondant": "De Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "sel_epandage",
+            "hivernage"
+          ],
+          "source_file": "Pv_2010.02.03.pdf"
+        }
+      ]
+    },
     {
       "seance": {
         "id": "PV-2010-06-23",
