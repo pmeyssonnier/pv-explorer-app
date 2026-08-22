@@ -51,6 +51,7 @@ _DISPLAY_NAME_OVERRIDES = {
     "malingreau": "Alain Malingreau",
     "smeysters": "Christine Smeysters",
     "sobieski": "Christine Sobieski",
+    "essaidi": "Tamimount Essaidi",
 }
 
 # Organismes captés à tort comme « auteur » sur des points de convention/
