@@ -24,6 +24,10 @@ import {
   loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
   jumpToSeance, setPendingSeanceDate,
 } from './seances.js';
+import {
+  checkAdminSession, openAdminLogin, closeAdminLogin, initAdminLoginOverlay,
+  submitAdminLogin, adminLogout,
+} from './admin.js';
 
 // ── ONGLETS ──
 function switchTab(tab) {
@@ -70,6 +74,7 @@ registerActions({
   shareStats, trendSuggestion, loadTrend,
   shareElu,
   shareSeance, jumpToSeance,
+  openAdminLogin, closeAdminLogin, adminLogout,
 });
 
 // ── Écouteurs directs pour les éléments statiques qui portaient un
@@ -88,6 +93,7 @@ function initStaticListeners() {
   bind('eluYear', 'change', onEluYearChange);
   bind('seanceYear', 'change', renderSeanceYearList);
   bind('seanceList', 'change', e => onSeanceListChange(e.target));
+  bind('adminLoginForm', 'submit', submitAdminLogin);
   bind('setMaxSources', 'input', e => updateSetting('maxSources', +e.target.value));
   bind('setTopK', 'input', e => updateSetting('topK', +e.target.value));
   bind('setScoreMin', 'input', e => updateSetting('scoreMin', +e.target.value));
@@ -101,5 +107,7 @@ applyTheme();   // le <head> a déjà posé le thème ; on confirme après charg
 syncModeUI();
 initSettingsDrag();
 initSettingsOverlay();
+initAdminLoginOverlay();
 initStaticListeners();
 handleDeepLink();
+checkAdminSession();
