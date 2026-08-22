@@ -1877,10 +1877,9 @@
           "rubrique": "Points inscrits à la demande d'habitants",
           "sous_rubrique": "",
           "titre": "Les problèmes liés à la rue Vandeweyer",
-          "resume": "Exposition des problèmes liés à la rue Vandeweyer par M. Nihoul. Réponse de la Bourgmestre ff. Interventions de M. Courtheoux, Mmes Nyssens, Durant et M. Clerfayt.",
+          "resume": "Exposition des problèmes liés à la rue Vandeweyer",
           "intervenants": [
             "Nihoul",
-            "Bourgmestre ff",
             "Courtheoux",
             "Nyssens",
             "Durant",
@@ -1895,7 +1894,9 @@
             "abstentions": 0
           },
           "montant_eur": null,
-          "thematiques": [],
+          "thematiques": [
+            "voirie"
+          ],
           "source_file": "Pv_2010.03.03.pdf"
         },
         {
