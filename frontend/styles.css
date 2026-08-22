@@ -429,6 +429,13 @@ body {
 /* ── INTERVENTIONS PAR ÉLU·E ─────────────────────────────────────────────── */
 .elus-panel { margin-bottom: 30px; padding-bottom: 24px; border-bottom: 2px solid var(--papier-dark); }
 .elus-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+/* `[hidden]` seul (règle par défaut du navigateur) a la même spécificité
+   qu'une classe : sur un élément portant .elus-bar, "display: flex" de la
+   règle ci-dessus l'emporte dans la cascade (déclarée après, même poids), et
+   l'attribut hidden n'a alors plus aucun effet visuel malgré son état DOM
+   correct — cas vécu avec #seanceFilterBar (JS bascule bien hidden, rien ne
+   se voit). Sélecteur d'ID + attribut : spécificité supérieure garantie. */
+.elus-bar[hidden] { display: none; }
 .elu-select {
   background: var(--blanc); border: 1px solid var(--ligne); border-radius: 4px;
   padding: 10px 12px; font-family: var(--corps); font-size: 15px; color: var(--encre);
