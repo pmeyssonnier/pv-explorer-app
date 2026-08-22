@@ -22,7 +22,7 @@ import {
 } from './elus.js';
 import {
   loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
-  setPendingSeanceDate,
+  jumpToSeance, setPendingSeanceDate,
 } from './seances.js';
 
 // ── ONGLETS ──
@@ -69,7 +69,7 @@ registerActions({
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend,
   shareElu,
-  shareSeance,
+  shareSeance, jumpToSeance,
 });
 
 // ── Écouteurs directs pour les éléments statiques qui portaient un
