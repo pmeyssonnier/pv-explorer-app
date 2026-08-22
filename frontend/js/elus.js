@@ -10,8 +10,7 @@ let elusLoaded = false;
 let pendingEluKey = null;   // élu·e à présélectionner depuis un lien partagé (?elu=)
 let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltrer sans refetch)
 let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
-let eluSelectedKey = null;  // clé actuellement chargée (l'input texte ne porte que le libellé)
-let eluLabelToKey = {};     // libellé affiché ("Nom (N)") → clé, pour résoudre la saisie/le choix
+let eluSelectedKey = null;  // clé actuellement chargée
 
 // Présélection appliquée depuis un lien partagé (?tab=elus&elu=…), voir handleDeepLink.
 export function setPendingEluKey(key) { pendingEluKey = key; }
@@ -32,30 +31,18 @@ export async function loadElus() {
   }
 }
 
-function eluLabel(e) {
-  const n = e.role === 'college' ? e.repond + e.depose : e.depose;
-  return `${e.nom} (${n})`;
-}
-
-// (Re)remplit la liste de suggestions (datalist) selon le filtre de rôle
-// courant ; un champ texte permet de filtrer par nom au lieu de parcourir
-// toute la liste (~90 noms), au lieu du <select> précédent.
+// (Re)remplit le menu déroulant selon le filtre de rôle courant.
 export function populateElus() {
-  const input = document.getElementById('eluSelect');
-  const datalist = document.getElementById('eluDatalist');
+  const select = document.getElementById('eluSelect');
   const role = (document.getElementById('eluRole') || {}).value || 'all';
-  if (!input || !datalist || !elusData) return;
+  if (!select || !elusData) return;
   const prevKey = eluSelectedKey;
   // Tri par nom de famille (la clé backend gère déjà les particules, ex.
   // « de Fierlant » → clé « fierlant »), pas par nombre d'interventions.
   const list = elusData.filter(e => role === 'all' || e.role === role)
     .slice()
     .sort((a, b) => a.key.localeCompare(b.key, 'fr'));
-  eluLabelToKey = {};
-  datalist.innerHTML = list.map(e => {
-    eluLabelToKey[eluLabel(e)] = e.key;
-    return `<option value="${escapeHtml(eluLabel(e))}"></option>`;
-  }).join('');
+  select.innerHTML = list.map(e => `<option value="${escapeHtml(e.key)}">${escapeHtml(e.nom)}</option>`).join('');
   // Présélection : lien partagé (?elu=) prioritaire, sinon on conserve la
   // sélection courante si elle reste visible, sinon la 1re entrée.
   let nextKey = null;
@@ -70,30 +57,24 @@ export function populateElus() {
   selectElu(nextKey, list);
 }
 
-// Applique une sélection par clé : renseigne l'input avec son libellé et
-// charge la fiche. `list` (optionnel) évite de re-chercher dans elusData
-// quand l'appelant l'a déjà filtrée/triée.
+// Applique une sélection par clé et charge la fiche. `list` (optionnel)
+// évite de re-chercher dans elusData quand l'appelant l'a déjà filtrée/triée.
 function selectElu(key, list) {
   eluSelectedKey = key;
-  const input = document.getElementById('eluSelect');
+  const select = document.getElementById('eluSelect');
   const entry = key ? (list || elusData || []).find(e => e.key === key) : null;
   if (entry) {
-    input.value = eluLabel(entry);
+    if (select) select.value = key;
     loadElu(key);
   } else {
-    input.value = '';
+    if (select) select.value = '';
     document.getElementById('eluResult').innerHTML = '';
     document.getElementById('eluYear').hidden = true;
   }
 }
 
-// Déclenché à chaque frappe (y compris un choix dans la liste de
-// suggestions, qui déclenche aussi "input") : ne charge que si le texte
-// courant correspond exactement à un libellé connu.
-export function onEluInput() {
-  const input = document.getElementById('eluSelect');
-  const key = eluLabelToKey[input.value];
-  if (key && key !== eluSelectedKey) selectElu(key);
+export function onEluSelectChange(sel) {
+  if (sel.value) selectElu(sel.value);
 }
 
 // Partage : lien profond vers l'onglet Par élu·e, sur la fiche sélectionnée.
