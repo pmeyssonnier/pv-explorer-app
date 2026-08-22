@@ -66,7 +66,7 @@ export function renderSeanceYearList() {
   const list = seancesData.filter(s => s.date.startsWith(yearSel.value));
   sel.innerHTML = list.map(s => {
     const video = s.video_url ? ' ▶' : '';
-    return `<option value="${escapeHtml(s.date)}">${escapeHtml(formatDate(s.date))} — ${s.n_points} point${s.n_points > 1 ? 's' : ''}${video}</option>`;
+    return `<option value="${escapeHtml(s.date)}">${escapeHtml(formatDate(s.date))}${video}</option>`;
   }).join('');
   const preselect = (currentSeanceDetail && list.some(s => s.date === currentSeanceDetail.date))
     ? currentSeanceDetail.date
