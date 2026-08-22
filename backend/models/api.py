@@ -79,3 +79,10 @@ class Source(BaseModel):
 class AnswerResponse(BaseModel):
     answer: str = Field(description="Réponse générée par Claude, citée à partir des sources.")
     sources: list[Source] = Field(description="Sources ayant servi à générer la réponse.")
+
+
+class AdminLoginRequest(BaseModel):
+    # Bornes larges (pas de contrainte métier sur la forme des identifiants) —
+    # juste un garde-fou anti-abus avant même d'atteindre verify_admin_credentials.
+    username: str = Field(min_length=1, max_length=100, description="Identifiant administrateur.")
+    password: str = Field(min_length=1, max_length=200, description="Mot de passe administrateur.")

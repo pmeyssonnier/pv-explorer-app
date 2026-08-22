@@ -20,6 +20,7 @@ limiter et le CORS, puis monte les routers. Toute la logique vit ailleurs :
 
 VARIABLES D'ENVIRONNEMENT (fichier .env ou dashboard) :
     ANTHROPIC_API_KEY, PINECONE_API_KEY, PV_JSON_PATH, ALLOWED_ORIGINS
+    ADMIN_USERNAME, ADMIN_PASSWORD_HASH, ADMIN_JWT_SECRET   (voir services/auth.py)
 
 LANCER EN LOCAL :   uvicorn app:app --reload --port 8000
 DÉPLOIEMENT :       uvicorn app:app --host 0.0.0.0 --port $PORT
@@ -32,7 +33,7 @@ from slowapi.errors import RateLimitExceeded
 
 from config import ALLOWED_ORIGINS
 from limiter import limiter
-from routers import health, ask, stats
+from routers import health, ask, stats, admin
 
 # ── APP ──────────────────────────────────────────────────────────────────────
 app = FastAPI(title="PV Schaerbeek Q&R", version="0.1")
@@ -43,9 +44,13 @@ app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS : n'autorise que les origines déclarées (jamais "*" en production).
+# allow_credentials : requis pour que le cookie de session admin (/admin/*)
+# franchisse la frontière cross-site frontend↔backend — sûr uniquement parce
+# qu'ALLOWED_ORIGINS est une liste explicite (jamais "*" avec credentials).
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
@@ -54,3 +59,4 @@ app.add_middleware(
 app.include_router(health.router)
 app.include_router(ask.router)
 app.include_router(stats.router)
+app.include_router(admin.router)

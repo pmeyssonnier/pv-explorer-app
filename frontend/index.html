@@ -40,6 +40,7 @@
   <symbol id="ico-mic" class="ux" viewBox="0 0 24 24"><path d="M12 3.5a2.6 2.6 0 0 0-2.6 2.6v5a2.6 2.6 0 0 0 5.2 0v-5A2.6 2.6 0 0 0 12 3.5z"/><path d="M17.5 11v.6a5.5 5.5 0 0 1-11 0V11"/><line x1="12" y1="17.5" x2="12" y2="20.5"/><line x1="8.8" y1="20.5" x2="15.2" y2="20.5"/></symbol>
   <symbol id="ico-video" class="ux" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M10 9.6l4.8 2.4L10 14.4z"/></symbol>
   <symbol id="ico-share" class="ux" viewBox="0 0 24 24"><circle cx="18" cy="6" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="18" r="2.6"/><line x1="8.3" y1="10.7" x2="15.7" y2="7.3"/><line x1="8.3" y1="13.3" x2="15.7" y2="16.7"/></symbol>
+  <symbol id="ico-lock" class="ux" viewBox="0 0 24 24"><rect x="5.5" y="11" width="13" height="9.5" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></symbol>
 </svg>
 
 <header class="header">
@@ -49,6 +50,9 @@
     </button>
     <button class="icon-btn" type="button" data-click="openSettings" aria-label="Options" title="Options">
       <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+    </button>
+    <button class="icon-btn" type="button" id="adminLoginBtn" data-click="openAdminLogin" aria-label="Connexion administrateur" title="Connexion administrateur">
+      <svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg>
     </button>
   </div>
   <div class="header-inner">
@@ -72,6 +76,7 @@
   <button class="tab" data-click="switchTab" data-arg="stats" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
   <button class="tab" data-click="switchTab" data-arg="elus" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
   <button class="tab" data-click="switchTab" data-arg="seances" id="tab-seances"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg><span>Séances</span></button>
+  <button class="tab" data-click="switchTab" data-arg="admin" id="tab-admin" hidden><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg><span>Admin</span></button>
 </nav>
 
 <main class="main">
@@ -168,6 +173,14 @@
         <select id="seanceList" class="elu-select elu-select-date" aria-label="Choisir une séance"></select>
       </div>
       <div id="seanceResult"></div>
+    </div>
+  </section>
+
+  <!-- ── ONGLET ADMIN (visible seulement connecté·e — voir admin.js) ── -->
+  <section class="panel" id="panel-admin">
+    <div class="elus-panel">
+      <h3><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg>Administration</h3>
+      <div id="adminPanelBody"></div>
     </div>
   </section>
 
@@ -273,6 +286,24 @@
         <button class="settings-reset" type="button" data-click="resetSettings">Réinitialiser</button>
       </section>
     </div>
+  </div>
+</div>
+
+<!-- ── CONNEXION ADMINISTRATEUR ── -->
+<div class="settings-overlay" id="adminLoginOverlay">
+  <div class="settings-panel admin-login-panel" role="dialog" aria-modal="true" aria-label="Connexion administrateur">
+    <div class="settings-head">
+      <h2>Connexion administrateur</h2>
+      <button class="settings-close" type="button" data-click="closeAdminLogin" aria-label="Fermer">✕</button>
+    </div>
+    <form id="adminLoginForm" class="admin-login-form">
+      <label for="adminLoginUsername">Identifiant</label>
+      <input type="text" id="adminLoginUsername" autocomplete="username" required>
+      <label for="adminLoginPassword">Mot de passe</label>
+      <input type="password" id="adminLoginPassword" autocomplete="current-password" required>
+      <p class="admin-login-error" id="adminLoginError" role="alert"></p>
+      <button type="submit" class="ask-btn admin-login-submit" id="adminLoginSubmit">Se connecter</button>
+    </form>
   </div>
 </div>
 

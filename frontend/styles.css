@@ -153,6 +153,21 @@ body {
 .settings-about { display: flex; justify-content: space-between; align-items: center; font-size: 14.5px; color: var(--encre-soft); border-bottom: none; }
 .settings-reset { border: 1px solid var(--ligne); background: none; color: var(--bordeaux); border-radius: 18px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
 .settings-reset:hover { background: var(--brand); color: #f7f3ec; border-color: var(--brand); }
+
+/* ── CONNEXION ADMINISTRATEUR ── (réutilise .settings-overlay/.settings-panel
+   pour le même comportement — voir openSettings/closeSettings — un panneau
+   nettement plus étroit, un simple formulaire) */
+.admin-login-panel { max-width: 360px; }
+.admin-login-form { padding: 20px 26px 26px; display: flex; flex-direction: column; }
+.admin-login-form label { font-size: 13px; font-weight: 600; color: var(--encre-soft); margin: 14px 0 6px; }
+.admin-login-form label:first-child { margin-top: 0; }
+.admin-login-form input {
+  padding: 10px 12px; border: 1px solid var(--ligne); border-radius: 8px;
+  background: var(--blanc); color: var(--encre); font: inherit; font-size: 15px;
+}
+.admin-login-form input:focus { outline: none; border-color: var(--or); }
+.admin-login-error { color: var(--bordeaux); font-size: 13px; min-height: 16px; margin: 10px 0 0; }
+.admin-login-submit { margin-top: 12px; }
 /* Mobile : on garde le panneau confortable sur tablette/PC mais on COMPACTE
    tout (marges, titres, contrôles, texte) pour que ça tienne sans déborder. */
 @media (max-width: 560px) {
@@ -247,6 +262,11 @@ body {
 @media (max-width: 480px) { .tab { padding: 12px 4px; font-size: 12px; gap: 4px; } }
 .tab:hover { color: var(--bordeaux); }
 .tab.active { color: var(--bordeaux); border-bottom-color: var(--or); }
+/* .tab a aussi "display: inline-flex" plus bas (même spécificité qu'une
+   classe) : sans cette règle, [hidden] (ex. onglet Admin caché tant qu'on
+   n'est pas connecté) serait silencieusement ignoré — même bug que
+   .elus-bar[hidden], voir plus haut. */
+.tab[hidden] { display: none; }
 
 /* ── CONTENU ─────────────────────────────────────────────────── */
 .main {
