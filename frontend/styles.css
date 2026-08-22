@@ -21,6 +21,11 @@
   --ligne: #d9cfbf;
   --blanc: #fffdf9;
   --vert: #4a7c59;
+  /* Traits du logo header (petites lignes de la « page ») : égal à --ligne en
+     clair (contraste déjà suffisant), mais redéfini en sombre ci-dessous —
+     --ligne y est trop proche de --papier-dark pour rester lisible à cette
+     échelle (icône ~34px), ce qui rendait le logo flou en thème sombre. */
+  --logo-line: var(--ligne);
   --display: 'Fraunces', Georgia, serif;
   --corps: 'Inter', system-ui, sans-serif;
   /* ── Mise à l'échelle responsive (mobile · tablette · PC) ──
@@ -50,6 +55,7 @@
     --ligne: #3a3128;
     --blanc: #201a15;
     --vert: #7fb08d;
+    --logo-line: var(--encre-soft);
   }
 }
 :root[data-theme="dark"] {
@@ -64,6 +70,7 @@
   --ligne: #3a3128;
   --blanc: #201a15;
   --vert: #7fb08d;
+  --logo-line: var(--encre-soft);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
