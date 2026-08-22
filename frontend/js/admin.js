@@ -68,10 +68,24 @@ function renderUploadForm() {
       <input type="file" id="adminPdfFile" accept="application/pdf" required>
       <label for="adminSourceUrl">URL du PV sur 1030.be (optionnel)</label>
       <input type="url" id="adminSourceUrl" placeholder="https://www.1030.be/...">
+      ${renderProgressBox()}
       <p class="admin-login-error" id="adminUploadError" role="alert"></p>
       <button type="submit" class="ask-btn admin-login-submit" id="adminUploadSubmit">Extraire</button>
     </form>
   </section>`;
+}
+
+// Barre de progression partagée entre extraction et publication (jamais les
+// deux en même temps — vues mutuellement exclusives) : masquée par défaut via
+// style.display (pas l'attribut hidden — voir le bug .elus-bar/.tab plus
+// haut dans l'historique du projet, une classe avec `display` définu ailleurs
+// peut le rendre inopérant ; ici on manipule le style directement, aucune
+// ambiguïté possible).
+function renderProgressBox() {
+  return `<div class="admin-progress" id="adminProgressBox" style="display:none">
+    <div class="admin-progress-track"><div class="admin-progress-fill" id="adminProgressFill"></div></div>
+    <p class="yc-note" id="adminProgressLabel"></p>
+  </div>`;
 }
 
 function renderPreview() {
@@ -91,6 +105,7 @@ function renderPreview() {
     <p class="yc-note">${escapeHtml(mergeNote)}</p>
     ${completeness}
     <ul class="admin-preview-titles">${titles}${more}</ul>
+    ${renderProgressBox()}
     <p class="admin-login-error" id="adminPublishError" role="alert"></p>
     <div class="admin-preview-actions">
       <button type="button" class="drill-reset" data-click="cancelAdminExtract">Annuler</button>
@@ -205,7 +220,10 @@ export async function submitAdminExtract(ev) {
 // Sonde `${API_URL}${path}` toutes les 3s jusqu'à statut "done" (retourné
 // tel quel) ou une erreur (HTTPException du backend → message réel, pas
 // générique). Plafonné à 10 min pour ne jamais boucler indéfiniment si
-// quelque chose reste bloqué côté serveur.
+// quelque chose reste bloqué côté serveur. Affiche l'avancement RÉEL renvoyé
+// par le backend (pages/chunks/points pour l'extraction, étape commit/
+// indexation pour la publication — voir services/pv_integration.py) plutôt
+// que de simuler une progression avec le temps écoulé.
 async function _pollJob(path, btn, label) {
   const started = Date.now();
   const MAX_MS = 10 * 60 * 1000;
@@ -217,11 +235,45 @@ async function _pollJob(path, btn, label) {
     if (data.status === 'pending') {
       const elapsed = Math.round((Date.now() - started) / 1000);
       if (btn) btn.textContent = `${label} en cours (${elapsed}s)…`;
+      updateProgressBox(data.progress);
       continue;
     }
+    updateProgressBox(null);   // masque la barre : le job est terminé (done/error géré par l'appelant)
     return data;
   }
   throw new Error(`${label} : délai dépassé (10 min) — réessayez plus tard.`);
+}
+
+// `progress` vient tel quel de process_pdf/publish_seance (voir
+// pipeline/pv_extraction_pipeline.py et services/pv_integration.py) — pas de
+// donnée simulée. Les étapes "commit"/"indexing" (publication) n'ont pas de
+// granularité fine (une seule opération atomique pour le commit, peu de
+// points à indexer pour une séance) : pourcentage approximatif par étape,
+// juste pour donner un signal visuel de progression, pas une mesure exacte.
+function updateProgressBox(progress) {
+  const box = document.getElementById('adminProgressBox');
+  const fill = document.getElementById('adminProgressFill');
+  const label = document.getElementById('adminProgressLabel');
+  if (!box) return;
+  if (!progress) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  let pct = 0;
+  let text = '';
+  if (progress.stage === 'extraction' && progress.total_chunks) {
+    pct = Math.round((progress.chunk / progress.total_chunks) * 100);
+    text = `Bloc de pages ${progress.chunk}/${progress.total_chunks} — ${progress.points_so_far} point(s) trouvé(s) jusqu'ici (${progress.pages} pages au total)`;
+  } else if (progress.stage === 'verification') {
+    pct = 100;
+    text = `Vérification de la complétude — ${progress.points_so_far} point(s)`;
+  } else if (progress.stage === 'commit') {
+    pct = 50;
+    text = `Fusion et commit sur GitHub — ${progress.n_points} point(s)…`;
+  } else if (progress.stage === 'indexing') {
+    pct = 90;
+    text = `Indexation dans Pinecone — ${progress.n_points} point(s)…`;
+  }
+  if (fill) fill.style.width = `${pct}%`;
+  if (label) label.textContent = text;
 }
 
 export function cancelAdminExtract() {

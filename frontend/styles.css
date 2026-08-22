@@ -180,6 +180,13 @@ body {
 .admin-preview-titles { list-style: disc; margin: 8px 0 8px 20px; font-size: 13.5px; color: var(--encre-soft); }
 .admin-preview-titles li { margin-bottom: 3px; }
 .admin-preview-actions { display: flex; gap: 10px; margin-top: 14px; }
+/* Avancement réel (extraction/publication, voir admin.js updateProgressBox) —
+   masqué par défaut via l'attribut style="display:none" posé au rendu, jamais
+   [hidden] (voir le commentaire dans admin.js). */
+.admin-progress { margin: 14px 0; }
+.admin-progress-track { height: 8px; border-radius: 4px; background: var(--papier-dark); overflow: hidden; }
+.admin-progress-fill { height: 100%; width: 0%; background: var(--brand); transition: width 0.4s ease; }
+.admin-progress .yc-note { margin-top: 6px; font-size: 13px; }
 /* Mobile : on garde le panneau confortable sur tablette/PC mais on COMPACTE
    tout (marges, titres, contrôles, texte) pour que ça tienne sans déborder. */
 @media (max-width: 560px) {

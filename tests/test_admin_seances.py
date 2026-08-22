@@ -110,6 +110,37 @@ def test_extract_job_completes_and_reports_done(monkeypatch):
     assert body["preview"]["is_new"] is True
 
 
+def test_extract_status_includes_progress_while_pending(monkeypatch):
+    _login(monkeypatch)
+    import threading
+    release = threading.Event()
+
+    def slow_with_progress(raw, filename, progress_cb=None):
+        progress_cb({"stage": "extraction", "pages": 12, "chunk": 2, "total_chunks": 5, "points_so_far": 7})
+        release.wait(timeout=2.0)
+        return {"seance": {"date": "2026-06-24"}, "preview": {"date": "2026-06-24", "n_points": 1,
+                                                                "is_new": True, "existing_points": 0}}
+
+    monkeypatch.setattr(admin_router.pv_integration, "extract_and_preview", slow_with_progress)
+    r = client.post("/admin/seances/extract", files={"file": ("pv.pdf", b"%PDF-1.4 ...", "application/pdf")})
+    job_id = r.json()["job_id"]
+
+    deadline = time.time() + 2.0
+    status = client.get(f"/admin/seances/extract/{job_id}")
+    while time.time() < deadline and status.json().get("progress") is None:
+        time.sleep(0.02)
+        status = client.get(f"/admin/seances/extract/{job_id}")
+
+    assert status.status_code == 200
+    assert status.json() == {
+        "status": "pending",
+        "progress": {"stage": "extraction", "pages": 12, "chunk": 2, "total_chunks": 5, "points_so_far": 7},
+    }
+
+    release.set()
+    _wait_until_settled(f"/admin/seances/extract/{job_id}")   # laisse le thread se terminer proprement
+
+
 def test_extract_job_maps_value_error_to_422(monkeypatch):
     _login(monkeypatch)
 

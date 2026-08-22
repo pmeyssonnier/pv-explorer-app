@@ -72,6 +72,9 @@ def test_total_engage_reste_plausible(db):
 
 def test_annees_couvertes_coherentes(db):
     annees = {int((s["seance"]["date"] or "0")[:4]) for s in db["seances"]}
-    # Le corpus commence en 2012 ; on vérifie juste la borne basse et l'ordre.
-    assert min(annees) == 2012
+    # Le corpus démarrait à 2012, mais s'enrichit désormais aussi d'anciens PV
+    # backfillés via le panneau admin (ex. 2010) — borne large plutôt qu'une
+    # année exacte, pour ne pas casser à chaque backfill légitime tout en
+    # attrapant une vraie date corrompue (année 0, 9999, etc.).
+    assert 1990 <= min(annees) <= 2012
     assert max(annees) >= 2022

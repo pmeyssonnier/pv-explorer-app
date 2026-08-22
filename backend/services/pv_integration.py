@@ -22,7 +22,7 @@ import json
 import sys
 import tempfile
 from pathlib import Path
-from typing import Optional
+from typing import Callable, Optional
 
 # pipeline/ est un répertoire FRÈRE de backend/ (pas un sous-package importable
 # tel quel) — même mécanique que tests/conftest.py pour le rendre importable,
@@ -49,16 +49,21 @@ COMMUNE = "schaerbeek"
 pipeline.CONFIG["CACHE_DIR"] = str(Path(tempfile.gettempdir()) / "pv_pipeline_cache")
 
 
-def extract_from_upload(pdf_bytes: bytes, filename: str) -> dict:
+def extract_from_upload(
+    pdf_bytes: bytes, filename: str, progress_cb: Optional[Callable[[dict], None]] = None,
+) -> dict:
     """Écrit le PDF dans un fichier temporaire, lance l'extraction complète
     (pipeline.process_pdf), retourne la structure de séance brute — telle
     quelle, y compris seance["extraction_check"] (le rapport de complétude).
-    Lève ValueError si l'extraction échoue (PDF scanné/image, aucun texte)."""
+    Lève ValueError si l'extraction échoue (PDF scanné/image, aucun texte).
+    `progress_cb` est transmis tel quel au pipeline (voir process_pdf) —
+    appelé après chaque chunk envoyé à Claude, avec l'avancement réel
+    (pages, chunk courant/total, points trouvés jusqu'ici)."""
     safe_name = Path(filename).name or "upload.pdf"
     with tempfile.TemporaryDirectory(prefix="pv_upload_") as tmp_dir:
         pdf_path = Path(tmp_dir) / safe_name
         pdf_path.write_bytes(pdf_bytes)
-        seance_struct = pipeline.process_pdf(pdf_path)
+        seance_struct = pipeline.process_pdf(pdf_path, progress_cb=progress_cb)
     if seance_struct is None:
         raise ValueError(
             "Aucun texte exploitable extrait du PDF (scanné/image ?) ou aucun point trouvé."
@@ -66,12 +71,14 @@ def extract_from_upload(pdf_bytes: bytes, filename: str) -> dict:
     return seance_struct
 
 
-def extract_and_preview(pdf_bytes: bytes, filename: str) -> dict:
+def extract_and_preview(pdf_bytes: bytes, filename: str, progress_cb=None) -> dict:
     """Combine extraction + aperçu de fusion — c'est cette fonction qui tourne
     en tâche de fond (voir routers/admin.py + services/jobs.py), pas
     extract_from_upload seule, pour que la route /extract renvoie un job_id
-    immédiatement plutôt que de bloquer sur toute la durée de l'extraction."""
-    seance = extract_from_upload(pdf_bytes, filename)
+    immédiatement plutôt que de bloquer sur toute la durée de l'extraction.
+    `progress_cb` : voir jobs.start_job — injecté automatiquement, jamais
+    fourni explicitement par l'appelant."""
+    seance = extract_from_upload(pdf_bytes, filename, progress_cb=progress_cb)
     return {"seance": seance, "preview": preview_merge(seance)}
 
 
@@ -94,15 +101,23 @@ def preview_merge(seance_struct: dict) -> dict:
     }
 
 
-def publish_seance(seance_struct: dict, source_url: Optional[str] = None) -> dict:
+def publish_seance(seance_struct: dict, source_url: Optional[str] = None, progress_cb=None) -> dict:
     """Fusionne pour de vrai, committe sur GitHub, réindexe dans Pinecone.
-    Retourne un résumé {commit_sha, date, n_points, indexed}."""
+    Retourne un résumé {commit_sha, date, n_points, indexed}. `progress_cb`
+    (optionnel, voir jobs.start_job) : 2 étapes grossières — pas de
+    granularité par batch ici, contrairement à l'extraction, la fusion+commit
+    est une seule opération atomique et l'indexation reste rapide pour une
+    seule séance (quelques dizaines de points au plus)."""
     meta = seance_struct.get("seance") or {}
     date = meta.get("date")
-    if not date or not seance_struct.get("points"):
+    n_points = len(seance_struct.get("points") or [])
+    if not date or not n_points:
         raise ValueError("Séance sans date ou sans points — rien à publier.")
     if source_url:
         meta["source_url"] = source_url
+
+    if progress_cb:
+        progress_cb({"stage": "commit", "n_points": n_points})
 
     db = _load_current_db()
     pipeline.merge_seance_into_db(db, seance_struct)
@@ -118,11 +133,13 @@ def publish_seance(seance_struct: dict, source_url: Optional[str] = None) -> dic
         f"data: intègre le PV du {date} (via panneau admin)",
     )
 
+    if progress_cb:
+        progress_cb({"stage": "indexing", "n_points": n_points})
     n_indexed = _index_seance_points(seance_struct)
     return {
         "commit_sha": commit_sha,
         "date": date,
-        "n_points": len(seance_struct["points"]),
+        "n_points": n_points,
         "indexed": n_indexed,
     }
 

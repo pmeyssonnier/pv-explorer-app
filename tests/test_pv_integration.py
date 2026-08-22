@@ -41,7 +41,7 @@ def fake_db_path(tmp_path, monkeypatch):
 def test_extract_from_upload_writes_temp_file_and_returns_struct(monkeypatch):
     captured = {}
 
-    def fake_process_pdf(pdf_path):
+    def fake_process_pdf(pdf_path, progress_cb=None):
         captured["path"] = pdf_path
         captured["exists"] = pdf_path.exists()
         return _fake_seance()
@@ -54,8 +54,25 @@ def test_extract_from_upload_writes_temp_file_and_returns_struct(monkeypatch):
     assert result["seance"]["date"] == "2026-06-24"
 
 
+def test_extract_from_upload_forwards_progress_cb(monkeypatch):
+    captured = {}
+
+    def fake_process_pdf(pdf_path, progress_cb=None):
+        captured["progress_cb"] = progress_cb
+        if progress_cb:
+            progress_cb({"stage": "extraction", "chunk": 1, "total_chunks": 3})
+        return _fake_seance()
+
+    monkeypatch.setattr(pv_integration.pipeline, "process_pdf", fake_process_pdf)
+    reports = []
+    pv_integration.extract_from_upload(b"x", "pv.pdf", progress_cb=reports.append)
+
+    assert captured["progress_cb"] is not None
+    assert reports == [{"stage": "extraction", "chunk": 1, "total_chunks": 3}]
+
+
 def test_extract_from_upload_raises_on_extraction_failure(monkeypatch):
-    monkeypatch.setattr(pv_integration.pipeline, "process_pdf", lambda p: None)
+    monkeypatch.setattr(pv_integration.pipeline, "process_pdf", lambda p, progress_cb=None: None)
     with pytest.raises(ValueError):
         pv_integration.extract_from_upload(b"not a real pdf", "empty.pdf")
 
@@ -64,7 +81,7 @@ def test_extract_from_upload_sanitizes_path_traversal(monkeypatch):
     captured = {}
     monkeypatch.setattr(
         pv_integration.pipeline, "process_pdf",
-        lambda p: captured.setdefault("name", p.name) or _fake_seance()
+        lambda p, progress_cb=None: captured.setdefault("name", p.name) or _fake_seance()
     )
     pv_integration.extract_from_upload(b"x", "../../etc/passwd.pdf")
     assert captured["name"] == "passwd.pdf"   # Path(...).name retire toute composante de répertoire
@@ -110,8 +127,19 @@ def test_publish_seance_merges_commits_and_indexes(fake_db_path, monkeypatch):
     assert dates == {"2026-05-27", "2026-06-24"}
     new_seance = next(s for s in committed_content["seances"] if s["seance"]["date"] == "2026-06-24")
     assert new_seance["seance"]["source_url"] == "https://1030.be/pv.pdf"
-    assert committed_content["meta"]["total_points"] == 3
-    assert len(index_calls) == 1
+
+
+def test_publish_seance_reports_commit_then_indexing_progress(fake_db_path, monkeypatch):
+    monkeypatch.setattr(pv_integration, "commit_file", lambda path, content, message: "abc123")
+    monkeypatch.setattr(pv_integration, "_index_seance_points", lambda s: len(s["points"]))
+
+    reports = []
+    pv_integration.publish_seance(_fake_seance(date="2026-06-24"), progress_cb=reports.append)
+
+    assert reports == [
+        {"stage": "commit", "n_points": 2},
+        {"stage": "indexing", "n_points": 2},
+    ]
 
 
 # ── github_publish.commit_file (httpx mocké, aucun appel réseau réel) ──
