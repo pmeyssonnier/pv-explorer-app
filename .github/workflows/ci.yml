@@ -1,8 +1,12 @@
 name: CI
 
-# Contrôle qualité avant fusion : lint (ruff), tests (pytest) et validation de
-# la base JSON. Se déclenche sur push et sur pull request. Aucun secret requis —
-# les tests portent sur des fonctions pures (dépendances lourdes neutralisées).
+# Contrôle qualité avant fusion : lint (ruff), tests (pytest), validation de la
+# base JSON, et smoke test frontend (Playwright/Chromium headless) — plusieurs
+# bugs de ce projet n'étaient visibles qu'au rendu réel dans un navigateur.
+# Se déclenche sur push et sur pull request. Aucun secret requis — les tests
+# portent sur des fonctions pures et des données locales (dépendances lourdes
+# neutralisées côté pytest ; le smoke test frontend n'appelle que /health,
+# /stats, /elus, /seances, qui ne nécessitent aucune clé API).
 on:
   push:
     branches: ["main"]
@@ -29,3 +33,45 @@ jobs:
 
       - name: Tests + validation JSON (pytest)
         run: pytest
+
+  frontend-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v5
+
+      - name: Installer Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Installer les dépendances backend (pour servir l'API en local)
+        run: pip install -r backend/requirements.txt
+
+      - name: Installer Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: e2e/package-lock.json
+
+      - name: Installer les dépendances du smoke test
+        working-directory: e2e
+        run: npm ci
+
+      - name: Installer Chromium (Playwright)
+        working-directory: e2e
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke test (Chromium headless)
+        working-directory: e2e
+        run: npx playwright test
+
+      - name: Rapport Playwright (si échec)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 7
