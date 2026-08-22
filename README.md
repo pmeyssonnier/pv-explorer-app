@@ -78,9 +78,10 @@ alternative — `railway.json` est fourni.)*
 │   ├── extract_video_chapters.py      → chapitrage vidéo (YouTube @1030be)
 │   └── extract_video_chapters.ipynb   → notebook Colab (script à jour, télécharge et exécute)
 ├── tests/                    → suite pytest (fonctions pures + routes HTTP)
+├── e2e/                      → smoke test frontend (Playwright/Chromium headless)
 ├── render.yaml               → Blueprint Render (déploiement backend)
 ├── ruff.toml · pytest.ini    → lint + config de tests
-├── .github/workflows/        → CI (ruff + pytest) et indexation Pinecone
+├── .github/workflows/        → CI (ruff + pytest + smoke test) et indexation Pinecone
 └── .gitignore                → protège les secrets (.env jamais committé)
 ```
 
@@ -123,7 +124,7 @@ vraies clés secrètes** sont nécessaires ; le reste, ce sont des réglages.
 
 | Workflow | Secret requis |
 |---|---|
-| `ci.yml` (ruff + pytest) | **aucun** |
+| `ci.yml` (ruff + pytest + smoke test frontend) | **aucun** |
 | `index-pinecone.yml` (indexation depuis Actions) | `PINECONE_API_KEY` — *Settings → Secrets and variables → Actions* (uniquement si tu indexes via GitHub plutôt qu'en local/Colab) |
 
 > ⚠️ **Ne committe jamais ces clés** (le `.gitignore` bloque `.env`). Au clonage,
@@ -271,3 +272,21 @@ cd frontend
 python3 -m http.server 5500
 # ouvre http://localhost:5500
 ```
+
+### Smoke test frontend (Playwright)
+
+Vérifie en Chromium headless que l'app charge sans erreur console, que les 4
+onglets publics, le thème, le login admin et le panneau Options réagissent, et
+qu'il n'y a pas de débordement horizontal en mobile (390px). Ne teste pas les
+données — complète pytest, ne le remplace pas.
+
+```bash
+cd e2e
+npm ci
+npx playwright install --with-deps chromium   # une seule fois
+npx playwright test
+```
+
+Lance lui-même un backend (`uvicorn`, données locales uniquement — aucune clé
+API requise) et le frontend statique avec la CSP de production ; voir
+`e2e/playwright.config.js`.
