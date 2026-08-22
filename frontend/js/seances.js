@@ -14,6 +14,10 @@ let currentSeanceDetail = null;
 // type réel, filtré séparément des types).
 let seanceTypeFilter = 'all';
 let seanceThemeFilter = 'all';
+// Personne (demandeur·se OU répondant·e) impliquée dans le point — un même
+// filtre couvre les deux rôles, pour retrouver tout ce qui concerne une
+// personne dans la séance, peu importe son rôle sur chaque point.
+let seancePersonFilter = 'all';
 
 // Présélection appliquée depuis un lien partagé (?tab=seances&seance=…), voir handleDeepLink.
 export function setPendingSeanceDate(date) { pendingSeanceDate = date; }
@@ -143,11 +147,27 @@ function seanceThemeFilterOptions(points) {
   const themes = [...counts.keys()].sort((a, b) => a.localeCompare(b, 'fr'));
   return themes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)} (${counts.get(t)})</option>`).join('');
 }
+// Personnes réellement présentes dans la séance (demandeur·se OU répondant·e
+// de chaque point), triées, avec leur nombre de points (les deux rôles
+// cumulés — retrouver tout ce qui concerne une personne, peu importe son
+// rôle sur chaque point).
+function seancePersonFilterOptions(points) {
+  const counts = new Map();
+  points.forEach(p => {
+    [p.demandeur, p.repondant].forEach(name => {
+      if (name) counts.set(name, (counts.get(name) || 0) + 1);
+    });
+  });
+  const names = [...counts.keys()].sort((a, b) => a.localeCompare(b, 'fr'));
+  return names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)} (${counts.get(n)})</option>`).join('');
+}
 function pointMatchesFilters(p) {
   const typeOk = seanceTypeFilter === 'all'
     || (seanceTypeFilter === 'reporte' ? p.reporte : p.type_label === seanceTypeFilter);
   const themeOk = seanceThemeFilter === 'all' || (p.thematiques || []).includes(seanceThemeFilter);
-  return typeOk && themeOk;
+  const personOk = seancePersonFilter === 'all'
+    || p.demandeur === seancePersonFilter || p.repondant === seancePersonFilter;
+  return typeOk && themeOk && personOk;
 }
 
 // (Re)rend uniquement la liste des points selon les filtres courants — pas
@@ -161,17 +181,19 @@ function renderSeancePoints() {
     ? filtered.map(seancePointRow).join('')
     : '<p class="trend-empty">Aucun point ne correspond à ces filtres.</p>';
   if (count) {
-    const filtering = seanceTypeFilter !== 'all' || seanceThemeFilter !== 'all';
+    const filtering = seanceTypeFilter !== 'all' || seanceThemeFilter !== 'all' || seancePersonFilter !== 'all';
     count.textContent = filtering ? `${filtered.length} / ${currentSeanceDetail.points.length} point(s) affiché(s)` : '';
   }
 }
 function onSeanceTypeFilterChange(sel) { seanceTypeFilter = sel.value; renderSeancePoints(); }
 function onSeanceThemeFilterChange(sel) { seanceThemeFilter = sel.value; renderSeancePoints(); }
+function onSeancePersonFilterChange(sel) { seancePersonFilter = sel.value; renderSeancePoints(); }
 
 function renderSeance(d) {
   currentSeanceDetail = d;
   seanceTypeFilter = 'all';
   seanceThemeFilter = 'all';
+  seancePersonFilter = 'all';
   const box = document.getElementById('seanceResult');
   let links = '';
   if (d.url) links += `<a class="elu-link" href="${d.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
@@ -186,6 +208,10 @@ function renderSeance(d) {
       <option value="all">Toutes les thématiques</option>
       ${seanceThemeFilterOptions(d.points)}
     </select>
+    <select id="seancePersonFilter" class="elu-select" aria-label="Filtrer par intervenant·e">
+      <option value="all">Tou·te·s les intervenant·e·s</option>
+      ${seancePersonFilterOptions(d.points)}
+    </select>
   </div>
   <p class="yc-note" id="seanceFilterCount"></p>
   <div class="elu-head">
@@ -199,8 +225,10 @@ function renderSeance(d) {
   box.innerHTML = html;
   const typeSel = document.getElementById('seanceTypeFilter');
   const themeSel = document.getElementById('seanceThemeFilter');
+  const personSel = document.getElementById('seancePersonFilter');
   if (typeSel) typeSel.addEventListener('change', () => onSeanceTypeFilterChange(typeSel));
   if (themeSel) themeSel.addEventListener('change', () => onSeanceThemeFilterChange(themeSel));
+  if (personSel) personSel.addEventListener('change', () => onSeancePersonFilterChange(personSel));
   renderSeancePoints();
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
