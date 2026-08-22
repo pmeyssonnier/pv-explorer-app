@@ -182,7 +182,9 @@ def answer(question_raw: str, commune_raw: Optional[str], *,
         # anxiogène — les onglets Statistiques/Évolution, eux, n'embeddent pas.
         blob = f"{type(e).__name__} {e}"
         if any(k in blob for k in ("RESOURCE_EXHAUSTED", "RateLimit", "429", "token limit")):
-            logger.warning("Quota d'embedding Pinecone atteint sur /ask : %s", e)
+            logger.warning(
+                "Quota d'embedding Pinecone atteint sur /ask : %s (commune=%r)", e, commune
+            )
             return AnswerResponse(
                 answer=(
                     "La recherche dans les procès-verbaux est momentanément "
@@ -192,7 +194,13 @@ def answer(question_raw: str, commune_raw: Optional[str], *,
                 ),
                 sources=[]
             )
-        logger.exception("Erreur lors de la recherche vectorielle Pinecone")
+        # Contexte utile au diagnostic sans logger le texte de la question
+        # (outil citoyen public — peut contenir des données personnelles).
+        logger.exception(
+            "Erreur lors de la recherche vectorielle Pinecone "
+            "(commune=%r, top_k=%d, longueur_question=%d)",
+            commune, top_k, len(question),
+        )
         raise HTTPException(
             status_code=500,
             detail="Erreur interne lors de la recherche. Réessayez plus tard.",
@@ -252,7 +260,10 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
             "",
         )
     except Exception:
-        logger.exception("Erreur lors de l'appel à Claude")
+        logger.exception(
+            "Erreur lors de l'appel à Claude (model=%r, commune=%r, longueur_question=%d)",
+            model, commune, len(question),
+        )
         raise HTTPException(
             status_code=500,
             detail="Erreur interne lors de la génération de la réponse. Réessayez plus tard.",

@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from config import VERSION, logger
 from services.pinecone_service import get_pinecone_index
 
-router = APIRouter()
+router = APIRouter(tags=["Service"])
 
 
 @router.get("/")

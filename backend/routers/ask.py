@@ -5,10 +5,15 @@ from limiter import limiter
 from models.api import QuestionRequest, AnswerResponse
 from services import rag
 
-router = APIRouter()
+router = APIRouter(tags=["RAG"])
 
 
-@router.post("/ask", response_model=AnswerResponse)
+@router.post(
+    "/ask",
+    response_model=AnswerResponse,
+    summary="Poser une question aux PV",
+    response_description="Réponse citée avec ses sources",
+)
 @limiter.limit("10/minute;100/day")
 def ask(request: Request, req: QuestionRequest):
     """Délègue toute la logique à services.rag.answer (recherche + génération).
