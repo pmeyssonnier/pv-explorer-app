@@ -727,10 +727,19 @@ def test_decision_summary_none_when_no_decision():
 
 
 def test_thematique_label_normalizes_slug():
-    assert elus._thematique_label("transports_publics") == "Transports publics"
+    assert elus._thematique_label("transports_publics") == "Transport public"
     assert elus._thematique_label("mobilite-verte") == "Mobilite verte"
     assert elus._thematique_label("") == ""
     assert elus._thematique_label(None) == ""
+
+
+def test_thematique_label_matches_stats_canonicalisation():
+    """Même fusion singulier/pluriel que compute_stats (services.statistics) :
+    un même tag brut doit produire le même radical dans les deux vues, à la
+    casse près (Statistiques : minuscules ; Séances/Par élu·e : 1re majuscule)."""
+    from utils.text import _canon_theme
+    for raw in ("transports_publics", "marches_publics", "fournitures"):
+        assert elus._thematique_label(raw).lower() == _canon_theme(raw)
 
 
 def test_seance_detail_exposes_thematiques_and_montant():
@@ -741,7 +750,7 @@ def test_seance_detail_exposes_thematiques_and_montant():
     d = elus.seance_detail("2026-05-27")
     it = next(p for p in d["points"] if p["sp"] == 9)
     assert it["montant_eur"] == -20809.92
-    assert it["thematiques"] == ["Comptes annuels", "Sports", "Cooperation associative"]
+    assert it["thematiques"] == ["Compte annuel", "Sport", "Cooperation associative"]
     # Un point sans montant renseigné : None, pas 0 ni absent.
     it77 = next(p for p in d["points"] if p["sp"] == 77)
     assert it77["montant_eur"] is None

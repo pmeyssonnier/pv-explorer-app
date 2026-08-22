@@ -7,6 +7,7 @@ services.people.registry) pour un affichage homogène — et pour chaque point,
 un résumé lisible de sa décision/vote et de ses thématiques.
 """
 from services.statistics import load_db
+from utils.text import _canon_theme
 from utils.video import video_session_map
 
 from services.people.attribution import _TYPE_LABEL, _point_author, _respondents
@@ -26,11 +27,13 @@ def _is_reportee(decision) -> bool:
 
 def _thematique_label(t: str) -> str:
     """Étiquette d'affichage d'une thématique (slug interne, ex.
-    « transports_publics ») : espaces au lieu des soulignés, casse
-    homogène. Plus de 4500 valeurs distinctes dans le corpus (souvent
-    rares/spécifiques) : pas de dictionnaire de correction des accents
-    (perdus dans les slugs), simple normalisation."""
-    s = (t or "").replace("_", " ").replace("-", " ").strip()
+    « transports_publics »). Passe par _canon_theme (utils.text) — la même
+    fusion singulier/pluriel que l'onglet Statistiques (services.statistics.
+    compute_stats) — pour qu'un même tag s'affiche IDENTIQUEMENT dans les deux
+    vues (avant ce correctif, seul compute_stats canonisait : « transports_
+    publics » s'affichait « Transport public » en Statistiques mais
+    « Transports publics » en Séances/Par élu·e)."""
+    s = _canon_theme((t or "").replace("-", " "))
     return s[:1].upper() + s[1:] if s else s
 
 
