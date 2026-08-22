@@ -5,6 +5,7 @@
     "date_creation": "2026-06-05",
     "seances_incluses": [
       "2010-02-03",
+      "2010-03-03",
       "2010-04-28",
       "2010-05-26",
       "2010-06-23",
@@ -157,7 +158,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9194,
+    "total_points": 9218,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -1840,6 +1841,703 @@
             "hivernage"
           ],
           "source_file": "Pv_2010.02.03.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2010-03-03",
+        "date": "2010-03-03",
+        "source_file": "Pv_2010.03.03.pdf",
+        "extracted_at": "2026-08-22T17:28:03.039551",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 24,
+          "extracted": 24,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        }
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande d'habitants",
+          "sous_rubrique": "",
+          "titre": "Les problèmes liés à la rue Vandeweyer",
+          "resume": "Exposition des problèmes liés à la rue Vandeweyer par M. Nihoul. Réponse de la Bourgmestre ff. Interventions de M. Courtheoux, Mmes Nyssens, Durant et M. Clerfayt.",
+          "intervenants": [
+            "Nihoul",
+            "Bourgmestre ff",
+            "Courtheoux",
+            "Nyssens",
+            "Durant",
+            "Clerfayt"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Equipement",
+          "sous_rubrique": "Contrôle",
+          "titre": "ASBL \"A.S. Schaerbeek\" - Comptes 2008 - Prendre acte",
+          "resume": "Approbation des comptes 2008 de l'ASBL A.S. Schaerbeek affichant un résultat positif de 144,34€. Subside communal de 7.500€ dont 6.607€ versés après déduction de redevance de salle.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 144.34,
+          "thematiques": [
+            "finances",
+            "subventions",
+            "controle"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique et durable",
+          "sous_rubrique": "Subventions et partenariats",
+          "titre": "Programme Triennal d'Investissements 2010-2012 - Dotation Triennale d'Investissement - Pour information",
+          "resume": "Approbation du programme triennal d'investissements 2010-2012. La commune a droit à 2.657.505,27€ de subsides pour investissements. Engagement sur l'honneur de ne pas aliéner ou modifier l'affectation des biens pendant 20 ans et assurance d'entretien et gestion selon les programmes joints.",
+          "intervenants": [
+            "Onkelinx"
+          ],
+          "repondant": "Smeysters",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2657505.27,
+          "thematiques": [
+            "investissements",
+            "subventions",
+            "infrastructure",
+            "developpement_durable"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Affaires générales",
+          "sous_rubrique": "",
+          "titre": "Archives - Versement d'un fonds privé - Convention - Approbation",
+          "resume": "Approbation de la convention de donation entre la Commune et M. Robert Van den Haute (représenté par son neveu Francis Van den Haute) pour confier au service des Archives communales un fonds collecté comprenant quelques œuvres d'art. Mandat donné au Collège de signer cette convention.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "archives",
+            "donations",
+            "patrimoine"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Affaires générales",
+          "sous_rubrique": "",
+          "titre": "Règlement relatif à la réservation du stationnement pour les véhicules automobiles à proximité du domicile ou du lieu de travail des personnes handicapées - Approbation",
+          "resume": "Adoption d'un règlement régissant la réservation de places de stationnement pour personnes handicapées à proximité de leur domicile ou lieu de travail. Conditions d'attribution: handicap grave des membres inférieurs ou handicap général d'au moins 80%, absence de garage/parking privé, possession de véhicule ou conduite par un habitant du foyer, possession de carte spéciale de stationnement.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "personnes_handicapees",
+            "accessibilite",
+            "circulation"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 9,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RESSOURCES HUMAINES",
+          "sous_rubrique": "Plan de prévention urbaine",
+          "titre": "Plan de prévention urbaine - Modification du cadre temporaire spécifique du Plan local de prévention et de proximité (PLPP) et du Plan stratégique de sécurité et de prévention (PSSP) - Approbation",
+          "resume": "Modification du cadre temporaire des emplois prévus au Plan Stratégique de Sécurité et de Prévention et au Plan Local de Prévention et de Proximité subsidié par l'Etat fédéral et la Région de Bruxelles Capitale. Transferts, créations et suppressions d'emplois dans plusieurs axes : médiation sociale, médiation scolaire, travail de rue, gardiens de la paix, réduction des risques. Suppression des 5 emplois du cadre temporaire 'Plan sécurité' créé en 2007.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "preventin_securite",
+            "emplois_temporaires"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "URBANISME",
+          "sous_rubrique": "Performance Energétique des Bâtiments",
+          "titre": "Urbanisme - Subside Performance Energétique des Bâtiments (PEB) - Prolongation du cadre temporaire - Approbation",
+          "resume": "Prolongation du cadre temporaire créé en date du 28 janvier 2009 de 1 et ½ emplois d'inspecteur dans le cadre du subside 'Performance énergétique des bâtiments' (PEB), pour une durée indéterminée. Subvention de 84.725,48 € accordée par le Gouvernement de la Région de Bruxelles-Capitale couvrant les rémunérations de 1 et ½ agents.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 84725.48,
+          "thematiques": [
+            "urbanisme",
+            "energie",
+            "performance_energetique",
+            "emplois_temporaires"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "STATUT ADMINISTRATIF",
+          "sous_rubrique": "Congés et position de disponibilité",
+          "titre": "Statut administratif - Règlement relatif aux congés et à la position de disponibilité - Modification - Approbation",
+          "resume": "Modification des Règlements relatifs aux congés et à la position de disponibilité adoptés par délibération du Conseil communal du 21 avril 1999. Mise en concordance du statut administratif avec les dispositions actuelles des lois relatives à la protection de la maternité, congé de paternité, congé d'adoption, congé d'accueil et droit au congé parental. Modification de plusieurs articles concernant les congés de circonstances, congé pour cause de grossesse ou d'adoption, congé de paternité, et pauses d'allaitement.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "statut_administratif",
+            "conges",
+            "maternite",
+            "paternite",
+            "protection_sociale"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et Infrastructes",
+          "sous_rubrique": "Gemeentehuis - Inrichting van lokalen",
+          "titre": "Gemeentehuis - Inrichting van lokalen bestemd voor het onderbrengen van de informatica server - Vaststelling van de gunningswijze en de opdrachtvoorwaarden",
+          "resume": "Transformation du local -1.38 du sous-sol de l'hôtel communal pour y abriter le serveur informatique. Travaux incluant placement de tôles, démolition, réaménagement intérieurs, remplacement de menuiseries, installation de climatisation et système d'extinction d'incendie. Adjudication publique. Imputation: 105.000 € TVAC à l'article 104/724-IN-60/51 du budget extraordinaire 2010. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 34,
+            "contre": 0,
+            "abstentions": 9
+          },
+          "montant_eur": 105000,
+          "thematiques": [
+            "infrastructure_communale",
+            "travaux_renovation",
+            "informatique",
+            "marches_publics"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et Infrastructes",
+          "sous_rubrique": "Groupe scolaire",
+          "titre": "Groupe scolaire Josaphat-Ruche sis rue Josaphat 229 et rue de la Ruche 30 - Restauration des façades A 1 - A 3 - B 1 et B 3 des cours intérieures",
+          "resume": "Restauration des façades A1-A3-B1-B3 des cours intérieures du Groupe scolaire Josaphat/Rûche présentant d'importantes fissures et corrosion des éléments métalliques. Adjudication publique. Dépense estimée: 930.000 € TVA incluse, imputable à l'article 722/724 IN-60/51 du budget extraordinaire 2010. Financement: 80 % par la Commission Royale des Monuments et Sites, solde par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 930000,
+          "thematiques": [
+            "infrastructure_scolaire",
+            "restauration_facade",
+            "patrimoine_classe",
+            "marches_publics"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "Contrat de quartier",
+          "titre": "Nouveau contrat de quartier Helmet - Mission d'étude préalable - Mode de passation et fixation des conditions du marché",
+          "resume": "Étude préalable pour le nouveau contrat de quartier Helmet attribué par la Région de Bruxelles-Capitale. Confier à un bureau d'études la mission d'auteur de projet. Procédure négociée sans publicité après consultation de 5 bureaux. Dépense plafonnée à 81.070,00 € TVA comprise, entièrement subsidiée. Imputation à l'article 930/733-IN-60/56 du budget 2010.",
+          "intervenants": [
+            "Mme Onkelinx",
+            "Mme Nyssens"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 81070,
+          "thematiques": [
+            "contrat_quartier",
+            "etude_prealable",
+            "renovation_urbaine",
+            "marches_publics"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Convention d'occupation",
+          "titre": "Convention d'occupation du rez-de-chaussée sis rue Stephenson 79 par l'ASBL \"CréACtions\" - Approbation",
+          "resume": "Accord sur l'occupation du rez-de-chaussée sis angle place/rue Stephenson par l'asbl CréACtions dès le 5 janvier 2010 pour activités d'accueil extrascolaire (6-12 ans et 13-18 ans), animations socio-culturelles, soutien scolaire. Redevance mensuelle: 380 euros/mois (à indexer) dès la fin des travaux de traitement d'humidité des murs.",
+          "intervenants": [
+            "M. Dönmez"
+          ],
+          "repondant": "M. Nimal et Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 8
+          },
+          "montant_eur": 380,
+          "thematiques": [
+            "immobilier_communal",
+            "asbl",
+            "jeunesse",
+            "education"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Convention d'occupation",
+          "titre": "Convention d'occupation à titre précaire d'un local sis au 1er étage (gauche) du complexe Van Oost avec entrée rue Navez 59 par l'ASBL \"Ecoliers du Monde\" - Approbation",
+          "resume": "Accord sur l'occupation gracieuse à titre précaire et révocable d'un local au 1er étage (gauche) du complexe Van Oost par l'asbl \"Ecoliers du Monde\" pour le stockage de matériel humanitaire. Relocalisation suite à travaux de rénovation du Crossing.",
+          "intervenants": [
+            "M. Dönmez"
+          ],
+          "repondant": "M. Nimal",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 13
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immobilier_communal",
+            "asbl",
+            "humanitaire",
+            "occupation_precaire"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Maison des Femmes",
+          "titre": "Maison des Femmes - rue Josaphat 247 - Règlement d'ordre intérieur - Approbation",
+          "resume": "Approbation du règlement d'ordre intérieur de la Maison des Femmes sis rue Josaphat 247.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "maison_femmes",
+            "reglement_interieur",
+            "services_sociaux"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Immobilier",
+          "sous_rubrique": "Location commerciale",
+          "titre": "Rez-de-chaussée commercial sis place Liedts 21 - Reprise de location par la sprl H.I.",
+          "resume": "Approbation de la reprise en location du rez-de-chaussée commercial communal sis place Liedts, 21 par la sprl H.I. pour un loyer mensuel de 579,54 euros afin d'y développer un commerce de jeux vidéo.",
+          "intervenants": [
+            "Özkara",
+            "Dönmez"
+          ],
+          "repondant": "Nimal",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 33,
+            "contre": 10,
+            "abstentions": 0
+          },
+          "montant_eur": 579.54,
+          "thematiques": [
+            "immobilier",
+            "location_commerciale",
+            "commerce"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Urbanisme",
+          "sous_rubrique": "Règlements communaux d'urbanisme",
+          "titre": "Elaboration de trois règlements communaux d'Urbanisme Zonés sur l'avenue Louis Bertrand et ses abords, l'avenue Huart Hamoir et ses abords et le quartier de la place Colignon - Modification de la convention d'étude",
+          "resume": "Prise pour information de la décision du Collège du 2 février 2010 de modifier le projet de convention à conclure entre la Commune et le bureau d'études ERU asbl, en particulier son article 4 concernant le coût des études et paiements. La première tranche d'honoraires est portée de 20% à 40%.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "urbanisme",
+            "reglements_communaux",
+            "etudes"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Lehon-Kessels",
+          "titre": "Contrat de quartier Lehon-Kessels - Opération 1 H - Démolition/construction d'un immeuble à l'angle sis rue de la Poste 200, en un logement unifamilial assimilé au logement social",
+          "resume": "Approbation du projet de convention régissant le prix pour bâtiment exemplaire. Prise acte du prix de 17.040,60 € reçu dans le cadre du concours des 'bâtiments exemplaires' en raison du caractère passif de la démolition/construction projetée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 17040.6,
+          "thematiques": [
+            "contrat_quartier",
+            "logement_social",
+            "demolition_construction"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 37,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Lehon-Kessels",
+          "titre": "Contrat de quartier Lehon-Kessels - Opération 1 I - Démolition du bâtiment de l'ancienne Justice de Paix et construction d'un immeuble de logements et d'un commissariat de Proximité",
+          "resume": "Extension de la mission d'étude confiée au bureau d'études pour les finitions des locaux des services de police. Les frais d'étude complémentaires sont évalués à 70.000,00 € TVAC, financés par le boni du service extraordinaire et imputés à l'article 922/733-CQ-60/05 du budget extraordinaire 2010.",
+          "intervenants": [
+            "Vriamont"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 33,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 70000,
+          "thematiques": [
+            "contrat_quartier",
+            "logement",
+            "commissariat",
+            "marche_complementaire"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 39,
+          "urgence": false,
+          "type": "motion",
+          "rubrique": "Services communaux spécifiques",
+          "sous_rubrique": "Sports",
+          "titre": "Motion relative à la suppression des chèques sport du budget de la Communauté Française",
+          "resume": "Motion invitant le Gouvernement de la Communauté française Wallonie-Bruxelles à poursuivre le dispositif 'chèques-sport' et à soutenir la participation et la pratique du sport, ainsi que l'appui financier des CPAS aux familles. Montants totaux de chèques-sport commandés: 84.285 € (droit de tirage) et 160.785 € (dépenses totales) pour les années 2007 et 2008.",
+          "intervenants": [
+            "Köse",
+            "Bouhjar",
+            "Clerfayt"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 42,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "sports",
+            "cheques_sport",
+            "inclusion_sociale",
+            "jeunesse"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 41,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiment",
+          "titre": "Royale Tennis Club Lambermont - Remplacement du hall gonflable - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Demande d'approbation pour le remplacement du hall gonflable du Royale Tennis Club Lambermont et fixation des conditions du marché.",
+          "intervenants": [
+            "Köse",
+            "Bouhjar",
+            "Clerfayt",
+            "Van Gorp",
+            "Smeysters"
+          ],
+          "repondant": "Smeysters",
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 15,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "sports"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 45,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "Le Holding Dexia",
+          "resume": "Demande de Monsieur Yvan de Beauffort concernant le Holding Dexia.",
+          "intervenants": [
+            "de Beauffort",
+            "De Herde"
+          ],
+          "repondant": "De Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "finances"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 45,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "L'état d'avancement en matière de Zones 30 à Schaerbeek",
+          "resume": "Demande de Monsieur Yvan de Beauffort concernant l'état d'avancement des Zones 30 à Schaerbeek.",
+          "intervenants": [
+            "de Beauffort",
+            "Smeysters"
+          ],
+          "repondant": "Smeysters",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "securite_routiere",
+            "circulation"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 45,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "La vente de l'ancien bâtiment de la bibliothèque communale néerlandophone",
+          "resume": "Demande de Madame Bernadette Vriamont concernant la vente de l'ancien bâtiment de la bibliothèque communale néerlandophone.",
+          "intervenants": [
+            "Vriamont",
+            "Nimal"
+          ],
+          "repondant": "Nimal",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "patrimoine",
+            "immobilier",
+            "bibliotheques"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 45,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "L'état d'avancement des projets sur le terrain de Schaerbeek-Josaphat",
+          "resume": "Demande de Monsieur Yvan de Beauffort concernant l'état d'avancement des projets sur le terrain de Schaerbeek-Josaphat.",
+          "intervenants": [
+            "de Beauffort"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "amenagement",
+            "urbanisme"
+          ],
+          "source_file": "Pv_2010.03.03.pdf"
         }
       ]
     },
