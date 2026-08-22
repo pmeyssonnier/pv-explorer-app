@@ -130,43 +130,64 @@ export async function loadSeance(date) {
   }
 }
 
-// Types réellement présents dans la séance (jamais une liste figée), avec
-// leur nombre de points, plus deux pseudo-types transversaux qui se
-// superposent aux types réels plutôt que de les remplacer (un point compte
-// dans son type ET dans "Débat filmé"/"Reporté" s'il l'est aussi — même
-// logique que les compteurs de thématiques, où la somme peut dépasser le
-// total) :
+// ── Filtres à facettes : chaque sélecteur ne propose que les valeurs encore
+// atteignables compte tenu des AUTRES filtres actifs (pas du sien) — choisir
+// un type recalcule les thématiques/intervenant·e·s disponibles, et vice
+// versa. Chaque prédicat matchesX ignore délibérément seanceXFilter lui-même :
+// c'est ce qui permet de calculer "les points qui passeraient le filtre X
+// si on l'ignorait" pour peupler les options de X.
+function matchesType(p) {
+  return seanceTypeFilter === 'all' ? true
+    : seanceTypeFilter === 'reporte' ? p.reporte
+    : seanceTypeFilter === 'debat_filme' ? hasDebateLink(p)
+    : p.type_label === seanceTypeFilter;
+}
+function matchesTheme(p) {
+  return seanceThemeFilter === 'all' || (p.thematiques || []).includes(seanceThemeFilter);
+}
+function matchesPerson(p) {
+  return seancePersonFilter === 'all' || p.demandeur === seancePersonFilter || p.repondant === seancePersonFilter;
+}
+function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && matchesPerson(p); }
+
+// Types réellement atteignables compte tenu des filtres thématique/
+// intervenant·e actifs, avec leur nombre de points, plus deux pseudo-types
+// transversaux qui se superposent aux types réels plutôt que de les
+// remplacer (un point compte dans son type ET dans "Débat filmé"/"Reporté"
+// s'il l'est aussi — même logique que les compteurs de thématiques, où la
+// somme peut dépasser le total) :
 //   "debat_filme" : tout point avec un lien vers le débat (voir
 //                   hasDebateLink), quel que soit son type réel — pas
 //                   seulement les chapitres vidéo autonomes.
 //   "reporte"     : un point reporté peut être de n'importe quel type réel.
-// Ordre stable, indépendant du tri d'apparition dans la liste.
+// La valeur actuellement sélectionnée reste toujours proposée (au besoin à
+// 0) : un filtre ne doit jamais faire disparaître sa propre sélection.
 const _TYPE_FILTER_ORDER = ['Point', 'Motion', 'Question orale', 'Demande'];
 function seanceTypeFilterOptions(points) {
   const opts = [];
   _TYPE_FILTER_ORDER.forEach(t => {
     const n = points.filter(p => p.type_label === t).length;
-    if (n) opts.push(`<option value="${escapeHtml(t)}">${escapeHtml(t)} (${n})</option>`);
+    if (n || seanceTypeFilter === t) opts.push(`<option value="${escapeHtml(t)}">${escapeHtml(t)} (${n})</option>`);
   });
   const nDebat = points.filter(hasDebateLink).length;
-  if (nDebat) opts.push(`<option value="debat_filme">Débat filmé (${nDebat})</option>`);
+  if (nDebat || seanceTypeFilter === 'debat_filme') opts.push(`<option value="debat_filme">Débat filmé (${nDebat})</option>`);
   const nReporte = points.filter(p => p.reporte).length;
-  if (nReporte) opts.push(`<option value="reporte">Reporté (${nReporte})</option>`);
+  if (nReporte || seanceTypeFilter === 'reporte') opts.push(`<option value="reporte">Reporté (${nReporte})</option>`);
   return opts.join('');
 }
-// Thématiques réellement présentes dans la séance, triées, avec le nombre
-// de points concernés (un point peut porter plusieurs thématiques, donc la
-// somme des compteurs peut dépasser le nombre de points de la séance).
+// Thématiques atteignables compte tenu des filtres type/intervenant·e actifs,
+// triées, avec le nombre de points concernés (un point peut porter plusieurs
+// thématiques, donc la somme des compteurs peut dépasser le nombre de points).
 function seanceThemeFilterOptions(points) {
   const counts = new Map();
   points.forEach(p => (p.thematiques || []).forEach(t => counts.set(t, (counts.get(t) || 0) + 1)));
+  if (seanceThemeFilter !== 'all' && !counts.has(seanceThemeFilter)) counts.set(seanceThemeFilter, 0);
   const themes = [...counts.keys()].sort((a, b) => a.localeCompare(b, 'fr'));
   return themes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)} (${counts.get(t)})</option>`).join('');
 }
-// Personnes réellement présentes dans la séance (demandeur·se OU répondant·e
-// de chaque point), triées, avec leur nombre de points (les deux rôles
-// cumulés — retrouver tout ce qui concerne une personne, peu importe son
-// rôle sur chaque point).
+// Personnes atteignables compte tenu des filtres type/thématique actifs
+// (demandeur·se OU répondant·e de chaque point), triées, avec leur nombre de
+// points (les deux rôles cumulés).
 function seancePersonFilterOptions(points) {
   const counts = new Map();
   points.forEach(p => {
@@ -174,22 +195,39 @@ function seancePersonFilterOptions(points) {
       if (name) counts.set(name, (counts.get(name) || 0) + 1);
     });
   });
+  if (seancePersonFilter !== 'all' && !counts.has(seancePersonFilter)) counts.set(seancePersonFilter, 0);
   const names = [...counts.keys()].sort((a, b) => a.localeCompare(b, 'fr'));
   return names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)} (${counts.get(n)})</option>`).join('');
 }
-function pointMatchesFilters(p) {
-  const typeOk = seanceTypeFilter === 'all' ? true
-    : seanceTypeFilter === 'reporte' ? p.reporte
-    : seanceTypeFilter === 'debat_filme' ? hasDebateLink(p)
-    : p.type_label === seanceTypeFilter;
-  const themeOk = seanceThemeFilter === 'all' || (p.thematiques || []).includes(seanceThemeFilter);
-  const personOk = seancePersonFilter === 'all'
-    || p.demandeur === seancePersonFilter || p.repondant === seancePersonFilter;
-  return typeOk && themeOk && personOk;
+
+// Reconstruit les options des 3 sélecteurs (pas les éléments <select>
+// eux-mêmes, pour garder leurs écouteurs) à partir des filtres CROISÉS —
+// chacun exclut son propre filtre mais applique les deux autres.
+function renderSeanceFilterOptions() {
+  if (!currentSeanceDetail) return;
+  const all = currentSeanceDetail.points;
+  const typeSel = document.getElementById('seanceTypeFilter');
+  const themeSel = document.getElementById('seanceThemeFilter');
+  const personSel = document.getElementById('seancePersonFilter');
+  if (typeSel) {
+    typeSel.innerHTML = '<option value="all">Tous les types</option>'
+      + seanceTypeFilterOptions(all.filter(p => matchesTheme(p) && matchesPerson(p)));
+    typeSel.value = seanceTypeFilter;
+  }
+  if (themeSel) {
+    themeSel.innerHTML = '<option value="all">Toutes les thématiques</option>'
+      + seanceThemeFilterOptions(all.filter(p => matchesType(p) && matchesPerson(p)));
+    themeSel.value = seanceThemeFilter;
+  }
+  if (personSel) {
+    personSel.innerHTML = '<option value="all">Tou·te·s les intervenant·e·s</option>'
+      + seancePersonFilterOptions(all.filter(p => matchesType(p) && matchesTheme(p)));
+    personSel.value = seancePersonFilter;
+  }
 }
 
-// (Re)rend uniquement la liste des points selon les filtres courants — pas
-// besoin de reconstruire l'en-tête/les liens de la séance à chaque changement.
+// (Re)rend la liste des points selon les filtres courants — pas besoin de
+// reconstruire l'en-tête/les liens de la séance à chaque changement.
 function renderSeancePoints() {
   const list = document.getElementById('seancePointsList');
   const count = document.getElementById('seanceFilterCount');
@@ -203,9 +241,12 @@ function renderSeancePoints() {
     count.textContent = filtering ? `${filtered.length} / ${currentSeanceDetail.points.length} point(s) affiché(s)` : '';
   }
 }
-function onSeanceTypeFilterChange(sel) { seanceTypeFilter = sel.value; renderSeancePoints(); }
-function onSeanceThemeFilterChange(sel) { seanceThemeFilter = sel.value; renderSeancePoints(); }
-function onSeancePersonFilterChange(sel) { seancePersonFilter = sel.value; renderSeancePoints(); }
+// Un changement de filtre recalcule à la fois les options des 2 AUTRES
+// sélecteurs (filtres à facettes) et la liste de points affichée.
+function refreshSeanceFilteredView() { renderSeanceFilterOptions(); renderSeancePoints(); }
+function onSeanceTypeFilterChange(sel) { seanceTypeFilter = sel.value; refreshSeanceFilteredView(); }
+function onSeanceThemeFilterChange(sel) { seanceThemeFilter = sel.value; refreshSeanceFilteredView(); }
+function onSeancePersonFilterChange(sel) { seancePersonFilter = sel.value; refreshSeanceFilteredView(); }
 
 function renderSeance(d) {
   currentSeanceDetail = d;
@@ -218,18 +259,9 @@ function renderSeance(d) {
   if (d.video_url) links += `<a class="elu-link elu-link-video" href="${d.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo (séance complète)</a>`;
 
   let html = `<div class="elus-bar seance-filter-bar">
-    <select id="seanceTypeFilter" class="elu-select" aria-label="Filtrer par type de sujet">
-      <option value="all">Tous les types</option>
-      ${seanceTypeFilterOptions(d.points)}
-    </select>
-    <select id="seanceThemeFilter" class="elu-select" aria-label="Filtrer par thématique">
-      <option value="all">Toutes les thématiques</option>
-      ${seanceThemeFilterOptions(d.points)}
-    </select>
-    <select id="seancePersonFilter" class="elu-select" aria-label="Filtrer par intervenant·e">
-      <option value="all">Tou·te·s les intervenant·e·s</option>
-      ${seancePersonFilterOptions(d.points)}
-    </select>
+    <select id="seanceTypeFilter" class="elu-select" aria-label="Filtrer par type de sujet"></select>
+    <select id="seanceThemeFilter" class="elu-select" aria-label="Filtrer par thématique"></select>
+    <select id="seancePersonFilter" class="elu-select" aria-label="Filtrer par intervenant·e"></select>
   </div>
   <p class="yc-note" id="seanceFilterCount"></p>
   <div class="elu-head">
@@ -247,7 +279,7 @@ function renderSeance(d) {
   if (typeSel) typeSel.addEventListener('change', () => onSeanceTypeFilterChange(typeSel));
   if (themeSel) themeSel.addEventListener('change', () => onSeanceThemeFilterChange(themeSel));
   if (personSel) personSel.addEventListener('change', () => onSeancePersonFilterChange(personSel));
-  renderSeancePoints();
+  refreshSeanceFilteredView();
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
