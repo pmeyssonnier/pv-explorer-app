@@ -25,6 +25,14 @@ const THEME_ICONS = {
 const THEME_LABELS = { light: 'clair', dark: 'sombre', auto: 'auto' };
 const THEME_ORDER = ['light', 'dark', 'auto'];
 
+// Couleur de chrome navigateur (barre d'état mobile, aperçu multitâche, fond
+// du splash screen à l'installation) — doit suivre le thème résolu comme le
+// reste de l'app ; valeurs alignées sur --blanc (styles.css) en clair/sombre.
+// Même résolution qu'au chargement (voir le script inline dans <head>, qui
+// évite le flash avant que ce module ne soit chargé).
+const THEME_COLOR_LIGHT = '#fffdf9';
+const THEME_COLOR_DARK = '#201a15';
+
 export function applyTheme() {
   if (settings.theme === 'light' || settings.theme === 'dark')
     document.documentElement.setAttribute('data-theme', settings.theme);
@@ -37,6 +45,12 @@ export function applyTheme() {
     const label = `Thème : ${THEME_LABELS[settings.theme] || 'auto'}`;
     btn.setAttribute('aria-label', label);
     btn.setAttribute('title', label + ' (appuyer pour changer)');
+  }
+  const meta = document.getElementById('themeColorMeta');
+  if (meta) {
+    const isDark = settings.theme === 'dark' ||
+      (settings.theme === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    meta.setAttribute('content', isDark ? THEME_COLOR_DARK : THEME_COLOR_LIGHT);
   }
 }
 export function cycleTheme() {

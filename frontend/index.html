@@ -4,18 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Conseil communal de Schaerbeek — Questions aux procès-verbaux</title>
+<!-- Couleur de chrome navigateur (barre d'état mobile, aperçu multitâche, fond
+     du splash screen à l'installation) : #fffdf9 par défaut (thème clair),
+     ajustée AVANT le premier rendu par le script ci-dessous si le thème
+     résolu (choix explicite ou préférence OS) est sombre — sinon elle
+     restait figée en clair même en thème sombre. -->
+<meta name="theme-color" content="#fffdf9" id="themeColorMeta">
 <!-- Applique le thème choisi AVANT le premier rendu (évite le flash clair→sombre) -->
 <script>
 (function () {
   try {
     var t = (JSON.parse(localStorage.getItem('pv_settings') || '{}').theme) || 'auto';
     if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    var dark = t === 'dark' || (t === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.getElementById('themeColorMeta').setAttribute('content', dark ? '#201a15' : '#fffdf9');
   } catch (e) {}
 })();
 </script>
 <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.svg">
-<meta name="theme-color" content="#fffdf9">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
