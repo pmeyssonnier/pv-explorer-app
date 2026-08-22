@@ -76,7 +76,20 @@ export async function submitAdminLogin(ev) {
       body: JSON.stringify({ username, password }),
     });
     if (!res.ok) {
-      errBox.textContent = 'Identifiants invalides.';
+      // 401 reste générique ("identifiants invalides") à dessein — mais
+      // toute autre erreur (config serveur incomplète, rate limit, etc.)
+      // affiche le vrai détail renvoyé par le backend, sinon un problème de
+      // configuration (ex. ADMIN_JWT_SECRET manquant) serait indiscernable
+      // d'un mot de passe erroné.
+      let detail = 'Identifiants invalides.';
+      if (res.status !== 401) {
+        try {
+          detail = (await res.json()).detail || `Erreur ${res.status}.`;
+        } catch {
+          detail = `Erreur ${res.status}.`;
+        }
+      }
+      errBox.textContent = detail;
       return;
     }
     const data = await res.json();
