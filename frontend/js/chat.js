@@ -63,7 +63,7 @@ export function clearHistory() {
 }
 // Retire une seule question de l'historique (bouton « × » sur son chip),
 // sans déclencher le clic du chip (qui la reposerait).
-export function removeHistoryItem(event, btn) {
+export function removeHistoryItem(btn, event) {
   event.stopPropagation();
   const textEl = btn.closest('.suggestion-history')?.querySelector('.suggestion-text');
   const q = textEl ? textEl.textContent : '';
@@ -80,9 +80,9 @@ export function renderHistory() {
   if (!h.length) { block.style.display = 'none'; chips.innerHTML = ''; return; }
   block.style.display = '';
   chips.innerHTML = h.map(q =>
-    `<span class="suggestion suggestion-history" onclick="askSuggestion(this)">` +
+    `<span class="suggestion suggestion-history" data-click="askSuggestion">` +
       `<span class="suggestion-text">${escapeHtml(q)}</span>` +
-      `<button class="suggestion-remove" type="button" onclick="removeHistoryItem(event, this)" aria-label="Supprimer cette question">×</button>` +
+      `<button class="suggestion-remove" type="button" data-click="removeHistoryItem" aria-label="Supprimer cette question">×</button>` +
     `</span>`
   ).join('');
 }
@@ -182,8 +182,7 @@ export function renderQuestionMsg(question) {
       <div class="msg-role">Votre question</div>
       <div class="msg-bubble" role="button" tabindex="0"
            title="Cliquer pour reposer ou modifier cette question"
-           onclick="reuseQuestion(this)"
-           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();reuseQuestion(this);}">${escapeHtml(question)}</div>
+           data-click="reuseQuestion" data-keyclick>${escapeHtml(question)}</div>
     </div>`;
 }
 export function renderAnswerMsg(question, answer, sourcesHtml, durationText) {
@@ -195,9 +194,9 @@ export function renderAnswerMsg(question, answer, sourcesHtml, durationText) {
       ${sourcesHtml}
       ${time}
       <div class="msg-actions" data-md="${encodeURIComponent(answer || '')}" data-q="${encodeURIComponent(question || '')}">
-        <button class="msg-act" type="button" onclick="copyAnswer(this)">Copier</button>
-        <button class="msg-act" type="button" onclick="downloadAnswer(this)">Exporter (.md)</button>
-        <button class="msg-act" type="button" onclick="shareAnswer(this)">Partager</button>
+        <button class="msg-act" type="button" data-click="copyAnswer">Copier</button>
+        <button class="msg-act" type="button" data-click="downloadAnswer">Exporter (.md)</button>
+        <button class="msg-act" type="button" data-click="shareAnswer">Partager</button>
       </div>
     </div>`;
 }

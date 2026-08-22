@@ -57,6 +57,11 @@ export function cycleTheme() {
   updateSetting('theme', THEME_ORDER[(THEME_ORDER.indexOf(settings.theme) + 1) % THEME_ORDER.length]);
 }
 export function openSettings() { renderSettings(); document.getElementById('settingsOverlay').classList.add('open'); }
+// Clic sur le fond assombri (pas sur le panneau lui-même) → ferme le tiroir.
+export function initSettingsOverlay() {
+  const overlay = document.getElementById('settingsOverlay');
+  if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) closeSettings(); });
+}
 export function closeSettings() {
   const panel = document.getElementById('settingsPanel');
   if (panel) panel.style.transform = '';   // efface un éventuel reliquat de glissement interrompu
