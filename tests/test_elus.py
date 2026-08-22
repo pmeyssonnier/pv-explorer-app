@@ -467,13 +467,41 @@ def test_seances_list_shape_and_sort():
     assert lst and isinstance(lst, list)
     for s in lst:
         assert set(s) >= {"date", "n_points", "url", "video_url"}
-        assert s["n_points"] > 0
+        # >= 0, pas > 0 : une séance filmée sans PV ni chapitrage vidéo
+        # encore fait (voir test_seances_list_includes_video_only_seance)
+        # a 0 point, mais reste listée (son lien vidéo reste utile).
+        assert s["n_points"] >= 0
     dates = [s["date"] for s in lst]
     assert dates == sorted(dates, reverse=True)  # plus récente en premier
 
 
+def test_seances_list_includes_video_only_seance():
+    """Séance filmée mais sans PV encore extrait/apparié (cas réel :
+    2026-06-24, la plus récente au moment d'écrire ce test) : doit quand
+    même apparaître dans la liste — sinon invisible dans l'onglet Séances
+    pour son année, alors que le débat est disponible."""
+    lst = elus.seances_list()
+    s = next((x for x in lst if x["date"] == "2026-06-24"), None)
+    assert s is not None
+    assert s["url"] is None            # pas de PDF : pas de PV pour cette date
+    assert s["video_url"]
+    assert s["n_points"] == 15
+
+
 def test_seance_detail_unknown_date_returns_none():
     assert elus.seance_detail("1999-01-01") is None
+
+
+def test_seance_detail_video_only_seance_builds_points_from_chapters():
+    """Sans PV, chaque chapitre vidéo devient un point à part entière (aucun
+    candidat PV à apparier) — la séance reste consultable, juste sans PDF."""
+    d = elus.seance_detail("2026-06-24")
+    assert d is not None
+    assert d["url"] is None
+    assert d["video_url"]
+    assert d["n_points"] == len(d["points"]) == 15
+    assert all(p["type"] == "video" for p in d["points"])
+    assert all(p["url"] for p in d["points"])  # deep-link précis par chapitre
 
 
 def test_seance_detail_lists_every_point_including_unattributed():

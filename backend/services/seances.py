@@ -93,21 +93,35 @@ def _decision_summary(decision, vote):
 
 
 def seances_list() -> list:
-    """Liste des séances (PV), la plus récente en premier — pour la
-    navigation par année dans l'onglet « Séances »."""
+    """Liste des séances, la plus récente en premier — pour la navigation
+    par année dans l'onglet « Séances ». Inclut aussi les séances filmées
+    sans PV encore extrait/apparié (ex. séance très récente) : sinon elles
+    seraient absentes de la liste d'une année pourtant filmée."""
     pv = load_db().get("seances", [])
     session_map = video_session_map()
+    pv_dates = set()
     out = []
     for s in pv:
         meta = s.get("seance", {}) or {}
         date = meta.get("date")
         if not date:
             continue
+        pv_dates.add(date)
         out.append({
             "date": date,
             "n_points": len(s.get("points", [])),
             "url": meta.get("source_url"),
             "video_url": session_map.get(date),
+        })
+    for vs in _load_video():
+        date = vs.get("date")
+        if not date or date in pv_dates:
+            continue
+        out.append({
+            "date": date,
+            "n_points": len(vs.get("points") or []),
+            "url": None,
+            "video_url": vs.get("video_url") or session_map.get(date),
         })
     out.sort(key=lambda x: x["date"], reverse=True)
     return out
@@ -118,14 +132,19 @@ def seance_detail(date: str):
     demandeur·se (auteur·e, si attribuable), le/la répondant·e, et le lien
     vidéo — précis si un chapitre correspondant existe (même fusion
     point-à-point que services.people.registry._build_all, voir
-    _match_pv_point), sinon le lien générique de séance. None si la date
-    est inconnue."""
+    _match_pv_point), sinon le lien générique de séance. Gère aussi une
+    séance filmée sans PV encore extrait/apparié : dans ce cas, tous ses
+    points viennent du chapitrage vidéo (aucun candidat PV à apparier, donc
+    chaque chapitre devient un point à part — même logique que pour un
+    chapitre orphelin d'une séance normale, voir plus bas). None si la date
+    n'est connue ni côté PV ni côté vidéo."""
     pv = load_db().get("seances", [])
     date = (date or "").strip()
     seance = next((s for s in pv if (s.get("seance") or {}).get("date") == date), None)
-    if not seance:
+    video_seance = next((s for s in _load_video() if s.get("date") == date), None)
+    if not seance and not video_seance:
         return None
-    meta = seance.get("seance", {}) or {}
+    meta = (seance or {}).get("seance", {}) or {}
     pairs = _pairs()
     nom_by_key = _nom_by_key()
     session_map = video_session_map()
@@ -134,7 +153,7 @@ def seance_detail(date: str):
         return _resolve_display_name(name, pairs, nom_by_key)
 
     points = []
-    for p in seance.get("points", []):
+    for p in (seance or {}).get("points", []):
         author, author_key = _point_author(p, pairs, date)
         author_names = _split_person_names(author) if author_key else []
         author_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in author_names))))
@@ -165,8 +184,9 @@ def seance_detail(date: str):
     # logique que services.people.registry._build_all : un chapitre vidéo
     # dont l'auteur·e et le sujet correspondent à un point déjà listé
     # remplace son lien générique par le lien précis, plutôt que d'apparaître
-    # comme un point séparé).
-    video_seance = next((s for s in _load_video() if s.get("date") == date), None)
+    # comme un point séparé). Si `points` est vide (pas de PV), aucun candidat
+    # ne peut jamais matcher : chaque chapitre devient naturellement un point
+    # à part via la branche "non apparié" ci-dessous.
     if video_seance:
         for vp in video_seance.get("points", []):
             vauthor = vp.get("auteur")
