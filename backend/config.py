@@ -46,8 +46,10 @@ SCORE_MIN = float(os.environ.get("SCORE_MIN", "0.0"))
 # Timeouts (secondes) des appels réseau externes. Bornent la durée max qu'un
 # thread du threadpool FastAPI peut rester retenu sur un appel lent ou bloqué :
 # au-delà, l'appel échoue proprement (500) au lieu d'immobiliser un thread.
-PINECONE_TIMEOUT = 15    # la recherche vectorielle est rapide (<2 s en régime normal)
-ANTHROPIC_TIMEOUT = 45   # marge pour une génération complète (max_tokens=2048)
+# Réglables par env (comme SCORE_MIN) pour ajuster sans redéployer de code —
+# utile si Pinecone/Anthropic est ponctuellement plus lent que la normale.
+PINECONE_TIMEOUT = float(os.environ.get("PINECONE_TIMEOUT", "15"))   # recherche vectorielle, rapide (<2 s en régime normal)
+ANTHROPIC_TIMEOUT = float(os.environ.get("ANTHROPIC_TIMEOUT", "45"))  # marge pour une génération complète (max_tokens=2048)
 
 # Chemin du fichier JSON des PV (lu par les statistiques). Surchargeable par env.
 PV_JSON_PATH = os.environ.get("PV_JSON_PATH", "pv_conseil_schaerbeek.json")
