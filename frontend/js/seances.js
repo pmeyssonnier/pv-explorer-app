@@ -63,14 +63,17 @@ function seancePointRow(it) {
   const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
   // Point reporté à une séance ultérieure : jamais débattu ce jour-là, donc
   // pas de lien vidéo générique à proposer (il n'y a rien à y voir sur ce
-  // point précis) — seul le PV reste pertinent.
+  // point précis).
   const reporteBadge = it.reporte ? `<span class="elu-badge b-report">Reporté</span>` : '';
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
+  // Pas de lien "PV (PDF)" par point : c'est le même PDF de séance pour tous
+  // les points (pas d'ancre par SP), déjà proposé une fois au-dessus de la
+  // liste (voir renderSeance) — le répéter à chaque point suggérerait à tort
+  // un accès direct à ce point précis dans le PDF.
   let links = '';
   if (it.type === 'video' && it.url) {
     links = `<a class="elu-link elu-link-video" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
   } else {
-    if (it.url) links += `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
     if (it.video_url && !it.reporte) {
       const label = it.video_precise ? '▶ Voir le débat' : '▶ vidéo';
       const title = it.video_precise
