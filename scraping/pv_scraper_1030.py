@@ -1,10 +1,16 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║  SCRAPER PV CONSEIL COMMUNAL SCHAERBEEK (1030.be) → GOOGLE DRIVE        ║
-║  Google Colab - Python 3.10+                          VERSION 2.2        ║
+║  Google Colab - Python 3.10+                          VERSION 2.3        ║
 ║  Scrape https://www.1030.be/fr/proces-verbaux                            ║
 ║  et copie tous les PDF dans Google Drive                                 ║
 ╚══════════════════════════════════════════════════════════════════════════╝
+
+CHANGELOG v2.3 :
+  - Nomenclature courte des archives 2010 confirmée : `pv-YYYY-MM-DD-sp.pdf`
+    (SANS "conseil", contrairement à toutes les nomenclatures plus récentes) —
+    ex : pv-2010-12-22-sp.pdf, vu sur https://www.1030.be/fr/proces-verbaux
+    (pagination). is_pv_pdf() et URL_TEMPLATES la reconnaissent désormais.
 
 CHANGELOG v2.2 :
   - Patterns d'URL confirmés : 2 emplacements (/import/ et /document/) et
@@ -321,6 +327,11 @@ URL_TEMPLATES = [
     "https://www.1030.be/data/media/document/pv-conseil-{date}-sp.pdf",
     "https://www.1030.be/data/media/document/pv-conseil-{date}-sp_{n}.pdf",
     "https://www.1030.be/data/media/document/pv-conseil-{date}-sp_{n}_0.pdf",
+    # ── /document/ — nomenclature courte des archives 2010, SANS "conseil" ────
+    #   Date à TIRETS ici (pas à points) : ex. /document/pv-2010-12-22-sp.pdf
+    "https://www.1030.be/data/media/document/pv-{date_dash}-sp.pdf",
+    "https://www.1030.be/data/media/document/pv-{date_dash}.pdf",
+    "https://www.1030.be/data/media/document/pv-{date_dash}-sp_{n}.pdf",
     # ── Variantes historiques (underscores dans la date), par sécurité ───────
     "https://www.1030.be/data/media/document/pv-conseil-{date_under}-sp_{n}.pdf",
     "https://www.1030.be/data/media/document/pv-conseil-{date_under}-sp.pdf",
@@ -423,17 +434,28 @@ def make_absolute(href: str) -> Optional[str]:
     return None
 
 
+# Nomenclature courte confirmée sur les archives 2010 : pv-YYYY-MM-DD[-sp].pdf,
+# SANS "conseil" — ex: /data/media/document/pv-2010-12-22-sp.pdf. Un simple
+# mot-clé serait trop permissif (n'importe quel "pv-*.pdf" matcherait) ; on
+# exige la forme datée pour rester spécifique aux PV.
+_SHORT_DATE_PV_RE = re.compile(r"/pv-20\d{2}-\d{2}-\d{2}")
+
+
 def is_pv_pdf(url: str) -> bool:
     """Vérifie si l'URL correspond à un PV du conseil communal.
-    Couvre les 2 emplacements (/import/, /document/) et les 3 nomenclatures
-    (tirets `pv-conseil-`, underscores `pv_conseil_`, espaces `PV Conseil`)."""
+    Couvre les 2 emplacements (/import/, /document/), les 3 nomenclatures
+    récentes (tirets `pv-conseil-`, underscores `pv_conseil_`, espaces
+    `PV Conseil`) et la nomenclature courte des archives 2010 (sans "conseil",
+    voir _SHORT_DATE_PV_RE)."""
     u = url.lower()
     if not (u.endswith(".pdf") and "1030.be" in u):
         return False
-    return any(k in u for k in [
+    if any(k in u for k in [
         "pv-conseil", "pv_conseil", "pv%20conseil", "pv conseil",
         "notulen", "proces-verbal",
-    ])
+    ]):
+        return True
+    return bool(_SHORT_DATE_PV_RE.search(u))
 
 
 def url_to_filename(url: str) -> str:
