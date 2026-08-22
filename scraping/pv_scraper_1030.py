@@ -1,10 +1,21 @@
 """
 ╔══════════════════════════════════════════════════════════════════════════╗
 ║  SCRAPER PV CONSEIL COMMUNAL SCHAERBEEK (1030.be) → GOOGLE DRIVE        ║
-║  Google Colab - Python 3.10+                          VERSION 2.2        ║
+║  Google Colab - Python 3.10+                          VERSION 2.3        ║
 ║  Scrape https://www.1030.be/fr/proces-verbaux                            ║
 ║  et copie tous les PDF dans Google Drive                                 ║
 ╚══════════════════════════════════════════════════════════════════════════╝
+
+CHANGELOG v2.3 :
+  - Nomenclatures courtes des archives 2010 confirmées, SANS "conseil"
+    (contrairement à toutes les nomenclatures plus récentes) — au moins 2
+    variantes coexistent pour cette période :
+      pv-2010-12-22-sp.pdf                        (tirets)
+      Pv%202010%2009%2001%20SP%20%282%29.pdf       (espaces %20, "(N)" pour
+                                                      les séances multi-documents)
+    vues sur https://www.1030.be/fr/proces-verbaux (pagination). is_pv_pdf()
+    décode désormais l'URL (unquote) avant de matcher, pour traiter espace
+    et %20 uniformément ; URL_TEMPLATES couvre la variante à tirets.
 
 CHANGELOG v2.2 :
   - Patterns d'URL confirmés : 2 emplacements (/import/ et /document/) et
@@ -61,6 +72,7 @@ import requests
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
+from urllib.parse import unquote
 from tqdm import tqdm
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -321,6 +333,11 @@ URL_TEMPLATES = [
     "https://www.1030.be/data/media/document/pv-conseil-{date}-sp.pdf",
     "https://www.1030.be/data/media/document/pv-conseil-{date}-sp_{n}.pdf",
     "https://www.1030.be/data/media/document/pv-conseil-{date}-sp_{n}_0.pdf",
+    # ── /document/ — nomenclature courte des archives 2010, SANS "conseil" ────
+    #   Date à TIRETS ici (pas à points) : ex. /document/pv-2010-12-22-sp.pdf
+    "https://www.1030.be/data/media/document/pv-{date_dash}-sp.pdf",
+    "https://www.1030.be/data/media/document/pv-{date_dash}.pdf",
+    "https://www.1030.be/data/media/document/pv-{date_dash}-sp_{n}.pdf",
     # ── Variantes historiques (underscores dans la date), par sécurité ───────
     "https://www.1030.be/data/media/document/pv-conseil-{date_under}-sp_{n}.pdf",
     "https://www.1030.be/data/media/document/pv-conseil-{date_under}-sp.pdf",
@@ -423,17 +440,32 @@ def make_absolute(href: str) -> Optional[str]:
     return None
 
 
+# Nomenclatures courtes confirmées sur les archives 2010, SANS "conseil" —
+# au moins 2 variantes coexistent pour cette période :
+#   /data/media/document/pv-2010-12-22-sp.pdf              (tirets)
+#   Pv%202010%2009%2001%20SP%20%282%29.pdf                 (espaces %20,
+#     "SP" avant un suffixe "(N)" pour les séances à plusieurs documents)
+# On décode l'URL (unquote) avant de matcher pour traiter espace et %20 de
+# façon uniforme. Un simple mot-clé serait trop permissif (n'importe quel
+# "pv *.pdf" matcherait) ; on exige la forme datée pour rester spécifique.
+_SHORT_DATE_PV_RE = re.compile(r"pv[-_. ]*20\d{2}[-_. ]+\d{1,2}[-_. ]+\d{1,2}(?:[-_. ]*sp)?")
+
+
 def is_pv_pdf(url: str) -> bool:
     """Vérifie si l'URL correspond à un PV du conseil communal.
-    Couvre les 2 emplacements (/import/, /document/) et les 3 nomenclatures
-    (tirets `pv-conseil-`, underscores `pv_conseil_`, espaces `PV Conseil`)."""
-    u = url.lower()
+    Couvre les 2 emplacements (/import/, /document/), les 3 nomenclatures
+    récentes (tirets `pv-conseil-`, underscores `pv_conseil_`, espaces
+    `PV Conseil`) et les nomenclatures courtes des archives 2010 (sans
+    "conseil", tirets ou espaces/%20, voir _SHORT_DATE_PV_RE)."""
+    u = unquote(url).lower()
     if not (u.endswith(".pdf") and "1030.be" in u):
         return False
-    return any(k in u for k in [
-        "pv-conseil", "pv_conseil", "pv%20conseil", "pv conseil",
+    if any(k in u for k in [
+        "pv-conseil", "pv_conseil", "pv conseil",
         "notulen", "proces-verbal",
-    ])
+    ]):
+        return True
+    return bool(_SHORT_DATE_PV_RE.search(u))
 
 
 def url_to_filename(url: str) -> str:
