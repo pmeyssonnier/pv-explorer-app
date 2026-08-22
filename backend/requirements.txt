@@ -6,3 +6,12 @@ anthropic==0.115.0
 pinecone==9.1.0
 python-dotenv==1.2.2
 slowapi==0.1.10
+# Ci-dessous : intégration d'un PV uploadé (panneau admin, voir
+# services/pv_integration.py) — pdfplumber/tqdm sont aussi des dépendances du
+# pipeline d'extraction (pipeline/pv_extraction_pipeline.py, réutilisé tel
+# quel) ; httpx est déjà tiré transitivement par anthropic/pinecone mais
+# épinglé explicitement puisqu'on l'importe directement (commit GitHub).
+pdfplumber==0.11.10
+tqdm==4.70.0
+httpx==0.28.1
+python-multipart==0.0.32

@@ -14,9 +14,14 @@ services:
     # changent. Sans ce filtre, chaque push sur main — y compris purement
     # frontend — redéployait l'API, provoquant une brève fenêtre de 502 (tier
     # gratuit). Les fichiers de données vivent dans backend/ → couverts aussi.
+    # pipeline/** est inclus depuis que backend/services/pv_integration.py
+    # réutilise pipeline/pv_extraction_pipeline.py à l'exécution (intégration
+    # d'un PV uploadé, panneau admin) — avant, pipeline/ était un outil Colab
+    # entièrement séparé du backend déployé.
     buildFilter:
       paths:
         - backend/**
+        - pipeline/**
         - render.yaml
     envVars:
       - key: ANTHROPIC_API_KEY
@@ -32,3 +37,16 @@ services:
         #   pv-explorer.vercel.app     → domaine principal
         #   pv-schaerbeek.vercel.app   → alias
         value: https://pv-explorer.vercel.app,https://pv-schaerbeek.vercel.app
+      # ── Authentification admin (voir backend/services/auth.py) ──
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: ADMIN_JWT_SECRET
+        sync: false
+      # ── Intégration d'un PV uploadé (voir backend/services/pv_integration.py
+      # et backend/services/github_publish.py) — jeton avec la permission
+      # "Contents: Read and write" sur pmeyssonnier/pv-explorer-app UNIQUEMENT
+      # (fine-grained PAT recommandé, pas un token classic tous-dépôts). ──
+      - key: GITHUB_TOKEN
+        sync: false
