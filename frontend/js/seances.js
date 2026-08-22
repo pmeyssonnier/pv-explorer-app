@@ -8,6 +8,10 @@ let seancesData = null;       // liste complète [{date,n_points,url,video_url}]
 let seancesLoaded = false;
 let pendingSeanceDate = null; // séance à présélectionner depuis un lien partagé (?seance=)
 let currentSeanceDetail = null;
+// Année actuellement affichée en vue agrégée ("Toutes les séances"), ou null
+// si une séance précise est affichée — sert à savoir si renderSeanceYearList
+// doit garder "__all__" sélectionné plutôt que retomber sur la plus récente.
+let currentAggregateYear = null;
 // Filtres de la séance affichée (réinitialisés à chaque nouvelle séance
 // chargée) : 'all', un type_label ("Motion", "Question orale", …), ou un
 // pseudo-type transversal — 'reporte' (point reporté, peut être de
@@ -63,10 +67,15 @@ export function renderSeanceYearList() {
   const sel = document.getElementById('seanceList');
   const yearSel = document.getElementById('seanceYear');
   if (!sel || !seancesData || !yearSel.value) return;
-  const list = seancesData.filter(s => s.date.startsWith(yearSel.value));
-  sel.innerHTML = list.map(s =>
+  const year = yearSel.value;
+  const list = seancesData.filter(s => s.date.startsWith(year));
+  const allOpt = `<option value="__all__">Toutes les séances (${list.length})</option>`;
+  sel.innerHTML = allOpt + list.map(s =>
     `<option value="${escapeHtml(s.date)}">${escapeHtml(formatDate(s.date))}</option>`
   ).join('');
+  // Vue agrégée déjà affichée pour cette année : la garder plutôt que de
+  // retomber sur la séance la plus récente (voir plus bas).
+  if (currentAggregateYear === year) { sel.value = '__all__'; return; }
   const preselect = (currentSeanceDetail && list.some(s => s.date === currentSeanceDetail.date))
     ? currentSeanceDetail.date
     : (list[0] && list[0].date);
@@ -74,8 +83,52 @@ export function renderSeanceYearList() {
   sel.value = preselect;
   if (!currentSeanceDetail || currentSeanceDetail.date !== preselect) loadSeance(preselect);
 }
-// Sélection manuelle dans le menu déroulant des séances.
-export function onSeanceListChange(sel) { if (sel.value) loadSeance(sel.value, { scroll: true }); }
+// Sélection manuelle dans le menu déroulant des séances — soit une date
+// précise, soit "__all__" (toutes les séances de l'année sélectionnée).
+export function onSeanceListChange(sel) {
+  if (!sel.value) return;
+  if (sel.value === '__all__') {
+    const yearSel = document.getElementById('seanceYear');
+    if (yearSel && yearSel.value) loadSeanceYearAll(yearSel.value);
+    return;
+  }
+  loadSeance(sel.value, { scroll: true });
+}
+
+// Vue agrégée "Toutes les séances (année)" : récupère le détail de chaque
+// séance de l'année en parallèle et fusionne leurs points dans une seule
+// liste filtrable (mêmes filtres type/thématique/intervenant·e que pour une
+// séance unique), chaque point gardant trace de sa date d'origine.
+async function loadSeanceYearAll(year) {
+  const box = document.getElementById('seanceResult');
+  box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
+  const dates = seancesData.filter(s => s.date.startsWith(year)).map(s => s.date);
+  try {
+    const results = await Promise.all(dates.map(async d => {
+      const res = await fetch(API_URL + '/seance/' + encodeURIComponent(d));
+      if (!res.ok) throw new Error('Erreur ' + res.status);
+      return res.json();
+    }));
+    const points = results
+      .flatMap(d => d.points.map(p => ({ ...p, _seanceDate: d.date })))
+      .sort((a, b) => b._seanceDate.localeCompare(a._seanceDate) || a.sp - b.sp);
+    renderSeance({
+      isAggregate: true,
+      year,
+      n_seances: results.length,
+      n_points: points.length,
+      points,
+    });
+  } catch (err) {
+    box.innerHTML = `<div class="error-box">Impossible de charger les séances de ${escapeHtml(year)}. ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+// Depuis la vue agrégée : reviens à la séance précise d'un point (bascule
+// aussi le menu déroulant, via loadSeance → renderSeanceYearList).
+export function jumpToSeance(date) {
+  if (date) loadSeance(date, { scroll: false });
+}
 
 // Un point a un lien vers le débat filmé quand c'est un chapitre vidéo
 // autonome (type "video", pas de point PV associé), ou quand un chapitre
@@ -92,6 +145,11 @@ function seancePointRow(it) {
   const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
   const reporteBadge = it.reporte ? `<span class="elu-badge b-report">Reporté</span>` : '';
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
+  // Vue agrégée "Toutes les séances" uniquement : rappelle de quelle séance
+  // vient ce point, et permet d'y revenir directement (voir jumpToSeance).
+  const seanceDateBadge = it._seanceDate
+    ? `<button type="button" class="elu-sp elu-sp-link" data-click="jumpToSeance" data-arg="${escapeHtml(it._seanceDate)}" title="Voir cette séance">${escapeHtml(formatDate(it._seanceDate))}</button>`
+    : '';
   // Pas de lien "PV (PDF)" par point : c'est le même PDF de séance pour tous
   // les points (pas d'ancre par SP), déjà proposé une fois au-dessus de la
   // liste (voir renderSeance) — le répéter à chaque point suggérerait à tort
@@ -112,7 +170,7 @@ function seancePointRow(it) {
     ? `<div class="elu-tags">${it.thematiques.map(t => `<span class="elu-tag">${escapeHtml(t)}</span>`).join('')}</div>` : '';
   return `<div class="elu-item">
     <div class="elu-body">
-      ${badge}${reporteBadge}${sp}
+      ${seanceDateBadge}${badge}${reporteBadge}${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}
@@ -269,13 +327,25 @@ function onSeanceFilterReset() {
 
 function renderSeance(d, scroll) {
   currentSeanceDetail = d;
+  currentAggregateYear = d.isAggregate ? d.year : null;
   seanceTypeFilter = 'all';
   seanceThemeFilter = 'all';
   seancePersonFilter = 'all';
   const box = document.getElementById('seanceResult');
+  // Vue agrégée : pas de PV/vidéo unique à lier (chaque point garde le sien
+  // via seanceDateBadge → jumpToSeance), ni de partage dédié pour l'instant.
   let links = '';
-  if (d.url) links += `<a class="elu-link" href="${d.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
-  if (d.video_url) links += `<a class="elu-link elu-link-video" href="${d.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo (séance complète)</a>`;
+  if (!d.isAggregate) {
+    if (d.url) links += `<a class="elu-link" href="${d.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
+    if (d.video_url) links += `<a class="elu-link elu-link-video" href="${d.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo (séance complète)</a>`;
+  }
+  const titleLabel = d.isAggregate ? `Toutes les séances ${escapeHtml(d.year)}` : formatDate(d.date);
+  const countLabel = d.isAggregate
+    ? `${d.n_points} point${d.n_points > 1 ? 's' : ''} · ${d.n_seances} séance${d.n_seances > 1 ? 's' : ''}`
+    : `${d.n_points} point${d.n_points > 1 ? 's' : ''}`;
+  const shareBtn = d.isAggregate ? '' : `<button type="button" class="seance-share-btn" data-click="shareSeance" aria-label="Partager le lien vers cette séance" title="Partager le lien vers cette séance">
+      <svg class="icon" aria-hidden="true"><use href="#ico-share"/></svg>
+    </button>`;
 
   // Filtres repliés par défaut (comme les valeurs, remises à "all" ci-dessus) :
   // l'écran par défaut reste léger (choisir une séance → lire ses points),
@@ -293,15 +363,15 @@ function renderSeance(d, scroll) {
   </div>
   <p class="yc-note" id="seanceFilterCount"></p>
   <div class="elu-head">
-    <div class="elu-name">${formatDate(d.date)}</div>
-    <span class="elu-role elu-role-conseiller">${d.n_points} point${d.n_points > 1 ? 's' : ''}</span>
-    <button type="button" class="seance-share-btn" data-click="shareSeance" aria-label="Partager le lien vers cette séance" title="Partager le lien vers cette séance">
-      <svg class="icon" aria-hidden="true"><use href="#ico-share"/></svg>
-    </button>
+    <div class="elu-name">${titleLabel}</div>
+    <span class="elu-role elu-role-conseiller">${countLabel}</span>
+    ${shareBtn}
   </div>`;
   if (links) html += `<div class="elu-links seance-head-links">${links}</div>`;
   html += `<div class="elu-list" id="seancePointsList"></div>`;
-  html += `<p class="elu-note">Agrégation déterministe depuis le procès-verbal officiel de cette séance et le chapitrage vidéo correspondant, quand la séance a été filmée. Liste exhaustive des points à l'ordre du jour ; demandeur·se/répondant·e non affiché·e quand non attribuable individuellement (points collectifs/administratifs).</p>`;
+  html += d.isAggregate
+    ? `<p class="elu-note">Points de toutes les séances de ${escapeHtml(d.year)} fusionnés dans une seule liste filtrable ; la date sous chaque point permet de revenir à sa séance d'origine (PV, vidéo).</p>`
+    : `<p class="elu-note">Agrégation déterministe depuis le procès-verbal officiel de cette séance et le chapitrage vidéo correspondant, quand la séance a été filmée. Liste exhaustive des points à l'ordre du jour ; demandeur·se/répondant·e non affiché·e quand non attribuable individuellement (points collectifs/administratifs).</p>`;
 
   box.innerHTML = html;
   const typeSel = document.getElementById('seanceTypeFilter');
