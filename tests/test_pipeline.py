@@ -1,12 +1,14 @@
 """Tests des utilitaires du pipeline d'extraction (`pv_extraction_pipeline.py`) :
-déduction de date depuis le nom de fichier, et normalisation du numéro de point
-(sp) que Claude renvoie tantôt en texte, tantôt en entier.
+déduction de date depuis le nom de fichier, normalisation du numéro de point
+(sp) que Claude renvoie tantôt en texte, tantôt en entier, et libération
+mémoire par page lors de l'extraction du texte du PDF.
 """
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from pv_extraction_pipeline import extract_pdf_metadata, _coerce_sp, _sp_key
+from pv_extraction_pipeline import extract_pdf_metadata, extract_text_from_pdf, _coerce_sp, _sp_key
 
 
 # ── extract_pdf_metadata : date depuis le NOM de fichier ────────────────────
@@ -58,3 +60,30 @@ def test_sp_key_tri_mixte():
     points = [{"sp": 3}, {"sp": "bis"}, {"sp": 1}, {"sp": 10}]
     ordonnes = [p["sp"] for p in sorted(points, key=_sp_key)]
     assert ordonnes == [1, 3, 10, "bis"]
+
+
+# ── extract_text_from_pdf : libère chaque page après usage ──────────────────
+# pdfplumber construit tous les objets Page dès l'ouverture et met en cache
+# leurs données de mise en page (chars/mots/rects) dès extract_text() — sans
+# page.close(), la mémoire croît linéairement avec le nombre de pages jusqu'à
+# la sortie du `with`. Sur un PV dense/bilingue, ça a suffi à faire tuer le
+# process en production (RAM du tier gratuit Render dépassée en plein milieu
+# de l'extraction). Vérifie que chaque page est bien fermée après usage.
+def test_extract_text_from_pdf_closes_each_page():
+    page1 = MagicMock()
+    page1.extract_text.return_value = "Texte page 1"
+    page2 = MagicMock()
+    page2.extract_text.return_value = "Texte page 2"
+
+    fake_pdf = MagicMock()
+    fake_pdf.pages = [page1, page2]
+    fake_pdf.__enter__.return_value = fake_pdf
+    fake_pdf.__exit__.return_value = False
+
+    with patch("pv_extraction_pipeline.pdfplumber.open", return_value=fake_pdf):
+        pages = extract_text_from_pdf(Path("fake.pdf"))
+
+    assert [p["text"] for p in pages] == ["Texte page 1", "Texte page 2"]
+    assert [p["page_num"] for p in pages] == [1, 2]
+    page1.close.assert_called_once()
+    page2.close.assert_called_once()
