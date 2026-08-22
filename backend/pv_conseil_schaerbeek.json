@@ -4,6 +4,7 @@
     "version": "1.0",
     "date_creation": "2026-06-05",
     "seances_incluses": [
+      "2010-10-27",
       "2010-12-01",
       "2010-12-22",
       "2012-01-18",
@@ -151,7 +152,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 8842,
+    "total_points": 8897,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -175,6 +176,1541 @@
     "last_updated": "2026-08-19T11:13:43.724687"
   },
   "seances": [
+    {
+      "seance": {
+        "id": "PV-2010-10-27",
+        "date": "2010-10-27",
+        "source_file": "pv-2010-10-27-sp.pdf",
+        "extracted_at": "2026-08-22T16:35:35.298092",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Dero",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 54,
+          "extracted": 55,
+          "missing_sp": [],
+          "extra_sp": [
+            55
+          ],
+          "missing_pages": [],
+          "ok": true
+        }
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Conseil de l'Enseignement des Communes et des Provinces - Adhésion - Désignation des représentants communaux",
+          "resume": "Confirmation de l'adhésion de la Commune de Schaerbeek au Conseil de l'Enseignement des Communes et des Provinces et désignation de M. Georges Verzin comme membre effectif et M. Claude Wachtelaer comme membre suppléant à l'Assemblée Générale.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "representation_communale"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement fixant les redevances sur l'établissement et/ou la délivrance de certificats et de documents administratifs - Modification - Approbation",
+          "resume": "Modification et approbation du règlement fixant les redevances pour l'établissement et/ou la délivrance de certificats et documents administratifs. Le règlement détaille les tarifs applicables pour diverses catégories de documents (cartes d'identité, passeports, permis de conduire, etc.) et énumère les exemptions.",
+          "intervenants": [
+            "Grimberghs"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "redevances",
+            "certificats_administratifs",
+            "tarification"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Budget 2010 - Modification budgétaire ordinaire et extraordinaire n°3 - Approbation",
+          "resume": "Approbation des modifications budgétaires ordinaires et extraordinaires n°3 pour l'année 2010",
+          "intervenants": [
+            "De Herde",
+            "Grimberghs",
+            "Onkelinx",
+            "Vanhalewyn",
+            "Clerfayt",
+            "Bouhjar"
+          ],
+          "repondant": "Köse, Smeysters, Noël",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 10,
+            "abstentions": 3
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget",
+            "modifications_budgetaires"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "Subventions",
+          "titre": "Règlement relatif aux subventions communales - Modification",
+          "resume": "Modification du règlement relatif aux subventions communales, précisant les conditions d'octroi, les délais de demande, les obligations de documentation et les modalités de contrôle pour les subventions d'une valeur égale ou supérieure à 3.000 €",
+          "intervenants": [
+            "Grimberghs",
+            "Vriamont"
+          ],
+          "repondant": "Nimal",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 3
+          },
+          "montant_eur": 3000,
+          "thematiques": [
+            "subventions",
+            "reglementations",
+            "controle_subventions"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "ASBL",
+          "titre": "ASBL \"Œuvre des Colonies Scolaires de Schaerbeek - OCS\" - Octroi du subside 2010 relatif à la réorganisation des activités parascolaires - Convention de partenariat - Approbation",
+          "resume": "Octroi du subside 2010 pour la réorganisation des activités parascolaires à l'ASBL \"Œuvre des Colonies Scolaires de Schaerbeek - OCS\" et approbation du projet de convention entre la Commune et l'ASBL",
+          "intervenants": [
+            "M. Grimberghs",
+            "M. Verzin"
+          ],
+          "repondant": "M. Verzin",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 3
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subventions",
+            "activites_parascolaires",
+            "convention_partenariat"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "ASBL",
+          "titre": "ASBL \"Association des Mosquées de Schaerbeek - AdMS\" - Comptes 2008 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2008 de l'ASBL \"Association des Mosquées de Schaerbeek - AdMS\" affichant un bénéfice de 129.840,63 € pour l'exercice et un montant des avoirs de 143.674,81 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 3
+          },
+          "montant_eur": 129840.63,
+          "thematiques": [
+            "comptes_annuels",
+            "asbl",
+            "subventions"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "ASBL",
+          "titre": "Comptes 2009 de l'ASBL \"Atout Couleur\" - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL \"Atout Couleur\" affichant un bénéfice de 21.949 € pour l'exercice et un résultat cumulé de 22.031 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 21949,
+          "thematiques": [
+            "comptes_annuels",
+            "asbl",
+            "subventions"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "ASBL",
+          "titre": "Comptes 2009 de l'ASBL \"Atelier des Petits Pas - APP\" - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL \"Atelier des Petits Pas - APP\" affichant une perte de -635,47 € pour l'exercice et un résultat cumulé de 29.340,30 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": -635.47,
+          "thematiques": [
+            "comptes_annuels",
+            "asbl",
+            "subventions"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Transports en commun",
+          "titre": "Harmonisation régionale des arrêts de transports en commun - Signature d'un Protocole d'accord entre la STIB et la commune relatif à la gestion des abris pour voyageurs sur le territoire de Schaerbeek",
+          "resume": "Approbation du protocole d'accord entre la Commune et la STIB relatif au mobilier urbain aux arrêts de transport en commun situés sur le territoire de Schaerbeek",
+          "intervenants": [
+            "MM. Grimberghs",
+            "M. Clerfayt"
+          ],
+          "repondant": "Mme la Bourgmestre ff.",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "transports",
+            "mobilier_urbain",
+            "stib",
+            "protocol_accord"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments - Techniques spéciales",
+          "sous_rubrique": "Achat de matériel pour la rénovation des installations sanitaires",
+          "titre": "Achat de matériel pour la rénovation des installations sanitaires dans les écoles primaires 2, 3, 6 et 16 - Mode de passation et fixation des conditions du marché",
+          "resume": "Acquisition de matériel pour rénover les installations sanitaires dans quatre écoles primaires",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "marche_public",
+            "equipement_scolaire",
+            "sanitaire"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service Infrastructures - Bâtiments",
+          "sous_rubrique": "Acquisition de matériel de fête",
+          "titre": "Acquisition de matériel de fête - Mode de passation et fixation des conditions du marché",
+          "resume": "Marché par procédure négociée sans publicité pour l'acquisition de matériel de fêtes",
+          "intervenants": [
+            "M. Bouhjar"
+          ],
+          "repondant": "Mme la Bourgmestre ff.",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "marche_public",
+            "materiel_fete",
+            "equipement"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures - Service techniques spéciales",
+          "sous_rubrique": "Acquisition d'appareils téléphoniques",
+          "titre": "Acquisition d'appareils téléphoniques pour le CSA - Mode de passation et fixation des conditions du marché",
+          "resume": "Marché par procédure négociée sans publicité pour l'acquisition d'appareils téléphoniques destinés au CSA",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 55000,
+          "thematiques": [
+            "marche_public",
+            "telephonie",
+            "equipement"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Schaerbeek Propreté & Espaces Verts",
+          "sous_rubrique": "Achat d'engins pour plaine de jeux",
+          "titre": "Achat d'engins pour plaine de jeux - Mode de passation et fixation des conditions du marché",
+          "resume": "Marché par procédure négociée sans publicité pour l'acquisition d'engins destinés aux plaines de jeux",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 35000,
+          "thematiques": [
+            "marche_public",
+            "espaces_verts",
+            "plaine_jeux",
+            "equipement"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Coopération Nord-Sud",
+          "sous_rubrique": "Acquisition de matériel informatique et de reprographie",
+          "titre": "Acquisition de matériel informatique et de reprographie destiné à la commune d'Al-Hoceima (Maroc) - Mode de passation et fixation des conditions du marché",
+          "resume": "Marché par procédure négociée sans publicité pour l'acquisition de matériel informatique et de reprographie destiné à Al-Hoceima au Maroc",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 14000,
+          "thematiques": [
+            "marche_public",
+            "cooperation_nord_sud",
+            "materiel_informatique",
+            "reprographie"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Bâtiments - Toiture",
+          "titre": "Commande pour des travaux de réparation à la toiture de l'Athénée Fernand Blum - Mode de passation et fixation des conditions du marché",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 12 octobre 2010 concernant l'acquisition du matériel pour la réparation de la toiture de l'Athénée Fernand Blum. Marché en partie auprès des adjudicataires annuels LUYPAERT et FACOZINC, et en partie par procédure négociée sans publicité auprès de S.A. APOK. Dépense de 2.119,45 € (TTC) imputée à l'article 731/724IN-60/51 du budget extraordinaire 2010 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2119.45,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "marches_publics",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service infrastructure",
+          "sous_rubrique": "Acquisition d'outillage",
+          "titre": "Acquisition d'outillage pour les services techniques - Mode de passation et fixation des conditions du marché",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 12 octobre 2010 de passer un marché par procédure négociée sans publicité pour l'acquisition d'outillage pour les services techniques selon le cahier des charges SCHA/EQUIP/2010/053. Dépense estimée à 49.586,78 € HT ou 60.000 € TTC (21% TVA), imputée à l'article 137/744-EQ-51/14 du budget extraordinaire 2010 et financée par fonds propres.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 60000,
+          "thematiques": [
+            "infrastructures",
+            "marches_publics",
+            "budget_extraordinaire",
+            "equipement"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Programme Informatique Communal",
+          "sous_rubrique": "Acquisition de matériel et logiciels",
+          "titre": "Acquisition de matériel et de logiciels divers - Mode de passation et fixation des conditions du marché",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 19 octobre 2010 de passer un marché par procédure négociée sans publicité pour l'acquisition de matériel et logiciels selon le cahier des charges SCHA/EQUIP/2010/071. Dépense estimée à 45.454,55 € HT ou 55.000 € TTC (21% TVA), imputée à l'article 139/742-DS-53/26 du budget extraordinaire 2010 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 55000,
+          "thematiques": [
+            "informatique",
+            "marches_publics",
+            "budget_extraordinaire",
+            "equipement"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 37,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Convention Eurotops 2010 dans le cadre du Fonds Sommets Européens",
+          "resume": "Approbation de la convention Eurotops 2010 dans le cadre du Fonds Sommets Européens pour couvrir les dépenses liées à la prévention de la criminalité lors des sommets européens et initiatives liées à la fonction internationale de la Ville de Bruxelles.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "prevension_urbaine",
+            "securite",
+            "sommets_europeens"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Programme de Prévention Urbaine - Dispositifs Rousseau",
+          "titre": "Convention de partenariat entre la commune et l'ASBL SeTIS portant sur des services d'interprétariat dans le cadre de projets de cohésion sociale dans le quartier Aerschot-Brabant",
+          "resume": "Approbation de la convention 2010/2011 entre la Commune et l'asbl SeTIS pour des services d'interprétariat dans le cadre de projets de cohésion sociale dans le quartier Aerschot-Brabant, dans le cadre du Programme de Prévention Urbaine.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "prevention_urbaine",
+            "cohesion_sociale",
+            "partenariats",
+            "quartier_aerschot_brabant"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 39,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions et Partenariats",
+          "sous_rubrique": "Fonds Politiques des Grandes Villes",
+          "titre": "Fonds Politiques des Grandes Villes 2009 - Mission de consultance pour la mise en place d'un guichet unique Rénovation énergétique - Rapport final de l'étude",
+          "resume": "Approbation du rapport final de l'étude relative à la mission de consultance pour la mise en place d'un guichet unique Rénovation énergétique dans le cadre du Fonds Politiques des Grandes Villes 2009. Considération de la création d'une entité locale (asbl Renovas) pour opérer sur le territoire de Schaerbeek dans le cadre du Fonds de réduction du coût global de l'énergie (FRCE).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "energies_renouvelables",
+            "politique_urbaine",
+            "aide_aux_personnes_demunies",
+            "reduction_energetique"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES GENERAUX",
+          "sous_rubrique": "Cabinet du Bourgmestre",
+          "titre": "Fête du Sacrifice 2010 - Convention particulière pour l'abattage des moutons selon le rite islamique à l'occasion de la Fête du Sacrifice du 16 et/ou 17 novembre 2010",
+          "resume": "Approbation de la convention entre l'Association des Mosquées Schaerbeekoises et la commune de Schaerbeek concernant l'organisation d'un abattoir temporaire les 16 et/ou 17 novembre 2010 sur le site du garage communal (rue de Jérusalem, 54)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "services_generaux",
+            "culte",
+            "abattage_rituel"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 44,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RESSOURCES HUMAINES",
+          "sous_rubrique": "Ressources Humaines",
+          "titre": "Modification du cadre temporaire spécifique du Fonds Politique des Grandes Villes - Approbation",
+          "resume": "Modification du cadre temporaire des emplois prévus au Fonds Politiques des Grandes Villes avec création, suppression et transformation d'emplois dans plusieurs projets (Boutiques de quartier, Accueil et formation des Primo-arrivants, Espaces publics accessibles à tous, Maison des femmes, etc.)",
+          "intervenants": [
+            "Mme Nyssens",
+            "M. Bouhjar"
+          ],
+          "repondant": "Mme la Bourgmestre ff.",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "cadre_temporaire",
+            "emplois",
+            "fonds_politique_grandes_villes"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 46,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RESSOURCES HUMAINES",
+          "sous_rubrique": "Ressources Humaines",
+          "titre": "Travail des volontaires - Modification de l'indemnité forfaitaire - Approbation",
+          "resume": "Fixation du montant forfaitaire alloué aux volontaires engagés dans les services communaux à 4 EUR par jour presté de minimum 2 heures, non soumis à l'indexation. Cette délibération sort ses effets à partir du 1er janvier 2011 et annule la délibération du 22 octobre 1991.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 4,
+          "thematiques": [
+            "ressources_humaines",
+            "volontaires",
+            "indemnites",
+            "frais_de_transport"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 47,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Immeuble sis rue Dupont 58 - Mission de techniques spéciales - Majoration de la dépense - Pour information",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 28 septembre 2010 approuvant la majoration de la dépense relative à la mission d'études de conception énergétique et techniques spéciales de l'immeuble sis 58 rue Dupont. Montant total : 39.019,98 €. Imputation à l'article 842/733-IN 60/51 et financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 39019.98,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "renovation",
+            "efficacite_energetique",
+            "travaux_publics"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "Infrastructures scolaires",
+          "titre": "Ecole 6 sise rue de l'Agriculture 46 - Relighting - Travaux supplémentaires - Majoration des dépenses",
+          "resume": "Approbation de la majoration des travaux supplémentaires de relighting (armatures, hublots, blocs de secours) pour l'école 6, portant le montant total de 87.347,32 € à 103.943,32 € TVAC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 103943.32,
+          "thematiques": [
+            "infrastructures_scolaires",
+            "travaux_relighting",
+            "securite"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 51,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "Infrastructures scolaires",
+          "titre": "Construction d'une école fondamentale néerlandophone temporaire sise Grande rue au Bois 76 - Mission d'étude d'architecture - Majoration de la dépense",
+          "resume": "Approbation de l'augmentation de la mission d'architecture de 25.000 € à 108.000 € TVAC (9% du coût estimé des travaux) pour l'école temporaire néerlandophone, dont le coût total estimé est de 1.200.000 € TVAC.",
+          "intervenants": [
+            "Mme Vriamont",
+            "Mme Smeysters"
+          ],
+          "repondant": "Mme Smeysters",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1200000,
+          "thematiques": [
+            "infrastructures_scolaires",
+            "architecture",
+            "construction"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 53,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures communales",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Hôtel communal - Aménagement d'un local pour le serveur informatique - Majoration de la dépense",
+          "resume": "Approbation de la majoration du coût des travaux d'aménagement du local serveur informatique, porté de 105.000 € à 139.000 € TVAC, compte tenu des dépassements de quantités et révisions de prix.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 139000,
+          "thematiques": [
+            "batiments_municipaux",
+            "informatique",
+            "infrastructure"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 54,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures communales",
+          "sous_rubrique": "Installations sportives",
+          "titre": "Complexe Terdelt - Remise en état du système de chauffage au gaz des halls de tennis nr. 1-2-3 - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation du mode de passation (procédure négociée sans publicité) et fixation des conditions du marché pour la remise en état du système de chauffage au gaz des halls de tennis nr. 1-2-3, estimé à 45.000 EUR.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 45000,
+          "thematiques": [
+            "installations_sportives",
+            "chauffage",
+            "maintenance"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 55,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures communales",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Hôtel communal - Acquisition d'un système audio-digital pour la salle du conseil - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation du projet d'acquisition d'un système audio-digital de conférence pour remplacer le système analogique de la salle du conseil, estimé à 81.000 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 81000,
+          "thematiques": [
+            "batiments_municipaux",
+            "audio_video",
+            "salle_conseil"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 57,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "Infrastructure scolaire",
+          "titre": "Athénée Fernand Blum - Section Renan - Rénovation des sanitaires filles - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation du cahier spécial des charges et du montant estimé du marché de rénovation des sanitaires filles de l'Athénée Fernand Blum Section Renan. Choix de la procédure négociée sans publicité. Montant estimé: 81.000 €TVAC. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 81000,
+          "thematiques": [
+            "enseignement",
+            "infrastructure_scolaire",
+            "renovation",
+            "marche_public"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 59,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "Infrastructure scolaire",
+          "titre": "Ecole 10 - Grande rue au Bois 57-59 - Travaux d'isolation de toiture - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation des travaux d'isolation thermique de la toiture de l'école 10. Procédure négociée sans publicité après consultation de six firmes. Montant estimé: 60.000 €. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 60000,
+          "thematiques": [
+            "enseignement",
+            "infrastructure_scolaire",
+            "isolation_thermique",
+            "marche_public"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 60,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "Infrastructure scolaire",
+          "titre": "Ecole 17 - Isolation de la toiture froide - Mode de passation et fixation des conditions du marché",
+          "resume": "Rénovation de la toiture froide de l'école 17 avec remplacement des supports en bois, mise en place d'isolation et d'étanchéité, rehaussement des murs. Adjudication publique. Montant estimé: 114.000 € TVA incluse. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 114000,
+          "thematiques": [
+            "enseignement",
+            "infrastructure_scolaire",
+            "isolation_thermique",
+            "renovation_toiture",
+            "marche_public"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 62,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "Infrastructure scolaire",
+          "titre": "Ecole 6 sise rue de l'Agriculture 46 - Rénovation des façades du gymnase - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation du projet de rénovation des façades du gymnase de l'école 6. Travaux incluant nettoyage, décapage des peintures, réparation des bétons, pose de nouveaux couvre-murs. Adjudication publique. Montant: 200.000 € TVA incluse. Demande de subsides auprès du Ministère de la Communauté française. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 200000,
+          "thematiques": [
+            "enseignement",
+            "infrastructure_scolaire",
+            "renovation_facade",
+            "marche_public",
+            "subsides"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 64,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures sportives",
+          "sous_rubrique": "Sports",
+          "titre": "Centre sportif Terdelt - Rénovation du terrain de football - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation du projet de rénovation du terrain de football du complexe sportif Terdelt. Travaux incluant enlèvement du gazon existant, pose de drains supplémentaires, préparation du sol et revêtement par rouleaux de gazon. Adjudication publique. Montant estimé: 150.000 €. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "sports",
+            "infrastructure_sportive",
+            "renovation_terrain",
+            "marche_public"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et Infrastructure",
+          "sous_rubrique": "Ecoles",
+          "titre": "Ecole 2/12 sise rue Quinaux 32 - Rénovation des sanitaires de la section maternelle - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du projet de rénovation des sanitaires de la section maternelle de l'école n°2/12, rue Quinaux 32 à 1030 Schaerbeek. Adjudication publique retenue comme mode de passation du marché. Conditions fixées selon le cahier spécial des charges Scha/Infra/2010/063. Dépense estimée à 375.000 € à imputer au budget extraordinaire 2010, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 375000,
+          "thematiques": [
+            "education",
+            "travaux_renovation",
+            "marche_public",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 67,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et Infrastructure",
+          "sous_rubrique": "Ecoles",
+          "titre": "Construction d'une école fondamentale néerlandophone temporaire sise Grande rue au Bois - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du cahier spécial des charges Scha/Infra/2010/059 et du montant estimé pour la construction d'une école fondamentale néerlandophone temporaire Grande rue au Bois 76. Adjudication publique retenue. École sur deux étages (8 classes, réfectoire, sanitaires, local de direction, local pour enseignants, aménagement des abords). Montant estimé 991.735,54 € HT ou 1.200.000,00 € TTC (21%). Financement: 70% subsides Ministère Communauté flamande, part communale par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1200000,
+          "thematiques": [
+            "education",
+            "construction",
+            "marche_public",
+            "budget_extraordinaire",
+            "subsides"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 69,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et Infrastructure",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Complexe Tamines, place Stephenson 78-84 - Travaux d'aménagement des installations de chauffage et de ventilation - Maintien de l'adjudication publique",
+          "resume": "Maintien de l'adjudication publique comme mode de passation du marché des travaux d'aménagement des installations de chauffage et ventilation au complexe Tamines, rue Stephenson 78-84. Estimation initiale 150.000 €. Première adjudication: une seule offre à 243.137,63 € (jugée inacceptable). Nouvelle adjudication: trois offres de 203.319,82 € à 233.505,80 €. Le bureau d'études reconnaît avoir sous-estimé les coûts. Le conseil maintient donc l'adjudication publique et révoque la décision du 29 septembre 2010 relative au changement de mode.",
+          "intervenants": [
+            "Dönmez",
+            "Bouhjar"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "travaux",
+            "marche_public",
+            "chauffage",
+            "ventilation"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 71,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Parcs et jardins",
+          "titre": "Sécurisation des concessions du parc Josaphat - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Sécurisation des divers bâtiments du parc Josaphat (parc non grillagé, accessible jour et nuit, fréquent vandalisme). Marché divisé en 3 lots: Lot 1 - système vidéosurveillance (40.000 € HT / 48.400 € TTC); Lot 2 - système vidéoparlophonie (17.000 € HT / 20.570 € TTC); Lot 3 - clôtures (10.000 € HT / 12.100 € TTC). Montant global 67.000 € HT / 81.070 € TTC (21%). Procédure négociée sans publicité. Financement par boni du service extraordinaire 2010. Appel à concurrence auprès de 6 firmes spécialisées. Ouverture des offres prévue 5 novembre 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 81070,
+          "thematiques": [
+            "parc",
+            "securite",
+            "videosurveillance",
+            "marche_public",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 74,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "",
+          "titre": "Explosion de 3 immeubles à l'angle des rues Gaucheret (n°197 et n° 199) et Destouvelles (n°35) - Désignation d'un expert pour une mission d'étude de stabilité - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Désignation d'un expert pour une mission d'étude de stabilité des immeubles suite à l'explosion du 25 septembre 2010. Procédure négociée sans publicité. Coût estimé à 30.000 € TVA incluse.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "renovation_urbaine",
+            "marche_public",
+            "etude_stabilite"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 75,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "",
+          "titre": "Explosion de 3 immeubles à l'angle des rues Gaucheret (n°197 et n° 199) et Destouvelles (n°35) - Désignation d'une entreprise pour la sécurisation de la voie publique par l'enlèvement des tuiles non fixées aux toitures des immeubles en-dehors du périmètre de sécurité - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Désignation d'une entreprise pour la sécurisation de la voie publique par enlèvement des tuiles de toiture décrochées en dehors du périmètre de sécurité. Procédure négociée sans publicité. Coût estimé à 35.000 € TVA incluse.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 35000,
+          "thematiques": [
+            "renovation_urbaine",
+            "marche_public",
+            "securite_voie_publique"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 77,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "",
+          "titre": "Contrat de quartier durable Helmet - Approbation du programme quadriennal 2011-2014 - Désignation des membres de commission de quartier",
+          "resume": "Approbation du programme quadriennal 2011-2014 du contrat de quartier durable Helmet. Transmission au Gouvernement de la Région de Bruxelles-Capitale. Désignation des membres habitants et secteurs associatif et scolaire de la commission de quartier.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrat_quartier",
+            "renovation_urbaine",
+            "quartier_helmet"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 78,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "",
+          "titre": "Espace Vogler - rue Vogler 38 - Nouvelle convention d'occupation avec l'association \"Les Iront d'Elles\" - Approbation",
+          "resume": "Approbation de la nouvelle convention d'occupation d'un local de 37 m² situé au 1er étage rue Vogler 38 par l'asbl \"Les Iront d'elles\" pour un loyer mensuel de 74 euros charges comprises.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 74,
+          "thematiques": [
+            "gestion_immobiliere",
+            "occupation_locale",
+            "association"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 79,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "",
+          "titre": "Complexe Van Oost - Convention d'occupation d'un local par l'institut Technique Cardinal Mercier",
+          "resume": "Approbation de la convention d'occupation à titre gracieux pour un an d'un local situé rue Van Oost 54 par l'Institut Technique Cardinal Mercier pour l'entreposage de matériel.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 0,
+          "thematiques": [
+            "gestion_immobiliere",
+            "occupation_locale",
+            "institut"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 80,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "",
+          "titre": "Prise en location du rez-de-chaussée sis avenue Emile Zola 21 - Approbation",
+          "resume": "Prise en location pour 9 ans du rez-de-chaussée avenue Emile Zola 21 à partir du 1er novembre 2010 pour les activités du service Prévention-Intégration. Loyer: 550 euros/mois + 100 euros forfait charges.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 650,
+          "thematiques": [
+            "gestion_immobiliere",
+            "location",
+            "prevention_integration"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 81,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier Aerschot Progrès",
+          "sous_rubrique": "Transformation de deux immeubles",
+          "titre": "Contrat de quartier Aerschot Progrès - Reprise d'un chantier de transformation de deux immeubles sis à l'angle de la rue Aerschot 120 et Rogier 112 - Marché de travaux",
+          "resume": "Approbation du cahier des charges et passage en adjudication publique du marché de travaux de transformation de deux immeubles suite à la défaillance de Construct Time. Inscription de la dépense de 220.000,00 € TVA comprise au budget extraordinaire 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 220000,
+          "thematiques": [
+            "marche_public",
+            "contrat_quartier",
+            "construction",
+            "transformation_immeubles"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 82,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier Brabant-Verte",
+          "sous_rubrique": "Construction de deux immeubles",
+          "titre": "Contrat de quartier Brabant-Verte - Reprise d'un chantier de construction de deux immeubles sis aux angles Dupont 29-Linné et Dupont 11-Plantes - Marché de travaux - Majoration de dépense",
+          "resume": "Approbation de la majoration de 120.905,15 € du coût estimé du marché suite aux offres anormalement élevées reçues. Financement de 98.262,95 € par le FPGV et du solde de 22.642,20 € par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 120905.15,
+          "thematiques": [
+            "marche_public",
+            "contrat_quartier",
+            "construction",
+            "majoration_depense",
+            "emprunt"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 47,
+          "page": 84,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier Lehon-Kessels",
+          "sous_rubrique": "Démolition et construction",
+          "titre": "Contrat de quartier Lehon-Kessels - Opération 1I - Démolition du bâtiment de l'ancienne Justice de paix et construction d'un immeuble de logements (5) et d'un commissariat de Proximité (KOBAN) - Marché de Travaux complémentaires - Majoration de dépense",
+          "resume": "Approbation de la majoration de 155.000,00 € du coût estimé des travaux complémentaires suite aux coûts supplémentaires pour finitions du KOBAN. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 155000,
+          "thematiques": [
+            "marche_public",
+            "contrat_quartier",
+            "construction",
+            "demolition",
+            "logements",
+            "commissariat",
+            "majoration_depense",
+            "emprunt"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 48,
+          "page": 86,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Etat civil",
+          "sous_rubrique": "Police des transports funèbres",
+          "titre": "Règlement général sur la police des transports funèbres, inhumations, cimetière et caveaux d'attente - Règlement-redevance sur les exhumations - Modification - Approbation",
+          "resume": "Adoption du règlement général modifié sur la police des transports funèbres, inhumations et cimetière suite à la décision de confier les exhumations à une firme privée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "etat_civil",
+            "reglements",
+            "transports_funebres",
+            "inhumations",
+            "cimetiere"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 49,
+          "page": 115,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Jeunesse et Sports",
+          "sous_rubrique": "",
+          "titre": "Subvention complémentaire, à titre exceptionnel, à l'association \"Les Amis d'Aladdin\" - Exercices 2010 - Approbation",
+          "resume": "Répartition de subsides aux associations actives dans le domaine de l'Enfance pour l'exercice 2010, pour un montant global de 1500,00 € prévu à l'article 844/332-SS-02/71 du budget ordinaire 2010. Allocation de 1500,00 € à l'association \"Les Amis d'Aladdin\" pour le renouvellement du matériel.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "jeunesse",
+            "subventions",
+            "associations"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 50,
+          "page": 116,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Classes Moyennes",
+          "sous_rubrique": "",
+          "titre": "Répartition du subside 2010 au Folklore Schaerbeekois - Approbation",
+          "resume": "Répartition des subsides aux groupes folkloriques de Schaerbeek pour l'année 2010, pour un montant total de 1.500 € prévu à l'article 520/332-SS-02/73 du budget ordinaire 2010. Distribution : \"Buûmdroegers\" 250 €, \"Jules Van Geele\" 250 €, \"Koninklijke Sint Sebastiaans Gilde Shaarbeek\" 250 €, \"Musée de la Bière\" 250 €, \"Schaerbeek la Dynamique\" 500 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "folklore",
+            "subventions",
+            "associations",
+            "culture"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 51,
+          "page": 117,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Culture Néerlandaise",
+          "sous_rubrique": "",
+          "titre": "Octroi d'un subside, pour l'année 2010, aux associations socio culturelles néerlandophones",
+          "resume": "Octroi de subsides aux associations néerlandophones socioculturelles pour l'exercice 2010, pour un montant total de 8500 €. Distribution entre 16 associations : K.A.V. Intercultureel 800 €, Curieus Schaarbeek 800 €, Willemsfonds Schaarbeek 800 €, Aksent-vzw 800 €, Nasci vzw 800 €, 11.11.11-Comité Schaarbeek 500 €, Vereniging der Pastorale werken 500 €, KAV Noord 300 €, Davidsfonds Helmet 800 €, Forum Artis 300 €, Eizelsorde 200 €, Vzw Wijkpartenariaat 500 €, KWB Schaarbeek 250 €, WMKJ Ratatouille 500 €, Yogadarshan 250 €, Everse dino's 350 €.",
+          "intervenants": [
+            "Mmes Vriamont",
+            "Mme Vanhauwaert"
+          ],
+          "repondant": "Mme Essaïdi",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 8500,
+          "thematiques": [
+            "culture",
+            "subventions",
+            "associations",
+            "neerlandophone"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 52,
+          "page": 119,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Culture Néerlandaise",
+          "sous_rubrique": "",
+          "titre": "Octroi d'un subside, pour l'année 2010, aux associations seniors néerlandophones",
+          "resume": "Octroi de subsides aux associations néerlandophones de seniors pour l'exercice 2010, pour un montant total de 1500 €. Distribution : Die Schare 750 €, Aktieve Senioren Schaarbeek 750 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "seniors",
+            "subventions",
+            "associations",
+            "neerlandophone"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 53,
+          "page": 120,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Culture Néerlandaise",
+          "sous_rubrique": "",
+          "titre": "Octroi d'un subside, pour l'année 2010, aux associations sportives néerlandophones",
+          "resume": "Octroi de subsides aux associations néerlandophones sportives pour l'exercice 2010, pour un montant total de 2.500 €. Distribution : Zaalvoetbalclub Rapid Moe 675 €, Bad-Ton 675 €, Sint-Sebastiaangilde 675 €, De Eendjes 475 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2500,
+          "thematiques": [
+            "sports",
+            "subventions",
+            "associations",
+            "neerlandophone"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 54,
+          "page": 124,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Subventions",
+          "sous_rubrique": "Conventions de partenariat",
+          "titre": "Conventions de partenariat conclues dans le cadre du Programme de Prévention Urbaine - Modifications - Approbation",
+          "resume": "Approbation des avenants des conventions conclues dans le cadre du PPU : Travail de Rue à Schaerbeek, Sport Schaerbeekois, Espace P, Le Club des Petits Débrouillards de Bruxelles (Projet Vogler), Zone de Police. Mandat au Collège pour signer les conventions modifiées.",
+          "intervenants": [
+            "Grimberghs",
+            "Nimal"
+          ],
+          "repondant": "Nimal",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subventions",
+            "conventions_partenariat",
+            "prevention_urbaine"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        },
+        {
+          "sp": 55,
+          "page": 127,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Commerce",
+          "sous_rubrique": "Vente et stockage",
+          "titre": "La vente et le stockage des bonbonnes de gaz",
+          "resume": "Question orale de Monsieur Larbi Kaddour concernant la vente et le stockage des bonbonnes de gaz",
+          "intervenants": [
+            "Kaddour",
+            "Bourgmestre"
+          ],
+          "repondant": "Bourgmestre",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "commerce",
+            "gaz",
+            "vente",
+            "stockage"
+          ],
+          "source_file": "pv-2010-10-27-sp.pdf"
+        }
+      ]
+    },
     {
       "seance": {
         "id": "PV-2010-12-01",
