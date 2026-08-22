@@ -494,6 +494,7 @@ body {
 :root:not([data-theme="light"]) .elu-link-video { color: var(--or); }
 
 /* ── SÉANCES (choix par menu déroulant + en-tête de la séance affichée) ──── */
+.seance-filter-toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .seance-share-btn {
   flex: 0 0 auto; margin-left: auto; display: flex; align-items: center; justify-content: center;
   background: none; border: none; padding: 4px 8px; color: var(--encre-soft); cursor: pointer;

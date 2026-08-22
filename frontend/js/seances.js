@@ -278,11 +278,19 @@ function renderSeance(d, scroll) {
   if (d.url) links += `<a class="elu-link" href="${d.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
   if (d.video_url) links += `<a class="elu-link elu-link-video" href="${d.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo (séance complète)</a>`;
 
-  let html = `<div class="elus-bar seance-filter-bar">
+  // Filtres repliés par défaut (comme les valeurs, remises à "all" ci-dessus) :
+  // l'écran par défaut reste léger (choisir une séance → lire ses points),
+  // le filtrage à facettes reste dispo à la demande sans peser sur tout le
+  // monde. Le bouton reset reste visible même replié (hors du bloc masqué)
+  // pour qu'un filtre actif reste toujours annulable sans rouvrir le panneau.
+  let html = `<div class="seance-filter-toggle-row">
+    <button type="button" class="drill-reset" id="seanceFilterToggle" aria-expanded="false">Filtrer ▾</button>
+    <button type="button" class="drill-reset" id="seanceFilterReset" hidden>↩ Réinitialiser les filtres</button>
+  </div>
+  <div class="elus-bar seance-filter-bar" id="seanceFilterBar" hidden>
     <select id="seanceTypeFilter" class="elu-select" aria-label="Filtrer par type de sujet"></select>
     <select id="seanceThemeFilter" class="elu-select" aria-label="Filtrer par thématique"></select>
     <select id="seancePersonFilter" class="elu-select" aria-label="Filtrer par intervenant·e"></select>
-    <button type="button" class="drill-reset" id="seanceFilterReset" hidden>↩ Réinitialiser les filtres</button>
   </div>
   <p class="yc-note" id="seanceFilterCount"></p>
   <div class="elu-head">
@@ -301,10 +309,20 @@ function renderSeance(d, scroll) {
   const themeSel = document.getElementById('seanceThemeFilter');
   const personSel = document.getElementById('seancePersonFilter');
   const resetBtn = document.getElementById('seanceFilterReset');
+  const filterToggle = document.getElementById('seanceFilterToggle');
+  const filterBar = document.getElementById('seanceFilterBar');
   if (typeSel) typeSel.addEventListener('change', () => onSeanceTypeFilterChange(typeSel));
   if (themeSel) themeSel.addEventListener('change', () => onSeanceThemeFilterChange(themeSel));
   if (personSel) personSel.addEventListener('change', () => onSeancePersonFilterChange(personSel));
   if (resetBtn) resetBtn.addEventListener('click', onSeanceFilterReset);
+  if (filterToggle && filterBar) {
+    filterToggle.addEventListener('click', () => {
+      const nowExpanded = filterBar.hidden;   // vrai une fois basculé
+      filterBar.hidden = !nowExpanded;
+      filterToggle.setAttribute('aria-expanded', String(nowExpanded));
+      filterToggle.textContent = nowExpanded ? 'Filtrer ▴' : 'Filtrer ▾';
+    });
+  }
   refreshSeanceFilteredView();
   if (scroll) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
