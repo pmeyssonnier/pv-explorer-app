@@ -9,6 +9,7 @@
       "2010-04-28",
       "2010-05-26",
       "2010-06-23",
+      "2010-09-01",
       "2010-09-29",
       "2010-10-27",
       "2010-12-01",
@@ -158,7 +159,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9218,
+    "total_points": 9246,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -6240,6 +6241,798 @@
             "marche_public"
           ],
           "source_file": "Pv_2010_06_23_SP.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2010-09-01",
+        "date": "2010-09-01",
+        "source_file": "Pv_2010_09_01_SP.pdf",
+        "extracted_at": "2026-08-22T20:44:05.516132",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 28,
+          "extracted": 28,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        }
+      },
+      "points": [
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Achats",
+          "titre": "Service Informatique - Acquisition d'un workflow des procédures décisionnelles de l'administration - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du cahier spécial des charges N° SCHA/EQUIP/2010/029 et du montant estimé du marché pour l'informatisation des procédures décisionnelles. Montant estimé : 165.289,26 € hors TVA ou 200.000,00 € TTC (21% TVA comprise). Choix de l'appel d'offres général comme mode de passation. Soumission à la publicité européenne.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 200000,
+          "thematiques": [
+            "informatique",
+            "marche_public",
+            "appel_offres"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 4,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DEVELOPPEMENT STRATEGIQUE ET DURABLE",
+          "sous_rubrique": "Subventions et Partenariats",
+          "titre": "Fonds Politique des Grandes Villes - Convention 2010 - Approbation",
+          "resume": "Approbation de la convention conclue entre la Commune et l'Etat Fédéral relative au Fonds pour la Politique des Grandes Villes. Budget annuel subsidié d'environ 3.000.000 €. Délégation au Collège des Bourgmestres et Echevins pour signer les conventions particulières d'exécution avec les partenaires locaux.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3000000,
+          "thematiques": [
+            "subventions",
+            "politique_villes",
+            "partenariats"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "SP 4",
+          "titre": "L'ASBL Le Bus Bavard - Octroi de subsides - Approbation",
+          "resume": "Octroi d'une subside de 4.000 € à l'ASBL Le Bus Bavard pour l'année 2010, inscrit à l'article 561/332-IN-02/56 du budget ordinaire 2010. L'association a réalisé 9 cartes promenades et un parcours ludique. Cette subside permettra de compléter le projet avec de nouveaux parcours.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 4000,
+          "thematiques": [
+            "subventions",
+            "tourisme",
+            "asbl"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Immeuble à l'angle des rues de Brabant et Quatrecht - Incendie - Travaux d'office de sécurisation - Application de l'article 249 de la Nouvelle Loi Communale - Approbation",
+          "resume": "Approbation de la dépense de 155.000 € pour les travaux d'office de sécurisation suite à l'incendie du 9 août 2010 à l'angle des rues de Brabant et Quatrecht. Travaux de démolition, stabilisation des maçonneries, déblaiment et stockage des gravats. Montant imputable à l'article 922/140-IN-11/-51 du budget ordinaire 2010 et à recouvrer auprès des assurances et du ministère de la Justice.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 155000,
+          "thematiques": [
+            "batiments",
+            "securite",
+            "sinistre",
+            "travaux_urgence"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Centre sportif Terdelt - Couverture des terrains de pétanque - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du projet de couverture des sept terrains de pétanque du complexe sportif Terdelt par une structure préfabriquée pour permettre les jeux de boules par temps de pluie. Définition du mode de passation et fixation des conditions du marché.",
+          "intervenants": [
+            "Van Gorp"
+          ],
+          "repondant": "Köse",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 9
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "equipement_sportif",
+            "infrastructure",
+            "marche_public"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 10,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments et installations",
+          "sous_rubrique": "Services communaux",
+          "titre": "Bâtiment Optima Grande rue au Bois 78 - Aménagement de locaux pour la création d'un deuxième centre PMS",
+          "resume": "Approbation du projet d'aménagement de locaux pour la création d'un deuxième centre PMS dans le bâtiment Optima. Adjudication publique. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "travaux_publics",
+            "pms",
+            "marche_public",
+            "financement"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et infrastructure",
+          "sous_rubrique": "Établissements scolaires",
+          "titre": "Divers établissements scolaires - Renouvellement des chaufferies",
+          "resume": "Approbation du projet de renouvellement des chaufferies dans 4 établissements scolaires (école 6, école 10, Lycée E. Max, centre aéré Ittre). Adjudication publique. Demande de subsides auprès de l'IBGE. Financement par emprunt pour la part communale.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 1000000,
+          "thematiques": [
+            "travaux_publics",
+            "chauffage",
+            "energie",
+            "ecoles",
+            "marche_public",
+            "environnement"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Patrimoine immobilier",
+          "sous_rubrique": "Rénovation de façades",
+          "titre": "Immeuble à appartements - Travaux de rénovation des façades - Marché stock",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Échevins du 22 juin 2010 concernant les travaux de rénovation des façades des immeubles à appartements (rues Josaphat, Kessels, Gallait et avenue de la Reine). Procédure négociée sans publicité.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 70000,
+          "thematiques": [
+            "patrimoine_immobilier",
+            "renovation_facades",
+            "marche_stock"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments scolaires",
+          "sous_rubrique": "Travaux d'enlèvement d'amiante",
+          "titre": "Athénée Fernand Blum - Section Roodebeek, avenue Roodebeek 59 - Travaux d'enlèvement d'amiante",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Échevins du 29 juin 2010 concernant le désamiantage de deux locaux de l'Athénée F. Blum section Roodebeek. Procédure négociée sans publicité après consultation de trois firmes spécialisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 13000,
+          "thematiques": [
+            "amiante",
+            "ecoles",
+            "sante_publique",
+            "travaux_publics"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux",
+          "sous_rubrique": "Group scolaire Josaphat/Ruche",
+          "titre": "Joints étanches à l'air sur menuiseries existantes",
+          "resume": "Fourniture et placement de joints étanches à l'air sur les menuiseries existantes du groupe scolaire Josaphat/Ruche. Procédure négociée sans publicité après consultation de six firmes. Dépense estimée à 50.000 € TVAI. Financement par subsides (80%) et part communale (20%).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 50000,
+          "thematiques": [
+            "travaux_immobiliers",
+            "menuiseries",
+            "efficacite_energetique"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux",
+          "sous_rubrique": "Conciergerie - Parc Josaphat",
+          "titre": "Enlèvement d'amiante - Conciergerie Parc Josaphat boulevard Lambermont 409",
+          "resume": "Désamiantage conciergerie parc Josaphat boulevard Lambermont 409. Amiante détecté cave (isolation, tuyaux chauffage) et rez-de-chaussée (dalles sol, colle). Procédure négociée sans publicité. Dépense estimée 15.000 €. Financement par boni service extraordinaire.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 15000,
+          "thematiques": [
+            "travaux_immobiliers",
+            "amiante",
+            "securite"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux",
+          "sous_rubrique": "Divers bâtiments communaux",
+          "titre": "Inventaire de l'amiante - Divers bâtiments communaux",
+          "resume": "Inventaire d'amiante dans 12 écoles et bâtiments communaux (écoles 1, 2, 3, 6, 11/13, 16, 17, complexe Optima, école Chazal, lycée Emile Max, hôtel communal, archives). Laboratoire agréé. Procédure négociée sans publicité après consultation quatre laboratoires. Dépense estimée 70.000 € répartie sur trois articles budget extraordinaire. Financement par emprunt (60.000 €) et boni service extraordinaire.",
+          "intervenants": [
+            "Mme Vriamont"
+          ],
+          "repondant": "Mme Smeysters, Mme la Bourgmestre ff.",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 70000,
+          "thematiques": [
+            "amiante",
+            "inventaire",
+            "bâtiments_communaux",
+            "securite"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux",
+          "sous_rubrique": "Maison conservateur parc Josaphat",
+          "titre": "Remplacement chaudière et cuve à mazout - Boulevard Lambermont 409",
+          "resume": "Remplacement chaudière et cuve à mazout maison boulevard Lambermont 409 pour occupation conservateur parc Josaphat. Procédure négociée sans publicité après consultation trois firmes. Dépense estimée 12.000 €. Financement par boni budget extraordinaire.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 12000,
+          "thematiques": [
+            "travaux_immobiliers",
+            "chauffage"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux",
+          "sous_rubrique": "Bâtiments communaux",
+          "titre": "Globalisation systèmes d'alarmes - Audit externe",
+          "resume": "Audit externe globalisation systèmes d'alarmes bâtiments communaux. Inventaire systèmes détection incendie/intrusion. Bureau expert sécurité. Procédure négociée sans publicité après consultation six firmes. Dépense estimée 12.000 €. Financement par boni service extraordinaire.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 12000,
+          "thematiques": [
+            "systemes_alarme",
+            "securite",
+            "bâtiments_communaux"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces publics",
+          "sous_rubrique": "Openbare ruimten",
+          "titre": "Eclairage festif 2010 - Reprise de la gestion des illuminations de la rue de Brabant et de la chaussée de Haecht - Adaptation des illuminations aux nouvelles normes Sibelga - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation de la reprise de la gestion des illuminations festives suite à l'obligation de Sibelga de scission entre éclairage festif et éclairage public. Acquisition de fournitures (coffrets électriques, câblage, mâts, motifs lumineux) et remplacement des lampes incandescence par des LED. Budget de 60.000 € TVAC financé par emprunt (12.500 €) et boni extraordinaire (47.500 €).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 60000,
+          "thematiques": [
+            "eclairage_public",
+            "illuminations",
+            "marche_public",
+            "normes_sibelga"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiment communal",
+          "sous_rubrique": "Gemeentegebouw",
+          "titre": "Bâtiment communal sis 215 rue Josaphat - Aménagement du CTA Frans Fischer - Travaux supplémentaires - Majoration de dépenses",
+          "resume": "Approbation des travaux supplémentaires (avenants n° 5, 7, 8 et 9) pour l'aménagement du Centre de Technologie Avancée (CTA) Frans Fischer. Montant total des travaux supplémentaires: 38.223,45 € (17% du montant initial). Dépense totale estimée à 272.000 € (120% du montant d'adjudication initial de 226.389,99 €). Travaux nécessaires : électrovanne de sécurité, remise en état de châssis, modifications installations techniques. Exclusion du poste de câblage de caméras (5.197,95 €).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 272000,
+          "thematiques": [
+            "travaux_batiment",
+            "centre_technologie_avancee",
+            "marche_public",
+            "avenants"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Wegen",
+          "titre": "Plan de rénovation des trottoirs - Année 2010 - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation du plan de rénovation des trottoirs pour 2010 sur l'ensemble du territoire communal dans le cadre d'un plan pluriannuel de 30 ans. Marché en adjudication publique. Coût total estimé à 1.199.994,76 € HT, portée à 1.320.000 € TVAC en tenant compte des révisions de prix. Cahier spécial des charges n° Scha/Infra/2010/026.",
+          "intervenants": [
+            "Clerfayt",
+            "El Arnouki",
+            "Van Gorp"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1320000,
+          "thematiques": [
+            "trottoirs",
+            "renovation",
+            "voirie",
+            "marche_public",
+            "adjudication_publique"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Wegen",
+          "titre": "Contrat de quartier Navez-Portaels - Opération 4B 1 - Réfection des trottoirs rue des Ailes - Opération 4B 2 - Réfection des trottoirs rue Floris - Opération 4B 5 - Rénovation de la voirie rue Capronnier",
+          "resume": "Approbation du projet de réfection des trottoirs et rénovation de voirie dans le cadre du Contrat de Quartier Navez-Portaels (opérations 4B.1, 4B.2, 4B.5). Coût total estimé à 329.486,03 € HT, porté à 362.000 € TVAC. Marché en adjudication publique. Cahier spécial des charges n° Scha/Infra/2010/040. Financement: 90% par le Contrat de Quartier et part communale par emprunt. Correction budgétaire : transfert de l'article 922-723-CQ-60/06 vers 922-731-CQ-60/06.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 362000,
+          "thematiques": [
+            "contrat_quartier",
+            "navez_portaels",
+            "trottoirs",
+            "renovation_voirie",
+            "marche_public",
+            "adjudication_publique"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Communaux Spécifiques",
+          "sous_rubrique": "",
+          "titre": "Plan hygiène - Rues d'Aerschot et Quatrecht - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du projet de plan hygiénique rues d'Aerschot et de Quatrecht portant sur la démolition des urinoirs existants et l'aménagement d'urinoirs modernes et d'une toilette publique accessible aux personnes à mobilité réduite. Coût total estimé à 353.732,91 € TVA incluse, imputé à 390.000 € au budget extraordinaire 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 390000,
+          "thematiques": [
+            "hygiène",
+            "travaux_publics",
+            "marche_public",
+            "infrastructure_urbaine",
+            "accessibilité"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Communaux Spécifiques - Jeunesse et Sports",
+          "sous_rubrique": "Jeunesse et Sports",
+          "titre": "Demande d'octroi de subsides pour l'année 2010 aux associations de jeunesse - Approbation",
+          "resume": "Répartition des subsides aux associations de jeunesse pour l'exercice 2010 pour un montant global de 10.000 €. Distribution à 9 associations incluant Unité St Albert 41ème (500 €), Association AL-JISR (1.000 €), MJT Schaerbeek (250 €), Carpediem-vis ta vie asbl (1.000 €), Anatolin Arts (1.000 €), Apab (2.000 €), Magicland (1.500 €), Prisma (1.000 €) et Asbl Sports Schaerbeekois (1.750 €).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "jeunesse",
+            "subventions",
+            "associations",
+            "sport"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Communaux Spécifiques - Jeunesse et Sports",
+          "sous_rubrique": "Jeunesse et Sports",
+          "titre": "Demande d'octroi de subsides pour l'année 2010 aux cercles sportifs - Approbation",
+          "resume": "Répartition des subsides aux cercles sportifs pour l'exercice 2010 pour un montant global de 90.000 €. Distribution à 33 clubs sportifs couvrant diverses disciplines (football, mini-foot, judo, rugby, boxe, basket, natation, tennis, pétanque, etc.).",
+          "intervenants": [
+            "M. Van Gorp"
+          ],
+          "repondant": "M. Köse",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 90000,
+          "thematiques": [
+            "sports",
+            "subventions",
+            "associations_sportives",
+            "loisirs"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 39,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Communaux Spécifiques - Intégration et Prévention",
+          "sous_rubrique": "Intégration et Prévention",
+          "titre": "Contrat communal de Cohésion sociale - Exercice 2010 - Avenant n°4 - Approbation",
+          "resume": "Approbation de la proposition de réaffectation 2010 reprise dans l'avenant n°4 au Contrat Communal de Cohésion sociale ainsi que les deux conventions spécifiques attachées, en vue de la réaffectation d'un montant de 35.061,41 € dans le cadre de l'exercice 2010 en Cohésion sociale.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 35061.41,
+          "thematiques": [
+            "cohésion_sociale",
+            "intégration",
+            "budget",
+            "contrat_communal"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "L'évaluation de l'accord de majorité",
+          "resume": "",
+          "intervenants": [
+            "Bernard CLERFAYT",
+            "Isabelle DURANT",
+            "Van Gorp",
+            "Vriamont",
+            "Grimberghs",
+            "Bouhjar"
+          ],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Le musée du Train sur le site de la gare de Schaerbeek",
+          "resume": "",
+          "intervenants": [
+            "Yvan de BEAUFFORT"
+          ],
+          "repondant": "Bourgmestre ff.",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "musee",
+            "gare",
+            "schaerbeek"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 41,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "L'état d'avancement du Projet Brusilia-bis",
+          "resume": "",
+          "intervenants": [
+            "Yvan de BEAUFFORT"
+          ],
+          "repondant": "Bourgmestre ff.",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "brusilia_bis",
+            "projet"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 41,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "L'état des travaux concernant le Parc Josaphat",
+          "resume": "",
+          "intervenants": [
+            "Yvan de BEAUFFORT"
+          ],
+          "repondant": "De Herde",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "parc_josaphat",
+            "travaux"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 41,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "L'avenir de Brussels Airport",
+          "resume": "",
+          "intervenants": [
+            "Yvan de BEAUFFORT"
+          ],
+          "repondant": "Guillaume",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "brussels_airport",
+            "avenir"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 42,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Le nombre de régularisation qui ont lieu sur le territoire de Schaerbeek",
+          "resume": "",
+          "intervenants": [
+            "Yvan de BEAUFFORT"
+          ],
+          "repondant": "Guillaume",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "regularisation",
+            "schaerbeek"
+          ],
+          "source_file": "Pv_2010_09_01_SP.pdf"
         }
       ]
     },
