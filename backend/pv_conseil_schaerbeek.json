@@ -5,6 +5,7 @@
     "date_creation": "2026-06-05",
     "seances_incluses": [
       "2010-02-03",
+      "2010-04-28",
       "2010-05-26",
       "2010-06-23",
       "2010-09-29",
@@ -156,7 +157,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9174,
+    "total_points": 9194,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -1839,6 +1840,577 @@
             "hivernage"
           ],
           "source_file": "Pv_2010.02.03.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2010-04-28",
+        "date": "2010-04-28",
+        "source_file": "Pv_2010_04_28.pdf",
+        "extracted_at": "2026-08-22T17:21:15.349531",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 20,
+          "extracted": 20,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        }
+      },
+      "points": [
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRÉTAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Délégation de contreseing du Secrétaire communal à plusieurs fonctionnaires en application de l'article 111 de la Nouvelle Loi Communale",
+          "resume": "Liste des délégations de contreseing accordées par le Secrétaire communal à des agents communaux pour la signature de documents officiels émanant des différents services et départements.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "administration_communale",
+            "procedures_administratives",
+            "delegation_signature"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 10,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comités techniques de SIBELGA et SIBELGAZ",
+          "sous_rubrique": "",
+          "titre": "Remplacement de Madame Béatrice COPPIETERS par Monsieur Damien LASSANCE - Approbation",
+          "resume": "Désignation de Monsieur Damien LASSANCE, ingénieur-directeur du département Infrastructure, comme représentant de la Commune au sein du collège d'experts de SIBELGAZ et du comité technique de SIBELGA, en remplacement de Madame Béatrice Coppieters qui a cessé ses fonctions le 31 mars 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "administration_communale",
+            "energie",
+            "infrastructure"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services du receveur communal",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement redevance relatif aux cartes communales de stationnement - Modification - Approbation",
+          "resume": "Modification du règlement redevance relatif aux cartes communales de stationnement. Le règlement établit les catégories d'usagers (firmes et indépendants, visiteurs occasionnels, commerçants ambulants, chantiers temporaires, riverains) et les tarifs des cartes de stationnement. Tarifs pour firmes et indépendants: 150€ première carte, 300€ supplémentaire. Tarifs visiteurs occasionnels: 50€ (1 jour/semaine), 100€ (2 jours/semaine), 50€ (15 jours). Tarifs commerçants ambulants: 50€ (1 jour/semaine), 100€ (2 jours/semaine), 300€ (7 jours/semaine). Tarifs chantiers temporaires: 50€ (15 jours). Carte riverain: gratuite (1ère), 36€ (2e), 108€ (supplémentaires). Duplicata: 100€ (gratuit en cas de perte/vol).",
+          "intervenants": [
+            "Mme la Bourgmestre ff",
+            "Mme Vriamont"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 0,
+            "abstentions": 15
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "mobilite",
+            "tarification",
+            "reglements"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Budget 2010 - Modification budgétaire extraordinaire n°1 - Approbation",
+          "resume": "Approbation de la modification budgétaire extraordinaire n°1 du budget 2010",
+          "intervenants": [
+            "De Herde",
+            "Durant"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 11,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget",
+            "finances_communales"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "ASBL \"Maison Autrique\" - Comptes 2009 - Prise d'acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl \"Maison Autrique\" affichant un résultat négatif de -8.629,42€ pour l'exercice 2009 et un résultat cumulé de -28.969,92€",
+          "intervenants": [
+            "Van Gorp"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": 50000,
+          "thematiques": [
+            "asbl",
+            "finances",
+            "comptes_publics"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "ASBL \"Neptunium\" - Nouveau plan triennal des travaux 2008-2010 - Approbation",
+          "resume": "Approbation du nouveau Plan Triennal des Travaux (2008/2010) de l'Asbl \"Neptunium\"",
+          "intervenants": [
+            "Dönmez"
+          ],
+          "repondant": "Köse",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "planification",
+            "travaux"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Plaine Wahis - Aménagement de deux terrains de sport en gazon synthétique, de leurs abords et de l'éclairage - Majoration de la dépense - Approbation",
+          "resume": "Approbation de la majoration du coût des travaux d'aménagement de deux terrains de sport en gazon synthétique à la plaine Wahis à 1.860.000€ TVA comprise, portant la majoration à 616.492,07€. Financement par subside COCOF de 777.700€ et emprunt pour le solde.",
+          "intervenants": [
+            "Dönmez"
+          ],
+          "repondant": "Smeysters",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": 1860000,
+          "thematiques": [
+            "infrastructures_sportives",
+            "travaux_publics",
+            "equipements"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Immeuble communal sis place Stephenson 78-84 - Travaux de rénovation et transformation - Majoration de la dépense - Approbation",
+          "resume": "Approbation de la majoration de l'enveloppe budgétaire pour travaux de réaménagement et rénovation du complexe Stephenson 78-84. Dépense estimée à 300.000€ supplémentaires, portant le total à 1.121.717,34€. Financement par subsides FPGV (255.000€) et emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1121717.34,
+          "thematiques": [
+            "batiments_communaux",
+            "travaux_renovation",
+            "finances"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Charges d'urbanisme du permis relatif aux îlots 61 et 64 - Construction des sous-sol et de la dalle de la future crèche Etoile du Nord - Convention de cession de propriété - Approbation",
+          "resume": "Approbation de la cession de propriété des aménagements de la dalle de la future crèche Etoile du Nord (490m2) et des sous-sols avec 10 places de parking, réalisés en exécution des charges d'urbanisme des îlots 61 et 64",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "amenagement_urbain",
+            "creche",
+            "equipements_publics"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et marché public",
+          "sous_rubrique": "Installation chauffage",
+          "titre": "Seniorie Radium - Mise en place d'une boucle d'eau chaude ECS",
+          "resume": "Placement d'une boucle ECS permettant l'arrivée plus rapide de l'eau chaude aux installations sanitaires de la seniorie Radium rue du Radium n°20. Procédure négociée sans publicité après consultation de cinq firmes. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 18000,
+          "thematiques": [
+            "travaux",
+            "marche_public",
+            "chauffage",
+            "eau_chaude",
+            "seniorie"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et marché public",
+          "sous_rubrique": "Régulation chauffage",
+          "titre": "Centre administratif CSA - Dysfonctionnement régulation chauffage - Remplacement de deux modules de commande",
+          "resume": "Remplacement de deux modules de commande domotique d'ouverture des clapets d'arrivée d'air régulant la température au CSA chaussée d'Haecht 226. Procédure négociée sans publicité après consultation de trois firmes. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 9000,
+          "thematiques": [
+            "travaux",
+            "marche_public",
+            "chauffage",
+            "domotique",
+            "centre_administratif"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et marché public",
+          "sous_rubrique": "Réaménagement installations",
+          "titre": "Serres communales boulevard Lambermont 409 - Réaménagement des douches personnel",
+          "resume": "Réaménagement des douches destinées au personnel des serres communales boulevard Lambermont 409. Procédure négociée sans publicité après consultation de trois firmes. Financement par boni du budget extraordinaire.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "travaux",
+            "marche_public",
+            "serres",
+            "installations_sanitaires"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et marché public",
+          "sous_rubrique": "Étude d'architecture",
+          "titre": "Stade Terdelt - Création extension club house comprenant douches et vestiaires",
+          "resume": "Mission d'architecte pour l'étude de l'extension du bâtiment du stade Terdelt création de vestiaires et douches. Procédure négociée sans publicité, marché à confier à l'architecte du bâtiment principal. Financement par boni du budget extraordinaire, cofinancement possible 50% Cocof.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 8000,
+          "thematiques": [
+            "travaux",
+            "marche_public",
+            "etude_architecture",
+            "stade",
+            "equipements_sportifs"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Convention d'occupation",
+          "titre": "Maison des Femmes rue Josaphat 247 - Convention d'occupation avec l'ASBL Ni Putes Ni Soumises",
+          "resume": "Convention d'occupation de la Maison des Femmes sise rue Josaphat 247 avec l'ASBL Belgisch Comité Ni Putes Ni Soumises Wallonie Bruxelles. Intervenants: MM. Clerfayt et Bouhjar",
+          "intervenants": [
+            "Clerfayt",
+            "Bouhjar"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immobilier",
+            "convention_occupation",
+            "droits_des_femmes"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Patrimoine communal",
+          "sous_rubrique": "Désaffectation et vente de biens",
+          "titre": "Ancienne bibliothèque communale néerlandophone sise chaussée d'Helmet 304-306 - Désaffectation et vente de gré à gré du bien - Approbation",
+          "resume": "Désaffectation du bien du domaine public et vente de gré à gré au prix de 400.000,00 € selon l'estimation du Receveur de l'Enregistrement. Imputation du produit de la vente au budget extraordinaire 2010.",
+          "intervenants": [
+            "Mme Nyssens"
+          ],
+          "repondant": "M. Nimal",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 400000,
+          "thematiques": [
+            "patrimoine_communal",
+            "vente_immobilier",
+            "domaine_public"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Patrimoine communal",
+          "sous_rubrique": "Droits de superficie",
+          "titre": "Seniorie Victor Hugo sise rue du Radium 20, angle rue Victor Hugo - Droit de superficie accordé au Crédit communal de Belgique (DEXIA) sur le terrain en vue de la réalisation de l'opération sous leasing - Résiliation par acte authentique du droit de superficie - Approbation",
+          "resume": "Mandatement du Collège des Bourgmestre et Echevins pour signer l'acte authentique de résiliation du droit de superficie accordé à DEXIA sur le terrain situé angle rues du Radium et Victor Hugo. La dette a été complètement apurée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "patrimoine_communal",
+            "droit_superficie",
+            "leasing"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 37,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Princesse Elisabeth - Opération 1A",
+          "titre": "Princesse Elisabeth - Opération 1A - Rénovation d'un immeuble de logement sis rue Van Camp 1 - Majoration de la dépense - Approbation",
+          "resume": "Approbation de la majoration de 27.758,40 € TVAC du coût estimé des travaux de rénovation d'un immeuble d'angle de logements. Imputation de la majoration à l'article 922/723-CQ-60/04 du budget extraordinaire 2009 et 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 27758.4,
+          "thematiques": [
+            "contrat_quartier",
+            "renovation_immeubles",
+            "logement"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Jérusalem - Opération 1E",
+          "titre": "Jérusalem - Opération 1 E - Construction d'un immeuble de logement sis rue Goossens 18 - Majoration de la dépense - Approbation",
+          "resume": "Approbation de la majoration de 50.000,00 € TVAC du coût estimé de la construction de logements sis rue Goossens 18. Imputation à l'article 922/723-CQ-60/03 du budget extraordinaire.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 50000,
+          "thematiques": [
+            "contrat_quartier",
+            "construction_logements",
+            "logement"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 40,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Marchés publics",
+          "sous_rubrique": "Rénovation immeubles",
+          "titre": "Reprise d'un chantier de rénovation des immeubles sis rue Linné 114-116 - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du cahier des charges SCHAE/INFRA/2010/CQBV/1.2/II pour la reprise des travaux de rénovation des immeubles sis rue Linné 114-116 par adjudication publique. Montant des travaux restants: 150.000,00 € TVA comprise. Imputé à l'article 922/723-IN-60/54 du budget extraordinaire 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "marches_publics",
+            "renovation_immeubles",
+            "contrat_quartier"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 42,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Gestion immobilière",
+          "titre": "Immeuble communal sis chaussée de Haecht 450 - Modification du loyer de l'appartement 3 A - Approbation",
+          "resume": "Modification de la valeur locative de l'appartement 3A (duplex – 3 chambres) d'une superficie de 105,5 m² situé chaussée de Haecht, 450 de 782,81 euros/mois à 690,81 euros/mois.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 690.81,
+          "thematiques": [
+            "immobilier",
+            "logement",
+            "loyer"
+          ],
+          "source_file": "Pv_2010_04_28.pdf"
         }
       ]
     },
