@@ -236,10 +236,12 @@ function renderSeancePoints() {
   list.innerHTML = filtered.length
     ? filtered.map(seancePointRow).join('')
     : '<p class="trend-empty">Aucun point ne correspond à ces filtres.</p>';
+  const filtering = seanceTypeFilter !== 'all' || seanceThemeFilter !== 'all' || seancePersonFilter !== 'all';
   if (count) {
-    const filtering = seanceTypeFilter !== 'all' || seanceThemeFilter !== 'all' || seancePersonFilter !== 'all';
     count.textContent = filtering ? `${filtered.length} / ${currentSeanceDetail.points.length} point(s) affiché(s)` : '';
   }
+  const reset = document.getElementById('seanceFilterReset');
+  if (reset) reset.hidden = !filtering;
 }
 // Un changement de filtre recalcule à la fois les options des 2 AUTRES
 // sélecteurs (filtres à facettes) et la liste de points affichée.
@@ -247,6 +249,12 @@ function refreshSeanceFilteredView() { renderSeanceFilterOptions(); renderSeance
 function onSeanceTypeFilterChange(sel) { seanceTypeFilter = sel.value; refreshSeanceFilteredView(); }
 function onSeanceThemeFilterChange(sel) { seanceThemeFilter = sel.value; refreshSeanceFilteredView(); }
 function onSeancePersonFilterChange(sel) { seancePersonFilter = sel.value; refreshSeanceFilteredView(); }
+function onSeanceFilterReset() {
+  seanceTypeFilter = 'all';
+  seanceThemeFilter = 'all';
+  seancePersonFilter = 'all';
+  refreshSeanceFilteredView();
+}
 
 function renderSeance(d) {
   currentSeanceDetail = d;
@@ -262,6 +270,7 @@ function renderSeance(d) {
     <select id="seanceTypeFilter" class="elu-select" aria-label="Filtrer par type de sujet"></select>
     <select id="seanceThemeFilter" class="elu-select" aria-label="Filtrer par thématique"></select>
     <select id="seancePersonFilter" class="elu-select" aria-label="Filtrer par intervenant·e"></select>
+    <button type="button" class="drill-reset" id="seanceFilterReset" hidden>↩ Réinitialiser les filtres</button>
   </div>
   <p class="yc-note" id="seanceFilterCount"></p>
   <div class="elu-head">
@@ -276,9 +285,11 @@ function renderSeance(d) {
   const typeSel = document.getElementById('seanceTypeFilter');
   const themeSel = document.getElementById('seanceThemeFilter');
   const personSel = document.getElementById('seancePersonFilter');
+  const resetBtn = document.getElementById('seanceFilterReset');
   if (typeSel) typeSel.addEventListener('change', () => onSeanceTypeFilterChange(typeSel));
   if (themeSel) themeSel.addEventListener('change', () => onSeanceThemeFilterChange(themeSel));
   if (personSel) personSel.addEventListener('change', () => onSeancePersonFilterChange(personSel));
+  if (resetBtn) resetBtn.addEventListener('click', onSeanceFilterReset);
   refreshSeanceFilteredView();
   box.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
