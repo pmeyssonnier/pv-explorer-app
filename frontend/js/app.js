@@ -1,11 +1,13 @@
-// ── POINT D'ENTRÉE — initialisation + câblage des gestionnaires "onclick"
-// inline du HTML (qui exigent des fonctions globales, contrairement aux
-// modules ES) sur `window`. Chaque fonctionnalité vit dans son propre module ;
-// ce fichier n'orchestre que le démarrage et la navigation par onglets. ──
+// ── POINT D'ENTRÉE — initialisation + câblage des gestionnaires d'événements
+// (délégation "data-click" pour le contenu généré dynamiquement, écouteurs
+// directs pour les éléments statiques). Chaque fonctionnalité vit dans son
+// propre module ; ce fichier n'orchestre que le démarrage et la navigation
+// par onglets. ──
 import { fetchVersion } from './config.js';
+import { registerActions } from './delegate.js';
 import {
   applyTheme, cycleTheme, openSettings, closeSettings, updateSetting,
-  resetSettings, setMode, syncModeUI, initSettingsDrag,
+  resetSettings, setMode, syncModeUI, initSettingsDrag, initSettingsOverlay,
 } from './settings.js';
 import {
   onAskInput, askSuggestion, reuseQuestion, clearHistory, removeHistoryItem,
@@ -15,7 +17,9 @@ import {
   loadStats, toggleYear, drillInto, drillTo, selectSeance, clearSeance,
   selectTheme, setMetric, shareStats, trendSuggestion, loadTrend,
 } from './stats.js';
-import { loadElus, populateElus, onEluInput, shareElu, setPendingEluKey } from './elus.js';
+import {
+  loadElus, populateElus, onEluInput, onEluYearChange, shareElu, setPendingEluKey,
+} from './elus.js';
 import {
   loadSeances, loadSeance, renderSeanceYearList, shareSeance, shareSeanceDate,
   setPendingSeanceDate,
@@ -53,24 +57,48 @@ function handleDeepLink() {
   }
 }
 
-// ── Fonctions référencées depuis des attributs "onclick"/"oninput"/"onchange"
-// inline du HTML (statique dans index.html, ou généré dynamiquement dans les
-// templates des modules) : doivent exister sur `window`, les modules ES ne
-// créent pas de globales automatiquement. ──
-Object.assign(window, {
+// ── Fonctions référencées depuis les attributs "data-click" du HTML
+// (statique dans index.html, ou généré dynamiquement dans les templates des
+// modules) : voir delegate.js — remplace les anciens attributs onclick
+// inline, incompatibles avec une CSP script-src sans 'unsafe-inline'. ──
+registerActions({
   switchTab,
-  cycleTheme, openSettings, closeSettings, updateSetting, resetSettings, setMode,
-  onAskInput, askSuggestion, reuseQuestion, clearHistory, removeHistoryItem,
+  cycleTheme, openSettings, closeSettings, resetSettings, setMode,
+  askSuggestion, reuseQuestion, clearHistory, removeHistoryItem,
   newSearch, toggleDictation, submitQuestion, copyAnswer, downloadAnswer, shareAnswer,
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend,
-  populateElus, onEluInput, shareElu,
-  loadSeance, renderSeanceYearList, shareSeance, shareSeanceDate,
+  shareElu,
+  loadSeance, shareSeance, shareSeanceDate,
 });
+
+// ── Écouteurs directs pour les éléments statiques qui portaient un
+// oninput/onchange/onkeydown inline (pas de délégation nécessaire : éléments
+// uniques présents dès le chargement de la page). ──
+function bind(id, event, handler) {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener(event, handler);
+}
+function initStaticListeners() {
+  bind('askInput', 'input', onAskInput);
+  bind('askInput', 'keydown', e => { if (e.key === 'Enter') submitQuestion(); });
+  bind('trendInput', 'keydown', e => { if (e.key === 'Enter') loadTrend(); });
+  bind('eluRole', 'change', populateElus);
+  bind('eluSelect', 'input', onEluInput);
+  bind('eluYear', 'change', onEluYearChange);
+  bind('seanceYear', 'change', renderSeanceYearList);
+  bind('setMaxSources', 'input', e => updateSetting('maxSources', +e.target.value));
+  bind('setTopK', 'input', e => updateSetting('topK', +e.target.value));
+  bind('setScoreMin', 'input', e => updateSetting('scoreMin', +e.target.value));
+  bind('setOrder', 'change', e => updateSetting('order', e.target.value));
+  bind('setCacheSize', 'input', e => updateSetting('cacheSize', +e.target.value));
+}
 
 // ── INITIALISATION ──
 fetchVersion();
 applyTheme();   // le <head> a déjà posé le thème ; on confirme après chargement des modules
 syncModeUI();
 initSettingsDrag();
+initSettingsOverlay();
+initStaticListeners();
 handleDeepLink();

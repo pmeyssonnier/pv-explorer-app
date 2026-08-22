@@ -47,11 +47,11 @@ export function renderSeanceYearList() {
     const videoIcon = s.video_url ? '<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>' : '';
     const active = s.date === (currentSeanceDetail && currentSeanceDetail.date) ? ' seance-row-active' : '';
     return `<div class="seance-row-wrap">
-      <button type="button" class="seance-row${active}" onclick="loadSeance('${s.date}')">
+      <button type="button" class="seance-row${active}" data-click="loadSeance" data-arg="${escapeHtml(s.date)}">
         <span class="seance-row-date">${formatDate(s.date)}</span>
         <span class="seance-row-meta">${s.n_points} point${s.n_points > 1 ? 's' : ''}${videoIcon}</span>
       </button>
-      <button type="button" class="seance-row-share" onclick="shareSeanceDate('${s.date}', this)" aria-label="Partager le lien vers cette séance" title="Partager le lien vers cette séance">
+      <button type="button" class="seance-row-share" data-click="shareSeanceDate" data-arg="${escapeHtml(s.date)}" aria-label="Partager le lien vers cette séance" title="Partager le lien vers cette séance">
         <svg class="icon" aria-hidden="true"><use href="#ico-share"/></svg>
       </button>
     </div>`;

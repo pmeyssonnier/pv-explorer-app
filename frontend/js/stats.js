@@ -103,7 +103,7 @@ function renderDrill() {
     const v = bucketVal(b), h = Math.max(4, Math.round(v / max * 130)), a = aggregate(b.list);
     const sel = (drill.level === 'month' && b.key === drill.month);
     const tip = `${b.label} · ${fmtInt(a.points)} points · ${fmtInt(a.nb)} séance(s) · ${fmtMontant(a.montant)}`;
-    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" onclick="drillInto('${b.key}')" title="${tip}">`
+    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(b.key)}" title="${escapeHtml(tip)}">`
       + `<span class="yc-val">${drillMetric === 'points' ? fmtInt(v) : v}</span>`
       + `<div class="yc-bar" style="height:${h}px"></div>`
       + `<span class="yc-yr">${b.label}</span></div>`;
@@ -127,19 +127,19 @@ function renderCrumb() {
   let p;
   if (drill.level === 'year') {
     p = [selectedSeance
-      ? '<a onclick="drillTo(\'year\')">Toutes les années</a>'
+      ? '<a data-click="drillTo" data-arg="year">Toutes les années</a>'
       : '<span class="crumb-here">Toutes les années</span>'];
   } else {
-    p = ['<a onclick="drillTo(\'year\')">Toutes les années</a>'];
+    p = ['<a data-click="drillTo" data-arg="year">Toutes les années</a>'];
     const yearHere = !drill.month && !selectedSeance;
     p.push(yearHere
       ? `<span class="crumb-here">${drill.year}</span>`
-      : `<a onclick="drillTo('month','${drill.year}')">${drill.year}</a>`);
+      : `<a data-click="drillTo" data-arg="month" data-arg2="${escapeHtml(drill.year)}">${drill.year}</a>`);
     if (drill.month) {
       const monthHere = !selectedSeance;
       p.push(monthHere
         ? `<span class="crumb-here">${MOIS_FR[+drill.month]}</span>`
-        : `<a onclick="clearSeance()">${MOIS_FR[+drill.month]}</a>`);
+        : `<a data-click="clearSeance">${MOIS_FR[+drill.month]}</a>`);
     }
   }
   if (selectedSeance) p.push(`<span class="crumb-here">Séance du ${formatDate(selectedSeance)}</span>`);
@@ -157,7 +157,7 @@ function renderThemes() {
   const max = Math.max(...rows.map(r => r[1]), 1);
   box.innerHTML = rows.map(([nom, n, m]) => `
     <div class="bar-row bar-clic${nom === selectedTheme ? ' bar-sel' : ''}"
-         onclick="selectTheme('${nom.replace(/'/g, "\\'")}')"
+         data-click="selectTheme" data-arg="${escapeHtml(nom)}"
          title="Ne montrer que les PV traitant « ${escapeHtml(nom.replace(/_/g, ' '))} »">
       <div class="bar-label">${escapeHtml(nom.replace(/_/g, ' '))}</div>
       <div class="bar-track"><div class="bar-fill" style="width:${n / max * 100}%"></div></div>
@@ -183,7 +183,7 @@ function listSeances() {
 function pvRowHtml(s) {
   const sel = s.date === selectedSeance;
   const label = `Séance du ${formatDate(s.date)}`;
-  const dateBtn = `<button type="button" class="pv-pick" onclick="selectSeance('${s.date}')"
+  const dateBtn = `<button type="button" class="pv-pick" data-click="selectSeance" data-arg="${escapeHtml(s.date)}"
       title="Afficher les indicateurs et thématiques de cette séance">${label}</button>`;
   const icons = (s.url
       ? `<a class="pv-pdf" href="${s.url}" target="_blank" rel="noopener noreferrer"
@@ -211,7 +211,7 @@ function renderPvList() {
     const base = drill.level === 'year' ? 'Toutes les années' : scopeLabel();
     cap.innerHTML = selectedTheme
       ? `${base} · thème « ${escapeHtml(selectedTheme.replace(/_/g, ' '))} » `
-        + `<button type="button" class="pv-clear" onclick="selectTheme('${selectedTheme.replace(/'/g, "\\'")}')">✕</button>`
+        + `<button type="button" class="pv-clear" data-click="selectTheme" data-arg="${escapeHtml(selectedTheme)}">✕</button>`
       : base;
   }
   const all = listSeances();
@@ -226,7 +226,7 @@ function renderPvList() {
       const items = byYear[y].slice().sort((a, b) => a.date < b.date ? 1 : -1);
       const open = expandedYears.has(y);
       return `<div class="pv-group">
-        <button type="button" class="pv-group-head" onclick="toggleYear('${y}')">
+        <button type="button" class="pv-group-head" data-click="toggleYear" data-arg="${escapeHtml(y)}">
           <span class="pv-caret">${open ? '▾' : '▸'}</span>
           <span class="pv-group-year">${y}</span>
           <span class="pv-group-count">${items.length} séance${items.length > 1 ? 's' : ''}</span>
@@ -299,15 +299,15 @@ export async function loadStats() {
     container.innerHTML = `
       <div class="scope-line">
         <div class="scope-title">Vue&nbsp;: <b id="scopeLabel">Toutes les années</b></div>
-        <button class="drill-reset" id="drillReset" hidden onclick="drillTo('year')">↩ Toutes les années</button>
+        <button class="drill-reset" id="drillReset" hidden data-click="drillTo" data-arg="year">↩ Toutes les années</button>
       </div>
       <div class="stats-grid" id="statsKPIs"></div>
       <div class="stat-section">
         <div class="yc-head">
           <h3><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span id="drillTitle">Activité par année</span></h3>
           <div class="yc-toggle">
-            <button data-metric="pv" onclick="setMetric('pv')">PV</button>
-            <button data-metric="points" class="active" onclick="setMetric('points')">Points</button>
+            <button data-metric="pv" data-click="setMetric" data-arg="pv">PV</button>
+            <button data-metric="points" class="active" data-click="setMetric" data-arg="points">Points</button>
           </div>
         </div>
         <div class="drill-crumb" id="drillCrumb"></div>

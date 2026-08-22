@@ -11,16 +11,7 @@
      restait figée en clair même en thème sombre. -->
 <meta name="theme-color" content="#fffdf9" id="themeColorMeta">
 <!-- Applique le thème choisi AVANT le premier rendu (évite le flash clair→sombre) -->
-<script>
-(function () {
-  try {
-    var t = (JSON.parse(localStorage.getItem('pv_settings') || '{}').theme) || 'auto';
-    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
-    var dark = t === 'dark' || (t === 'auto' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    document.getElementById('themeColorMeta').setAttribute('content', dark ? '#201a15' : '#fffdf9');
-  } catch (e) {}
-})();
-</script>
+<script src="js/theme-init.js"></script>
 <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,10 +44,10 @@
 
 <header class="header">
   <div class="header-icons">
-    <button class="icon-btn" type="button" id="themeBtn" onclick="cycleTheme()" aria-label="Thème" title="Thème">
+    <button class="icon-btn" type="button" id="themeBtn" data-click="cycleTheme" aria-label="Thème" title="Thème">
       <svg class="icon" id="themeIcon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"></svg>
     </button>
-    <button class="icon-btn" type="button" onclick="openSettings()" aria-label="Options" title="Options">
+    <button class="icon-btn" type="button" data-click="openSettings" aria-label="Options" title="Options">
       <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
     </button>
   </div>
@@ -77,10 +68,10 @@
 </header>
 
 <nav class="tabs">
-  <button class="tab active" onclick="switchTab('chat')" id="tab-chat"><svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg><span>Question</span></button>
-  <button class="tab" onclick="switchTab('stats')" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
-  <button class="tab" onclick="switchTab('elus')" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
-  <button class="tab" onclick="switchTab('seances')" id="tab-seances"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg><span>Séances</span></button>
+  <button class="tab active" data-click="switchTab" data-arg="chat" id="tab-chat"><svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg><span>Question</span></button>
+  <button class="tab" data-click="switchTab" data-arg="stats" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
+  <button class="tab" data-click="switchTab" data-arg="elus" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
+  <button class="tab" data-click="switchTab" data-arg="seances" id="tab-seances"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg><span>Séances</span></button>
 </nav>
 
 <main class="main">
@@ -91,21 +82,21 @@
       <h2>Que voulez-vous savoir&nbsp;?</h2>
       <p>Interrogez l'ensemble des délibérations : subventions, travaux, votes, taxes, motions…</p>
       <div class="suggestions">
-        <span class="suggestion" onclick="askSuggestion(this)">Quels subsides aux ASBL sportives ?</span>
-        <span class="suggestion" onclick="askSuggestion(this)">Quelles décisions sur le parc Josaphat ?</span>
-        <span class="suggestion" onclick="askSuggestion(this)">Quels votes n'étaient pas unanimes ?</span>
-        <span class="suggestion" onclick="askSuggestion(this)">Que dit le PV sur la propreté publique ?</span>
+        <span class="suggestion" data-click="askSuggestion">Quels subsides aux ASBL sportives ?</span>
+        <span class="suggestion" data-click="askSuggestion">Quelles décisions sur le parc Josaphat ?</span>
+        <span class="suggestion" data-click="askSuggestion">Quels votes n'étaient pas unanimes ?</span>
+        <span class="suggestion" data-click="askSuggestion">Que dit le PV sur la propreté publique ?</span>
       </div>
       <div class="history" id="historyBlock" style="display:none">
         <div class="history-head">
           <span>Vos questions récentes</span>
-          <button class="history-clear" type="button" onclick="clearHistory()">Effacer</button>
+          <button class="history-clear" type="button" data-click="clearHistory">Effacer</button>
         </div>
         <div class="suggestions" id="historyChips"></div>
       </div>
     </div>
 
-    <button class="new-search" id="newSearchBtn" type="button" onclick="newSearch()" style="display:none">↻ Nouvelle recherche</button>
+    <button class="new-search" id="newSearchBtn" type="button" data-click="newSearch" style="display:none">↻ Nouvelle recherche</button>
 
     <div class="conversation" id="conversation"></div>
   </section>
@@ -113,29 +104,28 @@
   <!-- ── ONGLET STATS ── -->
   <section class="panel" id="panel-stats">
     <div class="stats-toolbar">
-      <button class="msg-act" type="button" onclick="shareStats(this)" title="Partager le lien vers les statistiques">Partager</button>
+      <button class="msg-act" type="button" data-click="shareStats" title="Partager le lien vers les statistiques">Partager</button>
     </div>
     <div class="trend-panel">
       <h3><svg class="icon" aria-hidden="true"><use href="#ico-montant"/></svg>Évolution d'un thème (budget)</h3>
       <p class="trend-intro">Additionne les montants cités <strong>par année</strong> sur <strong>tous</strong> les points liés à un thème — une vue exhaustive, complémentaire au chat.</p>
       <div class="trend-bar">
         <input type="text" id="trendInput" class="trend-input"
-               placeholder="Ex. propreté, mobilité, écoles…"
-               onkeydown="if(event.key==='Enter') loadTrend()">
-        <button class="ask-btn" onclick="loadTrend()"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Voir</span></button>
+               placeholder="Ex. propreté, mobilité, écoles…">
+        <button class="ask-btn" data-click="loadTrend"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Voir</span></button>
       </div>
       <div class="suggestions">
-        <span class="suggestion" onclick="trendSuggestion(this)">propreté</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">mobilité</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">sécurité</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">CPAS</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">écoles</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">culture</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">sport</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">logement</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">voirie</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">environnement</span>
-        <span class="suggestion" onclick="trendSuggestion(this)">finances</span>
+        <span class="suggestion" data-click="trendSuggestion">propreté</span>
+        <span class="suggestion" data-click="trendSuggestion">mobilité</span>
+        <span class="suggestion" data-click="trendSuggestion">sécurité</span>
+        <span class="suggestion" data-click="trendSuggestion">CPAS</span>
+        <span class="suggestion" data-click="trendSuggestion">écoles</span>
+        <span class="suggestion" data-click="trendSuggestion">culture</span>
+        <span class="suggestion" data-click="trendSuggestion">sport</span>
+        <span class="suggestion" data-click="trendSuggestion">logement</span>
+        <span class="suggestion" data-click="trendSuggestion">voirie</span>
+        <span class="suggestion" data-click="trendSuggestion">environnement</span>
+        <span class="suggestion" data-click="trendSuggestion">finances</span>
       </div>
       <div id="trendResult"></div>
     </div>
@@ -148,22 +138,21 @@
   <!-- ── ONGLET INTERVENTIONS PAR ÉLU·E ── -->
   <section class="panel" id="panel-elus">
     <div class="stats-toolbar">
-      <button class="msg-act" type="button" onclick="shareElu(this)" title="Partager le lien vers cette fiche">Partager</button>
+      <button class="msg-act" type="button" data-click="shareElu" title="Partager le lien vers cette fiche">Partager</button>
     </div>
     <div class="elus-panel">
       <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg>Interventions par élu·e</h3>
       <p class="trend-intro">Recherche <strong>structurée et exhaustive</strong> : choisissez un·e élu·e → la liste complète de ses interventions, <strong>indépendante de la formulation</strong> (contrairement au chat). Les rôles diffèrent : les <strong>conseiller·ère·s</strong> déposent questions, demandes et motions ; les membres du <strong>Collège</strong> (échevin·e·s, bourgmestre) répondent en séance.</p>
       <div class="elus-bar">
-        <select id="eluRole" class="elu-select" aria-label="Filtrer par rôle" onchange="populateElus()">
+        <select id="eluRole" class="elu-select" aria-label="Filtrer par rôle">
           <option value="all">Tous les rôles</option>
           <option value="conseiller">Conseiller·ère·s</option>
           <option value="college">Collège (échevin·e·s)</option>
         </select>
         <input id="eluSelect" class="elu-select elu-select-name" list="eluDatalist" autocomplete="off"
-               aria-label="Rechercher et choisir un·e élu·e" placeholder="Rechercher un·e élu·e…"
-               oninput="onEluInput()">
+               aria-label="Rechercher et choisir un·e élu·e" placeholder="Rechercher un·e élu·e…">
         <datalist id="eluDatalist"></datalist>
-        <select id="eluYear" class="elu-select elu-select-year" aria-label="Filtrer par année" onchange="onEluYearChange()" hidden></select>
+        <select id="eluYear" class="elu-select elu-select-year" aria-label="Filtrer par année" hidden></select>
       </div>
       <div id="eluResult"></div>
     </div>
@@ -172,13 +161,13 @@
   <!-- ── ONGLET SÉANCES ── -->
   <section class="panel" id="panel-seances">
     <div class="stats-toolbar">
-      <button class="msg-act" type="button" onclick="shareSeance(this)" title="Partager le lien vers cette séance">Partager</button>
+      <button class="msg-act" type="button" data-click="shareSeance" title="Partager le lien vers cette séance">Partager</button>
     </div>
     <div class="elus-panel">
       <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séances du Conseil communal</h3>
       <p class="trend-intro">Parcourez les procès-verbaux <strong>séance par séance</strong> : pour chaque point à l'ordre du jour, l'objet, qui l'a déposé, qui y a répondu, et le débat filmé quand il existe.</p>
       <div class="elus-bar">
-        <select id="seanceYear" class="elu-select" aria-label="Filtrer par année" onchange="renderSeanceYearList()"></select>
+        <select id="seanceYear" class="elu-select" aria-label="Filtrer par année"></select>
       </div>
       <div id="seanceYearList" class="elu-list seance-list"></div>
       <div id="seanceResult"></div>
@@ -196,18 +185,16 @@
     <input type="text" class="ask-input" id="askInput"
            placeholder="Posez votre question sur les procès-verbaux…"
            autocomplete="off" autocapitalize="sentences" spellcheck="true"
-           enterkeyhint="send" data-form-type="other" data-lpignore="true" data-1p-ignore
-           oninput="onAskInput()"
-           onkeydown="if(event.key==='Enter') submitQuestion()">
+           enterkeyhint="send" data-form-type="other" data-lpignore="true" data-1p-ignore>
     <div class="ask-controls">
       <div class="mode-seg" id="modeSeg" role="tablist" aria-label="Mode de réponse">
-        <button type="button" data-mode="rapide" onclick="setMode('rapide')" role="tab"
+        <button type="button" data-mode="rapide" data-click="setMode" data-arg="rapide" role="tab"
                 title="Réponse rapide (modèle léger)">
           <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 11-13h-7z"/></svg>
           <span>Rapide</span>
         </button>
-        <button type="button" data-mode="reflexion" onclick="setMode('reflexion')" role="tab"
+        <button type="button" data-mode="reflexion" data-click="setMode" data-arg="reflexion" role="tab"
                 title="Analyse approfondie (modèle précis)">
           <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12c.6.5 1 1.3 1 2h6c0-.7.4-1.5 1-2a7 7 0 0 0-4-12Z"/></svg>
@@ -215,11 +202,11 @@
         </button>
       </div>
       <span class="ask-spacer"></span>
-      <button class="mic-btn" id="micBtn" type="button" onclick="toggleDictation(this)"
+      <button class="mic-btn" id="micBtn" type="button" data-click="toggleDictation"
               aria-label="Dicter la question" title="Dicter la question" style="display:none">
         <svg class="icon" aria-hidden="true"><use href="#ico-mic"/></svg>
       </button>
-      <button class="send-btn" id="askBtn" type="button" onclick="submitQuestion()"
+      <button class="send-btn" id="askBtn" type="button" data-click="submitQuestion"
               aria-label="Envoyer la question" title="Envoyer">
         <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
              stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
@@ -235,12 +222,12 @@
 </footer>
 
 <!-- ── PANNEAU ⚙️ OPTIONS ── -->
-<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+<div class="settings-overlay" id="settingsOverlay">
   <div class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-label="Options">
     <div class="settings-handle-zone" id="settingsHandle"><div class="settings-handle-bar"></div></div>
     <div class="settings-head">
       <h2>Options</h2>
-      <button class="settings-close" type="button" onclick="closeSettings()" aria-label="Fermer">✕</button>
+      <button class="settings-close" type="button" data-click="closeSettings" aria-label="Fermer">✕</button>
     </div>
 
     <div class="settings-scroll">
@@ -257,36 +244,36 @@
         </div>
         <div class="set-row">
           <div class="set-top"><span>Sources affichées</span><b id="valMaxSources">15</b></div>
-          <input type="range" id="setMaxSources" min="5" max="30" step="1" oninput="updateSetting('maxSources', +this.value)">
+          <input type="range" id="setMaxSources" min="5" max="30" step="1">
           <div class="set-hint">Nombre de sources listées sous la réponse.</div>
         </div>
         <div class="set-row">
           <div class="set-top"><span>Étendue de recherche</span><b id="valTopK">30</b></div>
-          <input type="range" id="setTopK" min="10" max="50" step="5" oninput="updateSetting('topK', +this.value)">
+          <input type="range" id="setTopK" min="10" max="50" step="5">
           <div class="set-hint">Passages lus par Claude. Plus = plus complet, plus lent.</div>
         </div>
         <div class="set-row">
           <div class="set-top"><span>Seuil de pertinence</span><b id="valScoreMin">0.00</b></div>
-          <input type="range" id="setScoreMin" min="0" max="0.9" step="0.05" oninput="updateSetting('scoreMin', +this.value)">
+          <input type="range" id="setScoreMin" min="0" max="0.9" step="0.05">
           <div class="set-hint">Masque les sources sous ce score (0 = désactivé).</div>
         </div>
         <div class="set-row">
           <div class="set-top"><span>Ordre des sources</span></div>
-          <select id="setOrder" onchange="updateSetting('order', this.value)">
+          <select id="setOrder">
             <option value="relevance">Par pertinence</option>
             <option value="date">Par date (récent d'abord)</option>
           </select>
         </div>
         <div class="set-row">
           <div class="set-top"><span>Questions en cache</span><b id="valCacheSize">15</b></div>
-          <input type="range" id="setCacheSize" min="3" max="30" step="1" oninput="updateSetting('cacheSize', +this.value)">
+          <input type="range" id="setCacheSize" min="3" max="30" step="1">
           <div class="set-hint">Nombre de « questions récentes » gardées, avec leur réponse (pas de nouvel appel en recliquant dessus). Au-delà, la plus ancienne est retirée.</div>
         </div>
       </section>
 
       <section class="settings-sec settings-about">
         <span>PV Explorer — version <strong id="appVersion"></strong></span>
-        <button class="settings-reset" type="button" onclick="resetSettings()">Réinitialiser</button>
+        <button class="settings-reset" type="button" data-click="resetSettings">Réinitialiser</button>
       </section>
     </div>
   </div>
