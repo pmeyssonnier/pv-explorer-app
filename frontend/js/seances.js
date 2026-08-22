@@ -134,10 +134,14 @@ function seanceTypeFilterOptions(points) {
   if (points.some(p => p.reporte)) opts.push('<option value="reporte">Reporté</option>');
   return opts.join('');
 }
-// Thématiques réellement présentes dans la séance, triées.
+// Thématiques réellement présentes dans la séance, triées, avec le nombre
+// de points concernés (un point peut porter plusieurs thématiques, donc la
+// somme des compteurs peut dépasser le nombre de points de la séance).
 function seanceThemeFilterOptions(points) {
-  const themes = [...new Set(points.flatMap(p => p.thematiques || []))].sort((a, b) => a.localeCompare(b, 'fr'));
-  return themes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+  const counts = new Map();
+  points.forEach(p => (p.thematiques || []).forEach(t => counts.set(t, (counts.get(t) || 0) + 1)));
+  const themes = [...counts.keys()].sort((a, b) => a.localeCompare(b, 'fr'));
+  return themes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)} (${counts.get(t)})</option>`).join('');
 }
 function pointMatchesFilters(p) {
   const typeOk = seanceTypeFilter === 'all'
