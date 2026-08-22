@@ -7,10 +7,15 @@
 ╚══════════════════════════════════════════════════════════════════════════╝
 
 CHANGELOG v2.3 :
-  - Nomenclature courte des archives 2010 confirmée : `pv-YYYY-MM-DD-sp.pdf`
-    (SANS "conseil", contrairement à toutes les nomenclatures plus récentes) —
-    ex : pv-2010-12-22-sp.pdf, vu sur https://www.1030.be/fr/proces-verbaux
-    (pagination). is_pv_pdf() et URL_TEMPLATES la reconnaissent désormais.
+  - Nomenclatures courtes des archives 2010 confirmées, SANS "conseil"
+    (contrairement à toutes les nomenclatures plus récentes) — au moins 2
+    variantes coexistent pour cette période :
+      pv-2010-12-22-sp.pdf                        (tirets)
+      Pv%202010%2009%2001%20SP%20%282%29.pdf       (espaces %20, "(N)" pour
+                                                      les séances multi-documents)
+    vues sur https://www.1030.be/fr/proces-verbaux (pagination). is_pv_pdf()
+    décode désormais l'URL (unquote) avant de matcher, pour traiter espace
+    et %20 uniformément ; URL_TEMPLATES couvre la variante à tirets.
 
 CHANGELOG v2.2 :
   - Patterns d'URL confirmés : 2 emplacements (/import/ et /document/) et
@@ -67,6 +72,7 @@ import requests
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
+from urllib.parse import unquote
 from tqdm import tqdm
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -434,24 +440,28 @@ def make_absolute(href: str) -> Optional[str]:
     return None
 
 
-# Nomenclature courte confirmée sur les archives 2010 : pv-YYYY-MM-DD[-sp].pdf,
-# SANS "conseil" — ex: /data/media/document/pv-2010-12-22-sp.pdf. Un simple
-# mot-clé serait trop permissif (n'importe quel "pv-*.pdf" matcherait) ; on
-# exige la forme datée pour rester spécifique aux PV.
-_SHORT_DATE_PV_RE = re.compile(r"/pv-20\d{2}-\d{2}-\d{2}")
+# Nomenclatures courtes confirmées sur les archives 2010, SANS "conseil" —
+# au moins 2 variantes coexistent pour cette période :
+#   /data/media/document/pv-2010-12-22-sp.pdf              (tirets)
+#   Pv%202010%2009%2001%20SP%20%282%29.pdf                 (espaces %20,
+#     "SP" avant un suffixe "(N)" pour les séances à plusieurs documents)
+# On décode l'URL (unquote) avant de matcher pour traiter espace et %20 de
+# façon uniforme. Un simple mot-clé serait trop permissif (n'importe quel
+# "pv *.pdf" matcherait) ; on exige la forme datée pour rester spécifique.
+_SHORT_DATE_PV_RE = re.compile(r"pv[-_. ]*20\d{2}[-_. ]+\d{1,2}[-_. ]+\d{1,2}(?:[-_. ]*sp)?")
 
 
 def is_pv_pdf(url: str) -> bool:
     """Vérifie si l'URL correspond à un PV du conseil communal.
     Couvre les 2 emplacements (/import/, /document/), les 3 nomenclatures
     récentes (tirets `pv-conseil-`, underscores `pv_conseil_`, espaces
-    `PV Conseil`) et la nomenclature courte des archives 2010 (sans "conseil",
-    voir _SHORT_DATE_PV_RE)."""
-    u = url.lower()
+    `PV Conseil`) et les nomenclatures courtes des archives 2010 (sans
+    "conseil", tirets ou espaces/%20, voir _SHORT_DATE_PV_RE)."""
+    u = unquote(url).lower()
     if not (u.endswith(".pdf") and "1030.be" in u):
         return False
     if any(k in u for k in [
-        "pv-conseil", "pv_conseil", "pv%20conseil", "pv conseil",
+        "pv-conseil", "pv_conseil", "pv conseil",
         "notulen", "proces-verbal",
     ]):
         return True
