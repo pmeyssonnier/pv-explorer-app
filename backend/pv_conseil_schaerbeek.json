@@ -6,6 +6,7 @@
     "seances_incluses": [
       "2010-02-03",
       "2010-03-03",
+      "2010-03-31",
       "2010-04-28",
       "2010-05-26",
       "2010-06-23",
@@ -159,7 +160,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9246,
+    "total_points": 9307,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -2542,6 +2543,1693 @@
             "urbanisme"
           ],
           "source_file": "Pv_2010.03.03.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2010-03-31",
+        "date": "2010-03-31",
+        "source_file": "Pv%202010.03.31%20SP.pdf",
+        "extracted_at": "2026-08-22T22:28:38.035750",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 61,
+          "extracted": 61,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/Pv%25202010.03.31%2520SP.pdf"
+      },
+      "points": [
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Intercommunale Bruxelloise de Distribution d'Eau (IBDE) - Prorogation de l'intercommunale",
+          "resume": "Prorogation de l'Intercommunale Bruxelloise de Distribution d'Eau pour une durée de trente ans prenant cours le 30 juin 2019.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "intercommunale",
+            "eau",
+            "prorogation"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Intercommunale Bruxelloise de Distribution d'Eau (IBDE) - Démission de Monsieur Vincent Vanhalewyn - Remplacement au Conseil d'Administration",
+          "resume": "Désignation de Madame Tamimount ESSAIDI comme représentante de la commune au sein du conseil d'Administration de l'IBDE en remplacement de Monsieur Vincent VANHALEWYN.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "intercommunale",
+            "eau",
+            "representation"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 4,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "ASBL Académie des arts de la parole, de la danse et de la musique de Saint-Josse-ten-Noode/Schaerbeek - Désignation des représentants de la commune",
+          "resume": "Désignation de 5 représentants de la commune au sein de l'Assemblée générale et de 3 candidats-représentants au sein du Conseil d'Administration de l'ASBL.",
+          "intervenants": [
+            "Mme la Bourgmestre ff",
+            "M. Grimberghs"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 0,
+            "abstentions": 15
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "culture",
+            "academie",
+            "arts",
+            "representation"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 6,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Primes d'accompagnement social - Exercices 2010 à 2012 - Renouvellement - Approbation",
+          "resume": "Reconduction et approbation du règlement sur les primes d'accompagnement social destinées à atténuer la hausse des centimes additionnels au précompte immobilier pour les exercices 2010 à 2012.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fiscalite",
+            "social",
+            "primes",
+            "precompte_immobilier"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement fixant les redevances sur l'établissement et/ou la délivrance de certificats et de documents administratifs - Modification",
+          "resume": "Modification du règlement qui fixe les redevances sur l'établissement et/ou la délivrance de certificats et de documents administratifs.",
+          "intervenants": [
+            "M. Guillaume",
+            "Mmes Vriamont et Bouarfa"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "redevances",
+            "certificats",
+            "documents_administratifs"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 16,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fiscalité",
+          "sous_rubrique": "Taxes immobilières",
+          "titre": "Taxe sur les immeubles subdivisés en logements multiples non-conformes à la législation urbanistique - Exercices 2010 à 2014 - Instauration - Approbation",
+          "resume": "Instauration d'une taxe sur les immeubles subdivisés en logements multiples non-conformes à la législation urbanistique pour les exercices 2010 à 2014.",
+          "intervenants": [
+            "M. Guillaume"
+          ],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "taxe_immobiliere",
+            "logements_multiples",
+            "urbanisme",
+            "non_conformite"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Rapport semestriel du fonds de pension - Pour information",
+          "resume": "Prise pour information du rapport de la société AXA relatif à la situation du fonds de pension arrêté à la date du 31 décembre 2009",
+          "intervenants": [
+            "De Herde",
+            "Lahlali"
+          ],
+          "repondant": "De Herde",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fonds_de_pension"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "",
+          "titre": "C.P.A.S. - Ajustement interne du budget de l'exercice 2009 - Approbation",
+          "resume": "Approbation de la délibération du 27 janvier 2010 par laquelle le Conseil de l'Action Sociale arrête l'ajustement interne du budget des dépenses et des recettes du CPAS pour l'exercice 2009. Recettes totales : 118.068.877,00 €. Dépenses totales : 118.068.877,00 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 118068877,
+          "thematiques": [
+            "cpas",
+            "budget",
+            "ajustement_interne"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "",
+          "titre": "C.P.A.S. - Extension du cadre Maribel - Approbation",
+          "resume": "Approbation de l'extension au 1er mars 2010 du cadre Maribel subsidié par le Fonds sectoriel de l'ONSSAPL. Nouvelle mesure du Maribel Fiscal destinée aux emplois de travailleurs sociaux de première ligne",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "cpas",
+            "maribel",
+            "emploi"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "",
+          "titre": "C.P.A.S. - Statuts de l'ASBL chargée d'assurer la production, la gestion et la distribution d'énergie par co-génération - Approbation",
+          "resume": "Approbation des statuts de l'asbl chargée d'assurer la production, la gestion et la distribution, au sein de ses membres (partenaires du Site Paul Brien), d'énergie produite par la technique de la co-génération. Projet pilote d'utilisation rationnelle des énergies et de développement durable",
+          "intervenants": [
+            "Courtheoux",
+            "Güles"
+          ],
+          "repondant": "De Herde, Smeysters, Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "cpas",
+            "energie",
+            "co-generation",
+            "asbl",
+            "developpement_durable"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances et Gestion",
+          "sous_rubrique": "Comptes d'Asbl",
+          "titre": "ASBL \"Cercle Royal Sportif du Personnel Communal de Schaerbeek\" - Comptes 2008",
+          "resume": "Prise d'acte des comptes 2008 affichant un résultat négatif de -327,03€ pour l'exercice et un résultat cumulé de 10.546,84€. Subside communal de 10.000€ versé intégralement le 20/11/2008.",
+          "intervenants": [
+            "M. Courtheoux"
+          ],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 40,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes_annuels"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances et Gestion",
+          "sous_rubrique": "Comptes d'Asbl",
+          "titre": "ASBL \"Enfants & Compagnie\" - Comptes 2008",
+          "resume": "Prise d'acte des comptes 2008 affichant un résultat positif de 20.880,84€ pour l'exercice et un résultat cumulé de 11.811,58€. Subsides communaux de 6.000€ et 1.400€ versés intégralement le 28/01/2009.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 7400,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes_annuels"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances et Gestion",
+          "sous_rubrique": "Comptes d'Asbl",
+          "titre": "ASBL \"Les Amis de la Maison des Arts de Schaerbeek\" - Comptes 2008",
+          "resume": "Prise d'acte des comptes 2008 affichant un résultat positif de 1.350,51€ pour l'exercice et un résultat cumulé de 38.076,76€. Subside communal de 10.000€ versé intégralement le 15/06/2009.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes_annuels"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances et Gestion",
+          "sous_rubrique": "Comptes d'Asbl",
+          "titre": "ASBL \"Les Amis des Ludothèques Schaerbeekoises\" - Comptes 2008",
+          "resume": "Prise d'acte des comptes 2008 affichant un résultat négatif de -9.025,01€ pour l'exercice et un résultat cumulé de -839,17€. Subsides communaux de 1.500€ chacun versés intégralement le 28/01/2009.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3000,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes_annuels"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances et Gestion",
+          "sous_rubrique": "Comptes d'Asbl",
+          "titre": "ASBL \"Maison de Quartier Helmet\" - Comptes 2008",
+          "resume": "Prise d'acte des comptes 2008 affichant un résultat positif de 3.462€ pour l'exercice et un résultat cumulé de 35.243€. Subside communal de 1.500€ versé intégralement le 19/01/2009.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes_annuels"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances et Gestion",
+          "sous_rubrique": "Comptes d'Asbl",
+          "titre": "ASBL \"Royal Canter Basket Club de Schaerbeek\" - Comptes 2008",
+          "resume": "Prise d'acte des comptes 2008 affichant un résultat négatif de -9.221€ pour l'exercice et un montant des avoirs de 3.329€. Subside communal de 3.500€ versé intégralement le 22/12/2008.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 40,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 3500,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes_annuels"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Partenariats et Conventions",
+          "sous_rubrique": "Conventions de Partenariat",
+          "titre": "ASBL \"Parcours - Compagnie Félicette Chazerand\" - Convention de partenariat pour mise à disposition de locaux",
+          "resume": "Approbation du Projet de Convention entre la Commune, l'Ecole n°6 Georges Primo et \"Parcours asbl – Compagnie Félicette Chazerand\" pour la mise à disposition de locaux. Mandat donné au Collège des Bourgmestre et Echevins pour signer cette Convention.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "partenariat",
+            "convention",
+            "education"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Marchés et Achats",
+          "sous_rubrique": "Marchés Publics",
+          "titre": "Désignation de la zone de Police 5344 comme opérateur intervenant en nom collectif pour l'attribution et l'exécution du marché conjoint concernant l'installation et l'entretien d'un réseau de caméras de surveillance",
+          "resume": "Approbation de la Convention désignant la zone de Police 5344 comme opérateur intervenant en nom collectif pour le marché conjoint passé entre les communes de Schaerbeek, Evere et Saint-Josse-ten-Noode ayant pour objet l'installation et l'entretien d'un réseau de caméras de surveillance sur leurs territoires respectifs.",
+          "intervenants": [
+            "Mme Nyssens",
+            "Mme Bouarfa",
+            "M. Clerfayt",
+            "M. Charels",
+            "M. Köksal"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "marche_public",
+            "videosurveillance",
+            "securite"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Programme de Prévention urbaine",
+          "titre": "Convention Eurotop 2009 dans le cadre du Fonds Sommets Européens - Approbation",
+          "resume": "Approbation de la convention Eurotop 2009",
+          "intervenants": [
+            "Mme Onkelinx",
+            "M. Vanhalewyn"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "prevention_urbaine",
+            "eurotop"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Programme de Prévention urbaine",
+          "titre": "Subventions D.A.S. 2009-2010 - Convention entre la Région de Bruxelles-Capitale et la commune - Approbation",
+          "resume": "Approbation des conventions D.A.S. 2009-2010 entre la Commune et ses partenaires, ainsi que la convention D.A.S. avec la Région de Bruxelles-Capitale. Subvention de 1.448.511,00 € pour l'année 2009.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1448511,
+          "thematiques": [
+            "dispositif_accrochage_scolaire",
+            "subvention_regionale"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Programme de Prévention urbaine",
+          "titre": "Convention entre la commune et l'ASBL Espace P dans le cadre du projet de cohésion sociale dans le quartier Nord en partenariat avec le dispositif communal Pléiade Nord - Reconduction pour l'année 2010 - Approbation",
+          "resume": "Approbation des conventions 2010 entre la Commune et l'asbl \"Espace P\" pour la reconduction du projet de cohésion sociale dans le quartier Nord.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "cohesion_sociale",
+            "prevention_urbaine",
+            "quartier_nord"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Programme de Prévention urbaine",
+          "titre": "Sécurisation des logements sociaux - Répartition du subside régional 2009 - Approbation",
+          "resume": "Approbation de la répartition du subside régional de 159.718,00 € pour la sécurisation des logements sociaux: 100.000,00 € au Foyer Schaerbeekois et 59.718,00 € pour la Commune. Travaux incluant éclairage de secours, portes coupe-feu, caméras de surveillance et renouvellement d'éclairage public.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 159718,
+          "thematiques": [
+            "logements_sociaux",
+            "securisation",
+            "subvention_regionale"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Programme de Prévention urbaine",
+          "titre": "Nouveau règlement communal relatif à l'octroi de primes de techno-prévention - Approbation",
+          "resume": "Adoption du nouveau règlement communal relatif à l'octroi de primes de technoprévention pour la protection des habitations contre les cambriolages. Prime fixée à 25% des frais d'achat/installation avec maximum de 250 € par habitation. Entrée en vigueur le 1er avril 2010.",
+          "intervenants": [
+            "Mme Vriamont",
+            "M. Dönmez"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 250,
+          "thematiques": [
+            "techno_prevention",
+            "primes_habitation",
+            "cambriolage"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions et partenariats",
+          "sous_rubrique": "Eco-conseil",
+          "titre": "Subvention Performance Energétique des Bâtiments - Convention - Approbation",
+          "resume": "Approbation de la convention subsides PEB entre l'IBGE et la Commune de Schaerbeek pour financer l'engagement d'agents communaux en vue de la mise en œuvre de l'ordonnance de Performance Energétique des Bâtiments du 7 juin 2007. L'engagement du gouvernement porte sur 1 et 1/2 poste de niveau A pour une durée de 12 mois.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "energie",
+            "performance_energetique",
+            "environnement",
+            "subvention"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Eco-conseil",
+          "sous_rubrique": "Eco-conseil",
+          "titre": "Agenda Iris 21 - Convention IBGE-Commune de Schaerbeek pour le projet subventionné AL21 - Approbation",
+          "resume": "Approbation de la convention Agenda 21 local entre la Commune de Schaerbeek et l'Institut Bruxellois pour la Gestion de l'Environnement (IBGE). La Commune s'engage à respecter ses obligations contractuelles vis-à-vis du pouvoir subsidiant et doit renvoyer le contrat signé au pouvoir régional pour le rendre opérationnel.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "agenda_21",
+            "environnement",
+            "developpement_durable"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Informatique",
+          "sous_rubrique": "Informatique",
+          "titre": "Règlement relatif à l'usage de l'outil informatique dans l'administration communale - Approbation",
+          "resume": "Approbation du règlement relatif à l'usage de l'outil informatique dans l'administration communale de Schaerbeek. Le règlement définit les principes de gestion de la politique informatique, les droits et obligations des utilisateurs, les conditions d'utilisation du matériel informatique, des courriels et d'Internet, ainsi que les mesures de contrôle et de sécurité. Un amendement a été introduit pour ajouter une disposition transitoire concernant l'article 17 du règlement, lequel n'entrera en vigueur qu'au 1er jour du 3ème mois qui suit la date d'envoi d'une demande officielle d'avis à la commission de la protection de la vie privée.",
+          "intervenants": [
+            "M. Nimal",
+            "Mme Onkelinx",
+            "M. Clerfayt"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "informatique",
+            "administration",
+            "protection_donnees",
+            "securite_informatique"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 56,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Mobilité",
+          "sous_rubrique": "",
+          "titre": "Plan de stationnement - Règlement complémentaire de police - Approbation",
+          "resume": "",
+          "intervenants": [
+            "M. Grimberghs"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 37,
+            "contre": 4,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "circulation_routiere",
+            "police"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 59,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RESSOURCES HUMAINES",
+          "sous_rubrique": "Statut pécuniaire",
+          "titre": "Statut pécuniaire - Intervention de la Commune dans les frais de transports en commun publics et/ou utilisation de la bicyclette ou indemnité piéton pour le trajet domicile / lieu de travail - Approbation",
+          "resume": "Modification du statut pécuniaire du personnel communal : augmentation de l'intervention pour transports en commun de 50% à 75%, augmentation de l'indemnité vélo de 0,15 € à 0,20 € par km, création d'une indemnité piéton annuelle de 30 € pour agents effectuant déplacements à pied. Entrée en vigueur 1er avril 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30,
+          "thematiques": [
+            "ressources_humaines",
+            "statut_pecuniaire",
+            "transports",
+            "mobilite",
+            "indemnites"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 62,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RESSOURCES HUMAINES",
+          "sous_rubrique": "Heures supplémentaires",
+          "titre": "Règlement du 17 décembre 1997 relatif aux heures supplémentaires, en particulier celles prestées par les 'gardes neige' - Modification - Approbation",
+          "resume": "Modification du règlement des heures supplémentaires avec insertion d'un article 3 bis accordant des forfaits aux agents effectuant des gardes-neige : forfait 2h pour gardes de semaine (8h-20h et nuits suivantes), forfait 4h pour gardes de week-end et jours fériés, même sans intervention.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "heures_supplementaires",
+            "gardes_neige"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 64,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ESPACES VERTS",
+          "sous_rubrique": "Schaerbeek Propreté et Espaces Verts",
+          "titre": "Schaerbeek Propreté et Espaces Verts - Création de la fonction de secrétaire technique 'Conservateur du Parc Josaphat' - Approbation",
+          "resume": "Création d'une nouvelle fonction de secrétaire technique 'Conservateur du Parc Josaphat' au sein de Schaerbeek Propreté et Espaces Verts.",
+          "intervenants": [
+            "Mme Onkelinx"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "espaces_verts",
+            "parc_josaphat"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "",
+          "titre": "Organisation d'un Prix biennal du Patrimoine - Approbation",
+          "resume": "Création d'un Prix biennal du Patrimoine visant à récompenser une association active dans la sensibilisation du patrimoine et un maître d'ouvrage pour sa contribution à la conservation ou restauration du patrimoine bâti. Montants : 8.000 € (article 773-332-IN-02-56) et 2.000 € (article 930-331-IN-01-51) du budget ordinaire 2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "patrimoine",
+            "culture"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 66,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments",
+          "sous_rubrique": "",
+          "titre": "Restauration du Mât de Lalaing sis au croisement des avenues Voltaire et Azalées - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Restauration du mât de Lalaing classé comme monument en 2009. Remise en place d'un système d'éclairage au sommet. Dépense estimée à 65.703,00 € TVA incluse, financée par subsides (52.563,00 €) et boni du service extraordinaire (13.140,00 €). Marché passé au secteur privé par procédure négociée sans publicité.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 65703,
+          "thematiques": [
+            "infrastructure",
+            "restauration",
+            "patrimoine"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 68,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments",
+          "sous_rubrique": "",
+          "titre": "Centre aéré à Ittre sis route de Clabecq 72 - Projet de sécurisation - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Remplacement de la centrale de détection d'intrusion du centre aéré d'Ittre, devenue irréparable. Coût estimé à 7.000 EUR. Marché passé par procédure négociée sans publicité après consultation de sept firmes. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 7000,
+          "thematiques": [
+            "securite",
+            "infrastructure",
+            "equipements"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 69,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments",
+          "sous_rubrique": "",
+          "titre": "Centre Technique Rodenbach - Vidange, nettoyage, démontage et évacuation d'une citerne à huile - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Vidange, dégazage, découpe et évacuation d'une ancienne citerne à huile située dans un local technique du CTR. Dépense estimée à 10.000 €. Marché passé par procédure négociée sans publicité après consultation de trois firmes. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "environnement",
+            "infrastructure",
+            "travaux"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 71,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments",
+          "sous_rubrique": "",
+          "titre": "Mission de coordinateur de sécurité et de santé pour les chantiers temporaires - Projets communaux élaborés en 2010 - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Désignation d'un coordinateur de sécurité et de santé pour les chantiers temporaires et mobiles selon la législation en vigueur. Dépense estimée à 80.000 €, financée par emprunt et boni du service extraordinaire. Marché passé par procédure négociée sans publicité.",
+          "intervenants": [
+            "M. Dönmez"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 11,
+            "abstentions": 0
+          },
+          "montant_eur": 80000,
+          "thematiques": [
+            "sante_et_securite",
+            "chantiers",
+            "travaux"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 72,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments",
+          "sous_rubrique": "",
+          "titre": "Eglise Sainte-Suzanne - Travaux de dépose conservatoire de quatre vitraux exceptionnels - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Dépose conservatoire de quatre vitraux exceptionnels de l'église Sainte-Suzanne.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "patrimoine",
+            "culture",
+            "restauration"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 74,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Immeubles communaux",
+          "sous_rubrique": "Josaphat",
+          "titre": "Immeubles communaux sis 105 et 107 rue Josaphat - Remplacement des portes d'entrée - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Remplacement de deux ensembles de châssis en aluminium (porte et partie fixe) pour les entrées des bâtiments communaux aux numéros 105 et 107 de la rue Josaphat. Procédure négociée sans publicité après consultation de trois firmes. Coût estimé à 8.000 € financé par le boni du service extraordinaire.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 8000,
+          "thematiques": [
+            "travaux_immeubles",
+            "marches_publics"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 76,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Royal Tennis Club Lambermont",
+          "titre": "Royal Tennis Club Lambermont - Remplacement du hall gonflable - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du nouveau projet de remplacement de la structure gonflable et travaux annexes au Royal Tennis Club Lambermont. Adjudication publique comme mode de passation. Coût estimé à 420.000 € (révision des prix, marge pour imprévus et TVA inclus), financé par 198.000 € de subside de la Commission communautaire française et 222.000 € par emprunt.",
+          "intervenants": [
+            "M. Bouhjar",
+            "M. Van Gorp"
+          ],
+          "repondant": "M. Köse",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 29,
+            "contre": 11,
+            "abstentions": 1
+          },
+          "montant_eur": 420000,
+          "thematiques": [
+            "equipements_publics",
+            "marches_publics",
+            "sports"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 78,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Immeubles communaux",
+          "sous_rubrique": "Rodenbach",
+          "titre": "Complexe Rodenbach - Mission de technique spéciale - Majoration de la dépense",
+          "resume": "Approbation de la majoration de dépense relative à la mission d'études de techniques spéciales pour l'aménagement du troisième étage du CT Rodenbach. Le décompte final s'élève à 33.190,04 € TVAC au lieu de 29.248,22 € TVAC. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 33190.04,
+          "thematiques": [
+            "travaux_immeubles",
+            "marches_publics"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 79,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Partenariat",
+          "titre": "Convention de partenariat entre la commune et JST - Approbation",
+          "resume": "Conclusion de la convention de partenariat entre la commune et l'asbl Jeunes Schaerbeekois au Travail (JST) pour les activités de jardinage et formation professionnelle pour les jeunes Schaerbeekois peu qualifiés en collaboration avec le service Propreté & Espaces Verts.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "partenariat",
+            "emploi_formation",
+            "espaces_verts"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 80,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Rapports",
+          "titre": "Service Propreté Publique - Espaces Verts - Rapport 2009",
+          "resume": "Présentation du rapport 2009 du service Propreté publique et Espaces verts par M. De Herde.",
+          "intervenants": [
+            "M. De Herde",
+            "M. Vanhalewyn",
+            "M. Özturk",
+            "Mme Lejeune de Schiervel",
+            "M. Clerfayt"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "rapports",
+            "gestion_publique",
+            "espaces_verts"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 81,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Wegen",
+          "titre": "Aménagement du tronçon de l'avenue Paul Deschanel entre la rue de la Consolation et le square Armand Steurs - Mode de passation et fixation des conditions du marché",
+          "resume": "Étude et aménagement de l'avenue Paul Deschanel visant la sécurisation des traversées piétonnes, carrefours en zone 30, amélioration de l'accessibilité et organisation du stationnement.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 50000,
+          "thematiques": [
+            "voirie",
+            "amenagement_urbain",
+            "marche_public",
+            "zone_30",
+            "accessibilite"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 82,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Wegen",
+          "titre": "Rénovation des trottoirs et renouvellement des alignements d'arbres de l'avenue Milcamps - Mission d'étude - Mode de passation et fixation des conditions du marché",
+          "resume": "Mission d'étude pour la rénovation des trottoirs et le renouvellement des alignements d'arbres de l'avenue Milcamps, située dans la zone 30 Diamant.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 60000,
+          "thematiques": [
+            "voirie",
+            "amenagement_urbain",
+            "marche_public",
+            "zone_30",
+            "espaces_verts"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 84,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Wegen",
+          "titre": "Règlement-redevance sur le placement et la mise à disposition de dispositifs anti-stationnement sur les trottoirs ou en voirie - Renouvellement et modification",
+          "resume": "Adoption d'un nouveau règlement-redevance pour le placement et la mise à disposition de dispositifs anti-stationnement (potelets, marquages) sur les trottoirs et en voirie, avec fixation des tarifs forfaitaires.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "reglementation",
+            "voirie",
+            "redevances"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 89,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux publics",
+          "sous_rubrique": "Contrat de quartier Aerschot/Progrès",
+          "titre": "Contrat de quartier Aerschot/Progrès - Immeuble sis rue du Progrès 249-251 et rue Gendebien 32 - Travaux de rénovation - Procédure négociée sans publicité - Approbation",
+          "resume": "Approbation des travaux de rénovation restant à réaliser dans les immeubles sis rue du Progrès 249-251 et rue Gendebien 32. Retrait de la procédure d'adjudication publique (offres irrégulières et prix inacceptable) au profit d'une procédure négociée sans publicité. Montant estimé: 750.000€ TVA comprise, financé par les subsides FPGV 2008-2009 et le solde par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 750000,
+          "thematiques": [
+            "travaux_publics",
+            "renovation_immobiliere",
+            "contrat_quartier",
+            "marche_public"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 47,
+          "page": 91,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Contrat de quartier Lehon-Kessels",
+          "titre": "Contrat de quartier Lehon-Kessels - Immeuble communal sis rue Josaphat 247 - Fixation des valeurs locatives - Approbation",
+          "resume": "Adoption des valeurs locatives de 5 logements situés rue Josaphat 247, financés à 90% par le Contrat de Quartier Lehon-Kessels. Détails des loyers mensuels: Duplex 366,10€, Appartement 1 394,10€, Appartement 2 385,60€, Appartement 3 397,60€, Appartement 4 362,60€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "logement",
+            "valeurs_locatives",
+            "contrat_quartier"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 48,
+          "page": 92,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Maison des Femmes",
+          "titre": "Maison des Femmes - rue Josaphat 247 - Convention d'occupation avec la Maison médicale Neptune - Approbation",
+          "resume": "Approbation de la convention d'occupation d'un local de 90 m² au demi sous-sol de la Maison des Femmes par l'asbl Maison médicale Neptune tous les jeudis de 14h à 15h pour un loyer mensuel de 40€ charges comprises.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": 40,
+          "thematiques": [
+            "maison_femmes",
+            "occupation_locale",
+            "sante",
+            "logement"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 49,
+          "page": 93,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Maison des Femmes",
+          "titre": "Maison des Femmes - rue Josaphat 247 - Convention d'occupation avec l'ASBL F-Amis - Approbation",
+          "resume": "Approbation de la convention d'occupation d'un local de 10 m² au 1er étage de la Maison des Femmes par l'asbl F-Amis du lundi au vendredi matin inclus pour un loyer mensuel de 50€ charges comprises.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": 50,
+          "thematiques": [
+            "maison_femmes",
+            "occupation_locale",
+            "asbl"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 50,
+          "page": 94,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Maison des Femmes",
+          "titre": "Maison des Femmes - rue Josaphat 247 - Convention d'occupation avec l'ASBL Inférences - Approbation",
+          "resume": "Approbation de la convention d'occupation d'un local de 42 m² au 1er étage de la Maison des Femmes par l'asbl Inférences tous les lundis à partir du 19 avril 2010 de 9h30 à 12h30 et de 13h à 16h pour un loyer mensuel de 38€ charges comprises.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": 38,
+          "thematiques": [
+            "maison_femmes",
+            "occupation_locale",
+            "asbl"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 51,
+          "page": 95,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Domaine public",
+          "sous_rubrique": "Désaffectation et mise à disposition",
+          "titre": "Désaffectation d'un espace public (partie de voirie) sis place Princesse Elisabeth - Mise à disposition par emphytéose de la S.A. Eurostation pour implantation du futur musée du train - Approbation",
+          "resume": "Désaffectation d'une parcelle de voirie de ±18 ca non cadastrée place Princesse Elisabeth, à droite de la gare de Schaerbeek. Conclusion d'un bail emphytéotique de 99 ans avec la S.A. EUROSTATION pour implanter le futur Musée du Train pour un euro symbolique prenant cours le 01.01.2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1,
+          "thematiques": [
+            "domaine_public",
+            "emphytheose",
+            "musee",
+            "transport_ferroviaire"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 52,
+          "page": 96,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Domaine public",
+          "sous_rubrique": "Acquisitions immobilières",
+          "titre": "Acquisition de gré à gré, pour cause d'utilité publique, de deux terrains sis rue Waelhem jouxtant le terrain communal appartenant à la société CO.BR.HA - Accorder une servitude de vue sur lesdits terrains",
+          "resume": "Acquisition à l'amiable de deux terrains rue Waelhem contigus au terrain communal de CO.BR.HA et octroi d'une servitude de vue",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "domaine_public",
+            "acquisition_immobiliere",
+            "servitude"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 53,
+          "page": 98,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "",
+          "titre": "Reprise de chantier de construction de deux immeubles sis aux angles Dupont 29/Linné et Dupont 11/Plantes - Nouveau mode passation et conditions de marché - Approbation",
+          "resume": "Approbation de la procédure négociée sans publicité pour la reprise du chantier de construction de deux immeubles. Le montant estimé des travaux est de 435.000,00 euros. Les offres initiales des sociétés Gilicon et Vandezande ont été écartées comme anormalement élevées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 435000,
+          "thematiques": [
+            "marche_public",
+            "construction",
+            "contrat_de_quartier"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 54,
+          "page": 100,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Planification",
+          "sous_rubrique": "",
+          "titre": "Elaboration d'un Plan Particulier d'Affectation du Sol \"RTBF\" en ce compris un rapport sur les incidences environnementales - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation de l'élaboration d'un Plan Particulier d'Affectation du Sol (PPAS) \"RTBF\" avec rapport sur les incidences environnementales. Confier la mission d'auteur de projet au secteur privé par procédure négociée sans publicité. Montant estimé des études : 80.000 euros TTC. Financement par subside et emprunt pour éventuels dépassements.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": 80000,
+          "thematiques": [
+            "urbanisme",
+            "plan_affectation_sol",
+            "environnement",
+            "marche_public"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 55,
+          "page": 106,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Mise en conformité d'une cabine haute tension sur le site du Crossing, avenue du Suffrage Universel 22-24 - Mode de passation et fixation des conditions du marché",
+          "resume": "Prise pour information de la décision du Collège relatif à la mise en conformité d'une cabine haute tension non conforme aux normes, coût estimé à 11.600 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 11600,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "travaux",
+            "electricite"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 56,
+          "page": 113,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Sécurité",
+          "sous_rubrique": "Piétons",
+          "titre": "La sécurité des piétons autour de la place Princesse Elisabeth",
+          "resume": "Demande de Monsieur Mohamed EL ARNOUKI concernant la sécurité des piétons autour de la place Princesse Elisabeth",
+          "intervenants": [
+            "Mohamed EL ARNOUKI"
+          ],
+          "repondant": "Mme Smeysters",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "securite_pietons",
+            "place_princesse_elisabeth"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 57,
+          "page": 113,
+          "urgence": false,
+          "type": "motion",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "Inspection pédagogique",
+          "titre": "L'inspection pédagogique dans les écoles francophones des six communes périphériques dites à facilités",
+          "resume": "Motion de Monsieur Larbi KADDOUR concernant l'inspection pédagogique dans les écoles francophones des six communes à facilités. Demande à la Communauté française d'organiser matériellement et financièrement l'enseignement francophone existant dans les six communes à facilités.",
+          "intervenants": [
+            "Larbi KADDOUR",
+            "Vanhalewyn",
+            "Mme Vriamont",
+            "M Courtheoux",
+            "Mme Nyssens",
+            "M Clerfayt"
+          ],
+          "repondant": null,
+          "decision": "DEMANDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 16,
+            "contre": 10,
+            "abstentions": 5
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "inspection_pedagogique",
+            "communes_facilites",
+            "enseignement_francophone"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 58,
+          "page": 114,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Urbanisme",
+          "sous_rubrique": "Carrefours",
+          "titre": "Le Carrefour Brusilia : Quid de la question?",
+          "resume": "Demande de Monsieur Mohamed EL ARNOUKI. Ce point est transformé en question écrite.",
+          "intervenants": [
+            "Mohamed EL ARNOUKI"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "carrefour_brusilia"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 59,
+          "page": 114,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Énergie",
+          "sous_rubrique": "Audit énergétique",
+          "titre": "L'audit énergétique pour particuliers",
+          "resume": "Demande de Madame Mahinur OZDEMIR concernant l'audit énergétique pour particuliers",
+          "intervenants": [
+            "Mahinur OZDEMIR"
+          ],
+          "repondant": "Mme Smeysters",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "audit_energetique",
+            "particuliers"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 60,
+          "page": 115,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Transports",
+          "sous_rubrique": "Aviation",
+          "titre": "L'accord annoncé par le Gouvernement Fédéral sur le survol de Bruxelles",
+          "resume": "Question de Monsieur Yvan de BEAUFFORT concernant l'accord annoncé par le Gouvernement Fédéral sur le survol de Bruxelles",
+          "intervenants": [
+            "Yvan de BEAUFFORT"
+          ],
+          "repondant": "M. Guillaume",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "survol_bruxelles",
+            "gouvernement_federal"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 61,
+          "page": 115,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Urbanisme",
+          "sous_rubrique": "Travaux publics",
+          "titre": "L'annonce du chantier de la place Colignon",
+          "resume": "Question de Monsieur Jean-Pierre VAN GORP concernant l'annonce du chantier de la place Colignon",
+          "intervenants": [
+            "Jean-Pierre VAN GORP"
+          ],
+          "repondant": "Mme Smeysters",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "place_colignon",
+            "chantier",
+            "travaux_publics"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
+        },
+        {
+          "sp": 62,
+          "page": 115,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Affaires sociales",
+          "sous_rubrique": "Personnes âgées",
+          "titre": "L'aide destinée aux personnes âgées",
+          "resume": "Question de Monsieur Larbi KADDOUR concernant l'aide destinée aux personnes âgées",
+          "intervenants": [
+            "Larbi KADDOUR"
+          ],
+          "repondant": "M. Guillaume",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "aide_personnes_agees",
+            "affaires_sociales"
+          ],
+          "source_file": "Pv%202010.03.31%20SP.pdf"
         }
       ]
     },
