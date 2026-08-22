@@ -25,7 +25,16 @@ NAMESPACE = "pv"
 CLAUDE_MODEL = "claude-sonnet-4-6"   # bon rapport qualité/coût pour du public
 # Modèles Claude autorisés pour l'override « modèle » par requête (menu Options).
 # Toute valeur hors de cet ensemble retombe sur CLAUDE_MODEL (garde-fou coût).
-ALLOWED_MODELS = {"claude-sonnet-4-6", "claude-haiku-4-5-20251001"}
+# Réglable par env (comme SCORE_MIN) pour ajouter/retirer un modèle sans
+# redéployer — ex. si Anthropic déprécie un ID. Le défaut part de CLAUDE_MODEL
+# (pas d'un second literal) pour qu'ils ne puissent pas diverger silencieusement.
+ALLOWED_MODELS = {
+    m.strip()
+    for m in os.environ.get(
+        "ALLOWED_MODELS", f"{CLAUDE_MODEL},claude-haiku-4-5-20251001"
+    ).split(",")
+    if m.strip()
+}
 
 # ── RAG ─────────────────────────────────────────────────────────────────────
 TOP_K = 30                           # passages récupérés (contexte donné à Claude).
