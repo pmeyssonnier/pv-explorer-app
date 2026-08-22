@@ -25,13 +25,20 @@ for sub in ("backend", "pipeline"):
     if p not in sys.path:
         sys.path.insert(0, p)
 
-# 2. Stubs des dépendances lourdes non requises par les fonctions pures.
-#    pv_extraction_pipeline importe pdfplumber et tqdm au chargement ; on les
-#    remplace par des modules factices pour pouvoir tester extract_pdf_metadata,
-#    _coerce_sp, etc. sans les installer.
-if "pdfplumber" not in sys.modules:
+# 2. Stubs de secours pour pdfplumber/tqdm — SEULEMENT s'ils ne sont pas
+#    installés. pv_extraction_pipeline les importe au chargement ; ce sont
+#    maintenant de vraies dépendances de backend/requirements.txt (nécessaires
+#    à services/pv_integration.py, pas seulement au pipeline), donc installées
+#    en CI comme en prod — le stub ne sert plus que si un environnement local
+#    ne les a pas installées mais veut quand même tester les fonctions PURES
+#    du pipeline (extract_pdf_metadata, _coerce_sp, etc.).
+try:
+    import pdfplumber  # noqa: F401
+except ImportError:
     sys.modules["pdfplumber"] = types.ModuleType("pdfplumber")
-if "tqdm" not in sys.modules:
+try:
+    import tqdm  # noqa: F401
+except ImportError:
     tqdm_mod = types.ModuleType("tqdm")
     tqdm_mod.tqdm = lambda iterable=None, **kw: iterable
     sys.modules["tqdm"] = tqdm_mod

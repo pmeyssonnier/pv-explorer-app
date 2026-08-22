@@ -26,7 +26,7 @@ import {
 } from './seances.js';
 import {
   checkAdminSession, openAdminLogin, closeAdminLogin, initAdminLoginOverlay,
-  submitAdminLogin, adminLogout,
+  submitAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
 } from './admin.js';
 
 // ── ONGLETS ──
@@ -74,7 +74,7 @@ registerActions({
   shareStats, trendSuggestion, loadTrend,
   shareElu,
   shareSeance, jumpToSeance,
-  openAdminLogin, closeAdminLogin, adminLogout,
+  openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
 });
 
 // ── Écouteurs directs pour les éléments statiques qui portaient un

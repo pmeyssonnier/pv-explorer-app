@@ -158,7 +158,10 @@ body {
    pour le même comportement — voir openSettings/closeSettings — un panneau
    nettement plus étroit, un simple formulaire) */
 .admin-login-panel { max-width: 360px; }
-.admin-login-form { padding: 20px 26px 26px; display: flex; flex-direction: column; }
+/* Padding léger par défaut (formulaire d'upload dans le panneau Admin, pas
+   dans une modale) ; la modale de connexion se donne plus d'air ci-dessous. */
+.admin-login-form { padding: 10px 0 0; display: flex; flex-direction: column; }
+.admin-login-panel .admin-login-form { padding: 20px 26px 26px; }
 .admin-login-form label { font-size: 13px; font-weight: 600; color: var(--encre-soft); margin: 14px 0 6px; }
 .admin-login-form label:first-child { margin-top: 0; }
 .admin-login-form input {
@@ -168,6 +171,15 @@ body {
 .admin-login-form input:focus { outline: none; border-color: var(--or); }
 .admin-login-error { color: var(--bordeaux); font-size: 13px; min-height: 16px; margin: 10px 0 0; }
 .admin-login-submit { margin-top: 12px; }
+
+/* ── PANNEAU ADMIN — upload/aperçu d'un PV (voir admin.js) ── */
+.admin-upload, .admin-preview { margin-top: 14px; }
+.admin-upload h4, .admin-preview h4 { font-family: var(--display); font-size: 18px; margin-bottom: 6px; }
+.admin-check-ok { color: var(--vert); font-size: 13.5px; margin: 8px 0; }
+.admin-check-warn { color: var(--bordeaux); font-size: 13.5px; margin: 8px 0; }
+.admin-preview-titles { list-style: disc; margin: 8px 0 8px 20px; font-size: 13.5px; color: var(--encre-soft); }
+.admin-preview-titles li { margin-bottom: 3px; }
+.admin-preview-actions { display: flex; gap: 10px; margin-top: 14px; }
 /* Mobile : on garde le panneau confortable sur tablette/PC mais on COMPACTE
    tout (marges, titres, contrôles, texte) pour que ça tienne sans déborder. */
 @media (max-width: 560px) {

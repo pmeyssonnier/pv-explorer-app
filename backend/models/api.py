@@ -86,3 +86,17 @@ class AdminLoginRequest(BaseModel):
     # juste un garde-fou anti-abus avant même d'atteindre verify_admin_credentials.
     username: str = Field(min_length=1, max_length=100, description="Identifiant administrateur.")
     password: str = Field(min_length=1, max_length=200, description="Mot de passe administrateur.")
+
+
+class SeancePublishRequest(BaseModel):
+    # `seance` reste un dict libre (pas un sous-modèle Pydantic dupliquant le
+    # schéma du pipeline d'extraction) : c'est EXACTEMENT ce que /admin/seances/
+    # extract a renvoyé, l'admin n'en modifie que le contenu, pas la forme.
+    # La validation métier (date/points présents) vit dans services/pv_integration.py.
+    seance: dict = Field(
+        description="Structure de séance extraite (retournée par /admin/seances/extract).",
+    )
+    source_url: Optional[str] = Field(
+        default=None, max_length=500,
+        description="URL du PV (PDF) sur 1030.be, si connue.",
+    )

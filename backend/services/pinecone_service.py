@@ -11,11 +11,15 @@ from config import INDEX_NAME
 _pc: Optional[Pinecone] = None
 
 
-def get_pinecone_index():
+def get_pinecone_client() -> Pinecone:
     global _pc
     if _pc is None:
         key = os.environ.get("PINECONE_API_KEY", "")
         if not key:
             raise RuntimeError("PINECONE_API_KEY manquante côté serveur")
         _pc = Pinecone(api_key=key)
-    return _pc.Index(INDEX_NAME)
+    return _pc
+
+
+def get_pinecone_index():
+    return get_pinecone_client().Index(INDEX_NAME)
