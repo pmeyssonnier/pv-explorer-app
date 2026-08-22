@@ -21,7 +21,7 @@ import {
   loadElus, populateElus, onEluInput, onEluYearChange, shareElu, setPendingEluKey,
 } from './elus.js';
 import {
-  loadSeances, loadSeance, renderSeanceYearList, shareSeance, shareSeanceDate,
+  loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
   setPendingSeanceDate,
 } from './seances.js';
 
@@ -69,7 +69,7 @@ registerActions({
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend,
   shareElu,
-  loadSeance, shareSeance, shareSeanceDate,
+  shareSeance,
 });
 
 // ── Écouteurs directs pour les éléments statiques qui portaient un
@@ -87,6 +87,7 @@ function initStaticListeners() {
   bind('eluSelect', 'input', onEluInput);
   bind('eluYear', 'change', onEluYearChange);
   bind('seanceYear', 'change', renderSeanceYearList);
+  bind('seanceList', 'change', e => onSeanceListChange(e.target));
   bind('setMaxSources', 'input', e => updateSetting('maxSources', +e.target.value));
   bind('setTopK', 'input', e => updateSetting('topK', +e.target.value));
   bind('setScoreMin', 'input', e => updateSetting('scoreMin', +e.target.value));
