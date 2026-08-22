@@ -3,7 +3,7 @@ vote et construction d'un chunk (texte vectorisé + métadonnées + ID stable).
 """
 import pytest
 
-from index_pv import format_vote, point_to_chunk
+from index_pv import SCHEMA_VERSION, format_vote, point_to_chunk
 
 
 # ── format_vote ─────────────────────────────────────────────────────────────
@@ -76,3 +76,10 @@ def test_chunk_text_priorise_le_titre_avant_le_gabarit_generique():
 def test_chunk_year_zero_si_date_absente():
     c = point_to_chunk(_point(), {"id": "PV-X", "date": "date inconnue"}, "schaerbeek")
     assert c["metadata"]["year"] == 0
+
+
+def test_chunk_porte_la_version_de_schema():
+    """Permet à une future migration de ne ré-embedder que les vecteurs
+    obsolètes (metadata["schema_version"] < N), sans épuiser le quota."""
+    c = point_to_chunk(_point(), _seance(), "schaerbeek")
+    assert c["metadata"]["schema_version"] == SCHEMA_VERSION

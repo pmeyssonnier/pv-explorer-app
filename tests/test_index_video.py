@@ -5,7 +5,7 @@ transcript alignés (sous-titres auto), et détection du format vidéo par
 """
 import json
 
-from index_pv import load_chunks, video_point_to_chunks
+from index_pv import SCHEMA_VERSION, load_chunks, video_point_to_chunks
 
 
 def _seance():
@@ -38,6 +38,7 @@ def test_video_chunk_metadata():
     assert m["type"] == "motion" and m["auteur"] == "Elias AMMI"
     assert "Elias AMMI" in m["decision"]          # libellé ex. « Motion · Elias AMMI »
     assert "Elias AMMI" in m["chunk_text"]        # texte vectorisé mentionne l'auteur
+    assert m["schema_version"] == SCHEMA_VERSION
 
 
 def test_video_chunk_id_stable():
