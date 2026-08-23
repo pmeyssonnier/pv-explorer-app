@@ -16,6 +16,12 @@ stable, sans risque de doublon en le relançant) :
     cd backend && python3 index_qe.py
     python3 index_qe.py --input questions_ecrites_schaerbeek.json --commune schaerbeek
 
+RÉINDEXATION CIBLÉE (--only-year) : n'envoie que les questions des années
+demandées (ex. après l'ajout d'un nouveau lot d'une seule année) — même
+principe qu'index_pv.py --only-year. Upsert idempotent par ID stable : ne
+touche pas aux vecteurs des autres années déjà indexées.
+    python3 index_qe.py --only-year 2022
+
 La publication ponctuelle (panneau admin) réindexe automatiquement la
 question concernée — voir services/questions_ecrites_integration.py. Ce
 script sert seulement au backfill initial (ou à une réindexation complète
@@ -84,6 +90,8 @@ def main():
                         help="Fichier JSON des questions écrites à indexer")
     parser.add_argument("--commune", default="schaerbeek",
                         help="Nom de la commune (écrit en métadonnée), ex. schaerbeek")
+    parser.add_argument("--only-year", dest="only_year", default="",
+                        help="N'indexe QUE ces années (ex. 2021,2022). Vide = toutes.")
     args = parser.parse_args()
 
     commune = args.commune.strip().lower()
@@ -103,6 +111,15 @@ def main():
     pc = get_client()
     chunks = load_chunks(json_path, commune)
     print(f"📄 {len(chunks)} question(s) chargée(s) depuis {json_path.name}")
+
+    if args.only_year:
+        years = {int(y) for y in args.only_year.split(",") if y.strip().isdigit()}
+        if not years:
+            print(f"❌ --only-year invalide : « {args.only_year} » (ex. attendu : 2021,2022)")
+            sys.exit(1)
+        before = len(chunks)
+        chunks = [c for c in chunks if c["metadata"].get("year") in years]
+        print(f"🎯 Filtre --only-year {sorted(years)} : {before} → {len(chunks)} question(s) à (ré)indexer")
 
     if not chunks:
         print("❌ Aucune question à indexer")
