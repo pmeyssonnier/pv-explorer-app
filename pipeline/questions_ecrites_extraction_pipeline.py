@@ -7,7 +7,8 @@
 Une question écrite (adressée par un·e conseiller·ère au Collège en dehors
 d'une séance, réponse écrite du Collège — voir 1030.be/fr/questions-ecrites)
 est un document COURT (1 à 5 pages), bilingue FR/NL, portant UN SEUL
-enregistrement (numéro, date, auteur·e, question, réponse) — contrairement à
+enregistrement (numéro, date, auteur·e, question, réponse, répondant·e le
+cas échéant) — contrairement à
 un PV (des dizaines de points), pas besoin ici du découpage en chunks ni de
 l'audit de complétude par regex de pv_extraction_pipeline.py : un seul appel
 Claude par fichier suffit. Les petites fonctions de nettoyage/normalisation
@@ -156,20 +157,25 @@ SCHÉMA JSON :
                                 // pas "Monsieur Georges VERZIN, conseiller communal")
   "titre": <string>,           // sujet de la question (le titre en gras/italique sous l'en-tête)
   "question": <string>,        // texte intégral de la question, en français uniquement
-  "reponse": <string|null>     // texte intégral de la réponse ("Réponse :"), en français
+  "reponse": <string|null>,    // texte intégral de la réponse ("Réponse :"), en français
                                 // uniquement ; null si absente du document
+  "repondant": <string|null>   // nom SANS civilité ni fonction de la personne qui répond (ex.
+                                // "Bernard Clerfayt"), tel qu'indiqué en tête ou en signature de
+                                // la réponse (ex. "Réponse de M. Bernard Clerfayt, Bourgmestre :")
+                                // ; null si la réponse est absente ou non signée nommément
 }
 
 RÈGLES :
 - Ne DEVINE JAMAIS une valeur absente — mets null plutôt qu'une valeur plausible mais fausse.
 - N'extrais QUE le texte français ; ignore complètement la version néerlandaise, y compris
   dans le titre bilingue de l'en-tête ("... -=- Vraag van de heer ...").
-- "auteur" : nom propre normalisé (Prénom Nom), casse standard, sans civilité/fonction/date.
+- "auteur" et "repondant" : nom propre normalisé (Prénom Nom), casse standard, sans
+  civilité/fonction/date (ex. "Bernard Clerfayt", pas "M. Bernard Clerfayt, Bourgmestre").
 - Conserve la mise en forme du texte (listes numérotées, paragraphes) sous forme de texte
   brut lisible, pas de markdown.
 
 RÉPONDS UNIQUEMENT en JSON valide, sans markdown, sans texte avant/après :
-{"numero": ..., "date": ..., "auteur": ..., "titre": ..., "question": ..., "reponse": ...}
+{"numero": ..., "date": ..., "auteur": ..., "titre": ..., "question": ..., "reponse": ..., "repondant": ...}
 """
 
 
@@ -261,6 +267,7 @@ def normalize_question(data: dict, filename: str) -> Optional[dict]:
         "titre": _clean_str(data.get("titre")),
         "question": _clean_str(data.get("question")),
         "reponse": _clean_str(data.get("reponse")) or None,
+        "repondant": _clean_str(data.get("repondant")) or None,
         "source_file": filename,
         "extracted_at": datetime.now().isoformat(),
     }

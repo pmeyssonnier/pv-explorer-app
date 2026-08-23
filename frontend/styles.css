@@ -553,6 +553,16 @@ body {
   border-radius: 999px; padding: 2px 8px;
 }
 .elu-rep { font-size: 12.5px; color: var(--encre-soft); margin-top: 2px; }
+/* Réponse d'une question écrite : repliée par défaut (texte souvent long) —
+   même logique que .elu-repond (details/summary), à l'échelle d'un item. */
+.elu-qe-reponse { margin-top: 6px; }
+.elu-qe-reponse > summary {
+  cursor: pointer; font-size: 12.5px; color: var(--bordeaux); list-style: revert;
+}
+.elu-qe-reponse p {
+  font-size: 13px; color: var(--encre); margin-top: 6px; white-space: pre-wrap;
+  line-height: 1.55;
+}
 .elu-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px; }
 .elu-link {
   display: inline-flex; align-items: center; gap: 4px; font-size: 12px;

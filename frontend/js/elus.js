@@ -207,6 +207,9 @@ function eluDeposeRow(it, nom) {
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, nom);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
   const tags = renderThemeTags(it.thematiques);
+  const reponse = it.type === 'question_ecrite' && it.reponse
+    ? `<details class="elu-qe-reponse"><summary>Voir la réponse</summary><p>${escapeHtml(it.reponse)}</p></details>`
+    : '';
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
@@ -215,6 +218,7 @@ function eluDeposeRow(it, nom) {
       ${demandeur}
       ${rep}
       ${tags}
+      ${reponse}
       ${links ? `<div class="elu-links">${links}</div>` : ''}
     </div>
   </div>`;
