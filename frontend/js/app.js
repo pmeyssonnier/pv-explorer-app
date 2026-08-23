@@ -18,7 +18,8 @@ import {
   selectTheme, setMetric, shareStats, trendSuggestion, loadTrend,
 } from './stats.js';
 import {
-  loadElus, populateElus, onEluSelectChange, onEluYearChange, onEluTypeChange, shareElu, setPendingEluKey,
+  loadElus, populateElus, onEluSelectChange, onEluYearChange, onEluTypeChange, onEluChipClick,
+  shareElu, setPendingEluKey,
 } from './elus.js';
 import {
   loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
@@ -73,7 +74,7 @@ registerActions({
   newSearch, toggleDictation, submitQuestion, copyAnswer, downloadAnswer, shareAnswer,
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend,
-  shareElu,
+  shareElu, onEluChipClick,
   shareSeance, jumpToSeance,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
   cancelQeExtract, confirmQePublish,

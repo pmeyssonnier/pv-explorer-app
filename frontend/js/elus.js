@@ -149,6 +149,15 @@ function filterByYear(items, year) {
 // sens quel que soit l'élu·e sélectionné·e.
 const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
 
+// Texte pluriel affiché sur chaque puce du résumé (voir eluTypeChip).
+const TYPE_COUNT_LABEL = {
+  'Question orale': n => `${n} question${n > 1 ? 's' : ''} orale${n > 1 ? 's' : ''}`,
+  'Demande': n => `${n} demande${n > 1 ? 's' : ''}`,
+  'Motion': n => `${n} motion${n > 1 ? 's' : ''}`,
+  'Débat filmé': n => `${n} débat${n > 1 ? 's' : ''} filmé${n > 1 ? 's' : ''}`,
+  'Question écrite': n => `${n} question${n > 1 ? 's' : ''} écrite${n > 1 ? 's' : ''}`,
+};
+
 // Types d'intervention distincts présents parmi les points DÉPOSÉS de cette
 // fiche (les réponses en séance n'ont pas de "type" — voir renderElu, le
 // filtre ne s'applique qu'à la liste "depose").
@@ -179,6 +188,26 @@ export function onEluTypeChange() {
 function filterByType(items, typeLabel) {
   if (typeLabel === 'all') return items;
   return items.filter(it => it.type_label === typeLabel);
+}
+
+// Puce cliquable par type présent — raccourci visuel vers le même filtre que
+// le menu déroulant #eluType (les deux pilotent le même état eluTypeFilter,
+// se resynchronisent l'un l'autre). '' si aucune intervention de ce type
+// cette année (jamais de puce à 0).
+function eluTypeChip(typeLabel, count) {
+  if (!count) return '';
+  const active = eluTypeFilter === typeLabel ? ' elu-chip-active' : '';
+  const text = TYPE_COUNT_LABEL[typeLabel](count);
+  return `<button type="button" class="elu-chip${active}" data-click="onEluChipClick" data-arg="${escapeHtml(typeLabel)}">${escapeHtml(text)}</button>`;
+}
+
+// Reclique sur la puce déjà active → bascule vers "Tous les types" ; sinon
+// sélectionne ce type. Synchronise aussi le menu déroulant #eluType.
+export function onEluChipClick(typeLabel) {
+  eluTypeFilter = eluTypeFilter === typeLabel ? 'all' : typeLabel;
+  const sel = document.getElementById('eluType');
+  if (sel) sel.value = eluTypeFilter;
+  if (currentEluData) renderElu(currentEluData);
 }
 
 function eluDeposeRow(it, nom) {
@@ -261,30 +290,29 @@ function renderElu(d) {
   populateEluTypeSelect(d);
 
   const box = document.getElementById('eluResult');
-  const depose = filterByType(filterByYear(d.depose || [], eluYearFilter), eluTypeFilter);
+  // Base pour les puces/compteurs : filtrée par ANNÉE seulement, pas par type
+  // — sinon sélectionner un type ferait disparaître les puces des autres
+  // types (chacune doit rester visible/cliquable pour changer de filtre).
+  const deposeForYear = filterByYear(d.depose || [], eluYearFilter);
+  const depose = filterByType(deposeForYear, eluTypeFilter);
   const repond = filterByYear(d.repond || [], eluYearFilter);
   const roleLabel = d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
     : 'Conseiller·ère';
-  const nQuestions = depose.filter(it => it.type === 'question_orale').length;
-  const nDemandes = depose.filter(it => it.type === 'demande_habitant').length;
-  const nMotions = depose.filter(it => it.type === 'motion').length;
-  const nVideos = depose.filter(it => it.type === 'video').length;
-  const nQE = depose.filter(it => it.type === 'question_ecrite').length;
-  const parts = [];
-  if (nQuestions) parts.push(`${nQuestions} question${nQuestions > 1 ? 's' : ''} orale${nQuestions > 1 ? 's' : ''}`);
-  if (nDemandes) parts.push(`${nDemandes} demande${nDemandes > 1 ? 's' : ''}`);
-  if (nMotions) parts.push(`${nMotions} motion${nMotions > 1 ? 's' : ''}`);
-  if (nVideos) parts.push(`${nVideos} débat${nVideos > 1 ? 's' : ''} filmé${nVideos > 1 ? 's' : ''}`);
-  if (nQE) parts.push(`${nQE} question${nQE > 1 ? 's' : ''} écrite${nQE > 1 ? 's' : ''}`);
+  const chips = TYPE_FILTER_ORDER
+    .map(t => eluTypeChip(t, deposeForYear.filter(it => it.type_label === t).length))
+    .join('');
 
   let html = `<div class="elu-head">
     <div class="elu-name">${escapeHtml(d.nom)}</div>
     <span class="elu-role elu-role-${d.role}">${roleLabel}</span>
   </div>`;
 
+  if (deposeForYear.length) {
+    html += `<div class="elu-summary"><strong>${depose.length}</strong> intervention${depose.length > 1 ? 's' : ''} déposée${depose.length > 1 ? 's' : ''}</div>`;
+    if (chips) html += `<div class="elu-chips">${chips}</div>`;
+  }
   if (depose.length) {
-    html += `<div class="elu-summary"><strong>${depose.length}</strong> intervention${depose.length > 1 ? 's' : ''} déposée${depose.length > 1 ? 's' : ''}${parts.length ? ' · ' + parts.join(' · ') : ''}</div>`;
     html += `<div class="elu-list">${groupByYear(depose, it => eluDeposeRow(it, d.nom))}</div>`;
   }
 
