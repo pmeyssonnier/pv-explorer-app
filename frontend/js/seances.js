@@ -6,6 +6,7 @@ import {
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
+import { loadElus, getElusData } from './elus.js';
 
 let seancesData = null;       // liste complète [{date,n_points,url,video_url}]
 let seancesLoaded = false;
@@ -27,6 +28,11 @@ let seanceThemeFilter = 'all';
 // filtre couvre les deux rôles, pour retrouver tout ce qui concerne une
 // personne dans la séance, peu importe son rôle sur chaque point.
 let seancePersonFilter = 'all';
+// Rôle (conseiller·ère / collège) de la personne demandeuse OU répondante —
+// même principe que le filtre "Tous les rôles" de l'onglet Par élu·e (voir
+// elus.js), mais ici en puces cliquables plutôt qu'un menu déroulant, et
+// combiné aux autres filtres à facettes de cette séance.
+let seanceRoleFilter = 'all';
 
 // Présélection appliquée depuis un lien partagé (?tab=seances&seance=…), voir handleDeepLink.
 export function setPendingSeanceDate(date) { pendingSeanceDate = date; }
@@ -107,11 +113,14 @@ async function loadSeanceYearAll(year) {
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   const dates = seancesData.filter(s => s.date.startsWith(year)).map(s => s.date);
   try {
-    const results = await Promise.all(dates.map(async d => {
-      const res = await fetch(API_URL + '/seance/' + encodeURIComponent(d));
-      if (!res.ok) throw new Error('Erreur ' + res.status);
-      return res.json();
-    }));
+    const [results] = await Promise.all([
+      Promise.all(dates.map(async d => {
+        const res = await fetch(API_URL + '/seance/' + encodeURIComponent(d));
+        if (!res.ok) throw new Error('Erreur ' + res.status);
+        return res.json();
+      })),
+      loadElus(),   // rôles par nom (voir ensureNomToRole) — filtre "Conseiller·ère / Collège"
+    ]);
     const points = results
       .flatMap(d => d.points.map(p => ({ ...p, _seanceDate: d.date })))
       .sort((a, b) => b._seanceDate.localeCompare(a._seanceDate) || a.sp - b.sp);
@@ -191,7 +200,10 @@ export async function loadSeance(date, opts = {}) {
   const box = document.getElementById('seanceResult');
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   try {
-    const res = await fetch(API_URL + '/seance/' + encodeURIComponent(date));
+    const [res] = await Promise.all([
+      fetch(API_URL + '/seance/' + encodeURIComponent(date)),
+      loadElus(),   // rôles par nom (voir ensureNomToRole) — filtre "Conseiller·ère / Collège"
+    ]);
     if (!res.ok) throw new Error('Erreur ' + res.status);
     renderSeance(await res.json(), !!opts.scroll);
     renderSeanceYearList();  // synchronise le menu déroulant (option/année sélectionnées)
@@ -218,7 +230,29 @@ function matchesTheme(p) {
 function matchesPerson(p) {
   return seancePersonFilter === 'all' || p.demandeur === seancePersonFilter || p.repondant === seancePersonFilter;
 }
-function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && matchesPerson(p); }
+// Nom (canonique, identique à d.nom/it.demandeur/it.repondant) -> rôle
+// ("conseiller"/"college"), depuis /elus (voir loadElus ci-dessus). Construite
+// une seule fois dès que les données sont là ; une personne à activité
+// négligeable (absente de /elus, voir elus.elus_list) reste sans rôle connu
+// — elle ne matche alors aucun filtre de rôle, mais reste visible en "Tous
+// les rôles".
+let _nomToRole = null;
+function ensureNomToRole() {
+  if (_nomToRole) return _nomToRole;
+  const data = getElusData();
+  if (!data) return new Map();
+  _nomToRole = new Map(data.map(e => [e.nom, e.role]));
+  return _nomToRole;
+}
+function personRole(nom) {
+  return nom ? ensureNomToRole().get(nom) : undefined;
+}
+function matchesRole(p) {
+  return seanceRoleFilter === 'all'
+    || personRole(p.demandeur) === seanceRoleFilter
+    || personRole(p.repondant) === seanceRoleFilter;
+}
+function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && matchesPerson(p) && matchesRole(p); }
 
 // Types réellement atteignables compte tenu des filtres thématique/
 // intervenant·e actifs, avec leur nombre de points, plus deux pseudo-types
@@ -255,14 +289,18 @@ function seanceThemeFilterOptions(points) {
   const themes = [...counts.keys()].sort((a, b) => a.localeCompare(b, 'fr'));
   return themes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)} (${counts.get(t)})</option>`).join('');
 }
-// Personnes atteignables compte tenu des filtres type/thématique actifs
+// Personnes atteignables compte tenu des filtres type/thématique/rôle actifs
 // (demandeur·se OU répondant·e de chaque point), triées, avec leur nombre de
-// points (les deux rôles cumulés).
+// points (les deux rôles cumulés). Un rôle actif restreint aussi les NOMS
+// eux-mêmes à celleux qui l'ont (pas seulement les points où il apparaît) —
+// même principe que "Tous les rôles" dans l'onglet Par élu·e.
 function seancePersonFilterOptions(points) {
   const counts = new Map();
   points.forEach(p => {
     [p.demandeur, p.repondant].forEach(name => {
-      if (name) counts.set(name, (counts.get(name) || 0) + 1);
+      if (!name) return;
+      if (seanceRoleFilter !== 'all' && personRole(name) !== seanceRoleFilter) return;
+      counts.set(name, (counts.get(name) || 0) + 1);
     });
   });
   if (seancePersonFilter !== 'all' && !counts.has(seancePersonFilter)) counts.set(seancePersonFilter, 0);
@@ -270,29 +308,57 @@ function seancePersonFilterOptions(points) {
   return names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)} (${counts.get(n)})</option>`).join('');
 }
 
-// Reconstruit les options des 3 sélecteurs (pas les éléments <select>
-// eux-mêmes, pour garder leurs écouteurs) à partir des filtres CROISÉS —
-// chacun exclut son propre filtre mais applique les deux autres.
+// Puces de rôle (Conseiller·ère / Collège) — même widget que eluTypeChip côté
+// Par élu·e (classes .elu-chip/.elu-chip-active) : reclique sur la puce déjà
+// active → "Tous les rôles" ; jamais affichée à 0, sauf si déjà active (pour
+// rester cliquable et permettre de revenir à "Tous les rôles").
+function seanceRoleChip(role, label, count) {
+  if (!count && seanceRoleFilter !== role) return '';
+  const active = seanceRoleFilter === role ? ' elu-chip-active' : '';
+  return `<button type="button" class="elu-chip${active}" data-click="onSeanceRoleChipClick" data-arg="${role}">${escapeHtml(label)} (${count})</button>`;
+}
+// Nombre de points où au moins une des deux personnes (demandeur·se OU
+// répondant·e) a ce rôle — une personne peut cumuler les deux côtés d'un même
+// point (rare, ex. un point autoporté), d'où deux compteurs indépendants.
+function seanceRoleCounts(points) {
+  let conseiller = 0, college = 0;
+  points.forEach(p => {
+    const roles = new Set([personRole(p.demandeur), personRole(p.repondant)]);
+    if (roles.has('conseiller')) conseiller++;
+    if (roles.has('college')) college++;
+  });
+  return { conseiller, college };
+}
+
+// Reconstruit les options des 3 sélecteurs + les puces de rôle (pas les
+// éléments eux-mêmes, pour garder leurs écouteurs) à partir des filtres
+// CROISÉS — chacun exclut son propre filtre mais applique les autres.
 function renderSeanceFilterOptions() {
   if (!currentSeanceDetail) return;
   const all = currentSeanceDetail.points;
   const typeSel = document.getElementById('seanceTypeFilter');
   const themeSel = document.getElementById('seanceThemeFilter');
   const personSel = document.getElementById('seancePersonFilter');
+  const roleBox = document.getElementById('seanceRoleChips');
   if (typeSel) {
     typeSel.innerHTML = '<option value="all">Tous les types</option>'
-      + seanceTypeFilterOptions(all.filter(p => matchesTheme(p) && matchesPerson(p)));
+      + seanceTypeFilterOptions(all.filter(p => matchesTheme(p) && matchesPerson(p) && matchesRole(p)));
     typeSel.value = seanceTypeFilter;
   }
   if (themeSel) {
     themeSel.innerHTML = '<option value="all">Toutes les thématiques</option>'
-      + seanceThemeFilterOptions(all.filter(p => matchesType(p) && matchesPerson(p)));
+      + seanceThemeFilterOptions(all.filter(p => matchesType(p) && matchesPerson(p) && matchesRole(p)));
     themeSel.value = seanceThemeFilter;
   }
   if (personSel) {
     personSel.innerHTML = '<option value="all">Tou·te·s les intervenant·e·s</option>'
-      + seancePersonFilterOptions(all.filter(p => matchesType(p) && matchesTheme(p)));
+      + seancePersonFilterOptions(all.filter(p => matchesType(p) && matchesTheme(p) && matchesRole(p)));
     personSel.value = seancePersonFilter;
+  }
+  if (roleBox) {
+    const { conseiller, college } = seanceRoleCounts(all.filter(p => matchesType(p) && matchesTheme(p) && matchesPerson(p)));
+    roleBox.innerHTML = seanceRoleChip('conseiller', 'Conseiller·ère', conseiller)
+      + seanceRoleChip('college', 'Collège', college);
   }
 }
 
@@ -306,23 +372,35 @@ function renderSeancePoints() {
   list.innerHTML = filtered.length
     ? filtered.map(seancePointRow).join('')
     : '<p class="trend-empty">Aucun point ne correspond à ces filtres.</p>';
-  const filtering = seanceTypeFilter !== 'all' || seanceThemeFilter !== 'all' || seancePersonFilter !== 'all';
+  const filtering = seanceTypeFilter !== 'all' || seanceThemeFilter !== 'all'
+    || seancePersonFilter !== 'all' || seanceRoleFilter !== 'all';
   if (count) {
     count.textContent = filtering ? `${filtered.length} / ${currentSeanceDetail.points.length} point(s) affiché(s)` : '';
   }
   const reset = document.getElementById('seanceFilterReset');
   if (reset) reset.hidden = !filtering;
 }
-// Un changement de filtre recalcule à la fois les options des 2 AUTRES
-// sélecteurs (filtres à facettes) et la liste de points affichée.
+// Un changement de filtre recalcule à la fois les options des AUTRES
+// filtres (facettes) et la liste de points affichée.
 function refreshSeanceFilteredView() { renderSeanceFilterOptions(); renderSeancePoints(); }
 function onSeanceTypeFilterChange(sel) { seanceTypeFilter = sel.value; refreshSeanceFilteredView(); }
 function onSeanceThemeFilterChange(sel) { seanceThemeFilter = sel.value; refreshSeanceFilteredView(); }
 function onSeancePersonFilterChange(sel) { seancePersonFilter = sel.value; refreshSeanceFilteredView(); }
+// Reclique sur la puce déjà active → "Tous les rôles" ; sinon sélectionne ce
+// rôle. Une personne déjà choisie qui n'a plus ce rôle est désélectionnée
+// (elle disparaîtrait sinon du menu sans que rien n'explique pourquoi).
+export function onSeanceRoleChipClick(role) {
+  seanceRoleFilter = seanceRoleFilter === role ? 'all' : role;
+  if (seanceRoleFilter !== 'all' && seancePersonFilter !== 'all' && personRole(seancePersonFilter) !== seanceRoleFilter) {
+    seancePersonFilter = 'all';
+  }
+  refreshSeanceFilteredView();
+}
 function onSeanceFilterReset() {
   seanceTypeFilter = 'all';
   seanceThemeFilter = 'all';
   seancePersonFilter = 'all';
+  seanceRoleFilter = 'all';
   refreshSeanceFilteredView();
 }
 
@@ -332,6 +410,7 @@ function renderSeance(d, scroll) {
   seanceTypeFilter = 'all';
   seanceThemeFilter = 'all';
   seancePersonFilter = 'all';
+  seanceRoleFilter = 'all';
   const box = document.getElementById('seanceResult');
   // Vue agrégée : pas de PV/vidéo unique à lier (chaque point garde le sien
   // via seanceDateBadge → jumpToSeance), ni de partage dédié pour l'instant.
@@ -358,6 +437,7 @@ function renderSeance(d, scroll) {
     <button type="button" class="drill-reset" id="seanceFilterReset" hidden>↩ Réinitialiser les filtres</button>
   </div>
   <div class="elus-bar seance-filter-bar" id="seanceFilterBar" hidden>
+    <div class="elu-chips" id="seanceRoleChips" aria-label="Filtrer par rôle"></div>
     <select id="seanceTypeFilter" class="elu-select" aria-label="Filtrer par type de sujet"></select>
     <select id="seanceThemeFilter" class="elu-select" aria-label="Filtrer par thématique"></select>
     <select id="seancePersonFilter" class="elu-select" aria-label="Filtrer par intervenant·e"></select>

@@ -19,6 +19,11 @@ let eluSelectedKey = null;  // clé actuellement chargée
 // Présélection appliquée depuis un lien partagé (?tab=elus&elu=…), voir handleDeepLink.
 export function setPendingEluKey(key) { pendingEluKey = key; }
 
+// Liste complète [{key,nom,role,depose,repond}] — réutilisée par l'onglet
+// Séances pour connaître le rôle (conseiller/collège) d'un nom (voir
+// seances.js), sans re-fetcher /elus si déjà chargé par cet onglet-ci.
+export function getElusData() { return elusData; }
+
 export async function loadElus() {
   if (elusLoaded) return;
   const input = document.getElementById('eluSelect');
