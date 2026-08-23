@@ -37,6 +37,7 @@ def test_ask_question_ecrite_source_shape(monkeypatch):
                         "titre": "Le prix des garderies scolaires",
                         "decision": "Question de Georges Verzin",
                         "url": "https://1030.be/qe/015.pdf",
+                        "reponse": "Le tarif est fixé par le règlement communal.",
                     },
                 },
             ],
@@ -55,6 +56,67 @@ def test_ask_question_ecrite_source_shape(monkeypatch):
     assert s.decision == "Question de Georges Verzin"
     assert s.thematiques == []
     assert s.sp == 0
+    assert s.reponse == "Le tarif est fixé par le règlement communal."
+
+
+def test_ask_question_ecrite_reponse_none_when_not_yet_answered(monkeypatch):
+    # Métadonnée "reponse" vide (chaîne vide, voir index_qe.question_to_chunk)
+    # → None côté API, jamais une chaîne vide affichée comme un accordéon
+    # ouvrable sans contenu.
+    fake_index = MagicMock()
+    fake_index.search.return_value = {
+        "result": {
+            "hits": [
+                {
+                    "_id": "QE-2026-008",
+                    "score": 0.6,
+                    "fields": {
+                        "source_type": "question_ecrite",
+                        "date": "2026-06-18",
+                        "sp": 0,
+                        "titre": "Test sans réponse",
+                        "decision": "Question de Quentin Van den Hove",
+                        "reponse": "",
+                    },
+                },
+            ],
+        },
+    }
+    monkeypatch.setattr(rag, "get_pinecone_index", lambda: fake_index)
+    monkeypatch.setattr(rag, "get_anthropic", lambda: _fake_client("Réponse."))
+
+    result = rag.answer("Question sans réponse ?", None)
+
+    assert result.sources[0].reponse is None
+
+
+def test_ask_pv_source_never_carries_reponse_field(monkeypatch):
+    # "reponse" est spécifique aux questions écrites — jamais peuplé pour une
+    # délibération (PV), même si la métadonnée en portait une par erreur.
+    fake_index = MagicMock()
+    fake_index.search.return_value = {
+        "result": {
+            "hits": [
+                {
+                    "_id": "PV-2026-01-14-sp3",
+                    "score": 0.9,
+                    "fields": {
+                        "source_type": "pv",
+                        "date": "2026-01-14",
+                        "sp": 3,
+                        "titre": "Rénovation d'une crèche",
+                        "decision": "DECIDE",
+                    },
+                },
+            ],
+        },
+    }
+    monkeypatch.setattr(rag, "get_pinecone_index", lambda: fake_index)
+    monkeypatch.setattr(rag, "get_anthropic", lambda: _fake_client("Réponse citant la séance du 14/01/2026."))
+
+    result = rag.answer("Quels travaux dans les crèches ?", None)
+
+    assert result.sources[0].reponse is None
 
 
 def test_ask_question_ecrite_never_falls_back_to_pv_pdf_by_date(monkeypatch):

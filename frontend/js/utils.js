@@ -89,6 +89,15 @@ export function renderThemeTags(thematiques) {
     : '';
 }
 
+// Réponse d'une question écrite : repliée par défaut (texte souvent long) —
+// partagé entre l'onglet Par élu·e (elus.js) et les sources du chat (chat.js).
+// '' si aucune réponse (jamais de bloc vide).
+export function renderReponseDetails(reponse) {
+  return reponse
+    ? `<details class="elu-qe-reponse"><summary>Voir la réponse</summary><p>${escapeHtml(reponse)}</p></details>`
+    : '';
+}
+
 // ── Fragments partagés entre Séances et Par élu·e (mêmes classes CSS,
 // mêmes gabarits, jusqu'ici réécrits à l'identique à 4 endroits :
 // seancePointRow/renderSeance dans seances.js, eluDeposeRow/eluRepondRow

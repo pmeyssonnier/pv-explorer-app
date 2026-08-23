@@ -347,6 +347,7 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
             video_url=video_url,
             n_extraits=n_extraits,
             thematiques=[_thematique_label(t) for t in (meta.get("thematiques") or [])],
+            reponse=meta.get("reponse") or None if source_type == "question_ecrite" else None,
         ))
         if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
             break
