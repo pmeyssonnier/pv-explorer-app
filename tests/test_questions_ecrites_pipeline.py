@@ -5,6 +5,75 @@ extraction PDF/appel Claude monkeypatchés (aucun appel réel).
 import questions_ecrites_extraction_pipeline as qe
 
 
+# ── call_claude_api : forme de l'appel SDK (streaming, pas create) ──────────
+# Un max_tokens élevé (voir CONFIG) fait REFUSER l'appel non-streamé par le
+# SDK (ValueError "Streaming is required..." — rencontré en production) :
+# garde-fou pour ne jamais revenir accidentellement à .create().
+class _FakeTextBlock:
+    def __init__(self, text):
+        self.type = "text"
+        self.text = text
+
+
+class _FakeMessage:
+    def __init__(self, text, stop_reason="end_turn"):
+        self.content = [_FakeTextBlock(text)]
+        self.stop_reason = stop_reason
+
+
+class _FakeStream:
+    def __init__(self, message):
+        self._message = message
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+    def get_final_message(self):
+        return self._message
+
+
+class _FakeMessages:
+    def __init__(self, message):
+        self._message = message
+        self.stream_calls = []
+
+    def stream(self, **kwargs):
+        self.stream_calls.append(kwargs)
+        return _FakeStream(self._message)
+
+    def create(self, **kwargs):
+        raise AssertionError("call_claude_api doit utiliser .stream(), pas .create()")
+
+
+class _FakeClient:
+    def __init__(self, message):
+        self.messages = _FakeMessages(message)
+
+
+def test_call_claude_api_uses_streaming_and_parses_json(monkeypatch):
+    message = _FakeMessage('{"numero": 1, "date": "2025-01-01", "auteur": "X"}')
+    fake_client = _FakeClient(message)
+    monkeypatch.setattr(qe, "get_client", lambda: fake_client)
+    data = qe.call_claude_api("texte du pdf")
+    assert data == {"numero": 1, "date": "2025-01-01", "auteur": "X"}
+    assert len(fake_client.messages.stream_calls) == 1
+    assert fake_client.messages.stream_calls[0]["max_tokens"] == qe.CONFIG["MAX_TOKENS"]
+
+
+def test_call_claude_api_gives_up_after_retries_on_truncated_response(monkeypatch):
+    # Réponse coupée par MAX_TOKENS en plein milieu d'une chaîne JSON : aucune
+    # des 3 tentatives (identiques) ne peut réussir — retourne None sans lever.
+    message = _FakeMessage('{"numero": 1, "date": "2025-01-01", "auteur": "Cha', stop_reason="max_tokens")
+    fake_client = _FakeClient(message)
+    monkeypatch.setattr(qe, "get_client", lambda: fake_client)
+    monkeypatch.setattr(qe.time, "sleep", lambda s: None)
+    assert qe.call_claude_api("texte du pdf") is None
+    assert len(fake_client.messages.stream_calls) == qe.CONFIG["MAX_RETRIES"]
+
+
 # ── _valid_iso_date ──────────────────────────────────────────────────────────
 def test_valid_iso_date_accepts_real_calendar_date():
     assert qe._valid_iso_date("2025-11-10") == "2025-11-10"

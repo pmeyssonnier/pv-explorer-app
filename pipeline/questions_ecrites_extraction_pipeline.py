@@ -204,10 +204,18 @@ def call_claude_api(text: str) -> Optional[dict]:
     for attempt in range(CONFIG["MAX_RETRIES"]):
         raw = ""
         try:
-            response = client.messages.create(
+            # .stream()+get_final_message() plutôt que create() : au-delà d'un
+            # certain max_tokens, le SDK REFUSE un appel non-streamé (il estime
+            # que ça peut dépasser les ~10 min d'une connexion HTTP non-streamée
+            # et lève ValueError "Streaming is required...") — rencontré en
+            # pratique avec MAX_TOKENS=32768 sur ce modèle. get_final_message()
+            # renvoie le même objet Message (.content/.stop_reason) que create(),
+            # donc rien d'autre à changer ci-dessous.
+            with client.messages.stream(
                 model=CONFIG["MODEL"], max_tokens=CONFIG["MAX_TOKENS"],
                 system=SYSTEM_PROMPT, messages=[{"role": "user", "content": make_user_prompt(text)}]
-            )
+            ) as stream:
+                response = stream.get_final_message()
             raw = next((b.text for b in response.content
                         if getattr(b, "type", None) == "text"), "").strip()
             # Réponse coupée par le plafond MAX_TOKENS (pas un problème de PDF,
