@@ -2,7 +2,7 @@
 // La recherche sémantique du chat est sensible à la formulation et non
 // exhaustive ; cette vue liste TOUTES les interventions d'une personne.
 import { API_URL } from './config.js';
-import { escapeHtml, formatDate, TYPE_BADGE, TYPE_ACTOR_LABEL } from './utils.js';
+import { escapeHtml, formatDate, TYPE_BADGE, TYPE_ACTOR_LABEL, renderThemeTags } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
 let elusData = null;        // liste complète [{key,nom,role,depose,repond}]
@@ -158,6 +158,7 @@ function eluDeposeRow(it, nom) {
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
   const demandeur = nom ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(nom)}</div>` : '';
   const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
+  const tags = renderThemeTags(it.thematiques);
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
@@ -165,6 +166,7 @@ function eluDeposeRow(it, nom) {
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}
+      ${tags}
       ${links ? `<div class="elu-links">${links}</div>` : ''}
     </div>
   </div>`;
@@ -175,6 +177,7 @@ function eluRepondRow(it, nom) {
   const link = it.url ? `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>` : '';
   const demandeur = it.demandeur ? `<div class="elu-demandeur">Demandé par : ${escapeHtml(it.demandeur)}</div>` : '';
   const rep = nom ? `<div class="elu-rep">Répondant·e : ${escapeHtml(nom)}</div>` : '';
+  const tags = renderThemeTags(it.thematiques);
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
@@ -182,6 +185,7 @@ function eluRepondRow(it, nom) {
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}
+      ${tags}
       ${link ? `<div class="elu-links">${link}</div>` : ''}
     </div>
   </div>`;

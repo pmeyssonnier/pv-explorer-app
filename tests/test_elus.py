@@ -785,6 +785,22 @@ def test_seance_detail_exposes_thematiques_and_montant():
     assert it77["thematiques"]
 
 
+def test_elu_detail_depose_and_repond_expose_thematiques():
+    # Avant ce correctif, seule la vue Séances affichait les thématiques —
+    # absentes de /elu/{key} (depose ET repond), donc pas visibles dans
+    # l'onglet Par élu·e ni dans les sources des réponses du chat.
+    d = elus.elu_detail("verzin")
+    with_theme = next((it for it in d["depose"] if it.get("thematiques")), None)
+    assert with_theme is not None
+    assert all(isinstance(t, str) and t for t in with_theme["thematiques"])
+    with_theme_r = next((it for it in d["repond"] if it.get("thematiques")), None)
+    assert with_theme_r is not None
+    # Un point sans thématique renseignée : liste vide, jamais absente/None
+    # (le frontend teste `.length`, pas la présence de la clé).
+    assert all("thematiques" in it and isinstance(it["thematiques"], list) for it in d["depose"])
+    assert all("thematiques" in it and isinstance(it["thematiques"], list) for it in d["repond"])
+
+
 def test_seance_detail_points_sorted_by_sp():
     d = elus.seance_detail("2026-04-22")
     sps = [p["sp"] for p in d["points"]]

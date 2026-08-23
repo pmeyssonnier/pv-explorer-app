@@ -12,6 +12,7 @@ import os
 from collections import defaultdict
 
 from services.statistics import load_db
+from utils.text import _thematique_label
 from utils.video import video_session_map
 
 from services.people.attribution import _author_of, _point_author, _respondents
@@ -144,6 +145,7 @@ def _build_all():
                     "date": date,
                     "sp": p.get("sp") or 0,
                     "titre": p.get("titre") or "",
+                    "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
                     "url": meta.get("source_url"),
                     "demandeur_key": author_key,
                 })
@@ -154,6 +156,7 @@ def _build_all():
                     "sp": p.get("sp") or 0,
                     "type": p.get("type"),
                     "titre": p.get("titre") or "",
+                    "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
                     "repondant_keys": resp_keys,
                     # Repli si le rôle mentionné n'a pas pu être résolu en
                     # nom de personne (ex. « Secrétaire communal », « Président ») :
@@ -194,6 +197,9 @@ def _build_all():
                 "sp": 0,
                 "type": "video",
                 "titre": titre,
+                # Pas de thématiques pour un débat filmé sans point PV apparié
+                # (chapitrage vidéo seul, sans champ `thematiques` source).
+                "thematiques": [],
                 "repondant": None,
                 "url": deeplink,
                 "video_url": s.get("video_url"),

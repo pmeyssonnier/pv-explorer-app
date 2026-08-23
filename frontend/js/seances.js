@@ -1,7 +1,7 @@
 // ── SÉANCES (vue complémentaire à « Par élu·e » : par PV, tous les points,
 // pas seulement ceux d'une personne) ──
 import { API_URL } from './config.js';
-import { escapeHtml, formatDate, TYPE_BADGE, TYPE_ACTOR_LABEL, fmtMontant } from './utils.js';
+import { escapeHtml, formatDate, TYPE_BADGE, TYPE_ACTOR_LABEL, fmtMontant, renderThemeTags } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
 let seancesData = null;       // liste complète [{date,n_points,url,video_url}]
@@ -166,8 +166,7 @@ function seancePointRow(it) {
   const decision = (it.decision && !it.reporte) ? `<div class="elu-decision">${escapeHtml(it.decision)}</div>` : '';
   const montant = (it.montant_eur !== null && it.montant_eur !== undefined)
     ? `<div class="elu-montant">Montant engagé : ${fmtMontant(it.montant_eur)}</div>` : '';
-  const tags = (it.thematiques && it.thematiques.length)
-    ? `<div class="elu-tags">${it.thematiques.map(t => `<span class="elu-tag">${escapeHtml(t)}</span>`).join('')}</div>` : '';
+  const tags = renderThemeTags(it.thematiques);
   return `<div class="elu-item">
     <div class="elu-body">
       ${seanceDateBadge}${badge}${reporteBadge}${sp}

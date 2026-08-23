@@ -2,7 +2,7 @@
 // rendu des échanges, dictée vocale, envoi de la question ──
 import { API_URL } from './config.js';
 import { settings } from './settings.js';
-import { escapeHtml, renderMarkdown, formatDate } from './utils.js';
+import { escapeHtml, renderMarkdown, formatDate, renderThemeTags } from './utils.js';
 import { copyShare, shareBaseUrl } from './share.js';
 
 let isLoading = false;
@@ -218,6 +218,7 @@ export function buildSourcesHtml(srcs) {
       <div class="source-ref">${ref}</div>
       <div class="source-titre">${escapeHtml(s.titre)}</div>
       ${s.decision ? `<div class="source-decision">${escapeHtml(s.decision)}</div>` : ''}
+      ${renderThemeTags(s.thematiques)}
     </div>`;
   };
   const pvItem = s => {
@@ -229,6 +230,7 @@ export function buildSourcesHtml(srcs) {
       <div class="source-ref">${seance}<br>Point SP ${s.sp}</div>
       <div class="source-titre">${escapeHtml(s.titre)}</div>
       <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
+      ${renderThemeTags(s.thematiques)}
     </div>`;
   };
   const vids = srcs.filter(s => s.source_type === 'video_conseil');

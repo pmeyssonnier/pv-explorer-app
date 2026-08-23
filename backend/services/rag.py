@@ -18,6 +18,7 @@ from config import (
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
+from utils.text import _thematique_label
 from utils.video import video_session_map, video_chunk_counts
 from services.pinecone_service import get_pinecone_index
 from services.statistics import load_db
@@ -326,6 +327,7 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
             source_type=source_type,
             video_url=video_url,
             n_extraits=n_extraits,
+            thematiques=[_thematique_label(t) for t in (meta.get("thematiques") or [])],
         ))
         if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
             break
