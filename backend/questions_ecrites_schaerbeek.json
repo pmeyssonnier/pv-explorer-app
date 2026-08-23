@@ -3,7 +3,7 @@
     "nom": "Base des questions écrites - Conseil communal de Schaerbeek",
     "version": "1.0",
     "date_creation": "2026-08-23T10:08:06.704034",
-    "total_questions": 211,
+    "total_questions": 213,
     "last_updated": "2026-08-23T17:59:53.674789"
   },
   "questions": [
@@ -2748,6 +2748,32 @@
       "repondant": null,
       "source_file": "001_-_monsieur_ozkara_-_synagogue_rue_pavillon.pdf",
       "extracted_at": "2026-08-23T17:12:36.835655"
+    },
+    {
+      "id": "QE-2019-019",
+      "annee": 2019,
+      "numero": 19,
+      "date": "2019-10-04",
+      "auteur": "Marie Nyssens",
+      "titre": "Le plan de gestion de l'asbl communale \"Crèches de Schaerbeek\"",
+      "question": "De nombreuses et nombreux Schaerbeekois m'ont interpellé au sujet d'avaloirs bouchés et d'inondations de la voirie et d'arrêts de tram en cas de fortes pluies. Lors de la séance du conseil communal de juin 2019, le plan de gestion de l'asbl crèches de Schaerbeek était à l'ordre du jour. N'en ayant pas eu connaissance de ce document en ma qualité d'administratrice de l'asbl crèche de schaerbeek, j'ai posé la question de savoir si celui-ci avait été approuvé en CA des crèches pendant ma convalescence. Monsieur De Herde m'a répondu lors de cette même séance que ce document, le plan de gestion, n'avait en effet pas encore été approuvé en CA car selon la nouvelle ordonnance, il devait passer d'abord au conseil communal. Puis-je donc vous demander de me transmettre ladite ordonnance et de me préciser, dans celle-ci, l'article justifiant cet ordre de passage?",
+      "reponse": "1. L'obligation de soumettre un plan de gestion pour les ASBL communales est relative à deux sources juridiques. La première, l'ordonnance du 5 juillet 2018 relative aux modes spécifiques de gestion communale et à la coopération intercommunale. En son point 3 de l'article 39 §1er, le législateur bruxellois stipule à propos des conventions : « Il précise les moyens de contrôle dont dispose la commune sur la situation financière de l'ASBL et les modalités concrètes lui permettant d'exercer un contrôle effectif sur l'utilisation des subsides octroyés par la commune ». La seconde, le Règlement communal du 27 mars 2019 relatif à l'octroi, l'emploi et le contrôle de subventions communales. Il liste en son l'article 12 l'ensemble documents à transmettre par l'ASBL à la Commune parmi lesquels un rapport de gestion qui, s'appuie habituellement sur un plan de gestion. 2. L'obligation de faire adopter préalablement par le Conseil le plan de gestion d'une ASBL communale n'est pas explicitement inscrite dans l'ordonnance du 5 juillet 2018, le règlement communal ou une décision du Collège des Bourgmestre et Echevins. Cependant, il apparait, dans une perspective de prudence, opportun de le porter à la connaissance du Conseil communal avant l'approbation par l'Assemblée Générale de l'ASBL.",
+      "repondant": null,
+      "source_file": "asbl_creches_de_schaerbeek.pdf",
+      "extracted_at": "2026-08-23T20:36:12.865581"
+    },
+    {
+      "id": "QE-2019-017",
+      "annee": 2019,
+      "numero": 17,
+      "date": "2019-09-24",
+      "auteur": "Arnaud Verstraete",
+      "titre": "Politique cyclable à Schaerbeek",
+      "question": "En vue du suivi de la mise en œuvre de l'accord de gouvernance, je souhaiterais en savoir plus sur les réalisations concrètes de la politique cyclable schaerbeekoise. 1. Combien de km d'infrastructure cyclable ont été aménagés ces dernières années ? Je souhaite une distinction entre les rues cyclables, les pistes cyclables séparées, les pistes cyclables adjacentes, les bandes cyclables suggestives, … 2. Combien de km supplémentaires d'infrastructure cyclable sont actuellement prévus dans des plans concrets et des décisions du collège ? Je souhaite une distinction entre les rues cyclables, les pistes cyclables séparées, les pistes cyclables adjacentes, les bandes cyclables suggestives, … 3. Combien d'arceaux vélos et de boîtes à vélos ont été installés ces dernières années ? 4. Combien d'arceaux vélos et de boîtes à vélos supplémentaires sont actuellement prévus dans des plans concrets et des décisions du collège ?",
+      "reponse": "La majorité actuelle à Schaerbeek s'est engagée au début de la législature à investir dans une mobilité fluide via différentes mesures : mise en place d'une zone 30, le principe STOP, notre inscription dans le plan Good Move de la Région,… Dans la circulation, nous donnons la priorité aux modes actifs. Vos questions sont donc très pertinentes. Je peux déjà vous répondre aujourd'hui sur certaines de vos questions. Combien d'arceaux vélos et de boîtes à vélos ont été installés ces dernières années ? Chaque année, la commune prévoit d'installer 10 boîtes à vélos. Cette année, ce nombre a été doublé. Nous arrivons ainsi à Schaerbeek à ce moment à environ 55 boîtes à vélos installées ou en cours d'installation à la fin de l'année. (selon décision du collège) Pour les arceaux vélos, le chiffre à la fin de 2018 s'élève à 410. Plus précisément, 100 ont été installés en 2016, 117 en 2017 et 193 en 2018. Les chiffres pour 2019 sont encore en cours d'élaboration. Combien d'arceaux vélos et de boîtes à vélos supplémentaires sont actuellement prévus dans des plans concrets et des décisions du collège ? Il y a 50 boîtes à vélos supplémentaires prévues via l'appel à projets Bikes in Brussels et avec des subsides de la Fondation Roi Baudouin. Celles-ci seront installées courant 2020 et 2021. Plus d'informations sur les plans et les réponses à vos autres questions nécessitent l'apport de différents services. Nos services ont besoin de plus de temps pour rassembler tous les éléments afin de pouvoir vous fournir une réponse correcte. Avant le conseil communal du 27 novembre, vous pouvez attendre une réponse complète à toutes vos questions de ma part.",
+      "repondant": null,
+      "source_file": "fietsinfrastructuur.pdf",
+      "extracted_at": "2026-08-23T20:36:53.484489"
     }
   ]
 }
