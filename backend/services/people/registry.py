@@ -149,7 +149,7 @@ def _build_all():
                     "titre": p.get("titre") or "",
                     "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
                     "url": meta.get("source_url"),
-                    "demandeur_key": author_key,
+                    "demandeur_keys": [author_key] if author_key else [],
                 })
 
             if author_key:
@@ -177,13 +177,24 @@ def _build_all():
     # document — voir la pipeline d'extraction) alimente aussi sa propre
     # activité "repond", comme pour un point de PV.
     for q in load_qe_db().get("questions", []):
-        author = q.get("auteur")
-        if not author:
+        author_raw = q.get("auteur")
+        if not author_raw:
             continue
-        author_key = _key(author, pairs)
-        if not author_key:
+        # Une question écrite peut être cosignée (« Georges Verzin et Cédric
+        # Mahieu ») : à la différence d'un point de PV (un seul auteur
+        # principal crédité, voir _point_author) — un cosignataire d'une QE
+        # n'est jamais un artefact de mise en page, c'est une signature au
+        # même titre que la première. Chaque personne nommée obtient donc sa
+        # propre entrée "depose".
+        author_keys = []
+        for name in _split_person_names(author_raw):
+            k = _key(name, pairs)
+            if not k:
+                continue
+            add_variant(k, name)
+            author_keys.append(k)
+        if not author_keys:
             continue
-        add_variant(author_key, author)
 
         resp_raw = q.get("repondant")
         resp_key = None
@@ -199,21 +210,22 @@ def _build_all():
                 "titre": q.get("titre") or "",
                 "thematiques": [],
                 "url": q.get("source_url"),
-                "demandeur_key": author_key,
+                "demandeur_keys": author_keys,
             })
 
-        people[author_key]["depose"].append({
-            "date": q.get("date"),
-            "sp": 0,
-            "type": "question_ecrite",
-            "titre": q.get("titre") or "",
-            "thematiques": [],
-            "reponse": q.get("reponse"),
-            "repondant_keys": [resp_key] if resp_key else [],
-            "repondant_fallback": _titlecase(_clean(resp_raw)) if resp_raw else None,
-            "url": q.get("source_url"),
-            "video_url": None,
-        })
+        for author_key in author_keys:
+            people[author_key]["depose"].append({
+                "date": q.get("date"),
+                "sp": 0,
+                "type": "question_ecrite",
+                "titre": q.get("titre") or "",
+                "thematiques": [],
+                "reponse": q.get("reponse"),
+                "repondant_keys": [resp_key] if resp_key else [],
+                "repondant_fallback": _titlecase(_clean(resp_raw)) if resp_raw else None,
+                "url": q.get("source_url"),
+                "video_url": None,
+            })
 
     for s in video:
         date = s.get("date")
@@ -294,8 +306,9 @@ def _build_all():
                 names = list(dict.fromkeys(nom_by_key[kk] for kk in keys if kk in nom_by_key))
                 entry["repondant"] = " et ".join(names) if names else fallback
         for entry in d["repond"]:
-            dk = entry.pop("demandeur_key", None)
-            entry["demandeur"] = nom_by_key.get(dk) if dk else None
+            dks = entry.pop("demandeur_keys", None) or []
+            names = list(dict.fromkeys(nom_by_key[dk] for dk in dks if dk in nom_by_key))
+            entry["demandeur"] = " et ".join(names) if names else None
         d["depose"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         d["repond"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         index[k] = {
