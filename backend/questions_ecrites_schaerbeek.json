@@ -3,7 +3,7 @@
     "nom": "Base des questions écrites - Conseil communal de Schaerbeek",
     "version": "1.0",
     "date_creation": "2026-08-23T10:08:06.704034",
-    "total_questions": 213,
+    "total_questions": 215,
     "last_updated": "2026-08-23T17:59:53.674789"
   },
   "questions": [
@@ -2774,6 +2774,32 @@
       "repondant": null,
       "source_file": "fietsinfrastructuur.pdf",
       "extracted_at": "2026-08-23T20:36:53.484489"
+    },
+    {
+      "id": "QE-2019-014",
+      "annee": 2019,
+      "numero": 14,
+      "date": "2019-07-09",
+      "auteur": "Emin Özkara",
+      "titre": "Les avancées réalisées au sujet des subsides et projets pour l'organisation de la fête du sacrifice 2019 pour Schaerbeek.",
+      "question": "En date du 31 mai 2017, lors du Conseil communal, je relayais des questions posées par des résidents de notre commune en ce qui concerne l'abattage des animaux et la fête du sacrifice 2017, aussi appelée Eid El Kebir. En date du 8 juin 2018, je vous questionnais par écrit au sujet des subsides et projets pour l'organisation de la fête du sacrifice 2018 pour Schaerbeek. Force est de constater que malgré les années qui passent et malgré le fait qu'il soit clairement établi que l'Abattoir d'Anderlecht ne puisse accueillir le surplus de bêtes lors des fêtes religieuses, il n'existe toujours pas, dans notre si belle et diversifiée commune, un site d'abattage fixe et agréé supplémentaire qui puisse accueillir des bêtes pour qu'elles soient abattues dans le respect des croyances et traditions musulmanes ou juives. Force est de déplorer que d'après mes informations et au regard du fait qu'aucune mesure concrète n'est prise par les Autorités publiques pour développer les capacités de l'abattoir d'Anderlecht ou mettre en œuvre un site d'abattage agréé sur le territoire de la commune de Schaerbeek, la fête du sacrifice 2019 risque de se dérouler comme celle de 2017 et 2018, c'est-à-dire qu'il n'y aura pas de site agréé pleinement fonctionnel et permettant l'abattage rituel sur le territoire de la commune de Schaerbeek. Aujourd'hui, 2 ans plus tard, j'aimerais savoir quelles sont les avancées réalisées depuis lors. Je souhaiterais donc vous poser les questions suivantes : 1. La Région et la commune ont-elles eu l'occasion de se rencontrer et de dialoguer au sujet de l'organisation de la fête du sacrifice 2019 ? Si oui, quand exactement et qui a participé aux rencontres? Quels ont été les conclusions, avis, demandes, recommandations dégagés suite à ces rencontres et/ou réunions ? 2. Quels sont les contacts que vous avez pris en rapport avec cette fête ? Quels sont les retours? Qui vous a contacté ? Y'a-t-il eu des contacts avec l'Excécutif des Musulmans de Belgique ? Si oui, quels sont les retours ? Si non, est-il prévu de contacter l'Excécutif des Musulmans de Belgique ou un autre organisme/association en rapport avec le Culte ? 3. Des subsides pour la prochaine fête du sacrifice 2019 ont-ils été demandés à la Région ou à la commune de Schaerbeek par une structure privée, une asbl communale ou la commune elle-même? Si oui, quels sont précisément les montants accordés et à qui ? Dans la négative, pour quelles raisons les demandes de subsides ont-elles été refusées ? 4. Un projet pour la fête du sacrifice 2019 a-t-il été soumis à la Région par la commune ou une asbl communale ? Une asbl communale a-t-elle été chargée d'organiser la fête du sacrifice 2019 sur le territoire communal ? 5. Quelles sont les mesures concrètes mises en place par la commune de Schaerbeek pour permettre à la fête du sacrifice 2019 de se dérouler dans les meilleures conditions ? Des possibilités de partenariats avec le tissu associatif ou d'autres communes ont-elles été envisagées ? 6. Est-il prévu d'initier une étude de faisabilité pour la création d'un site d'abattage fixe et agréé implanté sur le territoire de la commune de Schaerbeek ?",
+      "reponse": "Lors du Conseil Communal du 29 mai 2019, votre collègue Monsieur Abkoui a posé cette question, mais vous étiez absent. Célébrée par des millions de personnes dans le monde, la fête du Sacrifice est un moment de partage dans la communauté musulmane. Comme vous le savez, la Région ne permet aujourd'hui que l'abattage dans des abattoirs agréés et non plus dans des abattoirs temporaires comme cela était fait les années précédentes. Les communes ne sont plus autorisées à organiser des abattages temporaires comme elles faisaient précédemment. Schaerbeek qui avait toujours offert une solution n'est donc légalement plus en mesure de le faire. De la même manière, le transport de l'animal depuis son lieu d'élevage vers l'abattoir doit être réalisé par un transporteur agréé. Et bien entendu l'abattage à domicile est interdit. Nos contacts continus avec l'Association Des Mosquées de Schaerbeek ont permis que celles-ci puissent trouver aussi des solutions pour leurs fidèles. Nous mettons toujours à disposition des listes d'abattoirs agrées et présentons les autres solutions (dons, boucheries…). La commune continuera, comme elle l'a fait l'année passée, à remplir les obligations qui sont les siennes comme celles de répondre aux demandes de délivrance des inscriptions comme abatteurs. Enfin, je vous invite à la lecture du procès-verbal du point 47 du Conseil Communal du 29 mai 2019, où je suis certain que vous trouverez réponses à toutes vos questions.",
+      "repondant": null,
+      "source_file": "qe_2019_ndeg14_-_e._ozkara_-_fete_du_sacrifice.pdf",
+      "extracted_at": "2026-08-23T21:40:25.268051"
+    },
+    {
+      "id": "QE-2019-011",
+      "annee": 2019,
+      "numero": 11,
+      "date": "2019-05-06",
+      "auteur": "Marie Nyssens",
+      "titre": "Réalisation des travaux de voirie avenue Eugene Demolder",
+      "question": "Je me permets de vous poser cette question écrite quant à la réalisation des travaux de voirie avenue Eugene Demolder. Ayant constaté que la réfaction du trottoir a été étendue au jardinet privé du numéro 49 je me permets de vous poser les questions suivantes : La commune a-t'elle communiqué aux riverains sa propos de la possibilité de faire intervenir l'entreprise, à titre privé sur leur jardinet? Si oui quand et quelle a été cette communication ? (j'ai pu manquer l'information, je vous remercie de me la transmettre) En effet, et en particulier pour la deuxième partie de l'avenue, il me semble que cela pourrait être une opportunité pour d'autres riverains d'effectuer ces travaux dans les meilleures conditions financières et esthétiques (homogénéité avec le trottoir)… est-ce prévu ou cela va-t'il être prévu ? Si non… La commune va-t'elle communiquer sur cette possibilité à l'avenir pour la phase 2 du chantier Lambermont Riga en vue de l'avantage esthétique (et avec quel mesure de transparence au niveau financier ) La commune est-elle avertie par l'entreprise de cet élargissement du chantier ? ou était-il prévu dans les plans initiaux ? Peut-on, en transparence avoir la confirmation qu'une facture a bien été produite pour ce chantier d'ordre privé dans le cadre d'un chantier communal?",
+      "reponse": "Nous vous prions de vouloir bien trouver, ci-dessous, réponse à vos différentes questions : 1) A aucun moment, la Commune n'a communiqué aux riverains la possibilité de faire intervenir l'entrepreneur/adjudicataire à titre privé sur leur jardinet. Le riverain a pris contact directement avec l'entrepreneur. 2) La Commune n'a pas non plus prévu de communiquer sur cette possibilité pour ce qui concerne le second tronçon du chantier (entre Lambermont et Riga). 3) La Commune a été avertie, à titre informatif, par l'entrepreneur de ces travaux, mais il ne s'agit en aucun cas d'un « élargissement du chantier ». 4) Ces travaux en zone privée n'étaient pas prévus dans les plans initiaux, ni dans les documents qui régissent le marché public. 5) La Commune n'est en rien concernée par ce travail en zone privée et l'éventuelle facture étant donné qu'il y a eu un accord directement entre l'entrepreneur et le riverain.",
+      "repondant": null,
+      "source_file": "qe_2019_ndeg11_-_m._nyssens_-travaux_eugene_demolder.pdf",
+      "extracted_at": "2026-08-23T21:42:23.596330"
     }
   ]
 }
