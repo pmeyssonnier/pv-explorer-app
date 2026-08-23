@@ -6,6 +6,7 @@ vérifie l'orchestration (la question devient une entrée "depose" attribuable
 test_questions_ecrites_pipeline.py/test_questions_ecrites_integration.py).
 """
 import services.people.registry as registry
+from services import elus
 
 
 def test_written_question_becomes_depose_entry_for_known_person(monkeypatch):
@@ -65,6 +66,87 @@ def test_no_written_questions_leaves_registry_unaffected(monkeypatch):
     index, pairs, nom_by_key = registry._build_all()
     verzin = index["verzin"]
     assert not any(it["type"] == "question_ecrite" for it in verzin["depose"])
+
+
+def test_written_question_reponse_text_exposed_on_depose_entry(monkeypatch):
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2025-11-10", "auteur": "Georges Verzin", "titre": "Les nids-de-poule",
+        "reponse": "Les travaux sont planifiés pour le prochain trimestre.",
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    entry = next(it for it in index["verzin"]["depose"] if it["type"] == "question_ecrite")
+    assert entry["reponse"] == "Les travaux sont planifiés pour le prochain trimestre."
+
+
+def test_written_question_repondant_resolved_to_canonical_name_and_reciprocal_entry(monkeypatch):
+    # Un·e répondant·e nommé·e (voir la pipeline d'extraction) doit être
+    # résolu·e comme pour un point de PV : nom canonique sur la fiche de
+    # l'auteur·e ET une entrée "repond" réciproque sur la fiche du/de la
+    # répondant·e (même mécanique générique que pour les PV, via
+    # repondant_keys/demandeur_key — voir la fin de _build_all).
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2025-11-10", "auteur": "Georges Verzin", "titre": "Les nids-de-poule",
+        "repondant": "Bernard Clerfayt", "source_url": "https://1030.be/qe/015.pdf",
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    entry = next(it for it in index["verzin"]["depose"] if it["type"] == "question_ecrite")
+    assert entry["repondant"] == "Bernard Clerfayt"
+
+    repond_entry = next(
+        it for it in index["clerfayt"]["repond"]
+        if it["titre"] == "Les nids-de-poule" and it["date"] == "2025-11-10"
+    )
+    assert repond_entry["demandeur"] == "Georges Verzin"
+    assert repond_entry["url"] == "https://1030.be/qe/015.pdf"
+    assert repond_entry["sp"] == 0
+
+
+def test_written_question_repondant_role_word_alone_not_resolved_as_person(monkeypatch):
+    # « Bourgmestre » seul (sans nom) ne peut pas être résolu à UNE personne
+    # (contrairement au PV, aucune métadonnée de séance pour lever
+    # l'ambiguïté ici) — reste affiché tel quel (casse homogène), sans créer
+    # de fiche "bourgmestre".
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2025-11-10", "auteur": "Georges Verzin", "titre": "Test",
+        "repondant": "Bourgmestre",
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    entry = next(it for it in index["verzin"]["depose"] if it["type"] == "question_ecrite")
+    assert entry["repondant"] == "Bourgmestre"
+    assert "bourgmestre" not in index
+
+
+def test_written_question_without_repondant_leaves_field_none(monkeypatch):
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2025-11-10", "auteur": "Georges Verzin", "titre": "Test",
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    entry = next(it for it in index["verzin"]["depose"] if it["type"] == "question_ecrite")
+    assert entry.get("repondant") is None
+
+
+def test_elu_detail_exposes_reponse_and_repondant_for_written_question(monkeypatch):
+    # Bout en bout jusqu'à /elu/{key} (services.elus._fmt_depose) : la
+    # réponse et le/la répondant·e résolu·e doivent être visibles côté API,
+    # pas seulement dans l'index interne (registry._build_all).
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2025-11-10", "auteur": "Georges Verzin", "titre": "Les nids-de-poule",
+        "reponse": "Les travaux sont planifiés pour le prochain trimestre.",
+        "repondant": "Bernard Clerfayt", "source_url": "https://1030.be/qe/015.pdf",
+    }]})
+    registry._cache["sig"] = None   # force la reconstruction (nouvelle donnée QE monkeypatchée)
+    try:
+        d = elus.elu_detail("verzin")
+        entry = next(it for it in d["depose"] if it["type"] == "question_ecrite")
+        assert entry["reponse"] == "Les travaux sont planifiés pour le prochain trimestre."
+        assert entry["repondant"] == "Bernard Clerfayt"
+    finally:
+        # `_sig()` ne dépend que des mtimes de fichiers (inchangés par le
+        # monkeypatch de load_qe_db) : sans ce reset, le cache resterait
+        # "valide" (même signature) mais peuplé avec cette donnée QE factice
+        # une fois load_qe_db revenu à la normale — pollution pour les tests
+        # suivants qui lisent le vrai corpus via _index()/elu_detail().
+        registry._cache["sig"] = None
 
 
 def test_registry_signature_includes_qe_json_mtime(tmp_path, monkeypatch):

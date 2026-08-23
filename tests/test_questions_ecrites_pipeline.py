@@ -23,6 +23,7 @@ def _raw(**overrides):
         "numero": 15, "date": "2025-11-10", "auteur": "Georges Verzin",
         "titre": "Les nids-de-poule", "question": "Quand seront-ils réparés ?",
         "reponse": "Les travaux sont planifiés pour le prochain trimestre.",
+        "repondant": "Bernard Clerfayt",
     }
     data.update(overrides)
     return data
@@ -36,6 +37,16 @@ def test_normalize_question_builds_stable_id_from_year_and_number():
     assert q["auteur"] == "Georges Verzin"
     assert q["source_file"] == "015.verzin.pdf"
     assert q["reponse"] == "Les travaux sont planifiés pour le prochain trimestre."
+    assert q["repondant"] == "Bernard Clerfayt"
+
+
+def test_normalize_question_repondant_none_when_not_signed():
+    # Comme "reponse" : une réponse non signée nommément (ou absente) ne
+    # doit jamais produire un nom deviné.
+    q = qe.normalize_question(_raw(repondant=None), "x.pdf")
+    assert q["repondant"] is None
+    q2 = qe.normalize_question(_raw(repondant=""), "x.pdf")
+    assert q2["repondant"] is None
 
 
 def test_normalize_question_coerces_string_numero():

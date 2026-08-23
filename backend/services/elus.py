@@ -79,6 +79,7 @@ def elu_detail(key: str):
             "titre": it["titre"],
             "thematiques": it.get("thematiques") or [],
             "repondant": it.get("repondant"),
+            "reponse": it.get("reponse"),
             "url": it.get("url"),
             "video_url": it.get("video_url"),
             "video_precise": bool(it.get("video_precise")),

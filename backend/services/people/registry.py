@@ -19,7 +19,7 @@ from utils.video import video_session_map
 from services.people.attribution import _author_of, _point_author, _respondents
 from services.people.names import (
     _DISPLAY_NAME_OVERRIDES, _best_display_variant, _clean, _is_non_person_video_author,
-    _key, _norm_tok, _split_person_names, _titlecase,
+    _is_role_token, _key, _norm_tok, _split_person_names, _titlecase,
 )
 from services.video_merge import _match_pv_point
 
@@ -171,24 +171,46 @@ def _build_all():
                 pv_lookup[(author_key, date)].append(entry)
 
     # Questions écrites : canal totalement séparé des points de PV (adressées
-    # au Collège hors séance, jamais de SP/répondant·e attribuable — voir
-    # services/questions_ecrites*.py). Comptées comme une activité "déposée"
-    # de plus, au même titre qu'une question orale/demande/motion.
+    # au Collège hors séance, jamais de SP — voir services/questions_ecrites*.py).
+    # Comptées comme une activité "déposée" de plus, au même titre qu'une
+    # question orale/demande/motion. Le/la répondant·e (quand nommé·e dans le
+    # document — voir la pipeline d'extraction) alimente aussi sa propre
+    # activité "repond", comme pour un point de PV.
     for q in load_qe_db().get("questions", []):
         author = q.get("auteur")
         if not author:
             continue
-        k = _key(author, pairs)
-        if not k:
+        author_key = _key(author, pairs)
+        if not author_key:
             continue
-        add_variant(k, author)
-        people[k]["depose"].append({
+        add_variant(author_key, author)
+
+        resp_raw = q.get("repondant")
+        resp_key = None
+        if resp_raw:
+            last = resp_raw.split()[-1] if resp_raw.split() else ""
+            if last and not _is_role_token(last):
+                resp_key = _key(resp_raw, pairs)
+        if resp_key:
+            add_variant(resp_key, resp_raw)
+            people[resp_key]["repond"].append({
+                "date": q.get("date"),
+                "sp": 0,
+                "titre": q.get("titre") or "",
+                "thematiques": [],
+                "url": q.get("source_url"),
+                "demandeur_key": author_key,
+            })
+
+        people[author_key]["depose"].append({
             "date": q.get("date"),
             "sp": 0,
             "type": "question_ecrite",
             "titre": q.get("titre") or "",
             "thematiques": [],
-            "repondant": None,
+            "reponse": q.get("reponse"),
+            "repondant_keys": [resp_key] if resp_key else [],
+            "repondant_fallback": _titlecase(_clean(resp_raw)) if resp_raw else None,
             "url": q.get("source_url"),
             "video_url": None,
         })
