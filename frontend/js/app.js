@@ -15,7 +15,7 @@ import {
 } from './chat.js';
 import {
   loadStats, toggleYear, drillInto, drillTo, selectSeance, clearSeance,
-  selectTheme, setMetric, shareStats, trendSuggestion, loadTrend,
+  selectTheme, setMetric, shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick,
 } from './stats.js';
 import {
   loadElus, populateElus, onEluSelectChange, onEluYearChange, onEluTypeChange, onEluChipClick,
@@ -23,7 +23,7 @@ import {
 } from './elus.js';
 import {
   loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
-  jumpToSeance, setPendingSeanceDate,
+  jumpToSeance, setPendingSeanceDate, onSeanceRoleChipClick,
 } from './seances.js';
 import {
   checkAdminSession, openAdminLogin, closeAdminLogin, initAdminLoginOverlay,
@@ -73,9 +73,9 @@ registerActions({
   askSuggestion, reuseQuestion, clearHistory, removeHistoryItem,
   newSearch, toggleDictation, submitQuestion, copyAnswer, downloadAnswer, shareAnswer,
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
-  shareStats, trendSuggestion, loadTrend,
+  shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick,
   shareElu, onEluChipClick,
-  shareSeance, jumpToSeance,
+  shareSeance, jumpToSeance, onSeanceRoleChipClick,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
   cancelQeExtract, confirmQePublish,
 });

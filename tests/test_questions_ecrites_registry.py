@@ -25,6 +25,7 @@ def test_written_question_becomes_depose_entry_for_known_person(monkeypatch):
     assert entry["sp"] == 0
     assert entry["thematiques"] == []
     assert entry["video_url"] is None
+    assert entry.get("co_auteurs") is None
 
 
 def test_written_question_cosigned_credits_each_named_author(monkeypatch):
@@ -41,12 +42,17 @@ def test_written_question_cosigned_credits_each_named_author(monkeypatch):
         "repondant": "Bernard Clerfayt",
     }]})
     index, pairs, nom_by_key = registry._build_all()
-    for key in ("verzin", "mahieu"):
+    # Chaque fiche voit L'AUTRE cosignataire (jamais soi-même) dans son
+    # entrée "depose" — affichage côte à côte quelle que soit la fiche
+    # consultée (voir services/elus.py::_fmt_depose, frontend/js/elus.js).
+    expected_co_auteurs = {"verzin": "Cédric Mahieu", "mahieu": "Georges Verzin"}
+    for key, co_auteur in expected_co_auteurs.items():
         fiche = index[key]
         qe_entries = [it for it in fiche["depose"]
                       if it["type"] == "question_ecrite"
                       and it["titre"] == "Le règlement particulier du stationnement."]
         assert len(qe_entries) == 1, (key, fiche["depose"])
+        assert qe_entries[0]["co_auteurs"] == co_auteur
     # Le/la répondant·e voit les deux cosignataires dans son propre "repond".
     clerfayt = index["clerfayt"]
     resp = next(it for it in clerfayt["repond"]
