@@ -2,7 +2,10 @@
 // La recherche sémantique du chat est sensible à la formulation et non
 // exhaustive ; cette vue liste TOUTES les interventions d'une personne.
 import { API_URL } from './config.js';
-import { escapeHtml, formatDate, TYPE_BADGE, TYPE_ACTOR_LABEL, renderThemeTags } from './utils.js';
+import {
+  escapeHtml, formatDate, TYPE_ACTOR_LABEL, renderThemeTags,
+  renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine,
+} from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
 let elusData = null;        // liste complète [{key,nom,role,depose,repond}]
@@ -135,8 +138,7 @@ function filterByYear(items, year) {
 }
 
 function eluDeposeRow(it, nom) {
-  const cls = TYPE_BADGE[it.type_label] || 'b-d';
-  const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
+  const badge = renderTypeBadge(it.type_label);
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   // Lien : deep-link « ▶ Voir le débat » pour un point filmé (débat filmé
   // pur, ou point PV fusionné avec son chapitre vidéo — video_precise), sinon
@@ -144,20 +146,20 @@ function eluDeposeRow(it, nom) {
   // point, un lien léger « ▶ vidéo » (généraliste, début de séance).
   let links = '';
   if (it.type === 'video' && it.url) {
-    links = `<a class="elu-link elu-link-video" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`;
+    links = renderVideoLink(it.url, '▶ Voir le débat', 'Voir le débat sur YouTube (au bon moment)');
   } else {
-    if (it.url) links += `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
+    links += renderPvPdfLink(it.url);
     if (it.video_url) {
       const label = it.video_precise ? '▶ Voir le débat' : '▶ vidéo';
       const title = it.video_precise
         ? 'Voir le débat sur YouTube (au bon moment)'
         : 'Voir la séance filmée sur YouTube (début de séance, pas de moment précis identifié pour ce point)';
-      links += `<a class="elu-link elu-link-video" href="${it.video_url}" target="_blank" rel="noopener noreferrer" title="${title}"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>${label}</a>`;
+      links += renderVideoLink(it.video_url, label, title);
     }
   }
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
-  const demandeur = nom ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(nom)}</div>` : '';
-  const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
+  const demandeur = renderPersonLine('elu-demandeur', actorLabel, nom);
+  const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
   const tags = renderThemeTags(it.thematiques);
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
@@ -174,9 +176,9 @@ function eluDeposeRow(it, nom) {
 
 function eluRepondRow(it, nom) {
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
-  const link = it.url ? `<a class="elu-link" href="${it.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>` : '';
-  const demandeur = it.demandeur ? `<div class="elu-demandeur">Demandé par : ${escapeHtml(it.demandeur)}</div>` : '';
-  const rep = nom ? `<div class="elu-rep">Répondant·e : ${escapeHtml(nom)}</div>` : '';
+  const link = renderPvPdfLink(it.url);
+  const demandeur = renderPersonLine('elu-demandeur', 'Demandé par', it.demandeur);
+  const rep = renderPersonLine('elu-rep', 'Répondant·e', nom);
   const tags = renderThemeTags(it.thematiques);
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
