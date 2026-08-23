@@ -80,6 +80,17 @@ export const TYPE_ACTOR_LABEL = {
   'Question écrite': 'Auteur·e de la question',
 };
 
+// Texte pluriel « N question(s) orale(s) » pour un décompte par type — utilisé
+// par les puces cliquables de l'onglet Par élu·e (résumé d'activité) et de
+// l'onglet Statistiques (légende du graphe « Activité citoyenne »).
+export const TYPE_COUNT_LABEL = {
+  'Question orale': n => `${n} question${n > 1 ? 's' : ''} orale${n > 1 ? 's' : ''}`,
+  'Demande': n => `${n} demande${n > 1 ? 's' : ''}`,
+  'Motion': n => `${n} motion${n > 1 ? 's' : ''}`,
+  'Débat filmé': n => `${n} débat${n > 1 ? 's' : ''} filmé${n > 1 ? 's' : ''}`,
+  'Question écrite': n => `${n} question${n > 1 ? 's' : ''} écrite${n > 1 ? 's' : ''}`,
+};
+
 // Bloc de tags « thématiques » — même rendu partout où un point est affiché
 // (Séances, Par élu·e, sources des réponses) : avant ce correctif, seule la
 // vue Séances les montrait. '' si aucune thématique (jamais de bloc vide).

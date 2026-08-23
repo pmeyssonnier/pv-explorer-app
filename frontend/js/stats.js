@@ -1,7 +1,7 @@
 // ── STATISTIQUES — drill-down Année → Mois → Séance, thématiques, évolution
 // d'un thème (budget) ──
 import { API_URL } from './config.js';
-import { escapeHtml, formatDate, fmtInt, fmtMontant, fmtEUR } from './utils.js';
+import { escapeHtml, formatDate, fmtInt, fmtMontant, fmtEUR, TYPE_COUNT_LABEL } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
 // KPI et thématiques se recalculent pour le périmètre courant, à partir d'un
@@ -18,6 +18,9 @@ let expandedYears = new Set();  // années dépliées dans la vue « tous les PV
 let activiteTypesParAnnee = [];   // [{annee, "Question orale":n, "Demande":n, ...}] — voir /stats
 let activiteTypeOrder = [];       // ordre fixe des 4 séries (voir ACTIVITY_TYPE_ORDER, backend)
 let qeDates = [];                 // dates ISO des questions écrites — bucketage par mois (voir /stats qe_dates)
+// Type isolé dans le graphe « Activité citoyenne » via un clic sur sa puce de
+// légende ('all' = vue empilée normale) — voir onActivityTypeChipClick.
+let activiteTypeFilter = 'all';
 
 const MOIS_FR = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -194,6 +197,13 @@ function activityRows() {
   return Object.keys(m).sort().map(k => ({ key: k, label: MOIS_FR[+k].slice(0, 4) + '.', counts: m[k] }));
 }
 
+// Reclique sur la puce déjà active → retour à la vue empilée (toutes les
+// séries) ; sinon isole cette série (même geste que eluTypeChip côté Par élu·e).
+export function onActivityTypeChipClick(typeLabel) {
+  activiteTypeFilter = activiteTypeFilter === typeLabel ? 'all' : typeLabel;
+  renderActivityTypes();
+}
+
 // Graphe empilé « Activité citoyenne » : 4 séries DISJOINTES (question
 // orale/demande/motion/question écrite) — volontairement PAS les points
 // administratifs "point normal"/"urgent" (~95 % du volume total, qui
@@ -203,7 +213,10 @@ function activityRows() {
 // drill-down Année → Mois de l'autre graphe (même état `drill`, mêmes
 // gestes drillInto/drillTo) : légende + étiquette de total + infobulle par
 // segment restent (skill dataviz : relief obligatoire dès qu'une teinte
-// catégorielle tombe sous 3:1 de contraste sur le fond clair).
+// catégorielle tombe sous 3:1 de contraste sur le fond clair). La légende est
+// cliquable (comme les puces de profil de l'onglet Par élu·e) : isole une
+// série — le graphe passe d'empilé à un seul type, mis à l'échelle sur SES
+// propres valeurs (pas le total empilé, sinon la barre isolée paraîtrait minuscule).
 function renderActivityTypes() {
   const plot = document.getElementById('activityPlot');
   const legend = document.getElementById('activityLegend');
@@ -214,32 +227,41 @@ function renderActivityTypes() {
     return;
   }
   const rows = activityRows();
+  const isolate = activiteTypeFilter !== 'all' && activiteTypeOrder.includes(activiteTypeFilter);
   const totals = rows.map(row => activiteTypeOrder.reduce((sum, t) => sum + (row.counts[t] || 0), 0));
-  const max = Math.max(...totals, 1);
+  const values = isolate ? rows.map(row => row.counts[activiteTypeFilter] || 0) : totals;
+  const max = Math.max(...values, 1);
 
   plot.innerHTML = rows.map((row, i) => {
-    const total = totals[i];
-    const stackH = Math.max(4, Math.round(total / max * 130));
+    const value = values[i];
+    const stackH = Math.max(4, Math.round(value / max * 130));
     const sel = (drill.level === 'month' && row.key === drill.month);
+    const typesToRender = isolate ? [activiteTypeFilter] : activiteTypeOrder;
     let firstNonZero = true;
-    const segs = activiteTypeOrder.map((t, si) => {
+    const segs = typesToRender.map(t => {
+      const si = activiteTypeOrder.indexOf(t);
       const n = row.counts[t] || 0;
       if (!n) return '';
-      const segH = Math.max(2, Math.round(n / total * stackH));
+      const segH = isolate ? stackH : Math.max(2, Math.round(n / value * stackH));
       const topCls = firstNonZero ? ' yc-seg-top' : '';
       firstNonZero = false;
       return `<div class="yc-seg yc-seg-s${si}${topCls}" style="height:${segH}px" title="${escapeHtml(t)} : ${fmtInt(n)}"></div>`;
     }).join('');
-    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(row.label)} : ${fmtInt(total)} au total">
-      <span class="yc-val">${fmtInt(total)}</span>
+    const barTitle = isolate
+      ? `${row.label} : ${TYPE_COUNT_LABEL[activiteTypeFilter](value)}`
+      : `${row.label} : ${fmtInt(value)} au total`;
+    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(barTitle)}">
+      <span class="yc-val">${fmtInt(value)}</span>
       <div class="yc-stack" style="height:${stackH}px">${segs}</div>
       <span class="yc-yr">${escapeHtml(row.label)}</span>
     </div>`;
   }).join('');
 
-  legend.innerHTML = activiteTypeOrder.map((t, si) =>
-    `<span class="yc-legend-item"><span class="yc-legend-swatch yc-seg-s${si}"></span>${escapeHtml(t)}</span>`
-  ).join('');
+  legend.innerHTML = activiteTypeOrder.map((t, si) => {
+    const active = activiteTypeFilter === t ? ' yc-legend-chip-active' : '';
+    return `<button type="button" class="yc-legend-chip${active}" data-click="onActivityTypeChipClick" data-arg="${escapeHtml(t)}">`
+      + `<span class="yc-legend-swatch yc-seg-s${si}"></span>${escapeHtml(t)}</button>`;
+  }).join('');
 
   const title = document.getElementById('activityTitle');
   if (title) title.textContent = drill.level === 'year' ? 'Activité citoyenne par année' : 'Activité citoyenne par mois — ' + drill.year;
@@ -378,6 +400,7 @@ export async function loadStats() {
     expandedYears = new Set([latestYear]);   // année la plus récente dépliée par défaut
     drill = { level: 'year', year: null, month: null };
     drillMetric = 'points';
+    activiteTypeFilter = 'all';
 
     container.innerHTML = `
       <div class="scope-line">

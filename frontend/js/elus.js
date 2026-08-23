@@ -3,7 +3,7 @@
 // exhaustive ; cette vue liste TOUTES les interventions d'une personne.
 import { API_URL } from './config.js';
 import {
-  escapeHtml, formatDate, TYPE_ACTOR_LABEL, renderThemeTags,
+  escapeHtml, formatDate, TYPE_ACTOR_LABEL, TYPE_COUNT_LABEL, renderThemeTags,
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
@@ -153,15 +153,6 @@ function filterByYear(items, year) {
 // ordre que TYPE_BADGE côté utils.js, pour une liste toujours dans le même
 // sens quel que soit l'élu·e sélectionné·e.
 const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
-
-// Texte pluriel affiché sur chaque puce du résumé (voir eluTypeChip).
-const TYPE_COUNT_LABEL = {
-  'Question orale': n => `${n} question${n > 1 ? 's' : ''} orale${n > 1 ? 's' : ''}`,
-  'Demande': n => `${n} demande${n > 1 ? 's' : ''}`,
-  'Motion': n => `${n} motion${n > 1 ? 's' : ''}`,
-  'Débat filmé': n => `${n} débat${n > 1 ? 's' : ''} filmé${n > 1 ? 's' : ''}`,
-  'Question écrite': n => `${n} question${n > 1 ? 's' : ''} écrite${n > 1 ? 's' : ''}`,
-};
 
 // Types d'intervention distincts présents parmi les points DÉPOSÉS de cette
 // fiche (les réponses en séance n'ont pas de "type" — voir renderElu, le

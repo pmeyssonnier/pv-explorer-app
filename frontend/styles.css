@@ -206,11 +206,11 @@ body {
 .admin-login-form input:focus { outline: none; border-color: var(--or); }
 .admin-login-error { color: var(--bordeaux); font-size: 13px; min-height: 16px; margin: 10px 0 0; }
 .admin-login-submit { margin-top: 12px; }
-/* Bouton « Extraire » (PV + QE) uniquement — pas « Se connecter », qui
-   partage la même classe .admin-login-submit : hauteur doublée (16px → 32px)
-   pour une meilleure cible tactile sur mobile avant un envoi qui prend
-   plusieurs secondes. */
-#adminUploadSubmit, #qeUploadSubmit { padding-top: 8px; padding-bottom: 8px; }
+/* Hauteur doublée (16px → 32px) sur les 3 boutons qui partagent
+   .admin-login-submit — Extraire (PV + QE) et Se connecter — pour une
+   meilleure cible tactile sur mobile avant un envoi qui prend plusieurs
+   secondes. */
+#adminUploadSubmit, #qeUploadSubmit, #adminLoginSubmit { padding-top: 8px; padding-bottom: 8px; }
 
 /* ── PANNEAU ADMIN — upload/aperçu d'un PV (voir admin.js) ── */
 .admin-upload, .admin-preview { margin-top: 14px; }
@@ -955,8 +955,20 @@ body {
   display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0 2px;
   font-size: 12.5px; color: var(--encre-soft);
 }
-.yc-legend-item { display: inline-flex; align-items: center; gap: 6px; }
 .yc-legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
+/* Légende cliquable (voir stats.js/renderActivityTypes, onActivityTypeChipClick) :
+   isole une série du graphe empilé — même geste que .elu-chip (Par élu·e),
+   avec le carré de couleur de la série en plus. */
+.yc-legend-chip {
+  display: inline-flex; align-items: center; gap: 6px; font: inherit;
+  font-size: 12.5px; color: var(--encre-soft); background: none;
+  border: 1px solid transparent; border-radius: 999px; padding: 3px 10px 3px 8px;
+  cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.yc-legend-chip:hover { border-color: var(--ligne); color: var(--encre); }
+.yc-legend-chip-active {
+  background: var(--papier-dark); border-color: var(--ligne); color: var(--encre); font-weight: 600;
+}
 .yc-head {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; flex-wrap: wrap; margin-bottom: 14px;
