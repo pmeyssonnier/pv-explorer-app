@@ -223,6 +223,11 @@ def _build_all():
                 "reponse": q.get("reponse"),
                 "repondant_keys": [resp_key] if resp_key else [],
                 "repondant_fallback": _titlecase(_clean(resp_raw)) if resp_raw else None,
+                # Les AUTRES cosignataires de CETTE entrée (jamais soi-même)
+                # — résolus en noms canoniques en fin de fonction, pour
+                # affichage côte à côte quelle que soit la fiche consultée
+                # (voir nom_by_key).
+                "co_auteurs_keys": [k for k in author_keys if k != author_key],
                 "url": q.get("source_url"),
                 "video_url": None,
             })
@@ -305,6 +310,10 @@ def _build_all():
             if keys is not None:
                 names = list(dict.fromkeys(nom_by_key[kk] for kk in keys if kk in nom_by_key))
                 entry["repondant"] = " et ".join(names) if names else fallback
+            co_keys = entry.pop("co_auteurs_keys", None)
+            if co_keys:
+                names = list(dict.fromkeys(nom_by_key[kk] for kk in co_keys if kk in nom_by_key))
+                entry["co_auteurs"] = " et ".join(names) if names else None
         for entry in d["repond"]:
             dks = entry.pop("demandeur_keys", None) or []
             names = list(dict.fromkeys(nom_by_key[dk] for dk in dks if dk in nom_by_key))

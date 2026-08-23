@@ -233,7 +233,12 @@ function eluDeposeRow(it, nom) {
     }
   }
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
-  const demandeur = renderPersonLine('elu-demandeur', actorLabel, nom);
+  // Question écrite cosignée : les cosignataires sont affichés côte à côte
+  // avec le nom de la fiche consultée, quelle que soit celle-ci — jamais
+  // masqués simplement parce qu'on a filtré sur l'un d'eux (voir registry.py,
+  // co_auteurs résolu pour chaque auteur·e depuis les autres signataires).
+  const auteurs = it.co_auteurs ? `${nom} et ${it.co_auteurs}` : nom;
+  const demandeur = renderPersonLine('elu-demandeur', actorLabel, auteurs);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
   const tags = renderThemeTags(it.thematiques);
   const reponse = it.type === 'question_ecrite' ? renderReponseDetails(it.reponse) : '';
