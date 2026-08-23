@@ -21,6 +21,18 @@
   --ligne: #d9cfbf;
   --blanc: #fffdf9;
   --vert: #4a7c59;
+  /* Palette CATÉGORIELLE dédiée au graphe empilé « Activité citoyenne par an »
+     (onglet Statistiques) — 4 séries à distinguer par identité (pas une
+     magnitude), donc hors de la logique « un seul accent » du reste de l'app.
+     Validée avec le skill dataviz (scripts/validate_palette.js) : CVD
+     (protanopie/deutéranopie) + normal-vision + contraste, sur cet ordre fixe
+     et sur les valeurs sombres ci-dessous — jamais réordonnée par valeur.
+     Volontairement hors de la famille --bordeaux/--brand (déjà réservée aux
+     éléments interactifs/de marque) pour ne pas diluer son sens. */
+  --chart-s0: #2a78d6;   /* Question orale */
+  --chart-s1: #1baf7a;   /* Demande */
+  --chart-s2: #eda100;   /* Motion */
+  --chart-s3: #4a3aa7;   /* Question écrite */
   /* Traits du logo header (petites lignes de la « page ») : égal à --ligne en
      clair (contraste déjà suffisant), mais redéfini en sombre ci-dessous —
      --ligne y est trop proche de --papier-dark pour rester lisible à cette
@@ -56,6 +68,10 @@
     --blanc: #201a15;
     --vert: #7fb08d;
     --logo-line: var(--encre-soft);
+    --chart-s0: #3987e5;
+    --chart-s1: #199e70;
+    --chart-s2: #c98500;
+    --chart-s3: #9085e9;
   }
 }
 :root[data-theme="dark"] {
@@ -71,6 +87,10 @@
   --blanc: #201a15;
   --vert: #7fb08d;
   --logo-line: var(--encre-soft);
+  --chart-s0: #3987e5;
+  --chart-s1: #199e70;
+  --chart-s2: #c98500;
+  --chart-s3: #9085e9;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -908,6 +928,29 @@ body {
 }
 .yc-yr { font-size: 11px; color: var(--encre-soft); font-variant-numeric: tabular-nums; }
 .yc-note { font-size: 12px; color: var(--encre-soft); margin-top: 10px; }
+
+/* ── GRAPHE EMPILÉ « ACTIVITÉ CITOYENNE PAR AN » (voir stats.js/renderActivityTypes) ──
+   Palette catégorielle dédiée (--chart-s0..s3, voir tokens en tête de fichier) : 4
+   séries disjointes (question orale/demande/motion/question écrite), jamais les
+   points administratifs "point_normal"/"point_urgent" (~95 % du volume, qui
+   écraserait visuellement ces 4-là dans le même graphe). */
+.yc-stack {
+  width: 100%; max-width: 30px; display: flex; flex-direction: column;
+  justify-content: flex-end; transition: filter 0.15s;
+}
+.yc-col:hover .yc-stack { filter: brightness(1.08); }
+.yc-seg:not(:last-child) { margin-bottom: 2px; }   /* écart de 2px = fond de la page (spacer) */
+.yc-seg-top { border-radius: 4px 4px 0 0; }        /* seul le segment le plus haut est arrondi */
+.yc-seg-s0 { background: var(--chart-s0); }
+.yc-seg-s1 { background: var(--chart-s1); }
+.yc-seg-s2 { background: var(--chart-s2); }
+.yc-seg-s3 { background: var(--chart-s3); }
+.yc-legend {
+  display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0 2px;
+  font-size: 12.5px; color: var(--encre-soft);
+}
+.yc-legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.yc-legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex: none; }
 .yc-head {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; flex-wrap: wrap; margin-bottom: 14px;

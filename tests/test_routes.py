@@ -46,6 +46,7 @@ def test_stats_route():
     assert j["nb_seances"] > 100
     assert j["nb_points"] > 1000
     assert "pv_par_annee" in j and "themes_par_annee" in j
+    assert "activite_types_par_annee" in j and "activite_type_order" in j
 
 
 def test_trend_route():

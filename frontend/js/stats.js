@@ -15,6 +15,8 @@ let latestYear = '';
 let selectedSeance = null;   // date d'un PV choisi dans la liste (affine KPI + thèmes)
 let selectedTheme = null;    // thème choisi → ne garde dans la liste que les PV concernés
 let expandedYears = new Set();  // années dépliées dans la vue « tous les PV » groupée
+let activiteTypesParAnnee = [];   // [{annee, "Question orale":n, "Demande":n, ...}] — voir /stats
+let activiteTypeOrder = [];       // ordre fixe des 4 séries (voir ACTIVITY_TYPE_ORDER, backend)
 
 const MOIS_FR = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -169,6 +171,51 @@ function renderThemes() {
     + 'et seules les 12 thématiques principales sont affichées.</p>';
 }
 
+// Graphe empilé « Activité citoyenne par an » : 4 séries DISJOINTES (question
+// orale/demande/motion/question écrite) — volontairement PAS les points
+// administratifs "point normal"/"urgent" (~95 % du volume total, qui
+// écraserait visuellement ces 4-là dans le même graphe empilé, voir
+// backend/services/statistics.py). Palette catégorielle dédiée (--chart-s0..s3),
+// hors de l'accent --bordeaux réservé aux éléments interactifs. Lecture seule
+// (pas de drill-down) : légende + étiquette de total + infobulle par segment
+// suffisent (skill dataviz : relief obligatoire dès qu'une teinte catégorielle
+// tombe sous 3:1 de contraste sur le fond clair).
+function renderActivityTypes() {
+  const plot = document.getElementById('activityPlot');
+  const legend = document.getElementById('activityLegend');
+  if (!plot || !legend) return;
+  if (!activiteTypesParAnnee.length || !activiteTypeOrder.length) {
+    plot.innerHTML = '<p class="yc-note">Aucune donnée disponible.</p>';
+    legend.innerHTML = '';
+    return;
+  }
+  const totals = activiteTypesParAnnee.map(row => activiteTypeOrder.reduce((sum, t) => sum + (row[t] || 0), 0));
+  const max = Math.max(...totals, 1);
+
+  plot.innerHTML = activiteTypesParAnnee.map((row, i) => {
+    const total = totals[i];
+    const stackH = Math.max(4, Math.round(total / max * 130));
+    let firstNonZero = true;
+    const segs = activiteTypeOrder.map((t, si) => {
+      const n = row[t] || 0;
+      if (!n) return '';
+      const segH = Math.max(2, Math.round(n / total * stackH));
+      const topCls = firstNonZero ? ' yc-seg-top' : '';
+      firstNonZero = false;
+      return `<div class="yc-seg yc-seg-s${si}${topCls}" style="height:${segH}px" title="${escapeHtml(t)} : ${fmtInt(n)}"></div>`;
+    }).join('');
+    return `<div class="yc-col" title="${escapeHtml(row.annee)} : ${fmtInt(total)} au total">
+      <span class="yc-val">${fmtInt(total)}</span>
+      <div class="yc-stack" style="height:${stackH}px">${segs}</div>
+      <span class="yc-yr">${escapeHtml(row.annee)}</span>
+    </div>`;
+  }).join('');
+
+  legend.innerHTML = activiteTypeOrder.map((t, si) =>
+    `<span class="yc-legend-item"><span class="yc-legend-swatch yc-seg-s${si}"></span>${escapeHtml(t)}</span>`
+  ).join('');
+}
+
 // Séances à lister : celles du périmètre courant ; au niveau « toutes les
 // années », on retombe sur la dernière année (défaut demandé) plutôt que 144.
 function listSeances() {
@@ -291,6 +338,8 @@ export async function loadStats() {
     }
     const s = await res.json();
     seancesResume = s.seances_resume || [];
+    activiteTypesParAnnee = s.activite_types_par_annee || [];
+    activiteTypeOrder = s.activite_type_order || [];
     latestYear = seancesResume.reduce((mx, x) => x.date.slice(0, 4) > mx ? x.date.slice(0, 4) : mx, '');
     expandedYears = new Set([latestYear]);   // année la plus récente dépliée par défaut
     drill = { level: 'year', year: null, month: null };
@@ -314,6 +363,16 @@ export async function loadStats() {
         <div class="yc-scroll"><div class="yc-plot" id="drillPlot"></div></div>
         <p class="yc-note" id="drillHint"></p>
       </div>
+      <div class="stat-section" id="activitySection">
+        <div class="yc-head">
+          <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg>Activité citoyenne par année</h3>
+        </div>
+        <div class="yc-scroll"><div class="yc-plot" id="activityPlot"></div></div>
+        <div class="yc-legend" id="activityLegend"></div>
+        <p class="yc-note">Questions orales, demandes, motions et questions écrites — les points
+          administratifs/collectifs (approbations, conventions…) ne sont pas comptés ici, ils
+          domineraient sans rien dire de l'activité citoyenne.</p>
+      </div>
       <div class="stat-section" id="themesSection">
         <div class="yc-head">
           <h3><svg class="icon" aria-hidden="true"><use href="#ico-thematique"/></svg>Thématiques — <span id="themesScope">toutes les années</span></h3>
@@ -327,6 +386,7 @@ export async function loadStats() {
         <div id="pvList" class="pv-list"></div>
       </div>`;
     refreshStats();
+    renderActivityTypes();
     statsLoaded = true;
   } catch (err) {
     container.innerHTML = `<div class="error-box">Impossible de charger les statistiques. ${escapeHtml(err.message)}</div>`;
