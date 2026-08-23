@@ -13,6 +13,7 @@ from collections import Counter, defaultdict
 from config import PV_JSON_PATH
 from utils.text import _strip_accents, _canon_theme
 from utils.video import video_session_map
+from services.questions_ecrites import load_qe_db
 
 
 # Cache mémoire du JSON parsé : /stats et /trend le relisaient (~7,6 Mo) à
@@ -97,6 +98,20 @@ _TREND_NONSPEND_DECISION = re.compile(
     r"prend (pour information|acte|connaissance)|pour information|prend note|constate"
 )
 
+# ── ACTIVITÉ CITOYENNE PAR AN (graphe empilé, onglet Statistiques) ──────────
+# Volontairement LIMITÉ aux 4 types portés par un·e citoyen·ne/conseiller·ère
+# (jamais les points administratifs/collectifs "point_normal"/"point_urgent",
+# ~95 % du volume total : les mélanger écraserait visuellement ces 4 types-ci
+# dans un même graphe empilé — voir la discussion avec l'utilisateur). Ordre
+# FIXE (jamais réordonné par valeur) : partagé avec le frontend, qui assigne
+# une couleur catégorielle à chaque position (voir dataviz skill).
+_ACTIVITY_PV_TYPE_LABEL = {
+    "question_orale": "Question orale",
+    "demande_habitant": "Demande",
+    "motion": "Motion",
+}
+ACTIVITY_TYPE_ORDER = ["Question orale", "Demande", "Motion", "Question écrite"]
+
 
 def _is_excluded_amount(p: dict) -> bool:
     """True si le montant du point n'est PAS une dépense discrétionnaire de la
@@ -163,6 +178,7 @@ def compute_stats(db: dict) -> dict:
     themes_year = {}          # année -> Counter de thèmes canoniques
     themes_all = Counter()    # toutes années confondues (canoniques)
     dates_year = defaultdict(list)   # année -> [dates ISO des séances]
+    activite_year = defaultdict(Counter)   # année -> Counter par type (voir ACTIVITY_TYPE_ORDER)
     for s in db.get("seances", []):
         date = (s.get("seance", {}) or {}).get("date") or ""
         y = date[:4]
@@ -177,9 +193,26 @@ def compute_stats(db: dict) -> dict:
                 c = _canon_theme(t)
                 yc[c] += 1
                 themes_all[c] += 1
+            label = _ACTIVITY_PV_TYPE_LABEL.get(p.get("type"))
+            if label:
+                activite_year[y][label] += 1
     pv_par_annee = [
         {"annee": y, "pv": pv_year[y], "points": pts_year[y]}
         for y in sorted(pv_year)
+    ]
+    # Questions écrites : canal séparé, sans séance/PV associé — comptées par
+    # leur propre champ "annee" (voir services/questions_ecrites*.py), pas par
+    # date de séance.
+    try:
+        for q in load_qe_db().get("questions", []):
+            y = str(q.get("annee") or "")
+            if y:
+                activite_year[y]["Question écrite"] += 1
+    except Exception:
+        pass
+    activite_types_par_annee = [
+        {"annee": y, **{t: activite_year[y].get(t, 0) for t in ACTIVITY_TYPE_ORDER}}
+        for y in sorted(activite_year)
     ]
     # Top 12 thèmes par année + « toutes » — alimente le filtre synchronisé
     # du graphe des thématiques (clic sur une année → sujets de cette année).
@@ -236,6 +269,8 @@ def compute_stats(db: dict) -> dict:
         "montant_total_eur": round(montant_total, 2),
         "votes_non_unanimes": votes_non_unanimes,
         "pv_par_annee": pv_par_annee,
+        "activite_types_par_annee": activite_types_par_annee,
+        "activite_type_order": ACTIVITY_TYPE_ORDER,
         "themes_par_annee": themes_par_annee,
         "dates_par_annee": dates_par_annee,
         "seances_resume": seances_resume,
