@@ -55,7 +55,17 @@ CONFIG = {
 
     "ANTHROPIC_API_KEY": "",   # vide = lu depuis la variable d'environnement
     "MODEL":      "claude-haiku-4-5-20251001",
-    "MAX_TOKENS": 4096,        # un seul Q/R, jamais aussi dense qu'un PV
+    # "question"/"reponse" sont demandés en texte INTÉGRAL (voir SYSTEM_PROMPT) :
+    # pour l'immense majorité des documents (1-5 pages) 4096 tokens suffisent
+    # largement, mais un échange plus dense (10-30 pages, plusieurs relances)
+    # peut largement dépasser ce plafond — la réponse est alors coupée en plein
+    # milieu d'une chaîne JSON (stop_reason "max_tokens"), ce qui produit une
+    # erreur `json.JSONDecodeError: Unterminated string` qui n'a RIEN à voir
+    # avec le PDF lui-même : 3 tentatives identiques échouent alors à coup sûr
+    # (voir call_claude_api, qui log désormais ce cas explicitement). Marge
+    # large : Haiku est bon marché et max_tokens n'est qu'un plafond, pas un
+    # coût — le dépasser ne coûte rien tant qu'il n'est pas atteint.
+    "MAX_TOKENS": 32768,
 
     "API_DELAY_SEC":      1.0,
     "SKIP_ALREADY_DONE":  True,
@@ -200,6 +210,18 @@ def call_claude_api(text: str) -> Optional[dict]:
             )
             raw = next((b.text for b in response.content
                         if getattr(b, "type", None) == "text"), "").strip()
+            # Réponse coupée par le plafond MAX_TOKENS (pas un problème de PDF,
+            # ni un JSON aléatoirement invalide) : un retry identique échouera
+            # de la même façon à coup sûr. Diagnostic explicite avant même
+            # d'essayer de parser — sinon ça remonte comme un simple
+            # JSONDecodeError "Unterminated string" indiscernable d'un vrai
+            # glitch, ce qui a coûté une session de debug à froid une fois.
+            if response.stop_reason == "max_tokens":
+                log.error(
+                    f"    Réponse tronquée par MAX_TOKENS={CONFIG['MAX_TOKENS']} "
+                    f"(tentative {attempt+1}) — document trop dense, pas un problème "
+                    f"aléatoire : augmenter CONFIG['MAX_TOKENS']"
+                )
             raw = re.sub(r"^```(?:json)?\s*", "", raw)
             raw = re.sub(r"\s*```$", "", raw).strip()
             if not raw.startswith("{"):
