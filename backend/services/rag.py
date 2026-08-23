@@ -18,7 +18,7 @@ from config import (
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
-from utils.text import _thematique_label
+from utils.text import _decision_status, _thematique_label
 from utils.video import video_session_map, video_chunk_counts
 from services.pinecone_service import get_pinecone_index
 from services.statistics import load_db
@@ -317,11 +317,21 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
         # séance a été filmée — même sans chapitrage (couverture des séances
         # non chapitrées). None pour les débats vidéo (déjà un deep-link précis).
         video_url = session_map.get(date_str) if source_type != "video_conseil" else None
+        # Statut de la décision : pour un débat vidéo, le champ « decision »
+        # porte déjà « Type · Auteur·e » (ex. « Motion · Elias AMMI »), pas une
+        # issue de vote — inchangé. Pour une délibération, normalisé + issue du
+        # vote quand connue (ex. « Décidé à l'unanimité »), comme partout
+        # ailleurs (Séances/Par élu·e) — voir _decision_status (limité au TYPE
+        # de vote indexé, sans le détail pour/contre/abstentions).
+        decision = (
+            str(meta.get("decision", "")) if source_type == "video_conseil"
+            else _decision_status(meta.get("decision"), meta.get("vote_type"))
+        )
         sources.append(Source(
             date=date_str,
             sp=int(float(meta.get("sp") or 0)),
             titre=str(meta.get("titre", "")),
-            decision=str(meta.get("decision", "")),
+            decision=decision,
             score=round(float(h["score"]), 3),
             url=url,
             source_type=source_type,

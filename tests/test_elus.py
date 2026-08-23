@@ -754,6 +754,35 @@ def test_decision_summary_none_when_no_decision():
     assert elus._decision_summary(None, None) is None
 
 
+# ── _decision_status (utils.text) : variante pour services.rag/ ────────────
+# Contrairement à _decision_summary (vote COMPLET, lu depuis le JSON),
+# n'a accès qu'au TYPE de vote indexé dans Pinecone (voir index_pv.py) — pas
+# de détail pour/contre/abstentions à afficher pour un vote nominal.
+def test_decision_status_unanimous_vote():
+    from utils.text import _decision_status
+    assert _decision_status("DECIDE", "unanimite") == "Décidé à l'unanimité"
+
+
+def test_decision_status_nominal_vote_has_no_fabricated_counts():
+    # Le type de vote seul ne suffit pas à reconstituer les comptes réels
+    # (pour/contre/abstentions) — mieux vaut le label seul qu'un chiffre
+    # inventé (toujours "0 contre, 0 abstentions" faute de mieux).
+    from utils.text import _decision_status
+    assert _decision_status("DECIDE", "vote_nominal") == "Décidé"
+
+
+def test_decision_status_normalizes_same_as_decision_summary():
+    from utils.text import _decision_status
+    assert _decision_status("PRENDS POUR INFORMATION") == "Pris pour information"
+    assert _decision_status("PRENDRE ACTE", None) == "Pris acte"
+
+
+def test_decision_status_empty_when_no_decision():
+    from utils.text import _decision_status
+    assert _decision_status("") == ""
+    assert _decision_status(None) == ""
+
+
 def test_thematique_label_normalizes_slug():
     assert elus._thematique_label("transports_publics") == "Transport public"
     assert elus._thematique_label("mobilite-verte") == "Mobilite verte"
