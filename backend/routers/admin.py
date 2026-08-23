@@ -8,8 +8,8 @@ import os
 from fastapi import APIRouter, Depends, File, HTTPException, Request, Response, UploadFile
 
 from limiter import limiter
-from models.api import AdminLoginRequest, SeancePublishRequest
-from services import jobs, pv_integration
+from models.api import AdminLoginRequest, QuestionEcritePublishRequest, SeancePublishRequest
+from services import jobs, pv_integration, questions_ecrites_integration
 from services.auth import SESSION_TTL_S, create_session_token, verify_admin_credentials, verify_session_token
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -120,6 +120,49 @@ def publish_seance(request: Request, body: SeancePublishRequest, username: str =
 
 @router.get("/seances/publish/{job_id}")
 def publish_status(job_id: str, username: str = Depends(require_admin)):
+    return _job_status(job_id)
+
+
+@router.post("/questions-ecrites/extract")
+@limiter.limit("10/hour")
+def extract_question_ecrite(
+    request: Request, file: UploadFile = File(...), username: str = Depends(require_admin),
+):
+    """Étape 1/2 : même flux que /seances/extract (voir sa docstring pour le
+    raisonnement job_id/tâche de fond) appliqué à une question écrite —
+    document plus court, donc plus rapide, mais même risque de coupure
+    proxy sur un appel Claude, d'où le même sondage côté front."""
+    raw = file.file.read(MAX_UPLOAD_BYTES + 1)
+    if not raw:
+        raise HTTPException(status_code=400, detail="Fichier vide.")
+    if len(raw) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="Fichier trop volumineux (max 20 Mo).")
+    job_id = jobs.start_job(
+        questions_ecrites_integration.extract_and_preview, raw, file.filename or "upload.pdf",
+    )
+    return {"job_id": job_id}
+
+
+@router.get("/questions-ecrites/extract/{job_id}")
+def extract_question_ecrite_status(job_id: str, username: str = Depends(require_admin)):
+    return _job_status(job_id)
+
+
+@router.post("/questions-ecrites/publish")
+@limiter.limit("10/hour")
+def publish_question_ecrite(
+    request: Request, body: QuestionEcritePublishRequest, username: str = Depends(require_admin),
+):
+    """Étape 2/2 : reçoit la question telle que renvoyée par
+    /admin/questions-ecrites/extract (l'admin en a vu l'aperçu)."""
+    job_id = jobs.start_job(
+        questions_ecrites_integration.publish_question, body.question, body.source_url,
+    )
+    return {"job_id": job_id}
+
+
+@router.get("/questions-ecrites/publish/{job_id}")
+def publish_question_ecrite_status(job_id: str, username: str = Depends(require_admin)):
     return _job_status(job_id)
 
 
