@@ -13,6 +13,7 @@ let elusLoaded = false;
 let pendingEluKey = null;   // élu·e à présélectionner depuis un lien partagé (?elu=)
 let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltrer sans refetch)
 let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
+let eluTypeFilter = 'all';  // type d'intervention sélectionné ("all" = tous) — depose uniquement
 let eluSelectedKey = null;  // clé actuellement chargée
 
 // Présélection appliquée depuis un lien partagé (?tab=elus&elu=…), voir handleDeepLink.
@@ -73,6 +74,7 @@ function selectElu(key, list) {
     if (select) select.value = '';
     document.getElementById('eluResult').innerHTML = '';
     document.getElementById('eluYear').hidden = true;
+    document.getElementById('eluType').hidden = true;
   }
 }
 
@@ -94,7 +96,12 @@ export function shareElu(btn) {
 
 async function loadElu(key) {
   const box = document.getElementById('eluResult');
-  if (!key) { box.innerHTML = ''; document.getElementById('eluYear').hidden = true; return; }
+  if (!key) {
+    box.innerHTML = '';
+    document.getElementById('eluYear').hidden = true;
+    document.getElementById('eluType').hidden = true;
+    return;
+  }
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   try {
     const res = await fetch(API_URL + '/elu/' + encodeURIComponent(key));
@@ -135,6 +142,43 @@ export function onEluYearChange() {
 function filterByYear(items, year) {
   if (year === 'all') return items;
   return items.filter(it => (it.date || '').slice(0, 4) === year);
+}
+
+// Ordre d'affichage fixe (pas l'ordre d'apparition dans les données) : même
+// ordre que TYPE_BADGE côté utils.js, pour une liste toujours dans le même
+// sens quel que soit l'élu·e sélectionné·e.
+const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
+
+// Types d'intervention distincts présents parmi les points DÉPOSÉS de cette
+// fiche (les réponses en séance n'ont pas de "type" — voir renderElu, le
+// filtre ne s'applique qu'à la liste "depose").
+function eluTypes(d) {
+  const present = new Set((d.depose || []).map(it => it.type_label).filter(Boolean));
+  return TYPE_FILTER_ORDER.filter(t => present.has(t));
+}
+
+// (Re)remplit le filtre de type pour la fiche courante ; conserve le type
+// sélectionné s'il existe encore pour cette personne, sinon "Tous".
+function populateEluTypeSelect(d) {
+  const sel = document.getElementById('eluType');
+  if (!sel) return;
+  const types = eluTypes(d);
+  if (types.length < 2) { sel.innerHTML = ''; sel.hidden = true; eluTypeFilter = 'all'; return; }
+  if (!types.includes(eluTypeFilter)) eluTypeFilter = 'all';
+  sel.hidden = false;
+  sel.innerHTML = '<option value="all">Tous les types</option>' +
+    types.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+  sel.value = eluTypeFilter;
+}
+
+export function onEluTypeChange() {
+  eluTypeFilter = document.getElementById('eluType').value;
+  if (currentEluData) renderElu(currentEluData);
+}
+
+function filterByType(items, typeLabel) {
+  if (typeLabel === 'all') return items;
+  return items.filter(it => it.type_label === typeLabel);
 }
 
 function eluDeposeRow(it, nom) {
@@ -212,9 +256,10 @@ function groupByYear(items, rowFn) {
 function renderElu(d) {
   currentEluData = d;
   populateEluYearSelect(d);
+  populateEluTypeSelect(d);
 
   const box = document.getElementById('eluResult');
-  const depose = filterByYear(d.depose || [], eluYearFilter);
+  const depose = filterByType(filterByYear(d.depose || [], eluYearFilter), eluTypeFilter);
   const repond = filterByYear(d.repond || [], eluYearFilter);
   const roleLabel = d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
@@ -223,11 +268,13 @@ function renderElu(d) {
   const nDemandes = depose.filter(it => it.type === 'demande_habitant').length;
   const nMotions = depose.filter(it => it.type === 'motion').length;
   const nVideos = depose.filter(it => it.type === 'video').length;
+  const nQE = depose.filter(it => it.type === 'question_ecrite').length;
   const parts = [];
   if (nQuestions) parts.push(`${nQuestions} question${nQuestions > 1 ? 's' : ''} orale${nQuestions > 1 ? 's' : ''}`);
   if (nDemandes) parts.push(`${nDemandes} demande${nDemandes > 1 ? 's' : ''}`);
   if (nMotions) parts.push(`${nMotions} motion${nMotions > 1 ? 's' : ''}`);
   if (nVideos) parts.push(`${nVideos} débat${nVideos > 1 ? 's' : ''} filmé${nVideos > 1 ? 's' : ''}`);
+  if (nQE) parts.push(`${nQE} question${nQE > 1 ? 's' : ''} écrite${nQE > 1 ? 's' : ''}`);
 
   let html = `<div class="elu-head">
     <div class="elu-name">${escapeHtml(d.nom)}</div>
@@ -247,9 +294,12 @@ function renderElu(d) {
   }
 
   if (!depose.length && !repond.length) {
-    html += eluYearFilter === 'all'
-      ? `<div class="trend-empty">Aucune intervention identifiée.</div>`
-      : `<div class="trend-empty">Aucune intervention en ${escapeHtml(eluYearFilter)}.</div>`;
+    const filters = [];
+    if (eluTypeFilter !== 'all') filters.push(`de type « ${eluTypeFilter} »`);
+    if (eluYearFilter !== 'all') filters.push(`en ${eluYearFilter}`);
+    html += filters.length
+      ? `<div class="trend-empty">Aucune intervention ${filters.join(' ')}.</div>`
+      : `<div class="trend-empty">Aucune intervention identifiée.</div>`;
   }
 
   html += `<p class="elu-note">Agrégation déterministe depuis les procès-verbaux (2012–2026) et le chapitrage des séances filmées. Attribution : question orale → 1er intervenant ; demande → auteur du titre ou 1er intervenant ; motion → auteur nommé dans le titre. Liste indicative, non exhaustive des prises de parole en débat.</p>`;
