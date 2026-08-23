@@ -132,9 +132,13 @@ def test_elus_list_has_no_role_word_or_compound_display_names():
     lst = elus.elus_list()
     keys = {e["key"] for e in lst}
     assert "communal" not in keys  # « Secrétaire communal » n'est pas une personne
+    homonym_keys = set(elus._HOMONYM_KEY_OVERRIDES.values())
     for e in lst:
         toks = [elus._norm_tok(t) for t in e["nom"].split()]
-        assert toks[-1] == e["key"], e  # ordre « Prénom (particule) Nom »
+        # Une clé d'homonyme (ex. "nyssens_marie") est délibérément composée,
+        # pas le seul nom de famille — voir _HOMONYM_KEY_OVERRIDES.
+        if e["key"] not in homonym_keys:
+            assert toks[-1] == e["key"], e  # ordre « Prénom (particule) Nom »
         assert len(set(toks)) == len(toks), e  # pas de mot répété (artefact)
         assert not any(elus._is_role_token(t) for t in e["nom"].split()), e
 

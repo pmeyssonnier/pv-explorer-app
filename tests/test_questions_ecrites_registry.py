@@ -27,6 +27,30 @@ def test_written_question_becomes_depose_entry_for_known_person(monkeypatch):
     assert entry["video_url"] is None
 
 
+def test_written_question_homonym_author_not_merged_into_unrelated_namesake(monkeypatch):
+    # Marie Nyssens (autrice d'une question écrite isolée) n'a aucun lien
+    # avec Clotilde Nyssens, conseillère communale citée des dizaines de fois
+    # dans les PV — sans le registre d'homonymes (_HOMONYM_KEY_OVERRIDES),
+    # _key() ne retient que le nom de famille et les fusionne en une seule
+    # fiche, qui hérite alors du nom affiché de la personne la plus citée.
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2020-04-16", "auteur": "Marie Nyssens", "titre": "L'engagement dans le Département PPU",
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    assert "nyssens_marie" in index
+    fiche = index["nyssens_marie"]
+    assert fiche["nom"] == "Marie Nyssens"
+    qe_entries = [it for it in fiche["depose"] if it["type"] == "question_ecrite"]
+    assert len(qe_entries) == 1
+    assert qe_entries[0]["titre"] == "L'engagement dans le Département PPU"
+    # Pas de fuite dans la fiche de l'homonyme : la question de Marie
+    # n'apparaît pas sous la clé "nyssens" (Clotilde).
+    if "nyssens" in index:
+        assert all(it["titre"] != "L'engagement dans le Département PPU"
+                   for it in index["nyssens"]["depose"])
+        assert index["nyssens"]["nom"] != "Marie Nyssens"
+
+
 def test_written_question_creates_new_entry_for_unknown_author(monkeypatch):
     # Même logique que l'attribution des points de PV (_point_author) : une
     # personne pas encore vue ailleurs dans le corpus obtient quand même une
