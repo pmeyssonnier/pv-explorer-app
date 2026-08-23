@@ -4,7 +4,7 @@
 import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, renderThemeTags,
-  renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine,
+  renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
@@ -207,9 +207,7 @@ function eluDeposeRow(it, nom) {
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, nom);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
   const tags = renderThemeTags(it.thematiques);
-  const reponse = it.type === 'question_ecrite' && it.reponse
-    ? `<details class="elu-qe-reponse"><summary>Voir la réponse</summary><p>${escapeHtml(it.reponse)}</p></details>`
-    : '';
+  const reponse = it.type === 'question_ecrite' ? renderReponseDetails(it.reponse) : '';
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">

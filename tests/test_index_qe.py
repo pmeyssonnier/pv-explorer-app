@@ -57,6 +57,19 @@ def test_question_to_chunk_reponse_absente_ne_devine_rien():
     assert "Pas encore de réponse publiée." in chunk["metadata"]["chunk_text"]
 
 
+def test_question_to_chunk_reponse_metadata_dupliquee_hors_chunk_text():
+    # Nécessaire pour l'accordéon « Voir la réponse » côté chat (voir
+    # services/rag.py) — chunk_text n'est jamais renvoyé au frontend.
+    chunk = index_qe.question_to_chunk(_q(), "schaerbeek")
+    assert chunk["metadata"]["reponse"] == "Le tarif est fixé par le règlement communal."
+
+
+def test_question_to_chunk_reponse_metadata_empty_string_when_absente():
+    # Cohérent avec "url" (chaîne vide plutôt qu'un None absent en métadonnée).
+    chunk = index_qe.question_to_chunk(_q(reponse=None), "schaerbeek")
+    assert chunk["metadata"]["reponse"] == ""
+
+
 def test_question_to_chunk_url_defaults_to_empty_string_not_none():
     # Cohérent avec point_to_chunk (metadata Pinecone préfère une chaîne vide
     # à un None absent — filtrage/affichage plus simple côté lecture).

@@ -86,6 +86,14 @@ class Source(BaseModel):
         default=None,
         description="Nombre d'extraits de transcript pour ce point (débat vidéo uniquement).",
     )
+    # Texte intégral de la réponse du Collège (question écrite uniquement,
+    # None sinon — y compris une question écrite sans réponse publiée) :
+    # affiché dans un accordéon repliable côté frontend, comme dans l'onglet
+    # Par élu·e (voir services/questions_ecrites*.py).
+    reponse: Optional[str] = Field(
+        default=None,
+        description="Texte intégral de la réponse du Collège (question écrite uniquement).",
+    )
 
 
 class AnswerResponse(BaseModel):

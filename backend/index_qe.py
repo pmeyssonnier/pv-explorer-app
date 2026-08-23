@@ -64,6 +64,10 @@ Réponse : {reponse or "Pas encore de réponse publiée."}"""
         "type": "question_ecrite",
         "url": q.get("source_url") or "",
         "thematiques": [],                  # non extraites pour les questions écrites
+        # Dupliquée hors chunk_text (qui n'est jamais renvoyé au frontend, voir
+        # rag.build_context) : nécessaire pour l'accordéon « Voir la réponse »
+        # dans les sources du chat, comme pour l'onglet Par élu·e.
+        "reponse": reponse or "",
     }
     return {"id": q["id"], "metadata": metadata}
 
