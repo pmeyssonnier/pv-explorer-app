@@ -3,7 +3,7 @@
     "nom": "Base des questions écrites - Conseil communal de Schaerbeek",
     "version": "1.0",
     "date_creation": "2026-08-23T10:08:06.704034",
-    "total_questions": 212,
+    "total_questions": 213,
     "last_updated": "2026-08-23T17:59:53.674789"
   },
   "questions": [
@@ -2761,6 +2761,19 @@
       "repondant": null,
       "source_file": "asbl_creches_de_schaerbeek.pdf",
       "extracted_at": "2026-08-23T20:36:12.865581"
+    },
+    {
+      "id": "QE-2019-017",
+      "annee": 2019,
+      "numero": 17,
+      "date": "2019-09-24",
+      "auteur": "Arnaud Verstraete",
+      "titre": "Politique cyclable à Schaerbeek",
+      "question": "En vue du suivi de la mise en œuvre de l'accord de gouvernance, je souhaiterais en savoir plus sur les réalisations concrètes de la politique cyclable schaerbeekoise. 1. Combien de km d'infrastructure cyclable ont été aménagés ces dernières années ? Je souhaite une distinction entre les rues cyclables, les pistes cyclables séparées, les pistes cyclables adjacentes, les bandes cyclables suggestives, … 2. Combien de km supplémentaires d'infrastructure cyclable sont actuellement prévus dans des plans concrets et des décisions du collège ? Je souhaite une distinction entre les rues cyclables, les pistes cyclables séparées, les pistes cyclables adjacentes, les bandes cyclables suggestives, … 3. Combien d'arceaux vélos et de boîtes à vélos ont été installés ces dernières années ? 4. Combien d'arceaux vélos et de boîtes à vélos supplémentaires sont actuellement prévus dans des plans concrets et des décisions du collège ?",
+      "reponse": "La majorité actuelle à Schaerbeek s'est engagée au début de la législature à investir dans une mobilité fluide via différentes mesures : mise en place d'une zone 30, le principe STOP, notre inscription dans le plan Good Move de la Région,… Dans la circulation, nous donnons la priorité aux modes actifs. Vos questions sont donc très pertinentes. Je peux déjà vous répondre aujourd'hui sur certaines de vos questions. Combien d'arceaux vélos et de boîtes à vélos ont été installés ces dernières années ? Chaque année, la commune prévoit d'installer 10 boîtes à vélos. Cette année, ce nombre a été doublé. Nous arrivons ainsi à Schaerbeek à ce moment à environ 55 boîtes à vélos installées ou en cours d'installation à la fin de l'année. (selon décision du collège) Pour les arceaux vélos, le chiffre à la fin de 2018 s'élève à 410. Plus précisément, 100 ont été installés en 2016, 117 en 2017 et 193 en 2018. Les chiffres pour 2019 sont encore en cours d'élaboration. Combien d'arceaux vélos et de boîtes à vélos supplémentaires sont actuellement prévus dans des plans concrets et des décisions du collège ? Il y a 50 boîtes à vélos supplémentaires prévues via l'appel à projets Bikes in Brussels et avec des subsides de la Fondation Roi Baudouin. Celles-ci seront installées courant 2020 et 2021. Plus d'informations sur les plans et les réponses à vos autres questions nécessitent l'apport de différents services. Nos services ont besoin de plus de temps pour rassembler tous les éléments afin de pouvoir vous fournir une réponse correcte. Avant le conseil communal du 27 novembre, vous pouvez attendre une réponse complète à toutes vos questions de ma part.",
+      "repondant": null,
+      "source_file": "fietsinfrastructuur.pdf",
+      "extracted_at": "2026-08-23T20:36:53.484489"
     }
   ]
 }
