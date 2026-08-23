@@ -147,6 +147,8 @@ function eluDeposeRow(it, nom) {
   let links = '';
   if (it.type === 'video' && it.url) {
     links = renderVideoLink(it.url, '▶ Voir le débat', 'Voir le débat sur YouTube (au bon moment)');
+  } else if (it.type === 'question_ecrite') {
+    links += renderPvPdfLink(it.url, 'Voir la question (PDF)', 'Ouvrir la question écrite (PDF) sur 1030.be');
   } else {
     links += renderPvPdfLink(it.url);
     if (it.video_url) {

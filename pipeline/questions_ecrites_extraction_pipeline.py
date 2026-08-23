@@ -44,13 +44,13 @@ from pv_extraction_pipeline import _clean_str, _coerce_int_or_none  # noqa: E402
 # CONFIGURATION
 # ══════════════════════════════════════════════════════════════════════════
 CONFIG = {
-    "DRIVE_ROOT":   "/content/drive/MyDrive/QuestionsEcrites_Schaerbeek",
-    "INPUT_DIR":    "/content/drive/MyDrive/QuestionsEcrites_Schaerbeek/input",
-    "OUTPUT_DIR":   "/content/drive/MyDrive/QuestionsEcrites_Schaerbeek/output",
-    "BACKUP_DIR":   "/content/drive/MyDrive/QuestionsEcrites_Schaerbeek/backups",
-    "LOG_FILE":     "/content/drive/MyDrive/QuestionsEcrites_Schaerbeek/pipeline.log",
-    "DB_JSON_PATH": "/content/drive/MyDrive/QuestionsEcrites_Schaerbeek/questions_ecrites_schaerbeek.json",
-    "PROGRESS_FILE": "/content/drive/MyDrive/QuestionsEcrites_Schaerbeek/progress.json",
+    "DRIVE_ROOT":   "/content/drive/MyDrive/QE_Schaerbeek",
+    "INPUT_DIR":    "/content/drive/MyDrive/QE_Schaerbeek/input",
+    "OUTPUT_DIR":   "/content/drive/MyDrive/QE_Schaerbeek/output",
+    "BACKUP_DIR":   "/content/drive/MyDrive/QE_Schaerbeek/backups",
+    "LOG_FILE":     "/content/drive/MyDrive/QE_Schaerbeek/pipeline.log",
+    "DB_JSON_PATH": "/content/drive/MyDrive/QE_Schaerbeek/questions_ecrites_schaerbeek.json",
+    "PROGRESS_FILE": "/content/drive/MyDrive/QE_Schaerbeek/progress.json",
 
     "ANTHROPIC_API_KEY": "",   # vide = lu depuis la variable d'environnement
     "MODEL":      "claude-haiku-4-5-20251001",
