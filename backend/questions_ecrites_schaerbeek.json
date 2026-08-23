@@ -3,7 +3,7 @@
     "nom": "Base des questions écrites - Conseil communal de Schaerbeek",
     "version": "1.0",
     "date_creation": "2026-08-23T10:08:06.704034",
-    "total_questions": 214,
+    "total_questions": 215,
     "last_updated": "2026-08-23T17:59:53.674789"
   },
   "questions": [
@@ -2787,6 +2787,19 @@
       "repondant": null,
       "source_file": "qe_2019_ndeg14_-_e._ozkara_-_fete_du_sacrifice.pdf",
       "extracted_at": "2026-08-23T21:40:25.268051"
+    },
+    {
+      "id": "QE-2019-011",
+      "annee": 2019,
+      "numero": 11,
+      "date": "2019-05-06",
+      "auteur": "Marie Nyssens",
+      "titre": "Réalisation des travaux de voirie avenue Eugene Demolder",
+      "question": "Je me permets de vous poser cette question écrite quant à la réalisation des travaux de voirie avenue Eugene Demolder. Ayant constaté que la réfaction du trottoir a été étendue au jardinet privé du numéro 49 je me permets de vous poser les questions suivantes : La commune a-t'elle communiqué aux riverains sa propos de la possibilité de faire intervenir l'entreprise, à titre privé sur leur jardinet? Si oui quand et quelle a été cette communication ? (j'ai pu manquer l'information, je vous remercie de me la transmettre) En effet, et en particulier pour la deuxième partie de l'avenue, il me semble que cela pourrait être une opportunité pour d'autres riverains d'effectuer ces travaux dans les meilleures conditions financières et esthétiques (homogénéité avec le trottoir)… est-ce prévu ou cela va-t'il être prévu ? Si non… La commune va-t'elle communiquer sur cette possibilité à l'avenir pour la phase 2 du chantier Lambermont Riga en vue de l'avantage esthétique (et avec quel mesure de transparence au niveau financier ) La commune est-elle avertie par l'entreprise de cet élargissement du chantier ? ou était-il prévu dans les plans initiaux ? Peut-on, en transparence avoir la confirmation qu'une facture a bien été produite pour ce chantier d'ordre privé dans le cadre d'un chantier communal?",
+      "reponse": "Nous vous prions de vouloir bien trouver, ci-dessous, réponse à vos différentes questions : 1) A aucun moment, la Commune n'a communiqué aux riverains la possibilité de faire intervenir l'entrepreneur/adjudicataire à titre privé sur leur jardinet. Le riverain a pris contact directement avec l'entrepreneur. 2) La Commune n'a pas non plus prévu de communiquer sur cette possibilité pour ce qui concerne le second tronçon du chantier (entre Lambermont et Riga). 3) La Commune a été avertie, à titre informatif, par l'entrepreneur de ces travaux, mais il ne s'agit en aucun cas d'un « élargissement du chantier ». 4) Ces travaux en zone privée n'étaient pas prévus dans les plans initiaux, ni dans les documents qui régissent le marché public. 5) La Commune n'est en rien concernée par ce travail en zone privée et l'éventuelle facture étant donné qu'il y a eu un accord directement entre l'entrepreneur et le riverain.",
+      "repondant": null,
+      "source_file": "qe_2019_ndeg11_-_m._nyssens_-travaux_eugene_demolder.pdf",
+      "extracted_at": "2026-08-23T21:42:23.596330"
     }
   ]
 }
