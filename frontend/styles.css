@@ -513,6 +513,20 @@ body {
   font-size: 13.5px; color: var(--encre-soft); margin: 8px 0 4px;
 }
 .elu-summary strong { color: var(--bordeaux); font-size: 16px; }
+/* Puces cliquables du résumé (voir elus.js/eluTypeChip) : raccourci visuel
+   vers le filtre par type déjà disponible via #eluType — profil d'activité
+   visible et actionnable sans ouvrir le menu déroulant. */
+.elu-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 4px; }
+.elu-chip {
+  font: inherit; font-size: 12.5px; color: var(--encre-soft);
+  background: var(--papier-dark); border: 1px solid var(--ligne); border-radius: 999px;
+  padding: 5px 12px; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.elu-chip:hover { border-color: var(--bordeaux-clair); color: var(--bordeaux); }
+.elu-chip-active {
+  background: color-mix(in srgb, var(--bordeaux) 15%, transparent);
+  border-color: var(--bordeaux); color: var(--bordeaux); font-weight: 600;
+}
 
 .elu-year {
   font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--bordeaux);
