@@ -17,6 +17,7 @@ let selectedTheme = null;    // thème choisi → ne garde dans la liste que les
 let expandedYears = new Set();  // années dépliées dans la vue « tous les PV » groupée
 let activiteTypesParAnnee = [];   // [{annee, "Question orale":n, "Demande":n, ...}] — voir /stats
 let activiteTypeOrder = [];       // ordre fixe des 4 séries (voir ACTIVITY_TYPE_ORDER, backend)
+let qeDates = [];                 // dates ISO des questions écrites — bucketage par mois (voir /stats qe_dates)
 
 const MOIS_FR = ['', 'janvier', 'février', 'mars', 'avril', 'mai', 'juin',
   'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
@@ -171,15 +172,38 @@ function renderThemes() {
     + 'et seules les 12 thématiques principales sont affichées.</p>';
 }
 
-// Graphe empilé « Activité citoyenne par an » : 4 séries DISJOINTES (question
+// Lignes du graphe « Activité citoyenne » au niveau courant : totaux par
+// année précalculés côté serveur (activite_types_par_annee), ou — au niveau
+// mois — agrégés côté client depuis seancesResume (types PV) + qeDates
+// (questions écrites, comptées par leur propre date), comme les thématiques.
+function activityRows() {
+  if (drill.level === 'year') {
+    return activiteTypesParAnnee.map(row => ({ key: row.annee, label: row.annee, counts: row }));
+  }
+  const m = {};
+  seancesResume.filter(s => s.date.slice(0, 4) === drill.year).forEach(s => {
+    const mo = s.date.slice(5, 7);
+    const e = m[mo] || (m[mo] = {});
+    Object.entries(s.activite || {}).forEach(([t, n]) => { e[t] = (e[t] || 0) + n; });
+  });
+  qeDates.filter(d => d.slice(0, 4) === drill.year).forEach(d => {
+    const mo = d.slice(5, 7);
+    const e = m[mo] || (m[mo] = {});
+    e['Question écrite'] = (e['Question écrite'] || 0) + 1;
+  });
+  return Object.keys(m).sort().map(k => ({ key: k, label: MOIS_FR[+k].slice(0, 4) + '.', counts: m[k] }));
+}
+
+// Graphe empilé « Activité citoyenne » : 4 séries DISJOINTES (question
 // orale/demande/motion/question écrite) — volontairement PAS les points
 // administratifs "point normal"/"urgent" (~95 % du volume total, qui
 // écraserait visuellement ces 4-là dans le même graphe empilé, voir
 // backend/services/statistics.py). Palette catégorielle dédiée (--chart-s0..s3),
-// hors de l'accent --bordeaux réservé aux éléments interactifs. Lecture seule
-// (pas de drill-down) : légende + étiquette de total + infobulle par segment
-// suffisent (skill dataviz : relief obligatoire dès qu'une teinte catégorielle
-// tombe sous 3:1 de contraste sur le fond clair).
+// hors de l'accent --bordeaux réservé aux éléments interactifs. Partage le
+// drill-down Année → Mois de l'autre graphe (même état `drill`, mêmes
+// gestes drillInto/drillTo) : légende + étiquette de total + infobulle par
+// segment restent (skill dataviz : relief obligatoire dès qu'une teinte
+// catégorielle tombe sous 3:1 de contraste sur le fond clair).
 function renderActivityTypes() {
   const plot = document.getElementById('activityPlot');
   const legend = document.getElementById('activityLegend');
@@ -189,31 +213,40 @@ function renderActivityTypes() {
     legend.innerHTML = '';
     return;
   }
-  const totals = activiteTypesParAnnee.map(row => activiteTypeOrder.reduce((sum, t) => sum + (row[t] || 0), 0));
+  const rows = activityRows();
+  const totals = rows.map(row => activiteTypeOrder.reduce((sum, t) => sum + (row.counts[t] || 0), 0));
   const max = Math.max(...totals, 1);
 
-  plot.innerHTML = activiteTypesParAnnee.map((row, i) => {
+  plot.innerHTML = rows.map((row, i) => {
     const total = totals[i];
     const stackH = Math.max(4, Math.round(total / max * 130));
+    const sel = (drill.level === 'month' && row.key === drill.month);
     let firstNonZero = true;
     const segs = activiteTypeOrder.map((t, si) => {
-      const n = row[t] || 0;
+      const n = row.counts[t] || 0;
       if (!n) return '';
       const segH = Math.max(2, Math.round(n / total * stackH));
       const topCls = firstNonZero ? ' yc-seg-top' : '';
       firstNonZero = false;
       return `<div class="yc-seg yc-seg-s${si}${topCls}" style="height:${segH}px" title="${escapeHtml(t)} : ${fmtInt(n)}"></div>`;
     }).join('');
-    return `<div class="yc-col" title="${escapeHtml(row.annee)} : ${fmtInt(total)} au total">
+    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(row.label)} : ${fmtInt(total)} au total">
       <span class="yc-val">${fmtInt(total)}</span>
       <div class="yc-stack" style="height:${stackH}px">${segs}</div>
-      <span class="yc-yr">${escapeHtml(row.annee)}</span>
+      <span class="yc-yr">${escapeHtml(row.label)}</span>
     </div>`;
   }).join('');
 
   legend.innerHTML = activiteTypeOrder.map((t, si) =>
     `<span class="yc-legend-item"><span class="yc-legend-swatch yc-seg-s${si}"></span>${escapeHtml(t)}</span>`
   ).join('');
+
+  const title = document.getElementById('activityTitle');
+  if (title) title.textContent = drill.level === 'year' ? 'Activité citoyenne par année' : 'Activité citoyenne par mois — ' + drill.year;
+  const hint = document.getElementById('activityHint');
+  if (hint) hint.textContent = drill.level === 'year'
+    ? 'Cliquez une année pour voir la répartition par mois.'
+    : 'Cliquez un mois pour affiner les indicateurs, thématiques et la liste des PV ci-dessous.';
 }
 
 // Séances à lister : celles du périmètre courant ; au niveau « toutes les
@@ -294,7 +327,7 @@ export function toggleYear(y) {
   renderPvList();
 }
 
-function refreshStats() { renderKPIs(); renderDrill(); renderThemes(); renderPvList(); }
+function refreshStats() { renderKPIs(); renderDrill(); renderActivityTypes(); renderThemes(); renderPvList(); }
 
 // Navigation graphe : Année → mois ; mois → focalise ce mois. Toute navigation
 // dans le graphe annule la sélection d'un PV précis.
@@ -340,6 +373,7 @@ export async function loadStats() {
     seancesResume = s.seances_resume || [];
     activiteTypesParAnnee = s.activite_types_par_annee || [];
     activiteTypeOrder = s.activite_type_order || [];
+    qeDates = s.qe_dates || [];
     latestYear = seancesResume.reduce((mx, x) => x.date.slice(0, 4) > mx ? x.date.slice(0, 4) : mx, '');
     expandedYears = new Set([latestYear]);   // année la plus récente dépliée par défaut
     drill = { level: 'year', year: null, month: null };
@@ -365,10 +399,11 @@ export async function loadStats() {
       </div>
       <div class="stat-section" id="activitySection">
         <div class="yc-head">
-          <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg>Activité citoyenne par année</h3>
+          <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span id="activityTitle">Activité citoyenne par année</span></h3>
         </div>
         <div class="yc-scroll"><div class="yc-plot" id="activityPlot"></div></div>
         <div class="yc-legend" id="activityLegend"></div>
+        <p class="yc-note" id="activityHint"></p>
         <p class="yc-note">Questions orales, demandes, motions et questions écrites — les points
           administratifs/collectifs (approbations, conventions…) ne sont pas comptés ici, ils
           domineraient sans rien dire de l'activité citoyenne.</p>
@@ -386,7 +421,6 @@ export async function loadStats() {
         <div id="pvList" class="pv-list"></div>
       </div>`;
     refreshStats();
-    renderActivityTypes();
     statsLoaded = true;
   } catch (err) {
     container.innerHTML = `<div class="error-box">Impossible de charger les statistiques. ${escapeHtml(err.message)}</div>`;

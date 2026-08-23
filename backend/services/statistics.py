@@ -203,11 +203,14 @@ def compute_stats(db: dict) -> dict:
     # Questions écrites : canal séparé, sans séance/PV associé — comptées par
     # leur propre champ "annee" (voir services/questions_ecrites*.py), pas par
     # date de séance.
+    qe_dates = []   # dates ISO des questions écrites — bucketage par mois côté client
     try:
         for q in load_qe_db().get("questions", []):
             y = str(q.get("annee") or "")
             if y:
                 activite_year[y]["Question écrite"] += 1
+            if q.get("date"):
+                qe_dates.append(q["date"])
     except Exception:
         pass
     activite_types_par_annee = [
@@ -239,6 +242,7 @@ def compute_stats(db: dict) -> dict:
                 if p.get("montant_eur") and not _is_excluded_amount(p))
         tc = Counter()                 # thème -> nb de points
         tm = defaultdict(float)        # thème -> montant engagé (même filtre que le KPI)
+        ac = Counter()                 # type d'activité citoyenne (voir ACTIVITY_TYPE_ORDER) -> nb
         for p in pts:
             mp = p["montant_eur"] if (p.get("montant_eur") and not _is_excluded_amount(p)) else 0
             for t in (p.get("thematiques") or []):
@@ -246,6 +250,9 @@ def compute_stats(db: dict) -> dict:
                 tc[c] += 1
                 if mp:
                     tm[c] += mp
+            label = _ACTIVITY_PV_TYPE_LABEL.get(p.get("type"))
+            if label:
+                ac[label] += 1
         # [thème, nb_points, montant] — trié par nb de points décroissant
         th_list = [[t, n, round(tm.get(t, 0.0), 2)] for t, n in tc.most_common()]
         seances_resume.append({
@@ -254,6 +261,10 @@ def compute_stats(db: dict) -> dict:
             "votes": v,
             "montant": round(m, 2),
             "themes": th_list,
+            # Décompte par type d'activité citoyenne (question orale/demande/motion)
+            # de CETTE séance — alimente le drill-down Année → Mois du graphe
+            # « Activité citoyenne », calculé côté client comme les thématiques.
+            "activite": dict(ac),
             "file": meta.get("source_file"),
             # URL publique du PDF : pass-through (à renseigner plus tard dans le JSON
             # source via un champ url/source_url) → le lien apparaît dès qu'elle existe.
@@ -271,6 +282,7 @@ def compute_stats(db: dict) -> dict:
         "pv_par_annee": pv_par_annee,
         "activite_types_par_annee": activite_types_par_annee,
         "activite_type_order": ACTIVITY_TYPE_ORDER,
+        "qe_dates": qe_dates,
         "themes_par_annee": themes_par_annee,
         "dates_par_annee": dates_par_annee,
         "seances_resume": seances_resume,
