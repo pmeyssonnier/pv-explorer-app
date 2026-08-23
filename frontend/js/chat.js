@@ -233,13 +233,30 @@ export function buildSourcesHtml(srcs) {
       ${renderThemeTags(s.thematiques)}
     </div>`;
   };
+  const qeItem = s => {
+    // Jamais liée à une séance (question adressée au Collège hors séance,
+    // voir services/questions_ecrites*.py) : pas de "Séance"/"Point SP", juste
+    // la date de la question et son lien PDF si connu (souvent absent — voir
+    // le même module).
+    const ref = s.url
+      ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir la question écrite (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Question du ${formatDate(s.date)}</a>`
+      : `<svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Question du ${formatDate(s.date)}`;
+    return `
+    <div class="source-item">
+      <div class="source-ref">${ref}</div>
+      <div class="source-titre">${escapeHtml(s.titre)}</div>
+      ${s.decision ? `<div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>` : ''}
+    </div>`;
+  };
   const vids = srcs.filter(s => s.source_type === 'video_conseil');
-  const pvs = srcs.filter(s => s.source_type !== 'video_conseil');
+  const qes = srcs.filter(s => s.source_type === 'question_ecrite');
+  const pvs = srcs.filter(s => s.source_type !== 'video_conseil' && s.source_type !== 'question_ecrite');
   // La sélection des sources reste par pertinence (score, réglage « Ordre des
   // sources ») ; UNE FOIS sélectionnées, on affiche les délibérations dans un
   // ordre de lecture naturel — date décroissante, puis n° de point (SP)
   // croissant au sein d'une même séance — plutôt que dans l'ordre du score.
   pvs.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (a.sp || 0) - (b.sp || 0)));
+  qes.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
   let groups = '';
   if (vids.length) {
     groups += `<div class="src-group src-group-video"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débats filmés · ${vids.length}`
@@ -250,6 +267,11 @@ export function buildSourcesHtml(srcs) {
     groups += `<div class="src-group"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Délibérations · ${pvs.length}`
       + `<span class="src-group-note">— sur base des procès-verbaux officiels</span></div>`
       + pvs.map(pvItem).join('');
+  }
+  if (qes.length) {
+    groups += `<div class="src-group"><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Questions écrites · ${qes.length}`
+      + `<span class="src-group-note">— adressées au Collège hors séance</span></div>`
+      + qes.map(qeItem).join('');
   }
   const dont = vids.length
     ? ` · dont ${vids.length} débat${vids.length > 1 ? 's' : ''} filmé${vids.length > 1 ? 's' : ''} 🎥`

@@ -57,16 +57,23 @@ class Source(BaseModel):
     score: float
     # Étiquettes de thématique (ex. « Mobilité », « Finances ») — même liste,
     # même normalisation d'affichage que les onglets Statistiques/Séances/Par
-    # élu·e (voir utils.text._thematique_label). Vide pour un débat filmé
-    # (aucune thématique indexée pour ce type de source).
+    # élu·e (voir utils.text._thematique_label). Vide pour un débat filmé ou
+    # une question écrite (aucune thématique indexée pour ces types de source).
     thematiques: list[str] = Field(default_factory=list, description="Étiquettes de thématique du point.")
     # Lien : PDF officiel du PV (résolu par date) OU deep-link vidéo pour un débat
-    # filmé (métadonnée) — None si absent.
-    url: Optional[str] = Field(default=None, description="Lien vers le PV (PDF) ou la vidéo du débat.")
-    # Type de source : "pv" (délibération, défaut) ou "video_conseil" (débat filmé).
-    source_type: str = Field(default="pv", description='"pv" (délibération) ou "video_conseil" (débat filmé).')
+    # filmé (métadonnée) OU PDF de la question écrite sur 1030.be (métadonnée,
+    # souvent absent — voir services/questions_ecrites*.py) — None si absent.
+    url: Optional[str] = Field(default=None, description="Lien vers le PV (PDF), la vidéo du débat, ou la question écrite (PDF).")
+    # Type de source : "pv" (délibération, défaut), "video_conseil" (débat
+    # filmé) ou "question_ecrite" (question écrite hors séance).
+    source_type: str = Field(
+        default="pv",
+        description='"pv" (délibération), "video_conseil" (débat filmé) ou "question_ecrite" (question écrite).',
+    )
     # Lien vers la vidéo de la séance (début) quand elle a été filmée — pour un
-    # « ▶ voir la séance » sur une délibération, même sans chapitrage. None sinon.
+    # « ▶ voir la séance » sur une délibération, même sans chapitrage. None pour
+    # un débat vidéo (déjà un deep-link précis) ou une question écrite (jamais
+    # liée à une séance).
     video_url: Optional[str] = Field(
         default=None,
         description="Lien vers le début de la vidéo de la séance, si elle a été filmée.",

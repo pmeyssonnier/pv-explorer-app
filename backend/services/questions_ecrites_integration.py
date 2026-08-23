@@ -1,14 +1,16 @@
 """Intègre une nouvelle question écrite uploadée par l'admin : extraction
 (réutilise pipeline/questions_ecrites_extraction_pipeline.py, le même module
 qui traite les lots depuis Google Drive/Colab — voir son docstring), fusion
-en mémoire, publication (commit GitHub). Même flux en 2 temps que
-services/pv_integration.py — voir sa docstring pour le raisonnement complet
-(état du backend, persistance via GitHub uniquement, pas de save disque).
+en mémoire, publication (commit GitHub + réindexation Pinecone de cette seule
+question). Même flux en 2 temps que services/pv_integration.py — voir sa
+docstring pour le raisonnement complet (état du backend, persistance via
+GitHub uniquement, pas de save disque).
 
-Contrairement aux PV, pas de réindexation Pinecone ici pour l'instant : les
-questions écrites ne sont pas encore recherchables via le chat (/ask) — à
-ajouter dans une itération ultérieure si besoin, sur le même principe que
-index_pv.py pour les PV.
+Réindexation : un seul chunk par question (document court, voir
+index_qe.py) — même index/namespace que les PV, 3e source_type
+"question_ecrite" filtré à part côté lecture (services/rag.py). Le backfill
+du corpus déjà publié (traité par lot Colab, jamais passé par cette
+fonction) se fait à part via `python index_qe.py` — voir sa docstring.
 """
 import json
 import sys
@@ -24,8 +26,12 @@ if _PIPELINE_DIR not in sys.path:
 
 import questions_ecrites_extraction_pipeline as qe_pipeline  # noqa: E402
 
+import index_qe  # noqa: E402
 from services.github_publish import commit_file  # noqa: E402
+from services.pinecone_service import get_pinecone_client  # noqa: E402
 from services.questions_ecrites import QE_JSON_PATH, load_qe_db  # noqa: E402
+
+COMMUNE = "schaerbeek"
 
 
 def extract_from_upload(
@@ -68,10 +74,10 @@ def preview_merge(question: dict) -> dict:
 
 
 def publish_question(question: dict, source_url: Optional[str] = None, progress_cb=None) -> dict:
-    """Fusionne pour de vrai, committe sur GitHub. Retourne un résumé
-    {commit_sha, id, auteur}. `progress_cb` (optionnel, voir jobs.start_job) :
-    une seule étape grossière — commit + fusion en mémoire, une opération
-    atomique et rapide (pas d'indexation Pinecone, contrairement aux PV)."""
+    """Fusionne pour de vrai, committe sur GitHub, réindexe cette question dans
+    Pinecone. Retourne un résumé {commit_sha, id, auteur}. `progress_cb`
+    (optionnel, voir jobs.start_job) : 2 étapes grossières ("commit" /
+    "indexing"), même convention que services/pv_integration.publish_seance."""
     if not question.get("date") or not question.get("numero") or not question.get("auteur"):
         raise ValueError("Question incomplète (date/numéro/auteur·e manquant) — rien à publier.")
     if source_url:
@@ -91,4 +97,17 @@ def publish_question(question: dict, source_url: Optional[str] = None, progress_
         f"data: intègre la question écrite n°{question['numero']}/{question['annee']} "
         f"de {question['auteur']} (via panneau admin)",
     )
+
+    if progress_cb:
+        progress_cb({"stage": "indexing"})
+    _index_question(question)
+
     return {"commit_sha": commit_sha, "id": question["id"], "auteur": question["auteur"]}
+
+
+def _index_question(question: dict) -> None:
+    """Réindexe SEULEMENT cette question (pas tout le corpus) — upsert
+    idempotent par ID stable (voir index_qe.question_to_chunk)."""
+    chunk = index_qe.question_to_chunk(question, COMMUNE)
+    pc = get_pinecone_client()
+    index_qe.index_chunks(pc, [chunk])

@@ -286,9 +286,10 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
         meta = h["metadata"]
         source_type = str(meta.get("source_type") or "pv")
         # Sur une réponse « je ne trouve pas », on masque les délibérations (PV)
-        # pour ne pas afficher de fausses sources — MAIS on garde les DÉBATS
-        # VIDÉO : le lien « ▶ voir le débat » reste utile même quand le contenu
-        # n'est pas transcrit (le point a bien été abordé au Conseil).
+        # et les questions écrites pour ne pas afficher de fausses sources —
+        # MAIS on garde les DÉBATS VIDÉO : le lien « ▶ voir le débat » reste
+        # utile même quand le contenu n'est pas transcrit (le point a bien été
+        # abordé au Conseil).
         if not_found and source_type != "video_conseil":
             continue
         # Un même point peut avoir produit plusieurs chunks (titre + extraits
@@ -311,20 +312,28 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
         if source_type == "video_conseil":
             url = _point_video_url(point_key) or meta.get("url")
             n_extraits = chunk_counts.get(point_key)
+        elif source_type == "question_ecrite":
+            # Pas de repli sur url_map (résolu par date de PV) : une question
+            # écrite n'est jamais liée à une séance/un PV, même si sa date
+            # coïncide par hasard avec celle d'un PV — voir
+            # services/questions_ecrites*.py.
+            url = meta.get("url") or None
         else:
             url = meta.get("url") or url_map.get(date_str)
-        # Lien « voir la séance » (vidéo, début) pour une délibération dont la
-        # séance a été filmée — même sans chapitrage (couverture des séances
-        # non chapitrées). None pour les débats vidéo (déjà un deep-link précis).
-        video_url = session_map.get(date_str) if source_type != "video_conseil" else None
-        # Statut de la décision : pour un débat vidéo, le champ « decision »
-        # porte déjà « Type · Auteur·e » (ex. « Motion · Elias AMMI »), pas une
-        # issue de vote — inchangé. Pour une délibération, normalisé + issue du
-        # vote quand connue (ex. « Décidé à l'unanimité »), comme partout
-        # ailleurs (Séances/Par élu·e) — voir _decision_status (limité au TYPE
-        # de vote indexé, sans le détail pour/contre/abstentions).
+        # Lien « voir la séance » (vidéo, début) : uniquement pour une
+        # délibération (PV) dont la séance a été filmée, même sans chapitrage.
+        # None pour un débat vidéo (déjà un deep-link précis) et pour une
+        # question écrite (jamais liée à une séance, cf. ci-dessus).
+        video_url = session_map.get(date_str) if source_type == "pv" else None
+        # Statut de la décision : pour un débat vidéo OU une question écrite,
+        # le champ « decision » porte déjà un contexte compact précalculé à
+        # l'indexation (« Type · Auteur·e » / « Question de X · répondu par Y »),
+        # pas une issue de vote — inchangé. Pour une délibération, normalisé +
+        # issue du vote quand connue (ex. « Décidé à l'unanimité »), comme
+        # partout ailleurs (Séances/Par élu·e) — voir _decision_status (limité
+        # au TYPE de vote indexé, sans le détail pour/contre/abstentions).
         decision = (
-            str(meta.get("decision", "")) if source_type == "video_conseil"
+            str(meta.get("decision", "")) if source_type in ("video_conseil", "question_ecrite")
             else _decision_status(meta.get("decision"), meta.get("vote_type"))
         )
         sources.append(Source(

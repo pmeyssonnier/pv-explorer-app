@@ -1,9 +1,10 @@
 """Tests de services/questions_ecrites_integration.py et services/questions_ecrites.py.
 
-Aucun appel réel à Claude/GitHub : qe_pipeline.process_pdf et commit_file sont
-monkeypatchés — même approche que test_pv_integration.py, ces tests vérifient
-l'orchestration (fusion, injection de source_url, résumé renvoyé), pas les
-services externes eux-mêmes.
+Aucun appel réel à Claude/GitHub/Pinecone : qe_pipeline.process_pdf,
+commit_file et l'indexation Pinecone sont monkeypatchés — même approche que
+test_pv_integration.py, ces tests vérifient l'orchestration (fusion,
+injection de source_url, résumé renvoyé, réindexation), pas les services
+externes eux-mêmes.
 """
 import json
 
@@ -154,6 +155,7 @@ def test_publish_question_merges_and_commits(fake_qe_db_path, monkeypatch):
         return "abc123"
 
     monkeypatch.setattr(qe_integration, "commit_file", fake_commit_file)
+    monkeypatch.setattr(qe_integration, "_index_question", lambda question: None)
 
     result = qe_integration.publish_question(
         _fake_question(numero=15, annee=2025), source_url="https://1030.be/qe/015.pdf",
@@ -171,14 +173,34 @@ def test_publish_question_merges_and_commits(fake_qe_db_path, monkeypatch):
     assert committed_content["meta"]["total_questions"] == 2
 
 
-def test_publish_question_reports_commit_progress(fake_qe_db_path, monkeypatch):
+def test_publish_question_reports_commit_then_indexing_progress(fake_qe_db_path, monkeypatch):
     monkeypatch.setattr(qe_integration, "commit_file", lambda path, content, message: "abc123")
+    monkeypatch.setattr(qe_integration, "_index_question", lambda question: None)
     reports = []
     qe_integration.publish_question(_fake_question(), progress_cb=reports.append)
-    assert reports == [{"stage": "commit"}]
+    assert reports == [{"stage": "commit"}, {"stage": "indexing"}]
+
+
+def test_publish_question_indexes_via_index_qe(fake_qe_db_path, monkeypatch):
+    monkeypatch.setattr(qe_integration, "commit_file", lambda path, content, message: "abc123")
+    fake_pc = object()
+    monkeypatch.setattr(qe_integration, "get_pinecone_client", lambda: fake_pc)
+    calls = []
+    monkeypatch.setattr(qe_integration.index_qe, "index_chunks", lambda pc, chunks: calls.append((pc, chunks)))
+
+    question = _fake_question(numero=15, annee=2025)
+    qe_integration.publish_question(question)
+
+    assert len(calls) == 1
+    pc, chunks = calls[0]
+    assert pc is fake_pc
+    assert len(chunks) == 1
+    assert chunks[0]["id"] == "QE-2025-015"
+    assert chunks[0]["metadata"]["source_type"] == "question_ecrite"
 
 
 def test_publish_question_leaves_source_url_none_when_not_provided(fake_qe_db_path, monkeypatch):
+    monkeypatch.setattr(qe_integration, "_index_question", lambda question: None)
     captured = {}
 
     def fake_commit_file(path, content, message):
