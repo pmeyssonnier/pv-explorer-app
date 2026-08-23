@@ -37,7 +37,12 @@ _RESP_SPLIT = re.compile(r"\s+et\s+|\s+en\s+|\s+puis\s+|\s+ensuite\s+|&|,|;|/|\+
 # éviter une fiche dupliquée. Un simple réordonnancement de mots (couvert par
 # le registre de paires (prénom, nom) ci-dessous) ne peut pas détecter une
 # faute de frappe DANS un mot — d'où cette liste, à compléter au cas par cas.
-_KEY_ALIASES = {"ouazrhrari": "ouazrhari", "erlay": "eraly"}
+# Sert aussi pour un PRÉNOM SEUL capté comme clé (ex. « Yvan » au lieu de
+# « Yvan de Beauffort » — la regex _AUTHOR_IN_TITLE d'attribution.py s'arrête
+# avant la particule minuscule « de », et aucun intervenant du point ne
+# commence par « Yvan » pour permettre le repli habituel vers la forme
+# complète, voir _author_from_text) : même clé finale que le nom complet.
+_KEY_ALIASES = {"ouazrhrari": "ouazrhari", "erlay": "eraly", "yvan": "beauffort"}
 
 # Prénoms connus mais absents de toutes les sources PV/vidéo (la personne
 # n'y est jamais mentionnée que par son seul nom de famille) : complétés
@@ -46,6 +51,7 @@ _DISPLAY_NAME_OVERRIDES = {
     "malingreau": "Alain Malingreau",
     "smeysters": "Christine Smeysters",
     "sobieski": "Christine Sobieski",
+    "essaidi": "Tamimount Essaidi",
 }
 
 # Organismes captés à tort comme « auteur » sur des points de convention/

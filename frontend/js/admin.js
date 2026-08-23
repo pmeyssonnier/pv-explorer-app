@@ -54,6 +54,24 @@ function renderAdminPanel() {
   box.innerHTML = head + (pendingSeance ? renderPreview() : renderUploadForm());
   const form = document.getElementById('adminUploadForm');
   if (form) form.addEventListener('submit', submitAdminExtract);
+  const fileEl = document.getElementById('adminPdfFile');
+  if (fileEl) fileEl.addEventListener('change', prefillSourceUrl);
+}
+
+// Le lien "PDF officiel" (frontend/js/stats.js) ne s'affiche que si
+// source_url est renseignée — laissée vide par défaut, elle l'est presque
+// toujours restée (cause du correctif manuel de plusieurs PV de 2010). On
+// pré-remplit donc dès le choix du fichier avec le nom tel quel sous le
+// dossier 1030.be habituel : ce n'est qu'un point de départ (les nomenclatures
+// réelles varient — voir scraping/pv_scraper_1030.py), l'admin corrige avant
+// d'extraire si besoin. Champ toujours modifiable/vidable, pas obligatoire.
+function prefillSourceUrl() {
+  const fileEl = document.getElementById('adminPdfFile');
+  const sourceUrlEl = document.getElementById('adminSourceUrl');
+  const file = fileEl && fileEl.files[0];
+  if (sourceUrlEl && file) {
+    sourceUrlEl.value = `https://www.1030.be/data/media/import/${encodeURIComponent(file.name)}`;
+  }
 }
 
 function renderUploadForm() {
@@ -66,7 +84,7 @@ function renderUploadForm() {
     <form id="adminUploadForm" class="admin-login-form">
       <label for="adminPdfFile">Fichier PDF du PV</label>
       <input type="file" id="adminPdfFile" accept="application/pdf" required>
-      <label for="adminSourceUrl">URL du PV sur 1030.be (optionnel)</label>
+      <label for="adminSourceUrl">URL du PV sur 1030.be (pré-remplie depuis le fichier — à vérifier/corriger)</label>
       <input type="url" id="adminSourceUrl" placeholder="https://www.1030.be/...">
       ${renderProgressBox()}
       <p class="admin-login-error" id="adminUploadError" role="alert"></p>
