@@ -20,6 +20,15 @@ let pendingSourceUrl = null;
 // formulaire d'upload, effacé dès qu'une nouvelle extraction démarre.
 let lastPublishResult = null;
 
+// Même mécanique, pour le flux (indépendant) d'intégration d'une question
+// écrite — voir services/questions_ecrites_integration.py côté backend.
+// États distincts (jamais les deux formulaires en cours d'extraction/
+// publication en même temps côté données, mais les deux sections restent
+// affichées simultanément dans l'onglet Admin).
+let pendingQuestion = null;
+let pendingQeSourceUrl = null;
+let lastQePublishResult = null;
+
 // Session vérifiée via cookie httpOnly (jamais lu par ce script — juste
 // renvoyé automatiquement par le navigateur, `credentials: 'include'`) : on
 // interroge /admin/me pour savoir si une session valide existe déjà.
@@ -51,11 +60,15 @@ function renderAdminPanel() {
   if (!adminUsername) { box.innerHTML = ''; return; }
   const head = `<p class="yc-note">Connecté·e en tant que <strong>${escapeHtml(adminUsername)}</strong>.</p>
     <button type="button" class="drill-reset" data-click="adminLogout">Se déconnecter</button>`;
-  box.innerHTML = head + (pendingSeance ? renderPreview() : renderUploadForm());
+  box.innerHTML = head
+    + (pendingSeance ? renderPreview() : renderUploadForm())
+    + (pendingQuestion ? renderQePreview() : renderQeUploadForm());
   const form = document.getElementById('adminUploadForm');
   if (form) form.addEventListener('submit', submitAdminExtract);
   const fileEl = document.getElementById('adminPdfFile');
   if (fileEl) fileEl.addEventListener('change', prefillSourceUrl);
+  const qeForm = document.getElementById('qeUploadForm');
+  if (qeForm) qeForm.addEventListener('submit', submitQeExtract);
 }
 
 // Le lien "PDF officiel" (frontend/js/stats.js) ne s'affiche que si
@@ -99,10 +112,13 @@ function renderUploadForm() {
 // haut dans l'historique du projet, une classe avec `display` définu ailleurs
 // peut le rendre inopérant ; ici on manipule le style directement, aucune
 // ambiguïté possible).
-function renderProgressBox() {
-  return `<div class="admin-progress" id="adminProgressBox" style="display:none">
-    <div class="admin-progress-track"><div class="admin-progress-fill" id="adminProgressFill"></div></div>
-    <p class="yc-note" id="adminProgressLabel"></p>
+// `prefix` distingue les 2 formulaires indépendants (PV vs question écrite) :
+// ids par défaut inchangés (adminProgress*) pour le PV, 'qe' pour l'autre —
+// jamais de collision d'id si les deux étaient en cours en même temps.
+function renderProgressBox(prefix = 'admin') {
+  return `<div class="admin-progress" id="${prefix}ProgressBox" style="display:none">
+    <div class="admin-progress-track"><div class="admin-progress-fill" id="${prefix}ProgressFill"></div></div>
+    <p class="yc-note" id="${prefix}ProgressLabel"></p>
   </div>`;
 }
 
@@ -128,6 +144,55 @@ function renderPreview() {
     <div class="admin-preview-actions">
       <button type="button" class="drill-reset" data-click="cancelAdminExtract">Annuler</button>
       <button type="button" class="ask-btn" id="adminPublishBtn" data-click="confirmAdminPublish">Confirmer et publier</button>
+    </div>
+  </section>`;
+}
+
+// Pas de pré-remplissage d'URL ici (contrairement au PV) : la nomenclature
+// réelle des liens PDF sous 1030.be/fr/questions-ecrites n'est pas encore
+// confirmée — mieux vaut un champ vide qu'une URL devinée et fausse.
+function renderQeUploadForm() {
+  const banner = lastQePublishResult
+    ? `<p class="admin-check-ok">✅ Question écrite ${escapeHtml(lastQePublishResult.id)} de ${escapeHtml(lastQePublishResult.auteur)} publiée. Commit ${escapeHtml((lastQePublishResult.commit_sha || '').slice(0, 7))}.</p>`
+    : '';
+  return `${banner}<section class="admin-upload">
+    <h4>Intégrer une nouvelle question écrite</h4>
+    <p class="yc-note">Upload le PDF officiel (voir 1030.be/fr/questions-ecrites) : extraction automatique (Claude), aperçu avant publication. Canal indépendant des PV — jamais liée à une question orale.</p>
+    <form id="qeUploadForm" class="admin-login-form">
+      <label for="qePdfFile">Fichier PDF de la question écrite</label>
+      <input type="file" id="qePdfFile" accept="application/pdf" required>
+      <label for="qeSourceUrl">URL de la question sur 1030.be (optionnel)</label>
+      <input type="url" id="qeSourceUrl" placeholder="https://www.1030.be/...">
+      ${renderProgressBox('qe')}
+      <p class="admin-login-error" id="qeUploadError" role="alert"></p>
+      <button type="submit" class="ask-btn admin-login-submit" id="qeUploadSubmit">Extraire</button>
+    </form>
+  </section>`;
+}
+
+function renderQePreview() {
+  const { question, preview } = pendingQuestion;
+  const mergeNote = preview.is_new
+    ? `Nouvelle question — n°${preview.numero}/${preview.annee}.`
+    : `Question déjà publiée (n°${preview.numero}/${preview.annee}) — cette extraction la remplacera.`;
+  // Le champ réponse est nullable côté extraction (voir normalize_question) :
+  // une question tout juste posée peut ne pas encore avoir de réponse
+  // publiée — signalé ici plutôt qu'affiché comme une omission.
+  const reponse = question.reponse
+    ? `<p class="yc-note"><strong>Réponse extraite :</strong> ${escapeHtml(question.reponse)}</p>`
+    : `<p class="admin-check-warn">⚠️ Aucune réponse trouvée dans ce PDF — probablement une question encore sans réponse publiée.</p>`;
+  return `<section class="admin-preview">
+    <h4>Aperçu — question écrite n°${escapeHtml(String(question.numero ?? '?'))}/${escapeHtml(String(question.annee ?? '?'))}</h4>
+    <p class="yc-note">${escapeHtml(mergeNote)}</p>
+    <p class="yc-note"><strong>Auteur·e :</strong> ${escapeHtml(question.auteur || '?')} · <strong>Date :</strong> ${escapeHtml(question.date || '?')}</p>
+    <p class="yc-note"><strong>Titre :</strong> ${escapeHtml(question.titre || '?')}</p>
+    <p class="yc-note"><strong>Question :</strong> ${escapeHtml(question.question || '?')}</p>
+    ${reponse}
+    ${renderProgressBox('qe')}
+    <p class="admin-login-error" id="qePublishError" role="alert"></p>
+    <div class="admin-preview-actions">
+      <button type="button" class="drill-reset" data-click="cancelQeExtract">Annuler</button>
+      <button type="button" class="ask-btn" id="qePublishBtn" data-click="confirmQePublish">Confirmer et publier</button>
     </div>
   </section>`;
 }
@@ -235,6 +300,44 @@ export async function submitAdminExtract(ev) {
   }
 }
 
+// Même flux (étape 1/2) pour une question écrite — voir
+// services/questions_ecrites_integration.py côté backend.
+export async function submitQeExtract(ev) {
+  ev.preventDefault();
+  const fileEl = document.getElementById('qePdfFile');
+  const sourceUrlEl = document.getElementById('qeSourceUrl');
+  const errBox = document.getElementById('qeUploadError');
+  const btn = document.getElementById('qeUploadSubmit');
+  const file = fileEl.files[0];
+  if (!file) return;
+  errBox.textContent = '';
+  btn.disabled = true;
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(API_URL + '/admin/questions-ecrites/extract', {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
+    if (!res.ok) {
+      errBox.textContent = await _errorDetail(res);
+      return;
+    }
+    const { job_id } = await res.json();
+    const data = await _pollJob(`/admin/questions-ecrites/extract/${job_id}`, btn, 'Extraction', 'qe');
+    pendingQuestion = data;
+    pendingQeSourceUrl = sourceUrlEl.value.trim() || null;
+    lastQePublishResult = null;
+    renderAdminPanel();
+  } catch (err) {
+    errBox.textContent = err.message || 'Extraction impossible — réessayez.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Extraire';
+  }
+}
+
 // Sonde `${API_URL}${path}` toutes les 3s jusqu'à statut "done" (retourné
 // tel quel) ou une erreur (HTTPException du backend → message réel, pas
 // générique). Plafonné à 10 min pour ne jamais boucler indéfiniment si
@@ -242,7 +345,7 @@ export async function submitAdminExtract(ev) {
 // par le backend (pages/chunks/points pour l'extraction, étape commit/
 // indexation pour la publication — voir services/pv_integration.py) plutôt
 // que de simuler une progression avec le temps écoulé.
-async function _pollJob(path, btn, label) {
+async function _pollJob(path, btn, label, prefix = 'admin') {
   const started = Date.now();
   const MAX_MS = 10 * 60 * 1000;
   while (Date.now() - started < MAX_MS) {
@@ -253,10 +356,10 @@ async function _pollJob(path, btn, label) {
     if (data.status === 'pending') {
       const elapsed = Math.round((Date.now() - started) / 1000);
       if (btn) btn.textContent = `${label} en cours (${elapsed}s)…`;
-      updateProgressBox(data.progress);
+      updateProgressBox(data.progress, prefix);
       continue;
     }
-    updateProgressBox(null);   // masque la barre : le job est terminé (done/error géré par l'appelant)
+    updateProgressBox(null, prefix);   // masque la barre : le job est terminé (done/error géré par l'appelant)
     return data;
   }
   throw new Error(`${label} : délai dépassé (10 min) — réessayez plus tard.`);
@@ -268,10 +371,10 @@ async function _pollJob(path, btn, label) {
 // granularité fine (une seule opération atomique pour le commit, peu de
 // points à indexer pour une séance) : pourcentage approximatif par étape,
 // juste pour donner un signal visuel de progression, pas une mesure exacte.
-function updateProgressBox(progress) {
-  const box = document.getElementById('adminProgressBox');
-  const fill = document.getElementById('adminProgressFill');
-  const label = document.getElementById('adminProgressLabel');
+function updateProgressBox(progress, prefix = 'admin') {
+  const box = document.getElementById(`${prefix}ProgressBox`);
+  const fill = document.getElementById(`${prefix}ProgressFill`);
+  const label = document.getElementById(`${prefix}ProgressLabel`);
   if (!box) return;
   if (!progress) { box.style.display = 'none'; return; }
   box.style.display = 'block';
@@ -280,12 +383,26 @@ function updateProgressBox(progress) {
   if (progress.stage === 'extraction' && progress.total_chunks) {
     pct = Math.round((progress.chunk / progress.total_chunks) * 100);
     text = `Bloc de pages ${progress.chunk}/${progress.total_chunks} — ${progress.points_so_far} point(s) trouvé(s) jusqu'ici (${progress.pages} pages au total)`;
+  } else if (progress.stage === 'extraction') {
+    // Question écrite : pas de découpage en blocs (document court, un seul
+    // appel Claude — voir pipeline/questions_ecrites_extraction_pipeline.py).
+    pct = 40;
+    text = 'Extraction du texte…';
   } else if (progress.stage === 'verification') {
-    pct = 100;
-    text = `Vérification de la complétude — ${progress.points_so_far} point(s)`;
+    pct = 90;
+    // points_so_far absent pour une question écrite (voir process_pdf de
+    // questions_ecrites_extraction_pipeline.py — verification y suit
+    // directement l'appel Claude, pas d'audit de complétude par points).
+    text = progress.points_so_far != null
+      ? `Vérification de la complétude — ${progress.points_so_far} point(s)`
+      : 'Vérification…';
   } else if (progress.stage === 'commit') {
     pct = 50;
-    text = `Fusion et commit sur GitHub — ${progress.n_points} point(s)…`;
+    // n_points absent pour une question écrite (une seule question, pas de
+    // liste de points — voir publish_question côté backend).
+    text = progress.n_points
+      ? `Fusion et commit sur GitHub — ${progress.n_points} point(s)…`
+      : 'Fusion et commit sur GitHub…';
   } else if (progress.stage === 'indexing') {
     pct = 90;
     text = `Indexation dans Pinecone — ${progress.n_points} point(s)…`;
@@ -297,6 +414,12 @@ function updateProgressBox(progress) {
 export function cancelAdminExtract() {
   pendingSeance = null;
   pendingSourceUrl = null;
+  renderAdminPanel();
+}
+
+export function cancelQeExtract() {
+  pendingQuestion = null;
+  pendingQeSourceUrl = null;
   renderAdminPanel();
 }
 
@@ -336,6 +459,39 @@ export async function confirmAdminPublish() {
   }
 }
 
+// Étape 2/2 pour une question écrite : publie EXACTEMENT ce que l'extraction
+// a renvoyé, commit GitHub — pas d'indexation Pinecone (voir docstring de
+// services/questions_ecrites_integration.py).
+export async function confirmQePublish() {
+  const errBox = document.getElementById('qePublishError');
+  const btn = document.getElementById('qePublishBtn');
+  if (!pendingQuestion) return;
+  errBox.textContent = '';
+  btn.disabled = true;
+  try {
+    const res = await fetch(API_URL + '/admin/questions-ecrites/publish', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: pendingQuestion.question, source_url: pendingQeSourceUrl }),
+    });
+    if (!res.ok) {
+      errBox.textContent = await _errorDetail(res);
+      return;
+    }
+    const { job_id } = await res.json();
+    lastQePublishResult = await _pollJob(`/admin/questions-ecrites/publish/${job_id}`, btn, 'Publication', 'qe');
+    pendingQuestion = null;
+    pendingQeSourceUrl = null;
+    renderAdminPanel();
+  } catch (err) {
+    errBox.textContent = err.message || 'Publication impossible — réessayez.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Confirmer et publier';
+  }
+}
+
 async function _errorDetail(res) {
   try {
     return (await res.json()).detail || `Erreur ${res.status}.`;
@@ -352,5 +508,8 @@ export async function adminLogout() {
   pendingSeance = null;
   pendingSourceUrl = null;
   lastPublishResult = null;
+  pendingQuestion = null;
+  pendingQeSourceUrl = null;
+  lastQePublishResult = null;
   updateAdminUI();
 }

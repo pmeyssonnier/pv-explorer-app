@@ -66,6 +66,7 @@ export const TYPE_BADGE = {
   'Demande': 'b-d',
   'Motion': 'b-m',
   'Débat filmé': 'b-v',
+  'Question écrite': 'b-e',
 };
 
 // Terme utilisé pour désigner qui a soulevé le point, selon son type — affiché
@@ -76,6 +77,7 @@ export const TYPE_ACTOR_LABEL = {
   'Demande': 'Demandeur·se',
   'Motion': 'Auteur·e de la motion',
   'Débat filmé': 'Intervenant·e',
+  'Question écrite': 'Auteur·e de la question',
 };
 
 // Bloc de tags « thématiques » — même rendu partout où un point est affiché
@@ -98,9 +100,9 @@ export function renderTypeBadge(typeLabel) {
   return `<span class="elu-badge ${cls}">${escapeHtml(typeLabel)}</span>`;
 }
 
-export function renderPvPdfLink(url) {
+export function renderPvPdfLink(url, label = 'PV (PDF)', title = 'Ouvrir le PV (PDF) sur 1030.be') {
   return url
-    ? `<a class="elu-link" href="${url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`
+    ? `<a class="elu-link" href="${url}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(title)}"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>${escapeHtml(label)}</a>`
     : '';
 }
 

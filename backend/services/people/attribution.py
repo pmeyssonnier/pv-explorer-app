@@ -48,6 +48,10 @@ _TYPE_LABEL = {
     "demande_habitant": "Demande",
     "motion": "Motion",
     "video": "Débat filmé",
+    # Question écrite adressée au Collège hors séance (voir
+    # services/questions_ecrites*.py) — canal totalement séparé des questions
+    # orales, jamais liée à un point de PV/SP.
+    "question_ecrite": "Question écrite",
 }
 
 

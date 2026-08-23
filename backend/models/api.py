@@ -105,3 +105,15 @@ class SeancePublishRequest(BaseModel):
         default=None, max_length=500,
         description="URL du PV (PDF) sur 1030.be, si connue.",
     )
+
+
+class QuestionEcritePublishRequest(BaseModel):
+    # Même raisonnement que SeancePublishRequest ci-dessus : dict libre,
+    # exactement ce que /admin/questions-ecrites/extract a renvoyé.
+    question: dict = Field(
+        description="Question écrite extraite (retournée par /admin/questions-ecrites/extract).",
+    )
+    source_url: Optional[str] = Field(
+        default=None, max_length=500,
+        description="URL de la question écrite sur 1030.be, si connue.",
+    )

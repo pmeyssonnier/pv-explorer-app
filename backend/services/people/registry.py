@@ -12,6 +12,7 @@ import os
 from collections import defaultdict
 
 from services.statistics import load_db
+from services.questions_ecrites import QE_JSON_PATH, load_qe_db
 from utils.text import _thematique_label
 from utils.video import video_session_map
 
@@ -46,6 +47,7 @@ def _sig():
     except Exception:
         parts.append(0)
     parts.append(os.path.getmtime(_VIDEO_PATH) if os.path.exists(_VIDEO_PATH) else 0)
+    parts.append(os.path.getmtime(QE_JSON_PATH) if os.path.exists(QE_JSON_PATH) else 0)
     return tuple(parts)
 
 
@@ -167,6 +169,29 @@ def _build_all():
                 }
                 people[author_key]["depose"].append(entry)
                 pv_lookup[(author_key, date)].append(entry)
+
+    # Questions écrites : canal totalement séparé des points de PV (adressées
+    # au Collège hors séance, jamais de SP/répondant·e attribuable — voir
+    # services/questions_ecrites*.py). Comptées comme une activité "déposée"
+    # de plus, au même titre qu'une question orale/demande/motion.
+    for q in load_qe_db().get("questions", []):
+        author = q.get("auteur")
+        if not author:
+            continue
+        k = _key(author, pairs)
+        if not k:
+            continue
+        add_variant(k, author)
+        people[k]["depose"].append({
+            "date": q.get("date"),
+            "sp": 0,
+            "type": "question_ecrite",
+            "titre": q.get("titre") or "",
+            "thematiques": [],
+            "repondant": None,
+            "url": q.get("source_url"),
+            "video_url": None,
+        })
 
     for s in video:
         date = s.get("date")
