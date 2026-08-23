@@ -54,6 +54,18 @@ _DISPLAY_NAME_OVERRIDES = {
     "essaidi": "Tamimount Essaidi",
 }
 
+# Homonymes détectés dans le corpus : deux personnes RÉELLES et DISTINCTES
+# qui partagent un nom de famille, que _key() (basé sur le seul nom de
+# famille) fusionnerait sinon en une fiche unique — la moins mentionnée
+# hériterait alors du nom affiché de l'autre. Ex. Marie Nyssens, autrice
+# d'une question écrite isolée (2020), n'a aucun lien avec Clotilde
+# Nyssens, conseillère communale citée des dizaines de fois dans les PV.
+# Clé = nom complet nettoyé (prénom + nom), accents/casse normalisés ;
+# valeur = clé d'identité dédiée (jamais celle du seul nom de famille).
+_HOMONYM_KEY_OVERRIDES = {
+    "marie nyssens": "nyssens_marie",
+}
+
 # Organismes captés à tort comme « auteur » sur des points de convention/
 # partenariat du chapitrage vidéo (le contre-signataire, pas un·e citoyen·ne
 # intervenant·e) : jamais une personne, à exclure de l'agrégation.
@@ -110,7 +122,11 @@ def _key(name: str, pairs: set | None = None) -> str:
     nom de famille d'Axel Bernard, prénom du bourgmestre Bernard Clerfayt)
     — seule la paire complète est fiable.
     """
-    toks = [t for t in re.split(r"\s+", _clean(name)) if t]
+    cleaned = _clean(name)
+    override = _HOMONYM_KEY_OVERRIDES.get(_strip_accents(cleaned).lower())
+    if override:
+        return override
+    toks = [t for t in re.split(r"\s+", cleaned) if t]
     if not toks:
         return ""
     normed = [_norm_tok(t) for t in toks]

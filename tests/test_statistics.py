@@ -89,3 +89,30 @@ def test_activite_types_skips_seances_and_questions_without_year(monkeypatch):
     db = _db(("", [{"type": "question_orale", "sp": 1}]))
     s = statistics.compute_stats(db)
     assert "" not in {r["annee"] for r in s["activite_types_par_annee"]}
+
+
+def test_seances_resume_carries_per_seance_activite_breakdown(monkeypatch):
+    # Alimente le drill-down Année → Mois du graphe « Activité citoyenne »
+    # (agrégation côté client, voir frontend/js/stats.js activityRows()).
+    monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": []})
+    db = _db(("2025-03-10", [
+        {"type": "question_orale", "sp": 1},
+        {"type": "question_orale", "sp": 2},
+        {"type": "demande_habitant", "sp": 3},
+        {"type": "point_normal", "sp": 4},
+    ]))
+    s = statistics.compute_stats(db)
+    resume = next(r for r in s["seances_resume"] if r["date"] == "2025-03-10")
+    assert resume["activite"] == {"Question orale": 2, "Demande": 1}
+
+
+def test_qe_dates_lists_written_question_dates(monkeypatch):
+    # Bucketage par mois côté client (les questions écrites n'ont pas de séance).
+    monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": [
+        {"annee": 2025, "numero": 1, "date": "2025-03-05"},
+        {"annee": 2025, "numero": 2, "date": "2025-04-12"},
+        {"annee": 2025, "numero": 3},   # pas de date → ignorée
+    ]})
+    db = _db(("2025-03-10", [{"type": "question_orale", "sp": 1}]))
+    s = statistics.compute_stats(db)
+    assert s["qe_dates"] == ["2025-03-05", "2025-04-12"]

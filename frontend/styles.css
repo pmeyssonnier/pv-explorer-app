@@ -939,6 +939,7 @@ body {
   justify-content: flex-end; transition: filter 0.15s;
 }
 .yc-col:hover .yc-stack { filter: brightness(1.08); }
+.yc-col.yc-sel .yc-stack { outline: 2.5px solid var(--or); outline-offset: 2px; filter: brightness(1.08); }
 .yc-seg:not(:last-child) { margin-bottom: 2px; }   /* écart de 2px = fond de la page (spacer) */
 .yc-seg-top { border-radius: 4px 4px 0 0; }        /* seul le segment le plus haut est arrondi */
 .yc-seg-s0 { background: var(--chart-s0); }
