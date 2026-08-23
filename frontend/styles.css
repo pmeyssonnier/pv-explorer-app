@@ -206,6 +206,11 @@ body {
 .admin-login-form input:focus { outline: none; border-color: var(--or); }
 .admin-login-error { color: var(--bordeaux); font-size: 13px; min-height: 16px; margin: 10px 0 0; }
 .admin-login-submit { margin-top: 12px; }
+/* Bouton « Extraire » (PV + QE) uniquement — pas « Se connecter », qui
+   partage la même classe .admin-login-submit : hauteur doublée (16px → 32px)
+   pour une meilleure cible tactile sur mobile avant un envoi qui prend
+   plusieurs secondes. */
+#adminUploadSubmit, #qeUploadSubmit { padding-top: 8px; padding-bottom: 8px; }
 
 /* ── PANNEAU ADMIN — upload/aperçu d'un PV (voir admin.js) ── */
 .admin-upload, .admin-preview { margin-top: 14px; }
