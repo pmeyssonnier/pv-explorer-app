@@ -77,3 +77,12 @@ export const TYPE_ACTOR_LABEL = {
   'Motion': 'Auteur·e de la motion',
   'Débat filmé': 'Intervenant·e',
 };
+
+// Bloc de tags « thématiques » — même rendu partout où un point est affiché
+// (Séances, Par élu·e, sources des réponses) : avant ce correctif, seule la
+// vue Séances les montrait. '' si aucune thématique (jamais de bloc vide).
+export function renderThemeTags(thematiques) {
+  return (thematiques && thematiques.length)
+    ? `<div class="elu-tags">${thematiques.map(t => `<span class="elu-tag">${escapeHtml(t)}</span>`).join('')}</div>`
+    : '';
+}

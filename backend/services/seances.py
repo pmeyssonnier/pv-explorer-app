@@ -7,7 +7,7 @@ services.people.registry) pour un affichage homogène — et pour chaque point,
 un résumé lisible de sa décision/vote et de ses thématiques.
 """
 from services.statistics import load_db
-from utils.text import _canon_theme
+from utils.text import _thematique_label
 from utils.video import video_session_map
 
 from services.people.attribution import _TYPE_LABEL, _point_author, _respondents
@@ -23,18 +23,6 @@ def _is_reportee(decision) -> bool:
     """Point renvoyé à une séance ultérieure (« REPORTÉ ») : jamais débattu
     ce jour-là, donc jamais de répondant·e ni de débat filmé à en attendre."""
     return _strip_accents(decision or "").strip().lower().startswith("report")
-
-
-def _thematique_label(t: str) -> str:
-    """Étiquette d'affichage d'une thématique (slug interne, ex.
-    « transports_publics »). Passe par _canon_theme (utils.text) — la même
-    fusion singulier/pluriel que l'onglet Statistiques (services.statistics.
-    compute_stats) — pour qu'un même tag s'affiche IDENTIQUEMENT dans les deux
-    vues (avant ce correctif, seul compute_stats canonisait : « transports_
-    publics » s'affichait « Transport public » en Statistiques mais
-    « Transports publics » en Séances/Par élu·e)."""
-    s = _canon_theme((t or "").replace("-", " "))
-    return s[:1].upper() + s[1:] if s else s
 
 
 # Libellés d'affichage homogènes pour le champ « decision » du PV, dont la

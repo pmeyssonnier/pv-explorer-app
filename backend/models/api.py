@@ -55,6 +55,11 @@ class Source(BaseModel):
     titre: str
     decision: str
     score: float
+    # Étiquettes de thématique (ex. « Mobilité », « Finances ») — même liste,
+    # même normalisation d'affichage que les onglets Statistiques/Séances/Par
+    # élu·e (voir utils.text._thematique_label). Vide pour un débat filmé
+    # (aucune thématique indexée pour ce type de source).
+    thematiques: list[str] = Field(default_factory=list, description="Étiquettes de thématique du point.")
     # Lien : PDF officiel du PV (résolu par date) OU deep-link vidéo pour un débat
     # filmé (métadonnée) — None si absent.
     url: Optional[str] = Field(default=None, description="Lien vers le PV (PDF) ou la vidéo du débat.")

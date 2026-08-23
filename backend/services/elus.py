@@ -77,6 +77,7 @@ def elu_detail(key: str):
             "type_label": _TYPE_LABEL.get(it["type"], "Point"),
             "type": it["type"],
             "titre": it["titre"],
+            "thematiques": it.get("thematiques") or [],
             "repondant": it.get("repondant"),
             "url": it.get("url"),
             "video_url": it.get("video_url"),
@@ -88,6 +89,7 @@ def elu_detail(key: str):
             "date": it["date"],
             "sp": it["sp"],
             "titre": it["titre"],
+            "thematiques": it.get("thematiques") or [],
             "url": it.get("url"),
             "demandeur": it.get("demandeur"),
         }

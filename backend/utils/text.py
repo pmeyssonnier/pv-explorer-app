@@ -27,3 +27,13 @@ def _canon_theme(theme: str) -> str:
         toks.append(w)
     s = " ".join(toks)
     return _THEME_CANON.get(s, s)
+
+
+def _thematique_label(t: str) -> str:
+    """Étiquette d'affichage d'une thématique (slug interne, ex.
+    « transports_publics »). Passe par _canon_theme — la même fusion
+    singulier/pluriel que l'onglet Statistiques (services.statistics.
+    compute_stats) — pour qu'un même tag s'affiche IDENTIQUEMENT dans toutes
+    les vues (Statistiques, Séances, Par élu·e, sources des réponses)."""
+    s = _canon_theme((t or "").replace("-", " "))
+    return s[:1].upper() + s[1:] if s else s
