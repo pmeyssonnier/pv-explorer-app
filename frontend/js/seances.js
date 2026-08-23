@@ -1,7 +1,10 @@
 // ── SÉANCES (vue complémentaire à « Par élu·e » : par PV, tous les points,
 // pas seulement ceux d'une personne) ──
 import { API_URL } from './config.js';
-import { escapeHtml, formatDate, TYPE_BADGE, TYPE_ACTOR_LABEL, fmtMontant, renderThemeTags } from './utils.js';
+import {
+  escapeHtml, formatDate, TYPE_ACTOR_LABEL, fmtMontant, renderThemeTags,
+  renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine,
+} from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
 let seancesData = null;       // liste complète [{date,n_points,url,video_url}]
@@ -141,8 +144,7 @@ function hasDebateLink(it) {
 }
 
 function seancePointRow(it) {
-  const cls = TYPE_BADGE[it.type_label] || 'b-d';
-  const badge = `<span class="elu-badge ${cls}">${escapeHtml(it.type_label)}</span>`;
+  const badge = renderTypeBadge(it.type_label);
   const reporteBadge = it.reporte ? `<span class="elu-badge b-report">Reporté</span>` : '';
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   // Vue agrégée "Toutes les séances" uniquement : rappelle de quelle séance
@@ -157,11 +159,11 @@ function seancePointRow(it) {
   // vidéo générique (video_precise=false) : lien vers le DÉBUT de la séance,
   // pas ce point précis — déjà proposé une fois au-dessus (vidéo complète).
   const links = hasDebateLink(it)
-    ? `<a class="elu-link elu-link-video" href="${it.type === 'video' ? it.url : it.video_url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat</a>`
+    ? renderVideoLink(it.type === 'video' ? it.url : it.video_url, '▶ Voir le débat', 'Voir le débat sur YouTube (au bon moment)')
     : '';
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
-  const demandeur = it.demandeur ? `<div class="elu-demandeur">${escapeHtml(actorLabel)} : ${escapeHtml(it.demandeur)}</div>` : '';
-  const rep = it.repondant ? `<div class="elu-rep">Répondant·e : ${escapeHtml(it.repondant)}</div>` : '';
+  const demandeur = renderPersonLine('elu-demandeur', actorLabel, it.demandeur);
+  const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
   // Déjà signalé via le badge « Reporté » ci-dessus, pas besoin de répéter.
   const decision = (it.decision && !it.reporte) ? `<div class="elu-decision">${escapeHtml(it.decision)}</div>` : '';
   const montant = (it.montant_eur !== null && it.montant_eur !== undefined)
@@ -335,8 +337,8 @@ function renderSeance(d, scroll) {
   // via seanceDateBadge → jumpToSeance), ni de partage dédié pour l'instant.
   let links = '';
   if (!d.isAggregate) {
-    if (d.url) links += `<a class="elu-link" href="${d.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`;
-    if (d.video_url) links += `<a class="elu-link elu-link-video" href="${d.video_url}" target="_blank" rel="noopener noreferrer" title="Voir la séance filmée sur YouTube"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ vidéo (séance complète)</a>`;
+    links += renderPvPdfLink(d.url);
+    links += renderVideoLink(d.video_url, '▶ vidéo (séance complète)', 'Voir la séance filmée sur YouTube');
   }
   const titleLabel = d.isAggregate ? `Toutes les séances ${escapeHtml(d.year)}` : formatDate(d.date);
   const countLabel = d.isAggregate

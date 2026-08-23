@@ -7,7 +7,7 @@ services.people.registry) pour un affichage homogène — et pour chaque point,
 un résumé lisible de sa décision/vote et de ses thématiques.
 """
 from services.statistics import load_db
-from utils.text import _thematique_label
+from utils.text import _DECISION_LABELS, _thematique_label
 from utils.video import video_session_map
 
 from services.people.attribution import _TYPE_LABEL, _point_author, _respondents
@@ -23,29 +23,6 @@ def _is_reportee(decision) -> bool:
     """Point renvoyé à une séance ultérieure (« REPORTÉ ») : jamais débattu
     ce jour-là, donc jamais de répondant·e ni de débat filmé à en attendre."""
     return _strip_accents(decision or "").strip().lower().startswith("report")
-
-
-# Libellés d'affichage homogènes pour le champ « decision » du PV, dont la
-# graphie brute varie (casse, accents, coquilles ponctuelles — ex. « PRENDS
-# POUR INFORMATION », « PRENDRE ACTE »). Clé = texte sans accents/minuscule.
-_DECISION_LABELS = {
-    "approuve": "Approuvé",
-    "decide": "Décidé",
-    "decidé": "Décidé",
-    "debat": "Débat",
-    "reporte": "Reporté",
-    "prend acte": "Pris acte",
-    "prendre acte": "Pris acte",
-    "prend pour information": "Pris pour information",
-    "prendre pour information": "Pris pour information",
-    "prends pour information": "Pris pour information",
-    "prises pour information": "Pris pour information",
-    "arrete": "Arrêté",
-    "nomme": "Nommé",
-    "admet": "Admis",
-    "beslist": "Décidé",
-    "minute de silence": "Minute de silence",
-}
 
 
 def _decision_summary(decision, vote):

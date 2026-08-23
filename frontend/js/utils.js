@@ -86,3 +86,32 @@ export function renderThemeTags(thematiques) {
     ? `<div class="elu-tags">${thematiques.map(t => `<span class="elu-tag">${escapeHtml(t)}</span>`).join('')}</div>`
     : '';
 }
+
+// ── Fragments partagés entre Séances et Par élu·e (mêmes classes CSS,
+// mêmes gabarits, jusqu'ici réécrits à l'identique à 4 endroits :
+// seancePointRow/renderSeance dans seances.js, eluDeposeRow/eluRepondRow
+// dans elus.js). Ce qui reste spécifique à chaque appelant — QUELS liens
+// afficher, sous QUELLE condition, avec QUEL libellé — reste dans
+// l'appelant : seule la construction du fragment HTML est partagée. ──
+export function renderTypeBadge(typeLabel) {
+  const cls = TYPE_BADGE[typeLabel] || 'b-d';
+  return `<span class="elu-badge ${cls}">${escapeHtml(typeLabel)}</span>`;
+}
+
+export function renderPvPdfLink(url) {
+  return url
+    ? `<a class="elu-link" href="${url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>`
+    : '';
+}
+
+export function renderVideoLink(url, label, title) {
+  return url
+    ? `<a class="elu-link elu-link-video" href="${url}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(title)}"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>${label}</a>`
+    : '';
+}
+
+// Ligne « Auteur·e de la question : X » / « Répondant·e : X » — le libellé
+// varie selon l'appelant/le rôle, la classe CSS et le gabarit non.
+export function renderPersonLine(cssClass, label, name) {
+  return name ? `<div class="${cssClass}">${escapeHtml(label)} : ${escapeHtml(name)}</div>` : '';
+}
