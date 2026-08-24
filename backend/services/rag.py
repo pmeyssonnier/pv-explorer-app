@@ -15,10 +15,11 @@ from config import (
     NAMESPACE, CLAUDE_MODEL, ALLOWED_MODELS, TOP_K, MAX_SOURCES, SCORE_MIN,
     PINECONE_TIMEOUT, ANTHROPIC_TIMEOUT, logger,
 )
+import lexique_store
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
-from utils.text import _decision_status, _thematique_label
+from utils.text import _decision_status, _strip_accents, _thematique_label
 from utils.video import video_session_map, video_chunk_counts
 from services.pinecone_service import get_pinecone_index
 from services.statistics import load_db
@@ -57,6 +58,30 @@ def build_context(matches: list) -> str:
         meta = m.get("metadata", {})
         parts.append(meta.get("chunk_text", ""))
     return "\n\n---\n\n".join(parts)
+
+
+def _glossaire_block(question: str, context: str) -> str:
+    """Bloc <glossaire> des définitions du lexique (voir lexique_store) dont le
+    TERME apparaît dans la question OU dans les extraits — aide Claude à
+    comprendre et reformuler le vocabulaire local (ex. « dropzone »). Vide si
+    aucun terme ne s'y trouve. Comparaison insensible à la casse et aux accents.
+    Ces définitions servent la COMPRÉHENSION, ce ne sont pas des sources citables
+    (le system prompt l'énonce)."""
+    gloss = lexique_store.glossaire()
+    if not gloss:
+        return ""
+    hay = _strip_accents(f"{question}\n{context}".lower())
+    hits = [(t, d) for t, d in gloss.items() if _strip_accents(str(t).lower()) in hay]
+    if not hits:
+        return ""
+    lignes = "\n".join(f"- {t} : {d}" for t, d in hits)
+    return (
+        "<glossaire>\n"
+        "Définitions de vocabulaire local, pour t'aider à comprendre et expliquer "
+        "les extraits. Ce ne sont PAS des extraits de PV : ne les cite pas comme source.\n"
+        f"{lignes}\n"
+        "</glossaire>\n\n"
+    )
 
 
 def _hit_score(h) -> float:
@@ -233,9 +258,10 @@ def answer(question_raw: str, commune_raw: Optional[str], *,
     # Les extraits et la question (non fiable) sont isolés dans des balises :
     # le system prompt interdit d'obéir à des instructions dans <question>.
     context = build_context(norm)
+    glossaire = _glossaire_block(question, context)
     user_prompt = f"""Voici des extraits de procès-verbaux du Conseil communal de Schaerbeek :
 
-<extraits>
+{glossaire}<extraits>
 {context}
 </extraits>
 

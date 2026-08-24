@@ -11,6 +11,7 @@ import app
 import lexique_store
 from services import github_publish
 from services.auth import hash_password
+from services.rag import _glossaire_block
 from utils.text import _canon_theme, _decision_status
 
 client = TestClient(app.app)
@@ -76,6 +77,18 @@ def test_theme_override_applied_by_canon_theme(tmp_lexique):
 def test_decision_synonym_applied_by_decision_status(tmp_lexique):
     lexique_store.add_entry("decision", "approbation", "Approuvé")
     assert _decision_status("approbation") == "Approuvé"   # absent des libellés en dur
+
+
+def test_glossaire_block_injects_only_matching_terms(tmp_lexique):
+    lexique_store.add_entry("def", "dropzone", "Périmètre de stationnement en flotte libre.")
+    # Terme présent dans la question (insensible casse/accents) → bloc <glossaire>.
+    block = _glossaire_block("Où sont les DROPZONES à Schaerbeek ?", "")
+    assert "<glossaire>" in block
+    assert "dropzone" in block and "flotte libre" in block
+    # Terme présent seulement dans les extraits → également injecté.
+    assert "<glossaire>" in _glossaire_block("météo", "… installer une dropzone rue X …")
+    # Aucun terme du glossaire → pas de bloc.
+    assert _glossaire_block("Quel est le budget voirie ?", "extrait sans jargon") == ""
 
 
 # ── Endpoints /admin/lexique (auth + commit monkeypatché) ───────────────────
