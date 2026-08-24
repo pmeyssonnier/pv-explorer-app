@@ -47,6 +47,7 @@
       "2014-02-26",
       "2014-03-26",
       "2014-04-30",
+      "2014-05-28",
       "2014-06-25",
       "2014-09-24",
       "2014-10-22",
@@ -171,7 +172,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9883,
+    "total_points": 9914,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -59349,6 +59350,899 @@
             "accidents",
             "infrastructure_routiere"
           ]
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2014-05-28",
+        "date": "2014-05-28",
+        "source_file": "pv_2014.05.28_sp.pdf",
+        "extracted_at": "2026-08-24T14:02:52.411835",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": "Bernard Clerfayt",
+        "bourgmestre_ff": null,
+        "secretaire_communal": "David Neuprez",
+        "presents_count": 21,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 31,
+          "extracted": 31,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/pv_2014.05.28_sp.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINT(S) INSCRIT(S) À LA DEMANDE D'HABITANTS",
+          "sous_rubrique": "",
+          "titre": "La réglementation communale qui prévoit une surtaxation des immeubles qualifiés de négligés ou abandonnés - Demande de Monsieur M. Diament",
+          "resume": "Demande concernant la réglementation communale sur la surtaxation des immeubles négligés ou abandonnés",
+          "intervenants": [
+            "Monsieur Diament",
+            "Monsieur Grimberghs",
+            "Monsieur Verzin",
+            "Monsieur Bernard",
+            "Monsieur Nimal",
+            "Monsieur Goldstein"
+          ],
+          "repondant": "Monsieur Grimberghs",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immobilier",
+            "fiscalite_locale"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SECRÉTAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Commissions du conseil communal - Modifications - Pour information",
+          "resume": "Modification des commissions du conseil communal. Madame Barbara Trachte reprend sa fonction dans les commissions : Commission n° 3 (Etat civil - Population - Seniors), Commission n° 5 (Urbanisme - Environnement - Rénovation urbaine - Tourisme - Patrimoine), Commission n° 8 (Culture Française - Propreté publique), Commission n° 9 (Enseignement communal - Accueil extra scolaire - Crèches et Prégardiennats - Budget et comptes)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "administration_communale",
+            "commissions"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RECEVEUR COMMUNAL",
+          "sous_rubrique": "Recette - Comptabilité",
+          "titre": "Convention avec le FRBRTC - Modification de l'article 11 - Approbation",
+          "resume": "Approbation de la modification de l'article 11 de la convention avec le FRBRTC, accordant une avance de trésorerie jusque 40 millions d'euros à la commune de Schaerbeek (au lieu de 25 millions actuellement)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 40000000,
+          "thematiques": [
+            "finances",
+            "tresorerie",
+            "convention"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "****RETIRE**** Modifications budgétaires de clôture - Service ordinaire (n°6) et extraordinaire (n°7) - Approbation",
+          "resume": "Point retiré de l'ordre du jour",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'Eglise Divin Sauveur - Compte 2013 - Aviser favorablement",
+          "resume": "Avis favorable sur le compte 2013 de la Fabrique d'Eglise Divin Sauveur qui affiche un boni de 16.275,06 € (recettes: 28.013,24 €, dépenses: 11.738,18 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 28013.24,
+          "thematiques": [
+            "cultes",
+            "comptes",
+            "finances"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 4,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'Eglise Sainte Famille - Compte 2013 - Aviser favorablement",
+          "resume": "Avis favorable sur le compte 2013 de la Fabrique d'Eglise Sainte Famille qui affiche un boni de 77.857,44 € (recettes: 105.032,84 €, dépenses: 27.175,40 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 105032.84,
+          "thematiques": [
+            "cultes",
+            "comptes",
+            "finances"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 6,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'Eglise Sainte Thérèse d'Avila - Compte 2013 - Aviser favorablement",
+          "resume": "Avis favorable sur le compte 2013 de la Fabrique d'Eglise Sainte Thérèse d'Avila qui affiche un boni de 2.919,08 € (recettes: 17.319,83 €, dépenses: 14.400,75 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 17319.83,
+          "thematiques": [
+            "cultes",
+            "comptes",
+            "finances"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "ASBL \"BIBLA - Lire en classe\" - Comptes 2013 - Prise d'acte",
+          "resume": "Prise d'acte des comptes 2013 de l'ASBL BIBLA - Lire en classe affichant un résultat négatif de -3.890,40 € pour l'exercice 2013 et un résultat cumulé de 11.133,52 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": -3890.4,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "finances",
+            "education"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Achats",
+          "titre": "ASBL \"Oeuvre des Colonies Scolaires - OCS\" - Nouvelle convention liant la commune et l'ASBL + bail à rénovation - Approbation",
+          "resume": "Approbation de la nouvelle convention liant la Commune et l'ASBL Oeuvre des Colonies Scolaires - OCS et approbation du bail à rénovation liant la Commune et l'ASBL",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "convention",
+            "patrimoine",
+            "education"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 9,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Achats",
+          "titre": "Instruction Publique - Achat de matériel d'équipement pour les cours commerciaux du soir - Mode de passation et fixation des conditions du marché – Pour Information",
+          "resume": "Information sur la décision du Collège du 6 mai 2014 de passer un marché par procédure négociée sans publicité pour l'achat de matériel d'équipement pour les cours commerciaux du soir. Dépense estimée à 20.000 € TVA comprise, imputée à l'article 735 744 EQ 51 14 du budget extraordinaire 2014 et financée par emprunt",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 20000,
+          "thematiques": [
+            "marche_public",
+            "education",
+            "equipement",
+            "budget"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 10,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Schaerbeek Propreté & Espaces Verts",
+          "sous_rubrique": "Acquisition d'arbres",
+          "titre": "Acquisition d'arbres - Mode de passation et fixation des conditions de marchés",
+          "resume": "Approbation du mode de passation et des conditions du marché pour l'acquisition d'arbres dans le cadre de Schaerbeek Propreté & Espaces Verts, dépense estimée à 45.000,00 € TVA comprise.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 45000,
+          "thematiques": [
+            "marches_publics",
+            "equipement",
+            "espaces_verts"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Cimetière Communal",
+          "sous_rubrique": "Achat de matériel",
+          "titre": "Achat de matériel pour le cimetière communal - Mode de passation et fixation des conditions de marchés",
+          "resume": "Approbation du mode de passation et des conditions du marché pour l'achat de matériel pour le cimetière communal, dépense estimée à 6.600,00 € TVA comprise.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 6600,
+          "thematiques": [
+            "marches_publics",
+            "equipement",
+            "cimetiere"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Subventions et partenariats",
+          "titre": "Fonds Politique des Grandes Villes - Convention 2014",
+          "resume": "Approbation de la convention 2014 conclue entre la Commune et l'Etat Fédéral pour le Fonds Politique des Grandes Villes, montant de 2.766.379,00 €. Délégation au Collège pour signer les conventions particulières d'exécution avec les partenaires locaux.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2766379,
+          "thematiques": [
+            "subventions",
+            "partenariats",
+            "politique_grandes_villes"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Communication",
+          "sous_rubrique": "Communication",
+          "titre": "WebGIS (cartographie) - Résultats de la thermographie aérienne - Ratification de la convention",
+          "resume": "Approbation de la convention entre la commune de Schaerbeek et Bruxelles-Environnement portant sur l'utilisation des résultats de la thermographie aérienne dans le cadre de la promotion de l'isolation des bâtiments. Délégation au Collège pour signer la convention particulière d'exécution.",
+          "intervenants": [
+            "Monsieur Bernard",
+            "Monsieur le Bourgmestre"
+          ],
+          "repondant": "Monsieur le Bourgmestre",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "communication",
+            "cartographie",
+            "environnement",
+            "energy_efficiency"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux",
+          "sous_rubrique": "Affaires juridiques",
+          "titre": "Affaire Région de Bruxelles-Capitale contre Etat belge - Action en cessation sur les vols au-dessus de la Région - Requête en intervention volontaire",
+          "resume": "Autorisation pour introduire une requête en intervention volontaire au nom de la Commune de Schaerbeek dans l'action en cessation de la Région de Bruxelles-Capitale contre la mise en oeuvre du plan de répartition des vols au-dessus de la Région bruxelloise.",
+          "intervenants": [
+            "Monsieur le Bourgmestre",
+            "Monsieur de Beauffort",
+            "Monsieur van den Hove",
+            "Monsieur Goldstein",
+            "Monsieur Eraly",
+            "Monsieur Nimal",
+            "Monsieur Guillaume"
+          ],
+          "repondant": "Monsieur Guillaume",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 32,
+            "contre": 0,
+            "abstentions": 4
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "affaires_juridiques",
+            "environnement",
+            "aviation",
+            "nuisances_sonores"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 15,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux",
+          "sous_rubrique": "Gestion immobilière technique",
+          "titre": "Rue Van Dijck, 47 - Convention d'occupation pour la salle 2 par l'asbl Fraternité pour la Faydha Tijania-Belgique",
+          "resume": "Accord sur l'occupation de la salle 2 (1er étage) rue Van Dijck, 47 par l'asbl Fraternité pour la Faydha Tijania-Belgique pour 144 heures entre le 1er juin et le 31 décembre 2014 pour des activités éducatives, loyer total de 216 € (charges comprises). Adoption de la convention d'occupation à titre précaire et révocable.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 216,
+          "thematiques": [
+            "immobilier",
+            "locations",
+            "associations"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 16,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux",
+          "sous_rubrique": "Gestion immobilière technique",
+          "titre": "Consultation ONE - Rue François Bossaerts, 60 - Contrat de bail",
+          "resume": "Accord sur l'occupation des locaux au 1er étage rue François Bossaerts, 60 par la consultation ONE pour 500 euros par mois. Adoption du contrat de bail.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 500,
+          "thematiques": [
+            "immobilier",
+            "locations",
+            "one"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 16,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Architecture et Bâtiments",
+          "titre": "Réaménagement de la cité Terdelt - Enfouissement des bulles à verre en surface - Convention - Avenant",
+          "resume": "Approbation de la convention 'bulles à verre enterrées' et de l'avenant permettant l'enfouissement des bulles dans le cadre du réaménagement de la Cité Terdelt. Délégation au Collège pour définir les futurs sites d'enfouissement des bulles.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "infrastructure",
+            "propreté_publique",
+            "tri_selectif",
+            "amenagement_urbain"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Architecture et Bâtiments",
+          "titre": "Crèche 'Les petites étoiles' rue Godefroid Guffens 26 - Adaptation des sections moyens et bébés - Majoration de la dépense",
+          "resume": "Pour information : majoration de dépense pour l'adaptation des sections moyens et bébés de la crèche Les petites étoiles rue Godefroid Guffens 26.",
+          "intervenants": [
+            "Monsieur Goldstein",
+            "Monsieur Vanhalewyn"
+          ],
+          "repondant": "Monsieur Vanhalewyn",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 29,
+            "contre": 0,
+            "abstentions": 7
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "infrastructure",
+            "petite_enfance",
+            "creche"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Salle de sport",
+          "titre": "Salle de sport \"Queensbury asbl\" sur le site Tamines - Démontage du groupe de ventilation en toiture - Conditions et mode de passation du marché",
+          "resume": "Approbation du démontage du groupe de ventilation en toiture de la salle de sport Queensbury asbl sur le site Tamines, en amont de travaux provisoires de réfection de l'étanchéité de la toiture. Travaux à confier à l'installateur sans mise en concurrence pour des raisons de garantie. Variante choisie pour 10.177,31 € TVAC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10177.31,
+          "thematiques": [
+            "infrastructures_sportives",
+            "marches_publics",
+            "travaux"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Éducation",
+          "titre": "Site Cambier - Construction d'une nouvelle école du Parc et de locaux pour une unité de scouts et guides - Approbation",
+          "resume": "Construction d'une nouvelle école du Parc (216 élèves) et de locaux pour une unité de scouts et guides sur le site Cambier selon exigences environnementales avec éléments préfabriqués (durée de vie 30 ans minimum). Confier à un bureau d'architectes privé par procédure négociée avec publicité. Dépense estimée à 150.000 € TVAC. Financement par emprunt.",
+          "intervenants": [
+            "Monsieur Verzin",
+            "Monsieur Bernard",
+            "Monsieur Eraly",
+            "Monsieur Nimal"
+          ],
+          "repondant": "Monsieur Vanhalewyn, Monsieur De Herde",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 34,
+            "contre": 2,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "education",
+            "infrastructures",
+            "marches_publics",
+            "construction",
+            "scouts"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Revitalisation urbaine",
+          "titre": "Contrat de quartier durable Coteaux-Josaphat - Modifications du protocole d'accord Beliris relatif aux opérations concernées - Approbation",
+          "resume": "Approbation de la version modifiée du protocole d'accord définissant les droits et obligations de l'État fédéral, de la Région de Bruxelles-Capitale et de la Commune de Schaerbeek dans le cadre des études et travaux du contrat de quartier durable Coteaux-Josaphat. Budget maximal 3.000.000 EUR TVA comprise.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3000000,
+          "thematiques": [
+            "contrat_quartier",
+            "revitalisation_urbaine",
+            "cooperation_interadministrative"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services communaux spécifiques",
+          "sous_rubrique": "Marchés publics",
+          "titre": "Règlement relatif à l'exercice et à l'organisation des activités ambulantes sur les marchés publics - Approbation",
+          "resume": "Approbation du nouveau règlement communal relatif à l'organisation des marchés publics et des activités ambulantes sur le territoire de Schaerbeek, conforme aux lois du 25 juin 1993 et du 22 décembre 2009. Avis du SPF Économie solicité et pris en compte.",
+          "intervenants": [
+            "Monsieur Noël",
+            "Madame Ozdemir"
+          ],
+          "repondant": "Monsieur Noël",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "reglements_communaux",
+            "activites_ambulantes",
+            "marches_publics"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement communal",
+          "sous_rubrique": "Services d'accueil",
+          "titre": "Règlement communal concernant les redevances pour les services d'accueil en milieu scolaire pendant l'année scolaire - Amendement",
+          "resume": "Fixation des tarifs pour les Services d'Accueil en Milieu Scolaire (S.A.M.S.) ou \"garderies\" pendant l'année scolaire. Régime forfaitaire avec possibilités de modulation basées sur la situation sociale des familles et le nombre d'enfants. Inscription obligatoire par formulaire avant le 15 septembre.",
+          "intervenants": [
+            "Monsieur Verzin",
+            "Madame Byttebier",
+            "Monsieur Gilles",
+            "Monsieur Bernard",
+            "Monsieur Goldstein"
+          ],
+          "repondant": "Monsieur De Herde",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 2,
+            "abstentions": 7
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "education",
+            "services_scolaires",
+            "tarification",
+            "accueil_enfants"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ENSEIGNEMENT",
+          "sous_rubrique": "Services d'accueil en milieu scolaire",
+          "titre": "Règlement communal concernant les redevances pour les services d'accueil en milieu scolaire (S.A.M.S.) pendant l'année scolaire",
+          "resume": "Fixation des tarifs forfaitaires pour les services d'accueil en milieu scolaire durant l'année scolaire. Forfaits journaliers: matin 10€/jour/an, midi 50€/jour/an (tarif réduit 30€/jour/an pour domiciliés à Schaerbeek), soir 40€/jour/an, mercredi midi et après-midi 80€/jour/an. Dispositions relatives aux tickets pour garderie occasionnelle, modalités de paiement, facturation complémentaire après fermeture, exonérations sociales et réductions familiales.",
+          "intervenants": [
+            "De Herde",
+            "Verzin",
+            "Gilles",
+            "Bernard",
+            "Byttebier"
+          ],
+          "repondant": "Byttebier",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 3,
+            "abstentions": 6
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "services_scolaires",
+            "tarification",
+            "accueil_enfants"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 46,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "",
+          "sous_rubrique": "",
+          "titre": "Pourquoi le Bourgmestre Clerfayt et la majorité FDF-Ecolo-CdH de Schaerbeek n'attaquent pas le plan Wathelet en justice?",
+          "resume": "Ce point a été développé lors de la discussion du point 15",
+          "intervenants": [
+            "Yvan de BEAUFFORT"
+          ],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 55,
+          "page": 32,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Contrats de quartier",
+          "titre": "Contrat de quartier durable Helmet - Square Apollo - IM1 Transformation de logements en équipements communautaires - Fixation du mode de passation et des conditions du marché de travaux - approbation",
+          "resume": "Approbation du cahier des charges pour la transformation de logements en équipements communautaires dans les socles des immeubles Apollo (opération IM1). Passation du marché de travaux par adjudication publique. Coût estimé à 749.186,78€ TVAC. Subsidiation régionale de 647.385€, financement du solde par emprunt. Imputation budgétaire article 922/723-CQ-60/07.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 749186.78,
+          "thematiques": [
+            "infrastructures",
+            "contrat_quartier",
+            "travaux",
+            "logements",
+            "equipements_communautaires",
+            "helmet"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 56,
+          "page": 34,
+          "urgence": true,
+          "type": "point_normal",
+          "rubrique": "SERVICES COMMUNAUX SPÉCIFIQUES",
+          "sous_rubrique": "Enseignement néerlandophone",
+          "titre": "Règlement communal concernant les redevances pour les services d'accueil en milieu scolaire pendant l'année scolaire",
+          "resume": "Approbation du règlement fixant les tarifs et modalités de fonctionnement des services d'accueil en milieu scolaire (garderies) pendant l'année scolaire dans l'enseignement communal.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 2,
+            "abstentions": 7
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "services_scolaires",
+            "tarifs",
+            "garderies",
+            "enfants"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 57,
+          "page": 40,
+          "urgence": true,
+          "type": "point_normal",
+          "rubrique": "SERVICES COMMUNAUX SPÉCIFIQUES",
+          "sous_rubrique": "Enseignement néerlandophone",
+          "titre": "Règlement communal concernant les redevances pour les services d'accueil en milieu scolaire pendant les congés scolaires",
+          "resume": "Approbation du règlement fixant les tarifs et modalités de fonctionnement des services d'accueil en milieu scolaire (garderies) pendant les congés scolaires dans l'enseignement communal.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 3,
+            "abstentions": 6
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "services_scolaires",
+            "tarifs",
+            "garderies",
+            "congés_scolaires",
+            "enfants"
+          ],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 58,
+          "page": 46,
+          "urgence": true,
+          "type": "motion",
+          "rubrique": "",
+          "sous_rubrique": "",
+          "titre": "Le viaduc Reyers",
+          "resume": "Motion retirée. L'urgence est admise à l'unanimité. Ce point a été reporté au conseil communal du 25 juin 2014.",
+          "intervenants": [
+            "Frédéric NIMAL",
+            "Yves GOLDSTEIN",
+            "Georges VERZIN",
+            "Quentin VAN DEN HOVE",
+            "Thomas ERALY",
+            "Joëlle VAN ZUYLEN",
+            "Denis GRIMBERGHS",
+            "Cécile JODOGNE",
+            "Bernard CLERFAYT"
+          ],
+          "repondant": "Denis GRIMBERGHS, Cécile JODOGNE, Bernard CLERFAYT",
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": "reporte",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "pv_2014.05.28_sp.pdf"
+        },
+        {
+          "sp": 59,
+          "page": 46,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "",
+          "sous_rubrique": "",
+          "titre": "Les inscriptions dans l'enseignement communal fondamental",
+          "resume": "",
+          "intervenants": [
+            "Asma METTIOUI",
+            "Michel DE HERDE",
+            "Adelheid BYTTEBIER"
+          ],
+          "repondant": "Michel DE HERDE, Adelheid BYTTEBIER",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "pv_2014.05.28_sp.pdf"
         }
       ]
     },
