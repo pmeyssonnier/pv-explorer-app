@@ -1,7 +1,7 @@
 // ── STATISTIQUES — drill-down Année → Mois → Séance, thématiques, évolution
 // d'un thème (budget) ──
 import { API_URL } from './config.js';
-import { escapeHtml, formatDate, fmtInt, fmtMontant, fmtEUR, TYPE_COUNT_LABEL } from './utils.js';
+import { escapeHtml, formatDate, fmtInt, fmtMontant, fmtMontantCompact, fmtEUR, TYPE_COUNT_LABEL } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
 // KPI et thématiques se recalculent pour le périmètre courant, à partir d'un
@@ -85,7 +85,7 @@ function renderKPIs() {
     card('ico-date', fmtInt(a.nb), 'Séances') +
     card('ico-pv', fmtInt(a.points), 'Points traités') +
     card('ico-vote', fmtInt(a.votes), 'Votes disputés') +
-    card('ico-montant', fmtMontant(a.montant), 'Montants engagés', true);
+    card('ico-montant', fmtMontantCompact(a.montant), 'Montants engagés', true);
   const lbl = document.getElementById('scopeLabel');
   if (lbl) lbl.textContent = selectedSeance ? 'Séance du ' + formatDate(selectedSeance) : scopeLabel();
   const reset = document.getElementById('drillReset');
@@ -326,11 +326,17 @@ function pvRowHtml(s) {
            title="Voir la vidéo de la séance"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg></a>`
       : '');
   // Colonnes fixes : date | icônes | méta → tout aligné à gauche, sans flottement.
+  // Points/votes (ligne 1) et montant (ligne 2) toujours sur deux lignes
+  // distinctes (voir .pv-meta en colonne, styles.css) — un flux texte unique
+  // ne renvoyait le montant à la ligne que lorsque le texte dépassait la
+  // largeur disponible, donnant un alignement incohérent d'une ligne à l'autre.
   return `<div class="pv-row${sel ? ' pv-sel' : ''}">`
     + `<span class="pv-date">${dateBtn}</span>`
     + `<span class="pv-icons">${icons}</span>`
-    + `<span class="pv-meta">${fmtInt(s.points)} points · ${fmtInt(s.votes)} votes · `
-    + `<span class="pv-montant">${fmtMontant(s.montant)}</span></span></div>`;
+    + `<span class="pv-meta">`
+    + `<span class="pv-meta-top">${fmtInt(s.points)} points · ${fmtInt(s.votes)} votes</span>`
+    + `<span class="pv-montant">${fmtMontant(s.montant)}</span>`
+    + `</span></div>`;
 }
 
 // Liste des PV du périmètre. « Toutes les années » → groupée par année (repliable) ;
