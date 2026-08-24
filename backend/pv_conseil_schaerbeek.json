@@ -98805,14 +98805,14 @@
           "page": 3,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Secrétaire Communal",
-          "sous_rubrique": "Assemblées",
+          "rubrique": "Secrétaire Communal - Assemblées",
+          "sous_rubrique": "",
           "titre": "Démission de Monsieur Yves Goldstein de ses fonctions de conseiller communal - Prise d'acte - Vérification des pouvoirs et installation de son remplaçant",
-          "resume": "Prise d'acte de la démission de Monsieur Yves Goldstein et installation de Monsieur El Maslouhi comme conseiller communal",
+          "resume": "Prise d'acte de la démission de Yves Goldstein, vérification des pouvoirs et installation de El Maslouhi comme remplaçant. El Maslouhi prête serment.",
           "intervenants": [
             "El Maslouhi"
           ],
-          "repondant": null,
+          "repondant": "Clerfayt",
           "decision": "PREND ACTE",
           "vote": {
             "type": "unanimite",
@@ -98821,7 +98821,9 @@
             "abstentions": 0
           },
           "montant_eur": null,
-          "thematiques": [],
+          "thematiques": [
+            "fonctionnement_conseil"
+          ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
         {
