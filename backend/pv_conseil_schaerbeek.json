@@ -16638,10 +16638,10 @@
           "rubrique": "EQUIPEMENT",
           "sous_rubrique": "Budget",
           "titre": "Budget 2011 - Services ordinaire et extraordinaire - Approbation",
-          "resume": "",
+          "resume": "Point retiré de l'ordre du jour",
           "intervenants": [],
           "repondant": null,
-          "decision": "",
+          "decision": "REPORTÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -16649,7 +16649,10 @@
             "abstentions": 0
           },
           "montant_eur": null,
-          "thematiques": [],
+          "thematiques": [
+            "budget",
+            "finances"
+          ],
           "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
         },
         {
@@ -17113,10 +17116,10 @@
           "page": 41,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "ASBL et Subventions",
-          "sous_rubrique": "",
+          "rubrique": "Subsides et Contrôle",
+          "sous_rubrique": "Comptes d'ASBL",
           "titre": "ASBL \"Neptunium\" - Comptes 2009 - Prendre acte",
-          "resume": "Prise d'acte des comptes 2009 de l'Asbl Neptunium affichant un bénéfice de 43.107,18 € pour l'exercice, des réserves cumulées de 300.176,04 € et des pertes reportées de -230.352,56 €. Subside communal versé intégralement: 786.101 €.",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL Neptunium affichant un résultat positif de 43.107,18 € pour l'exercice 2009, des réserves cumulées de 300.176,04 € et des pertes reportées de -230.352,56 €. Subside communal versé de 786.101 €.",
           "intervenants": [
             "M. Bouhjar"
           ],
@@ -17132,7 +17135,7 @@
           "thematiques": [
             "asbl",
             "comptes_financiers",
-            "subventions"
+            "subsides"
           ],
           "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
         },
@@ -17141,10 +17144,10 @@
           "page": 42,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "ASBL et Subventions",
-          "sous_rubrique": "",
+          "rubrique": "Subsides et Contrôle",
+          "sous_rubrique": "Comptes d'ASBL",
           "titre": "ASBL \"Royal Cercle Athlétique de Schaerbeek - RCAS\" - Comptes 2009 - Prendre acte",
-          "resume": "Prise d'acte des comptes 2009 de l'Asbl Royal Cercle Athlétique de Schaerbeek affichant une perte de -1.273 € pour l'exercice 2009. Subside communal de 5.000 € versé le 08/01/2010.",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL Royal Cercle Athlétique de Schaerbeek affichant une perte de -1.273 € pour l'exercice 2009. Subside communal de 5.000 € versé le 08/01/2010.",
           "intervenants": [],
           "repondant": null,
           "decision": "PREND ACTE",
@@ -17158,7 +17161,7 @@
           "thematiques": [
             "asbl",
             "comptes_financiers",
-            "subventions",
+            "subsides",
             "sport"
           ],
           "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
@@ -17168,10 +17171,10 @@
           "page": 43,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "ASBL et Subventions",
-          "sous_rubrique": "",
+          "rubrique": "Subsides et Contrôle",
+          "sous_rubrique": "Comptes d'ASBL",
           "titre": "ASBL \"Union Belge Contre les Nuisances des Avions - UBCNA\" - Comptes 2009 - Prendre acte",
-          "resume": "Prise d'acte des comptes 2009 de l'Asbl Union Belge Contre les Nuisances des Avions affichant une perte de -2.570,41 € pour l'exercice et un montant des avoirs de 6.395,85 €. Subside communal de 2.500 € versé le 28/01/2010.",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL Union Belge Contre les Nuisances des Avions affichant une perte de -2.570,41 € pour l'exercice 2009 et des avoirs de 6.395,85 €. Subside communal de 2.500 € versé le 28/01/2010.",
           "intervenants": [],
           "repondant": null,
           "decision": "PREND ACTE",
@@ -17185,7 +17188,7 @@
           "thematiques": [
             "asbl",
             "comptes_financiers",
-            "subventions",
+            "subsides",
             "environnement"
           ],
           "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
@@ -17250,9 +17253,9 @@
           "urgence": false,
           "type": "point_normal",
           "rubrique": "Informatique",
-          "sous_rubrique": "",
+          "sous_rubrique": "Informatique",
           "titre": "Télécom - Réseau IRISnet 2.0 - Participation au marché conjoint régional - Convention de mandat - Approbation",
-          "resume": "Approbation de la participation de la Commune au marché conjoint régional pour la télécommunication IRISnet 2.0, mandaté à la Région de Bruxelles-Capitale. Souscription aux lots 1 (téléphonie fixe et transport data) et 2 (mobilophonie). Délégation au Collège pour signer les conventions particulières de mise en œuvre.",
+          "resume": "Approbation de la convention de mandat à la Région de Bruxelles-Capitale pour la passation d'un marché de fourniture de services de télécommunications dans le cadre du développement du réseau IRISnet 2.0. Souscription aux lots 1 (téléphonie fixe et transport data) et 2 (mobilophonie). Délégation au Collège pour signer les conventions particulières de mise en œuvre.",
           "intervenants": [],
           "repondant": null,
           "decision": "DÉCIDE",
@@ -17264,10 +17267,9 @@
           },
           "montant_eur": null,
           "thematiques": [
+            "telecommunication",
             "informatique",
-            "telecommunications",
-            "marches_publics",
-            "irisnet"
+            "marche_public"
           ],
           "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
         },
