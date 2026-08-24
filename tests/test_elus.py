@@ -783,6 +783,25 @@ def test_is_reportee_case_and_accent_insensitive():
     assert elus._is_reportee("APPROUVÉ") is False
     assert elus._is_reportee(None) is False
     assert elus._is_reportee("") is False
+    # RETIRÉ est un statut DISTINCT : jamais confondu avec REPORTÉ.
+    assert elus._is_reportee("RETIRÉ") is False
+
+
+def test_is_retire_case_and_accent_insensitive_and_distinct_from_reporte():
+    assert elus._is_retire("RETIRÉ") is True
+    assert elus._is_retire("Retiré") is True
+    assert elus._is_retire("retire") is True
+    assert elus._is_retire("REPORTÉ") is False        # statut distinct
+    assert elus._is_retire("APPROUVÉ") is False
+    assert elus._is_retire(None) is False
+    assert elus._is_retire("") is False
+
+
+def test_decision_summary_withdrawn_point_label():
+    # « RETIRÉ » (retiré de l'ordre du jour) → libellé « Retiré », distinct de
+    # « Reporté » (voir utils.text._DECISION_LABELS).
+    assert elus._decision_summary("RETIRÉ", None) == "Retiré"
+    assert elus._decision_summary("REPORTÉ", None) == "Reporté"
 
 
 def test_decision_summary_unanimous_vote():

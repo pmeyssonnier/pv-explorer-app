@@ -588,6 +588,10 @@ body {
 .elu-badge.b-m { background: color-mix(in srgb, var(--vert) 20%, transparent); color: var(--vert); }
 .elu-badge.b-v { background: color-mix(in srgb, var(--bordeaux-clair) 20%, transparent); color: var(--bordeaux-clair); }
 .elu-badge.b-report { background: color-mix(in srgb, var(--encre-soft) 18%, transparent); color: var(--encre-soft); font-style: italic; }
+/* « Retiré » (ôté de l'ordre du jour) — statut distinct de « Reporté » : même
+   famille sobre (point non débattu) mais contour tireté = « retiré », sans
+   italique, pour les différencier d'un coup d'œil. */
+.elu-badge.b-retire { background: transparent; color: var(--encre-soft); border: 1px dashed var(--encre-soft); }
 .elu-badge.b-e { background: color-mix(in srgb, var(--or-light) 45%, transparent); color: var(--bordeaux-dark); }
 .elu-sp { font-size: 11.5px; color: var(--encre-soft); font-weight: 600; }
 /* Rappel de séance d'origine dans la vue "Toutes les séances" (voir

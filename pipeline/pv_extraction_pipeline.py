@@ -434,7 +434,7 @@ SCHÉMA JSON D'UN POINT :
   "rubrique": <string>, "sous_rubrique": <string>,
   "titre": <string>, "resume": <string>,
   "intervenants": <array>, "repondant": <string|null>,
-  "decision": <"DÉCIDE"|"PREND ACTE"|"APPROUVÉ"|"PREND POUR INFORMATION"|"REPORTÉ"|"DÉBAT"|"MINUTE DE SILENCE">,
+  "decision": <"DÉCIDE"|"PREND ACTE"|"APPROUVÉ"|"PREND POUR INFORMATION"|"REPORTÉ"|"RETIRÉ"|"DÉBAT"|"MINUTE DE SILENCE">,
   "vote": {"type": <"unanimite"|"vote_nominal"|"reporte"|null>, "pour": <int|null>, "contre": <int>, "abstentions": <int>},
   "montant_eur": <float|null>, "thematiques": <array snake_case>
 }
@@ -448,7 +448,16 @@ RÈGLES :
   Reporte l'entier N tel quel ; en cas de doute, la page du titre du point.
 - "Approuvé à l'unanimité" → vote.type="unanimite"
 - "Décidé par X voix contre Y et Z abstentions" → vote.type="vote_nominal"
-- "Ce point est reporté" → vote.type="reporte", decision="REPORTÉ"
+- "Ce point est reporté" / "wordt uitgesteld" (NL) → decision="REPORTÉ",
+  vote.type="reporte". Un point REPORTÉ est renvoyé à une séance ultérieure.
+- "Ce point est retiré de l'ordre du jour" / "Dit punt wordt aan de agenda
+  onttrokken" (NL) → decision="RETIRÉ", vote.type=null. Un point RETIRÉ est
+  ÔTÉ de l'ordre du jour — statut DISTINCT de REPORTÉ, ne les confonds jamais.
+- N'OMETS JAMAIS un point qui porte une ancre "SP n.-", même s'il est reporté,
+  retiré, sans résumé ni décision (ex. un simple "SP 22.- Titre. Ce point est
+  retiré de l'ordre du jour.") : il garde son numéro SP et doit apparaître dans
+  la liste. Un point retiré/reporté a un titre mais souvent ni intervenants, ni
+  montant, ni vote chiffré — mets `null`/0, jamais l'omission du point entier.
 - SP > 67 souvent urgences ; motions = "Motion de..." ; habitants = "Demande de..."
 - Extrais montants même dans considérants (ex: "65.000 € TVAC")
 - IGNORE le texte néerlandais (version NL) pour éviter doublons
@@ -586,6 +595,90 @@ def _extract_chunk_points(chunk: list[dict], seance_date: Optional[str],
 # ── GREFFE 2 : complétude déterministe (regex) + récupération ciblée ─────────
 RE_SP_ANCHOR = re.compile(r"SP\s*(\d+)\s*\.-", re.IGNORECASE)
 
+# Formules (FR + NL) des DEUX statuts distincts d'un point non traité tel quel —
+# mêmes cas que la règle du SYSTEM_PROMPT, mais détectés ici PAR REGEX (sans LLM)
+# pour le filet de sécurité déterministe (voir _synthesize_deferred_points) : un
+# tel point est souvent réduit à son seul titre + cette phrase, et le LLM l'omet
+# parfois sur une page dense — on le reconstruit alors plutôt que de le perdre
+# (trou dans la numérotation SP). RETIRÉ (ôté de l'ordre du jour) et REPORTÉ
+# (renvoyé à une séance ultérieure) sont deux statuts DIFFÉRENTS.
+RE_RETIRE = re.compile(
+    r"retir[ée]\s+de\s+l['’]ordre\s+du\s+jour"
+    r"|retir[ée]\s+de\s+l['’]agenda"
+    r"|aan\s+de\s+agenda\s+onttrokken"
+    r"|onttrokken\s+aan\s+de\s+agenda",
+    re.IGNORECASE,
+)
+# « est reporté » exigé (pas le seul mot « reporté », qui apparaît aussi dans
+# des titres, ex. « Un point reporté quelconque ») — c'est la formulation réelle
+# des PV : « Ce point est reporté [à une séance ultérieure] ».
+RE_REPORTE = re.compile(
+    r"point\s+est\s+report[ée]"
+    r"|dit\s+punt\s+wordt\s+(?:\w+\s+)?uitgesteld",
+    re.IGNORECASE,
+)
+# Union des deux — pour « ce point est-il différé d'une manière ou d'une autre ? »
+# (détection dans le filet, et découpe du titre avant la phrase de statut).
+RE_DEFERRED = re.compile(f"{RE_RETIRE.pattern}|{RE_REPORTE.pattern}", re.IGNORECASE)
+
+
+def _anchor_window(text: str, sp: int) -> str:
+    """Texte brut compris entre l'ancre 'SP n.-' et l'ancre du point suivant
+    (ou 600 caractères à défaut) — le périmètre d'un point donné dans la page."""
+    m = re.search(rf"SP\s*{sp}\s*\.-", text, re.IGNORECASE)
+    if not m:
+        return ""
+    rest = text[m.end():]
+    nxt = RE_SP_ANCHOR.search(rest)
+    return rest[:nxt.start()] if nxt else rest[:600]
+
+
+def _extract_anchor_title(window: str, sp: int) -> str:
+    """Titre FR d'un point à partir du texte suivant son ancre : jusqu'au 1er
+    séparateur bilingue '-=-' (le titre NL suit) ou à la formule de statut
+    (retrait/report), au plus court. Espaces normalisés, borné à 300 caractères."""
+    end = len(window)
+    sep = window.find("-=-")
+    if sep != -1:
+        end = min(end, sep)
+    dm = RE_DEFERRED.search(window)
+    if dm:
+        end = min(end, dm.start())
+    return re.sub(r"\s+", " ", window[:end]).strip()[:300]
+
+
+def _synthesize_deferred_points(pages: list[dict], missing_sp: list[int]) -> list[dict]:
+    """Filet déterministe : pour un SP encore manquant après la récupération LLM,
+    si le texte brut autour de son ancre 'SP n.-' contient une formule de retrait
+    ou de report, reconstruit un point minimal avec le BON statut (RETIRÉ ou
+    REPORTÉ, deux statuts distincts) plutôt que de laisser un trou dans la
+    numérotation. Ne fabrique JAMAIS de point pour un SP manquant SANS cette
+    preuve textuelle : un vrai point de fond manquant relève d'une ré-extraction,
+    pas d'un stub inventé."""
+    expected = expected_sp_from_pages(pages)
+    text_by_page = {p["page_num"]: p["text"] for p in pages}
+    out = []
+    for sp in missing_sp:
+        pg = expected.get(sp)
+        window = _anchor_window(text_by_page.get(pg, ""), sp)
+        # RETIRÉ prioritaire si les deux formules apparaissent (rare) : le retrait
+        # de l'ordre du jour est l'acte final, il prime sur un éventuel report.
+        if RE_RETIRE.search(window):
+            decision, vote_type = "RETIRÉ", None
+        elif RE_REPORTE.search(window):
+            decision, vote_type = "REPORTÉ", "reporte"
+        else:
+            continue
+        out.append({
+            "sp": sp,
+            "page": pg,
+            "type": "point_normal",
+            "titre": _extract_anchor_title(window, sp),
+            "decision": decision,
+            "vote": {"type": vote_type, "pour": None, "contre": 0, "abstentions": 0},
+        })
+    return out
+
 
 def expected_sp_from_pages(pages: list[dict]) -> dict:
     """Compte, PAR REGEX (sans LLM), les points attendus : {sp: page_de_début}.
@@ -711,6 +804,21 @@ def process_pdf(pdf_path: Path, progress_cb: Optional[Callable[[dict], None]] = 
                 check = verify_completeness(pages, deduped)   # re-vérifie
                 log.info(
                     f"  ↻ Après récupération : {check['extracted']}/{check['expected']} — "
+                    + ("complet ✅" if check["ok"] else f"encore manquant {check['missing_sp']}")
+                )
+        # Filet déterministe : un SP encore manquant dont le texte brut porte une
+        # formule de retrait/report (ex. SP retiré de l'ordre du jour, omis par le
+        # LLM sur page dense) est reconstruit en point minimal REPORTÉ plutôt que
+        # laissé comme un trou. Sans appel LLM — s'exécute même si RECOVER_MISSING
+        # est off. Aucun stub inventé sans preuve textuelle (voir la fonction).
+        if check["missing_sp"]:
+            synth = _synthesize_deferred_points(pages, check["missing_sp"])
+            if synth:
+                synth = [p for p in (normalize_point(p) for p in synth) if p is not None]
+                deduped = _dedup_by_sp(deduped + synth)
+                check = verify_completeness(pages, deduped)
+                log.info(
+                    f"  ⊕ Points retirés/reportés reconstruits : {len(synth)} — "
                     + ("complet ✅" if check["ok"] else f"encore manquant {check['missing_sp']}")
                 )
     else:

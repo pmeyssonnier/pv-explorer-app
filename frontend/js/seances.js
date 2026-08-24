@@ -17,10 +17,10 @@ let currentSeanceDetail = null;
 let currentAggregateYear = null;
 // Filtres de la séance affichée (réinitialisés à chaque nouvelle séance
 // chargée) : 'all', un type_label ("Motion", "Question orale", …), ou un
-// pseudo-type transversal — 'reporte' (point reporté, peut être de
-// n'importe quel type réel) ou 'debat_filme' (a un lien vers le débat filmé,
-// voir hasDebateLink) — qui se superpose aux types réels (détail dans
-// seanceTypeChips).
+// pseudo-type transversal — 'reporte' (point reporté), 'retire' (point retiré
+// de l'ordre du jour, statut distinct) ou 'debat_filme' (a un lien vers le
+// débat filmé, voir hasDebateLink) — qui se superpose aux types réels (détail
+// dans seanceTypeChips).
 let seanceTypeFilter = 'all';
 let seanceThemeFilter = 'all';
 // Personne (demandeur·se OU répondant·e) impliquée dans le point — un même
@@ -141,16 +141,21 @@ export function jumpToSeance(date) {
 // Un point a un lien vers le débat filmé quand c'est un chapitre vidéo
 // autonome (type "video", pas de point PV associé), ou quand un chapitre
 // vidéo a été apparié précisément à ce point (video_precise). Un point
-// reporté n'a jamais rien été débattu ce jour-là. Fonction partagée entre
-// le rendu de la ligne (lien affiché) et le filtre "Débat filmé" (voir
-// seanceTypeChips/pointMatchesFilters) — même définition partout.
+// reporté OU retiré de l'ordre du jour n'a jamais rien été débattu ce jour-là.
+// Fonction partagée entre le rendu de la ligne (lien affiché) et le filtre
+// "Débat filmé" (voir seanceTypeChips/pointMatchesFilters) — même définition
+// partout.
 function hasDebateLink(it) {
-  return (it.type === 'video' && !!it.url) || !!(it.video_url && it.video_precise && !it.reporte);
+  return (it.type === 'video' && !!it.url) || !!(it.video_url && it.video_precise && !it.reporte && !it.retire);
 }
 
 function seancePointRow(it) {
   const badge = renderTypeBadge(it.type_label);
-  const reporteBadge = it.reporte ? `<span class="elu-badge b-report">Reporté</span>` : '';
+  // Deux statuts DISTINCTS (voir backend seances.py _is_reportee/_is_retire) :
+  // « Reporté » (renvoyé à une séance ultérieure) vs « Retiré » (ôté de
+  // l'ordre du jour) — jamais confondus.
+  const statutBadge = it.reporte ? `<span class="elu-badge b-report">Reporté</span>`
+    : it.retire ? `<span class="elu-badge b-retire">Retiré</span>` : '';
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   // Vue agrégée "Toutes les séances" uniquement : rappelle de quelle séance
   // vient ce point, et permet d'y revenir directement (voir jumpToSeance).
@@ -169,14 +174,14 @@ function seancePointRow(it) {
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, it.demandeur);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
-  // Déjà signalé via le badge « Reporté » ci-dessus, pas besoin de répéter.
-  const decision = (it.decision && !it.reporte) ? `<div class="elu-decision">${escapeHtml(it.decision)}</div>` : '';
+  // Déjà signalé via le badge « Reporté »/« Retiré » ci-dessus, pas besoin de répéter.
+  const decision = (it.decision && !it.reporte && !it.retire) ? `<div class="elu-decision">${escapeHtml(it.decision)}</div>` : '';
   const montant = (it.montant_eur !== null && it.montant_eur !== undefined)
     ? `<div class="elu-montant">Montant engagé : ${fmtMontant(it.montant_eur)}</div>` : '';
   const tags = renderThemeTags(it.thematiques);
   return `<div class="elu-item">
     <div class="elu-body">
-      ${seanceDateBadge}${badge}${reporteBadge}${sp}
+      ${seanceDateBadge}${badge}${statutBadge}${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}
@@ -214,6 +219,7 @@ export async function loadSeance(date, opts = {}) {
 function matchesType(p) {
   return seanceTypeFilter === 'all' ? true
     : seanceTypeFilter === 'reporte' ? p.reporte
+    : seanceTypeFilter === 'retire' ? p.retire
     : seanceTypeFilter === 'debat_filme' ? hasDebateLink(p)
     : p.type_label === seanceTypeFilter;
 }
@@ -238,13 +244,15 @@ function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && ma
 // Types réellement atteignables compte tenu des filtres thématique/
 // intervenant·e actifs, avec leur nombre de points, plus deux pseudo-types
 // transversaux qui se superposent aux types réels plutôt que de les
-// remplacer (un point compte dans son type ET dans "Débat filmé"/"Reporté"
-// s'il l'est aussi — même logique que les compteurs de thématiques, où la
-// somme peut dépasser le total) :
+// remplacer (un point compte dans son type ET dans "Débat filmé"/"Reporté"/
+// "Retiré" s'il l'est aussi — même logique que les compteurs de thématiques,
+// où la somme peut dépasser le total) :
 //   "debat_filme" : tout point avec un lien vers le débat (voir
 //                   hasDebateLink), quel que soit son type réel — pas
 //                   seulement les chapitres vidéo autonomes.
-//   "reporte"     : un point reporté peut être de n'importe quel type réel.
+//   "reporte"     : un point reporté (renvoyé à une séance ultérieure).
+//   "retire"      : un point retiré de l'ordre du jour — statut DISTINCT du
+//                   report (voir backend _is_reportee/_is_retire).
 // La valeur actuellement sélectionnée reste toujours proposée (au besoin à
 // 0) : un filtre ne doit jamais faire disparaître sa propre sélection.
 const _TYPE_FILTER_ORDER = ['Point', 'Motion', 'Question orale', 'Demande'];
@@ -298,6 +306,7 @@ function seanceTypeChips(points) {
   const chips = _TYPE_FILTER_ORDER.map(t => seanceTypeChip(t, t, points.filter(p => p.type_label === t).length));
   chips.push(seanceTypeChip('debat_filme', 'Débat filmé', points.filter(hasDebateLink).length));
   chips.push(seanceTypeChip('reporte', 'Reporté', points.filter(p => p.reporte).length));
+  chips.push(seanceTypeChip('retire', 'Retiré', points.filter(p => p.retire).length));
   return chips.join('');
 }
 // Nombre de points où au moins une des deux personnes (demandeur·se OU
