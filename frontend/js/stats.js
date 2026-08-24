@@ -17,7 +17,7 @@ let selectedTheme = null;    // thème choisi → ne garde dans la liste que les
 let expandedYears = new Set();  // années dépliées dans la vue « tous les PV » groupée
 let activiteTypesParAnnee = [];   // [{annee, "Question orale":n, "Demande":n, ...}] — voir /stats
 let activiteTypeOrder = [];       // ordre fixe des 4 séries (voir ACTIVITY_TYPE_ORDER, backend)
-let qeDates = [];                 // dates ISO des questions écrites — bucketage par mois (voir /stats qe_dates)
+let qeResume = [];                // {date, thematiques} par question écrite (voir /stats qe_resume)
 // Type isolé dans le graphe « Activité citoyenne » via un clic sur sa puce de
 // légende ('all' = vue empilée normale) — voir onActivityTypeChipClick.
 let activiteTypeFilter = 'all';
@@ -42,7 +42,10 @@ function activeScope() {
 
 // Agrège une liste de séances → KPI + thématiques (canoniques, top 12).
 // Chaque thème cumule son nombre de points ET son montant engagé.
-function aggregate(list) {
+// extraThemeCounts (optionnel) : Map<thème, nombre> à fusionner avant le
+// top 12 — sert à intégrer les questions écrites (jamais rattachées à une
+// séance, donc absentes de `list`), voir qeThemesInScope().
+function aggregate(list, extraThemeCounts) {
   const th = {}; let points = 0, votes = 0, montant = 0;
   list.forEach(s => {
     points += s.points; votes += s.votes; montant += s.montant;
@@ -51,6 +54,12 @@ function aggregate(list) {
       e.n += n; e.m += (m || 0);
     });
   });
+  if (extraThemeCounts) {
+    extraThemeCounts.forEach((n, t) => {
+      const e = th[t] || (th[t] = { n: 0, m: 0 });
+      e.n += n;
+    });
+  }
   const top = Object.entries(th).sort((a, b) => b[1].n - a[1].n).slice(0, 12)
     .map(([t, e]) => [t, e.n, e.m]);
   return { nb: list.length, points, votes, montant, themes: top };
@@ -158,11 +167,26 @@ function renderCrumb() {
   if (bc2) bc2.innerHTML = html;
 }
 
+// Thématiques des questions écrites dans le périmètre courant (année/mois du
+// drill-down) — jamais rattachées à une séance précise, donc absentes de
+// activeScope()/seancesResume : agrégées séparément puis fusionnées dans
+// renderThemes(). Une question écrite n'appartenant à aucune séance, un PV
+// précis sélectionné dans la liste exclut par définition toute question écrite.
+function qeThemesInScope() {
+  const counts = new Map();
+  if (selectedSeance) return counts;
+  qeResume
+    .filter(q => !drill.year || q.date.slice(0, 4) === drill.year)
+    .filter(q => !drill.month || q.date.slice(5, 7) === drill.month)
+    .forEach(q => (q.thematiques || []).forEach(t => counts.set(t, (counts.get(t) || 0) + 1)));
+  return counts;
+}
+
 // Thématiques recalculées pour le périmètre courant.
 function renderThemes() {
   const box = document.getElementById('themesBars');
   if (!box) return;
-  const rows = aggregate(activeScope()).themes;
+  const rows = aggregate(activeScope(), qeThemesInScope()).themes;
   const sc = document.getElementById('themesScope');
   if (sc) sc.textContent = selectedSeance ? 'séance du ' + formatDate(selectedSeance) : scopeLabel().toLowerCase();
   if (!rows.length) { box.innerHTML = '<p class="yc-note">Aucune donnée pour cette vue.</p>'; return; }
@@ -183,7 +207,7 @@ function renderThemes() {
 
 // Lignes du graphe « Activité citoyenne » au niveau courant : totaux par
 // année précalculés côté serveur (activite_types_par_annee), ou — au niveau
-// mois — agrégés côté client depuis seancesResume (types PV) + qeDates
+// mois — agrégés côté client depuis seancesResume (types PV) + qeResume
 // (questions écrites, comptées par leur propre date), comme les thématiques.
 function activityRows() {
   if (drill.level === 'year') {
@@ -195,8 +219,8 @@ function activityRows() {
     const e = m[mo] || (m[mo] = {});
     Object.entries(s.activite || {}).forEach(([t, n]) => { e[t] = (e[t] || 0) + n; });
   });
-  qeDates.filter(d => d.slice(0, 4) === drill.year).forEach(d => {
-    const mo = d.slice(5, 7);
+  qeResume.filter(q => q.date.slice(0, 4) === drill.year).forEach(q => {
+    const mo = q.date.slice(5, 7);
     const e = m[mo] || (m[mo] = {});
     e['Question écrite'] = (e['Question écrite'] || 0) + 1;
   });
@@ -401,7 +425,7 @@ export async function loadStats() {
     seancesResume = s.seances_resume || [];
     activiteTypesParAnnee = s.activite_types_par_annee || [];
     activiteTypeOrder = s.activite_type_order || [];
-    qeDates = s.qe_dates || [];
+    qeResume = s.qe_resume || [];
     latestYear = seancesResume.reduce((mx, x) => x.date.slice(0, 4) > mx ? x.date.slice(0, 4) : mx, '');
     expandedYears = new Set([latestYear]);   // année la plus récente dépliée par défaut
     drill = { level: 'year', year: null, month: null };
