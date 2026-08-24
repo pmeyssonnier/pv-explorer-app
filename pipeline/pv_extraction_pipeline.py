@@ -750,14 +750,19 @@ def _recover_decision_from_window(window: str):
 
 
 def _recover_missing_decisions(points: list[dict], pages: list[dict]) -> int:
-    """Corrige les points DÉJÀ extraits mais laissés SANS décision, à partir du
-    texte brut (fenêtre autour de l'ancre 'SP n.-') : le LLM garde parfois le
-    titre d'un point mais oublie sa décision, surtout quand le titre est long ou
-    la décision est loin sur la page suivante. Deux cas réels du corpus :
-      • SP 21 (2016-10-26) : point RETIRÉ, gardé sans statut (titre bilingue
-        très long, formule au-delà des 600 premiers caractères, page suivante) ;
-      • SP 7/19/37 (2010-03-31) : points APPROUVÉS (unanimité / vote nominal)
-        dont le « DÉCISION DU CONSEIL … approuvé … » n'a pas été repris.
+    """Corrige les points DÉJÀ extraits mais laissés SANS décision, à partir de
+    DEUX sources de texte : (a) les champs `resume`/`titre` que le LLM a lui-même
+    extraits pour ce point (texte propre, normalisé, attribué sans ambiguïté),
+    et (b) le texte brut du PDF (fenêtre autour de l'ancre 'SP n.-'). Le LLM
+    garde parfois le titre mais oublie la décision, ou décrit le statut dans le
+    `resume` sans remplir `decision`. Trois cas réels du corpus :
+      • SP 21 (2016-10-26) : RETIRÉ, gardé sans statut (titre bilingue très long,
+        formule au-delà des 600 premiers car., sur la page suivante) ;
+      • SP 45 (2016-10-26) : RETIRÉ, `resume`=« Point retiré de l'ordre du jour »
+        mais `decision` vide (le texte brut portait une variante d'espace/
+        apostrophe que la regex ratait ; le resume normalisé, lui, matche) ;
+      • SP 7/19/37 (2010-03-31) : APPROUVÉS (unanimité / vote nominal) dont le
+        « DÉCISION DU CONSEIL … approuvé … » n'a pas été repris.
     Complète _synthesize_deferred_points (qui ne traite que les SP OMIS).
     N'écrase JAMAIS une décision déjà présente. Retourne le nombre corrigé."""
     n = 0
@@ -767,10 +772,12 @@ def _recover_missing_decisions(points: list[dict], pages: list[dict]) -> int:
         sp = pt.get("sp")
         if not isinstance(sp, int):
             continue
-        # Fenêtre GLOBALE (toutes pages, sans plafond) : capte la décision même
-        # pour un point à titre long ou chevauchant une fin de page (voir
-        # _anchor_window_spanning, cas SP 21 2016-10-26).
-        decision, vote = _recover_decision_from_window(_anchor_window_spanning(pages, sp))
+        # Texte du point tel qu'extrait par le LLM (propre) + fenêtre brute
+        # globale (toutes pages, sans plafond) : capte la décision où qu'elle
+        # soit — resume normalisé (cas SP 45) OU texte brut (cas SP 21).
+        extracted_text = f"{pt.get('resume') or ''} {pt.get('titre') or ''}"
+        combined = f"{extracted_text}\n{_anchor_window_spanning(pages, sp)}"
+        decision, vote = _recover_decision_from_window(combined)
         if not decision:
             continue
         pt["decision"] = decision

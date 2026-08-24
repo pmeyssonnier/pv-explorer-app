@@ -197,6 +197,29 @@ def test_apply_deferred_status_spans_pages_and_long_titles():
     assert pts[0]["decision"] == "RETIRÉ"
 
 
+def test_recover_decision_from_normalized_resume_when_raw_text_variant():
+    # Cas réel SP 45 (2016-10-26) : le LLM a mis « Point retiré de l'ordre du
+    # jour » dans le RESUME mais laissé `decision` vide ; le texte brut du PDF
+    # portait une variante d'espace/apostrophe non captée par la regex. Le
+    # resume normalisé, lui, matche → on doit s'en servir.
+    pts = [{"sp": 45, "page": 98, "titre": "Règlement académie de musique - Approbation",
+            "resume": "Point retiré de l'ordre du jour", "decision": "", "vote": {"type": None}}]
+    raw = "SP 45.- Règlement académie - Approbation SP 46.- Autre"  # brut SANS la formule
+    assert _recover_missing_decisions(pts, [{"page_num": 98, "text": raw}]) == 1
+    assert pts[0]["decision"] == "RETIRÉ"
+
+
+def test_recover_decision_no_false_positive_from_approbation_in_title():
+    # Un titre finissant par « - Approbation » (intention d'agenda) NE doit PAS
+    # produire un faux « APPROUVÉ » : seul « approuvé …/goedgekeurd … » (décision
+    # réelle) compte, pas le mot « Approbation ».
+    pts = [{"sp": 50, "page": 1, "titre": "Convention X - Approbation",
+            "resume": "Approbation de la convention X avec l'ASBL Y", "decision": "", "vote": {"type": None}}]
+    raw = "SP 50.- Convention X - Approbation SP 51.- z"
+    assert _recover_missing_decisions(pts, [{"page_num": 1, "text": raw}]) == 0
+    assert pts[0]["decision"] == ""
+
+
 def test_recover_decision_approved_unanime_on_extracted_empty_decision():
     # Cas réel SP 19/37 (2010-03-31) : point voté (« DÉCISION DU CONSEIL …
     # approuvé à l'unanimité ») dont le LLM a oublié la décision.
