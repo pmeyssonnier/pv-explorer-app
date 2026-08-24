@@ -101,7 +101,10 @@ Réponse : {reponse or "Pas encore de réponse publiée."}"""
         "decision": decision,
         "type": "question_ecrite",
         "url": q.get("source_url") or "",
-        "thematiques": [],                  # non extraites pour les questions écrites
+        # Brut (snake_case, non canonisé) comme pour un point de PV — voir
+        # index_pv.point_to_chunk. La canonisation (_thematique_label) a
+        # lieu à la lecture (services/rag.py), pas à l'indexation.
+        "thematiques": q.get("thematiques") or [],
         # Dupliquée hors chunk_text (qui n'est jamais renvoyé au frontend, voir
         # rag.build_context) : nécessaire pour l'accordéon « Voir la réponse »
         # dans les sources du chat, comme pour l'onglet Par élu·e.

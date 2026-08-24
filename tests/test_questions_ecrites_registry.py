@@ -84,6 +84,20 @@ def test_written_question_homonym_author_not_merged_into_unrelated_namesake(monk
         assert index["nyssens"]["nom"] != "Marie Nyssens"
 
 
+def test_written_question_thematiques_canonised_on_depose_and_repond(monkeypatch):
+    # Même canonisation (_thematique_label) qu'un point de PV — un tag brut
+    # au pluriel/singulier différent doit s'afficher identiquement partout.
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2025-11-10", "auteur": "Georges Verzin", "titre": "Les nids-de-poule",
+        "repondant": "Bernard Clerfayt", "thematiques": ["voirie", "travaux_publics"],
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    entry = next(it for it in index["verzin"]["depose"] if it["type"] == "question_ecrite")
+    assert entry["thematiques"] == ["Voirie", "Travaux public"]
+    resp = next(it for it in index["clerfayt"]["repond"] if it["titre"] == "Les nids-de-poule")
+    assert resp["thematiques"] == ["Voirie", "Travaux public"]
+
+
 def test_written_question_creates_new_entry_for_unknown_author(monkeypatch):
     # Même logique que l'attribution des points de PV (_point_author) : une
     # personne pas encore vue ailleurs dans le corpus obtient quand même une

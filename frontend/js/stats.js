@@ -126,10 +126,14 @@ function renderDrill() {
   renderCrumb();
 }
 
-// Fil d'Ariane cliquable pour remonter d'un niveau.
+// Fil d'Ariane cliquable pour remonter d'un niveau — dupliqué au-dessus des
+// DEUX graphes (ils partagent le même état `drill`, voir renderActivityTypes)
+// pour rester utilisable sans remonter en haut de page une fois descendu
+// jusqu'au graphe « Activité citoyenne ».
 function renderCrumb() {
   const bc = document.getElementById('drillCrumb');
-  if (!bc) return;
+  const bc2 = document.getElementById('activityCrumb');
+  if (!bc && !bc2) return;
   let p;
   if (drill.level === 'year') {
     p = [selectedSeance
@@ -149,7 +153,9 @@ function renderCrumb() {
     }
   }
   if (selectedSeance) p.push(`<span class="crumb-here">Séance du ${formatDate(selectedSeance)}</span>`);
-  bc.innerHTML = p.join('<span class="crumb-sep">›</span>');
+  const html = p.join('<span class="crumb-sep">›</span>');
+  if (bc) bc.innerHTML = html;
+  if (bc2) bc2.innerHTML = html;
 }
 
 // Thématiques recalculées pour le périmètre courant.
@@ -424,6 +430,7 @@ export async function loadStats() {
         <div class="yc-head">
           <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span id="activityTitle">Activité citoyenne par année</span></h3>
         </div>
+        <div class="drill-crumb" id="activityCrumb"></div>
         <div class="yc-scroll"><div class="yc-plot" id="activityPlot"></div></div>
         <div class="yc-legend" id="activityLegend"></div>
         <p class="yc-note" id="activityHint"></p>

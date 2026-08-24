@@ -208,7 +208,7 @@ def _build_all():
                 "date": q.get("date"),
                 "sp": 0,
                 "titre": q.get("titre") or "",
-                "thematiques": [],
+                "thematiques": [_thematique_label(t) for t in (q.get("thematiques") or [])],
                 "url": q.get("source_url"),
                 "demandeur_keys": author_keys,
             })
@@ -219,7 +219,7 @@ def _build_all():
                 "sp": 0,
                 "type": "question_ecrite",
                 "titre": q.get("titre") or "",
-                "thematiques": [],
+                "thematiques": [_thematique_label(t) for t in (q.get("thematiques") or [])],
                 "reponse": q.get("reponse"),
                 "repondant_keys": [resp_key] if resp_key else [],
                 "repondant_fallback": _titlecase(_clean(resp_raw)) if resp_raw else None,

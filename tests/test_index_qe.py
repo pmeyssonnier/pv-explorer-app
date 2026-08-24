@@ -34,6 +34,13 @@ def test_question_to_chunk_metadata_shape():
     assert meta["thematiques"] == []
 
 
+def test_question_to_chunk_thematiques_pass_through_raw():
+    # Brut (snake_case), pas canonisé à l'indexation — comme un point de PV
+    # (voir index_pv.point_to_chunk) ; la canonisation a lieu à la lecture.
+    chunk = index_qe.question_to_chunk(_q(thematiques=["stationnement", "securite_routiere"]), "schaerbeek")
+    assert chunk["metadata"]["thematiques"] == ["stationnement", "securite_routiere"]
+
+
 def test_question_to_chunk_decision_combines_auteur_and_repondant():
     chunk = index_qe.question_to_chunk(_q(), "schaerbeek")
     assert chunk["metadata"]["decision"] == "Question de Georges Verzin · répondu par Bernard Clerfayt"
