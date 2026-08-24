@@ -18,7 +18,7 @@ import {
   selectTheme, setMetric, shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick,
 } from './stats.js';
 import {
-  loadElus, onEluSelectChange, onEluYearChange, onEluTypeChange, onEluThemeChange,
+  loadElus, onEluSelectChange, onEluYearChange, onEluThemeChange,
   onEluChipClick, onEluRoleChipClick, shareElu, setPendingEluKey,
 } from './elus.js';
 import {
@@ -93,7 +93,6 @@ function initStaticListeners() {
   bind('trendInput', 'keydown', e => { if (e.key === 'Enter') loadTrend(); });
   bind('eluSelect', 'change', e => onEluSelectChange(e.target));
   bind('eluYear', 'change', onEluYearChange);
-  bind('eluType', 'change', onEluTypeChange);
   bind('eluTheme', 'change', onEluThemeChange);
   bind('seanceYear', 'change', renderSeanceYearList);
   bind('seanceList', 'change', e => onSeanceListChange(e.target));
