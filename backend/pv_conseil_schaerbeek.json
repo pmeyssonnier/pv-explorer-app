@@ -38,6 +38,7 @@
       "2013-02-27",
       "2013-03-27",
       "2013-04-24",
+      "2013-05-29",
       "2013-06-26",
       "2013-09-25",
       "2013-10-23",
@@ -172,7 +173,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9914,
+    "total_points": 9954,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -46140,6 +46141,1180 @@
             "dialogue_interculturel",
             "citoyennete"
           ]
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2013-05-29",
+        "date": "2013-05-29",
+        "source_file": "pv_2013_05_29.pdf",
+        "extracted_at": "2026-08-24T14:08:37.858596",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": "Bernard Clerfayt",
+        "bourgmestre_ff": null,
+        "secretaire_communal": "Jacques Bouvier",
+        "presents_count": 21,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 40,
+          "extracted": 40,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/pv_2013_05_29.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 1,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINT(S) INSCRIT(S) À LA DEMANDE D'HABITANTS",
+          "sous_rubrique": "",
+          "titre": "La Plan Régional de la Politique de Stationnement",
+          "resume": "Demande de Monsieur Lefebure et Monsieur Bouché concernant le plan régional de politique de stationnement",
+          "intervenants": [
+            "Monsieur Bouché",
+            "Monsieur Lefebure",
+            "Monsieur le Bourgmestre",
+            "Monsieur Grimberghs",
+            "Monsieur Verzin",
+            "Monsieur Nimal",
+            "Monsieur Goldstein",
+            "Monsieur Sag",
+            "Monsieur Gilles"
+          ],
+          "repondant": "Monsieur le Bourgmestre",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "politique_de_stationnement"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SECRÉTAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Démission de Madame Dominique DECOUX de ses fonctions de conseillère communale - Prise d'acte - Vérification des pouvoirs et installation de son remplaçant",
+          "resume": "Prise d'acte de la démission de Madame Dominique DECOUX et installation de son remplaçant Monsieur Thomas ERALY",
+          "intervenants": [
+            "Monsieur le Bourgmestre",
+            "Monsieur Thomas ERALY"
+          ],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "conseil_communal",
+            "elections"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RECEVEUR COMMUNAL",
+          "sous_rubrique": "Recette – Comptabilité",
+          "titre": "Projet de convention avec le FRBRTC - Approbation",
+          "resume": "Approbation du projet de convention avec le FRBRTC accordant une avance de trésorerie de 25 millions d'euros à la Commune de Schaerbeek",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 25000000,
+          "thematiques": [
+            "tresorerie",
+            "finance",
+            "convention"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 4,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Taxe sur les emplacements de parcage - Exercices 2013 à 2016 – Modification",
+          "resume": "Modification de la taxe communale annuelle sur les emplacements de parcage pour les exercices 2013 à 2016 avec fixation des taux",
+          "intervenants": [
+            "Monsieur Reghif",
+            "Monsieur Verzin",
+            "Monsieur Grimberghs"
+          ],
+          "repondant": "Monsieur Grimberghs",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 11,
+            "abstentions": 2
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "taxation",
+            "stationnement",
+            "parking"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Prime d'accompagnement social - Exercice 2013 - Modification",
+          "resume": "Modification de la prime d'accompagnement social pour l'exercice 2013",
+          "intervenants": [
+            "Monsieur Verzin",
+            "Monsieur Grimberghs",
+            "Madame Querton",
+            "Monsieur le Bourgmestre"
+          ],
+          "repondant": "Monsieur Grimberghs",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "social",
+            "accompagnement"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Règlements",
+          "sous_rubrique": "Stationnement",
+          "titre": "Règlement redevance relatif aux cartes communales de stationnement - Modification",
+          "resume": "Modification du règlement sur les cartes communales de stationnement. Introduction d'amendements concernant les établissements d'enseignement (suppression de redevance de 200€) et réduction des redevances pour les riverains (suppression pour premier véhicule, 25€ pour second véhicule). Détermination des catégories d'usagers, durées de validité et tarifs des différentes cartes (riverains, firmes, visiteurs occasionnels, commerçants ambulants, etc.).",
+          "intervenants": [
+            "Monsieur Verzin",
+            "Monsieur Gilles",
+            "Monsieur Goldstein",
+            "Monsieur Grimberghs",
+            "Monsieur le Bourgmestre"
+          ],
+          "repondant": "Monsieur le Bourgmestre, Monsieur Grimberghs",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 29,
+            "contre": 14,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "redevances",
+            "mobilite",
+            "cartes_communales"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "Fabrique d'Eglise Saint Albert – Compte 2012 - Aviser favorablement",
+          "resume": "Approbation favorable du compte de l'exercice 2012 de la Fabrique d'Eglise Saint Albert. Recettes: 57.022,15 €, Dépenses: 44.556,62 €, Boni: 12.465,53 €. Petits dépassements de crédits constatés mais compensés par des dépenses non réalisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 12465.53,
+          "thematiques": [
+            "cultes",
+            "comptes_fabrique",
+            "budget"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "Fabrique d'Eglise Sainte Alice – Compte 2012 - Aviser favorablement",
+          "resume": "Approbation favorable du compte de l'exercice 2012 de la Fabrique d'Eglise Sainte Alice. Recettes: 17.433,18 €, Dépenses: 14.794,67 €, Excédent: 2.638,51 €. Petits dépassements de crédits constatés mais compensés par des dépenses non réalisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2638.51,
+          "thematiques": [
+            "cultes",
+            "comptes_fabrique",
+            "budget"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "Fabrique d'Eglise de l'Epiphanie – Compte 2012 - Aviser favorablement",
+          "resume": "Approbation favorable du compte de l'exercice 2012 de la Fabrique d'Eglise de l'Epiphanie. Recettes: 54.773,02 €, Dépenses: 20.765,67 €, Boni: 34.007,35 €. Petits dépassements de crédits constatés mais compensés par des dépenses non réalisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 34007.35,
+          "thematiques": [
+            "cultes",
+            "comptes_fabrique",
+            "budget"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "Fabrique d'Eglise Sainte Suzanne – Compte 2012 - Aviser favorablement",
+          "resume": "Approbation favorable du compte de l'exercice 2012 de la Fabrique d'Eglise Sainte Suzanne. Recettes: 35.586,65 €, Dépenses: 23.642,07 €, Excédent: 11.944,58 €. Petits dépassements de crédits constatés mais compensés par des dépenses non réalisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 11944.58,
+          "thematiques": [
+            "cultes",
+            "comptes_fabrique",
+            "budget"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "Fabrique d'Eglise Sainte Famille – Compte 2012 - Aviser favorablement",
+          "resume": "Approbation favorable du compte de l'exercice 2012 de la Fabrique d'Eglise Ste Famille. Recettes: 107.499,49 €, Dépenses: 23.513,71 €, Boni: 83.985,78 €. Compte se clôturant par un excédent sans remarque particulière.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 83985.78,
+          "thematiques": [
+            "cultes",
+            "comptes_fabrique",
+            "budget"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "Fabrique d'Eglise du Divin Sauveur – Compte 2012 - Aviser favorablement",
+          "resume": "Approbation favorable du compte de l'exercice 2012 de la Fabrique d'Eglise du Divin Sauveur. Recettes: 40.739,01 €, Dépenses: 15.526,70 €, Boni: 25.212,31 €. Intervention de 7590 € sollicitée en 2012 (quote-part Schaerbeek: 2526 €) puis réduite à 2.000 € (quote-part: 665,74 €). Compte se clôturant par un excédent de 25.212,31 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 25212.31,
+          "thematiques": [
+            "cultes",
+            "comptes_fabrique",
+            "budget",
+            "subventions"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "ASBL RenovaS - comptes 2012 - prise d'acte",
+          "resume": "Prise d'acte des comptes 2012 de l'ASBL RenovaS affichant un résultat positif de 473,06 € pour l'exercice 2012 et un résultat cumulé atteignant 166.824,31 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 473.06,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "subventions"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances",
+          "sous_rubrique": "Comptes d'ASBL",
+          "titre": "ASBL CréACtions - comptes 2012 - prise d'acte",
+          "resume": "Prise d'acte des comptes 2012 de l'ASBL CréACtions affichant un bénéfice de 1.510,35€ pour l'exercice 2012 et un résultat cumulé de 404,76€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1510.35,
+          "thematiques": [
+            "finances",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Infrastructure - Bâtiments & Techniques Spéciales",
+          "titre": "Achat de matériel de protection contre l'incendie, les effractions et les intrusions - Marché Stock à imputer au budget extraordinaire",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 7 mai 2013 pour l'achat de matériel de protection contre l'incendie, les effractions et les intrusions pour une dépense estimée à 42.000€ TTC à financer par emprunt.",
+          "intervenants": [
+            "Vanhalewyn"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 42000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "securite",
+            "incendie",
+            "marche_public",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Infrastructure - Bâtiments & Techniques Spéciales",
+          "titre": "Achat de matériel pour la rénovation des installations sanitaires - Marché Stock à imputer au budget extraordinaire",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 7 mai 2013 pour l'achat de matériel pour la rénovation des installations sanitaires pour une dépense estimée à 60.000€ TTC à financer par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 60000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "renovation",
+            "installations_sanitaires",
+            "marche_public",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Infrastructure - Bâtiments & Techniques Spéciales",
+          "titre": "Achat de matériel divers pour les travaux d'entretien aux installations de chauffage - Marché Stock à imputer au budget extraordinaire",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 7 mai 2013 pour l'achat de matériel divers pour les travaux d'entretien aux installations de chauffage (vannes thermostatiques etc.) pour une dépense estimée à 75.000€ TTC à financer par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 75000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "chauffage",
+            "entretien",
+            "marche_public",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Infrastructure - Bâtiments & Techniques Spéciales",
+          "titre": "Achat de matériel pour la mise en conformité - Marché Stock à imputer au budget extraordinaire",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 7 mai 2013 pour l'achat de fourniture pour la mise en conformité pour une dépense estimée à 40.000€ TTC à financer par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 40000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "conformite",
+            "marche_public",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Infrastructure - Bâtiments & Techniques Spéciales",
+          "titre": "Achat de fourniture pour travaux extraordinaires - Marché Stock à imputer au budget extraordinaire",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 7 mai 2013 pour l'achat de fourniture pour travaux extraordinaires pour une dépense estimée à 25.000€ TTC à financer par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 25000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "travaux_extraordinaires",
+            "marche_public",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure - Bâtiments",
+          "sous_rubrique": "Acquisition du matériel",
+          "titre": "Acquisition du matériel pour la remise en état de la conciergerie au CSA",
+          "resume": "Approbation de la décision du Collège du 21 mai 2013 pour l'achat de fournitures pour la remise en état de la conciergerie au CSA auprès des adjudicataires annuels pour une dépense globale estimée à 5.000 € TVA inclus, imputée à l'article 137/744-EQ-51/14 du budget extraordinaire 2013 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Schaerbeek Propreté & Espaces Verts",
+          "sous_rubrique": "Travaux de plantations",
+          "titre": "Acquisition d'arbres pour l'avenue Milcamps - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation de la décision du Collège du 21 mai 2013 de passer un marché par procédure négociée sans publicité pour l'acquisition d'arbres pour l'avenue Milcamps conformément au cahier des charges SCHA/EQUIP/2013/012. La dépense estimée à 45.000 € TTC sera imputée à l'article 766/734-EQ-51/14 du budget extraordinaire 2013 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 45000,
+          "thematiques": [
+            "espaces_verts",
+            "plantations",
+            "budget_extraordinaire"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Commissions consultatives",
+          "titre": "Commission Consultative de l'Environnement et de l'Aménagement du Territoire (CCEAT) - Composition",
+          "resume": "Approbation de la composition de la CCEAT comprenant une présidente (Cécile Jodogne), un vice-président (Vincent Vanhalewyn), 10 représentants politiques, 3 représentants d'organisations ayant l'environnement/aménagement du territoire dans leurs préoccupations, 8 représentants de comités de quartier, et 4 experts avec voix consultative, pour un total de 23 participants.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "environnement",
+            "amenagement_territorial",
+            "commissions"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Mobilité",
+          "sous_rubrique": "Politique du stationnement",
+          "titre": "Projet de Plan Régional de Politique du Stationnement",
+          "resume": "Délibération sur le Projet de Plan Régional de Politique de Stationnement. Le Conseil approuve la volonté d'harmoniser les politiques de stationnement des 19 communes tout en exprimant de nombreuses remarques et préoccupations concernant le cadastre des places existantes, la réduction des places de parking, le stationnement nocturne, et la nécessité de distinguer les navetteurs des Bruxellois. Trois amendements ont été rejetés.",
+          "intervenants": [
+            "Grimberghs",
+            "Goldstein",
+            "Nimal",
+            "Verzin",
+            "Gilles",
+            "Sag",
+            "Bernard"
+          ],
+          "repondant": "Grimberghs, Bourgmestre",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 40,
+            "contre": 3,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "mobilite",
+            "stationnement",
+            "politique_regionale",
+            "cartes_riverain"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux - Affaires juridiques",
+          "sous_rubrique": "Affaires juridiques",
+          "titre": "Aff. c/ Etat Belge, SPF Aff. Intér. - Taxe sur les surfaces de bureaux, exercice 2010",
+          "resume": "Approbation de l'autorisation d'interjeter appel contre le jugement du Tribunal de 1ère instance de Bruxelles du 29 mars 2013 concernant la taxe communale sur les surfaces de bureaux pour l'exercice 2010 (montant: 94.601,60 EUR). Le Tribunal avait annulé la décision du Collège des Bourgmestre et Échevins du 18/10/2011 et la cotisation, estimant que le règlement-taxe violait le principe d'égalité et l'obligation de motivation matérielle. Le Conseil communal souhaite contester ce jugement.",
+          "intervenants": [
+            "Monsieur de Beauffort",
+            "Monsieur Goldstein",
+            "Monsieur le Bourgmestre"
+          ],
+          "repondant": "Monsieur le Bourgmestre",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 94601.6,
+          "thematiques": [
+            "fiscalite",
+            "taxe_bureaux",
+            "affaires_juridiques",
+            "appel_jugement"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RESSOURCES HUMAINES",
+          "sous_rubrique": "Service du Personnel",
+          "titre": "Règlement de travail - Approbation",
+          "resume": "Approbation du règlement de travail de l'administration communale de Schaerbeek, conformément aux obligations légales de la Loi du 18 décembre 2002 et suite à l'avis du comité de concertation Commune/CPAS du 22 mars 2013 et du protocole d'accord signé par le SLFP et la CSC-SP le 19 avril 2013.",
+          "intervenants": [
+            "Monsieur Noël",
+            "Monsieur Lahlali",
+            "Monsieur de Beauffort"
+          ],
+          "repondant": "Monsieur Noël",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 12
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "reglementation_travail",
+            "personnel_communal"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 115,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Comptabilité, espace public, transport",
+          "titre": "Audit pour l'optimalisation du fonctionnement du garage communal et la gestion du charroi - Marché de service - Mode de passation et conditions de marché",
+          "resume": "Approbation du principe du marché de service pour réalisation d'un audit du garage communal. Procedure négociée sans publicité après consultation de quatre firmes. Coût estimé 40.000€ financé par emprunt.",
+          "intervenants": [
+            "Goldstein",
+            "Ozdemir",
+            "Nimal",
+            "Trachte"
+          ],
+          "repondant": "Vanhalewyn, Bourgmestre",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 32,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": 40000,
+          "thematiques": [
+            "marches_publics",
+            "infrastructure",
+            "garage_communal",
+            "audit"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 117,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Voirie",
+          "titre": "Gestion de la signalisation non lumineuse - placement et remplacement de panneaux de signalisation routière et de stationnement",
+          "resume": "Lancement d'appel à concurrence pour placement et remplacement de panneaux de signalisation. Procedure négociée sans publicité après consultation de trois firmes spécialisées. Coût estimé 45.000€ financé par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 45000,
+          "thematiques": [
+            "marches_publics",
+            "signalisation_routiere",
+            "voirie"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 118,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Rénovation urbaine",
+          "titre": "Biens communaux construits ou rénovés dans le cadre des contrats de quartier - Fixation des valeurs locatives",
+          "resume": "Adoption des valeurs locatives fixées selon grille AIS pour logements communaux. Adaptation du règlement d'attribution pour ouvrir candidatures aux locataires dont revenus dépassent de maximum 20% le seuil admission logement social.",
+          "intervenants": [
+            "Goldstein"
+          ],
+          "repondant": "Grimberghs, Bourgmestre",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "logement_social",
+            "contrats_de_quartier",
+            "valeurs_locatives"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 120,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Contrats de quartier",
+          "titre": "Contrat de quartier durable Reine-Progrès - opérations socioéconomiques : conventions tripartites avec les porteurs de projet - 2ème partie",
+          "resume": "Approbation des conventions tripartites dans le cadre du contrat de quartier durable Reine-Progrès pour opérations socioéconomiques.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrats_de_quartier",
+            "operations_socioeconomiques",
+            "reine_progres"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 122,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier durable",
+          "sous_rubrique": "Helmet",
+          "titre": "Contrat de quartier durable Helmet - Protocole d'Accord Beliris relatif à l'opération IM6 Chaussée de Helmet 343-347",
+          "resume": "Approbation du projet de protocole d'accord précisant les droits et obligations de l'État fédéral, de la Région de Bruxelles-Capitale et de la Commune de Schaerbeek dans le cadre des études et travaux relatifs au contrat de quartier durable Helmet",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2750000,
+          "thematiques": [
+            "contrat_quartier_durable",
+            "accord_beliris"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 123,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services ordinaires à la population",
+          "sous_rubrique": "État civil - Cimetière",
+          "titre": "Règlement Tarif général des concessions - Modifications",
+          "resume": "Modification du règlement-tarif général des concessions funéraires avec ajustement des tarifs, notamment l'article 5 fixant le dépôt en caveaux ou concessions de 50 ans à 250€ par unité",
+          "intervenants": [
+            "Guillaume"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 11,
+            "abstentions": 1
+          },
+          "montant_eur": 250,
+          "thematiques": [
+            "cimetiere",
+            "tarifs",
+            "concessions"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 125,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services communaux spécifiques",
+          "sous_rubrique": "",
+          "titre": "Plan pluriannuel d'extension des milieux d'accueil communaux francophones pour la petite enfance dit \"Plan crèches communal\"",
+          "resume": "Approbation du plan pluriannuel d'extension des structures d'accueil communales francophones pour la petite enfance et modification de la convention avec l'asbl Crèches de Schaerbeek pour intégrer la subvention complémentaire de fonctionnement nécessitée par l'ouverture de 5 nouvelles structures",
+          "intervenants": [
+            "De Herde",
+            "Byttebier",
+            "Kanfaoui",
+            "Ozdemir",
+            "van den Hove",
+            "Lahlali",
+            "Mettioui",
+            "de Beauffort",
+            "Verzin"
+          ],
+          "repondant": "De Herde",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 32,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "petite_enfance",
+            "creches",
+            "accueil",
+            "subventions"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 126,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services communaux spécifiques",
+          "sous_rubrique": "",
+          "titre": "Composition de la commission de la bibliothèque néerlandophone - approbation",
+          "resume": "Approbation de la liste des membres de la Commission de la Bibliothèque néerlandophone selon la formule 9b comprenant des délégués du gouvernement et des utilisateurs",
+          "intervenants": [
+            "van de Hove",
+            "Gilles"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 42,
+            "contre": 1,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "bibliotheque",
+            "neerlandophone",
+            "commission"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 127,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Cohésion sociale - prévention",
+          "sous_rubrique": "",
+          "titre": "Renouvellement de la convention entre l'Epicerie sociale \"Les Capucines\" et la Commune de Schaerbeek",
+          "resume": "Approbation du renouvellement de la convention entre l'Epicerie sociale Les Capucines et la Commune de Schaerbeek",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "cohesion_sociale",
+            "epicerie_sociale",
+            "prevention"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 128,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bibliothèque francophone",
+          "sous_rubrique": "",
+          "titre": "Bibliothèques francophones: introduction d'une demande de reconnaissance auprès de la Fédération Wallonie-Bruxelles, approbation du Plan quinquennal de développement 2013-2018 et dénonciation de la convention Schaerbeek-Evere",
+          "resume": "Approbation du Plan Quinquennal de Développement de la lecture et introduction d'une demande de reconnaissance à la Fédération Wallonie-Bruxelles à partir du 1er janvier 2014 en tant qu'opérateur direct du Réseau public de lecture dans la catégorie 3, avec dénonciation de la convention intercommunale Schaerbeek-Evere",
+          "intervenants": [
+            "Goldstein",
+            "Verzin"
+          ],
+          "repondant": "Köksal",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "bibliotheque",
+            "francophone",
+            "lecture_publique",
+            "reconnaissance",
+            "federation_wallonie_bruxelles"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 129,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bibliothèque",
+          "sous_rubrique": "Bibliothèque Néerlandophone",
+          "titre": "Contrat entre le VGC et la Commune de Schaerbeek concernant le raccordement de la Bibliothèque Néerlandophone sur le réseau BruNO - Approbation",
+          "resume": "Conclusion d'un contrat de durée indéterminée entre le VGC et la Commune de Schaerbeek concernant le raccordement de la Bibliothèque Néerlandophone de Schaerbeek sur le réseau de Brussels Netwerk Openbare Bibliotheken (BruNO).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "bibliotheque",
+            "reseau_bruno"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 130,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement Communal",
+          "sous_rubrique": "Capacités scolaires",
+          "titre": "Plan d'extension des capacités scolaires francophones du pouvoir organisateur communal - Présentation du plan de construction d'écoles pour l'extension des capacités scolaires néerlandophones du pouvoir organisateur communal",
+          "resume": "Approbation du plan d'extension des capacités scolaires francophones et du plan de construction d'écoles pour l'extension des capacités scolaires néerlandophones du pouvoir organisateur communal.",
+          "intervenants": [
+            "De Herde",
+            "Vanhalewyn",
+            "Byttebier",
+            "Verzin",
+            "Gilles",
+            "van de Hove",
+            "Lahlali",
+            "Querton",
+            "Ozdemir",
+            "Bernard",
+            "Trachte"
+          ],
+          "repondant": "Vanhalewyn, De Herde, Byttebier, Bourgmestre",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 29,
+            "contre": 2,
+            "abstentions": 12
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "capacites_scolaires",
+            "construction_ecoles"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 135,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Dialogue interculturel",
+          "sous_rubrique": "Citoyenneté",
+          "titre": "La création d'un conseil schaerbeekois du dialogue interculturel et de la citoyenneté",
+          "resume": "Demande de création d'un conseil schaerbeekois du dialogue interculturel et de la citoyenneté présentée par Monsieur Georges Verzin.",
+          "intervenants": [
+            "Verzin",
+            "Noël",
+            "Bouhjar"
+          ],
+          "repondant": "Bourgmestre",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "dialogue_interculturel",
+            "citoyennete"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 135,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "Stationnement",
+          "titre": "Evolution du projet de parking souterrain sous la Place Dailly ?",
+          "resume": "Question orale de Madame Debora Lorenzino concernant l'évolution du projet de parking souterrain sous la Place Dailly.",
+          "intervenants": [
+            "Lorenzino"
+          ],
+          "repondant": "Grimberghs",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "parking_souterrain",
+            "place_dailly"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
+        },
+        {
+          "sp": 95,
+          "page": 135,
+          "urgence": true,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "Circulation",
+          "titre": "La nécessité des ralentisseurs dans la rue Pavillon",
+          "resume": "Question orale de Monsieur Axel Bernard concernant la nécessité des ralentisseurs dans la rue Pavillon.",
+          "intervenants": [
+            "Bernard"
+          ],
+          "repondant": "Vanhalewyn, Bourgmestre",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "circulation",
+            "ralentisseurs",
+            "rue_pavillon"
+          ],
+          "source_file": "pv_2013_05_29.pdf"
         }
       ]
     },
