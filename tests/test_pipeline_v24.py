@@ -2,13 +2,15 @@
 normalisation, parsing montant, traçabilité page, complétude, date-repli.
 Verrouille en CI les comportements testés « en isolation » lors du merge.
 """
+import re
+
 import pytest
 
 from pv_extraction_pipeline import (
     _coerce_amount, normalize_point, _fix_point_pages,
     expected_sp_from_pages, verify_completeness, extract_seance_date_from_text,
     _synthesize_deferred_points, _extract_anchor_title, RE_RETIRE, RE_REPORTE,
-    _recover_missing_decisions,
+    _recover_missing_decisions, _loosen, _with_lex,
 )
 from reextract_targeted import targets_from_audit
 
@@ -137,6 +139,31 @@ def test_retire_and_reporte_regexes_are_disjoint():
     # NL
     assert RE_RETIRE.search("Dit punt wordt aan de agenda onttrokken")
     assert RE_REPORTE.search("Dit punt wordt uitgesteld")
+
+
+# ── Lexique éditable → formules d'extraction ajoutées aux regex ─────────────
+def test_loosen_flexes_whitespace_and_apostrophes():
+    pat = _loosen("ôté de l'ordre")
+    # Espaces multiples tolérés, apostrophe droite OU typographique.
+    assert re.search(pat, "ôté  de l'ordre", re.IGNORECASE)
+    assert re.search(pat, "ôté de l’ordre", re.IGNORECASE)
+
+
+def test_with_lex_without_phrases_returns_base_unchanged():
+    # Le lexique livré a des familles d'extraction vides → motif en dur intact.
+    base = r"retir[ée]\s+de\s+l['’]ordre"
+    assert _with_lex(base, "retrait") == base
+
+
+def test_with_lex_appends_custom_phrase(monkeypatch):
+    import pv_extraction_pipeline as pp
+    monkeypatch.setattr(pp, "_LEX_EXTRACTION",
+                        {"retrait": ["ôté de la séance"], "report": [],
+                         "approbation": [], "rejet": []})
+    pat = pp._with_lex(r"retir[ée]\s+de\s+l['’]ordre\s+du\s+jour", "retrait")
+    rx = re.compile(pat, re.IGNORECASE)
+    assert rx.search("Ce point a été ôté de la séance")          # phrase du lexique
+    assert rx.search("retiré de l'ordre du jour")                # motif en dur conservé
 
 
 def test_extract_anchor_title_stops_at_bilingual_separator():

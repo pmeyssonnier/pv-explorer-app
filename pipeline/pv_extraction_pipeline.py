@@ -595,6 +595,60 @@ def _extract_chunk_points(chunk: list[dict], seance_date: Optional[str],
 # ── GREFFE 2 : complétude déterministe (regex) + récupération ciblée ─────────
 RE_SP_ANCHOR = re.compile(r"SP\s*(\d+)\s*\.-", re.IGNORECASE)
 
+
+# Le lexique éditable (backend/lexique.json, section « extraction ») peut AJOUTER
+# des formules aux regex de statut ci-dessous SANS toucher au code : l'admin les
+# enrichit via la commande « //lex retrait|report|approbation|rejet = … » (voir
+# backend/lexique_store.py). La pipeline tourne AUSSI hors backend (Colab) : le
+# fichier est cherché en best-effort et son absence est tolérée (on garde alors
+# les seules formules en dur). Chargé une fois au chargement du module.
+def _load_lexique_extraction() -> dict:
+    empty = {"retrait": [], "report": [], "approbation": [], "rejet": []}
+    candidates = []
+    env = os.environ.get("PV_LEXIQUE_PATH")
+    if env:
+        candidates.append(Path(env))
+    here = Path(__file__).resolve().parent
+    candidates += [
+        here.parent / "backend" / "lexique.json",   # dépôt : pipeline/ ↔ backend/
+        here / "lexique.json",
+        Path("backend/lexique.json"),
+        Path("lexique.json"),
+    ]
+    for p in candidates:
+        try:
+            with open(p, encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            continue
+        extr = (data or {}).get("extraction") or {}
+        return {k: [s for s in (extr.get(k) or []) if isinstance(s, str) and s.strip()]
+                for k in empty}
+    return empty
+
+
+_LEX_EXTRACTION = _load_lexique_extraction()
+
+
+def _loosen(phrase: str) -> str:
+    """Échappe une formule libre du lexique puis assouplit espaces (→ \\s+) et
+    apostrophes (droite « ' » et typographique « ’ » interchangeables) — pour
+    matcher le texte brut d'un PDF quelle qu'en soit la ponctuation exacte."""
+    esc = re.escape(phrase.strip())
+    esc = re.sub(r"(\\\s|\s)+", r"\\s+", esc)      # runs d'espaces (échappés ou non) → \s+
+    esc = re.sub(r"\\?['’]", "['’]", esc)          # apostrophe → classe
+    return esc
+
+
+def _with_lex(base_pattern: str, famille: str) -> str:
+    """base_pattern éventuellement complété (alternation) par les formules du
+    lexique pour cette famille (retrait/report/approbation/rejet). Sans lexique
+    ou famille vide : le motif en dur est renvoyé inchangé."""
+    extra = _LEX_EXTRACTION.get(famille) or []
+    if not extra:
+        return base_pattern
+    return base_pattern + "".join("|" + _loosen(p) for p in extra)
+
 # Formules (FR + NL) des DEUX statuts distincts d'un point non traité tel quel —
 # mêmes cas que la règle du SYSTEM_PROMPT, mais détectés ici PAR REGEX (sans LLM)
 # pour le filet de sécurité déterministe (voir _synthesize_deferred_points) : un
@@ -603,18 +657,24 @@ RE_SP_ANCHOR = re.compile(r"SP\s*(\d+)\s*\.-", re.IGNORECASE)
 # (trou dans la numérotation SP). RETIRÉ (ôté de l'ordre du jour) et REPORTÉ
 # (renvoyé à une séance ultérieure) sont deux statuts DIFFÉRENTS.
 RE_RETIRE = re.compile(
-    r"retir[ée]\s+de\s+l['’]ordre\s+du\s+jour"
-    r"|retir[ée]\s+de\s+l['’]agenda"
-    r"|aan\s+de\s+agenda\s+onttrokken"
-    r"|onttrokken\s+aan\s+de\s+agenda",
+    _with_lex(
+        r"retir[ée]\s+de\s+l['’]ordre\s+du\s+jour"
+        r"|retir[ée]\s+de\s+l['’]agenda"
+        r"|aan\s+de\s+agenda\s+onttrokken"
+        r"|onttrokken\s+aan\s+de\s+agenda",
+        "retrait",
+    ),
     re.IGNORECASE,
 )
 # « est reporté » exigé (pas le seul mot « reporté », qui apparaît aussi dans
 # des titres, ex. « Un point reporté quelconque ») — c'est la formulation réelle
 # des PV : « Ce point est reporté [à une séance ultérieure] ».
 RE_REPORTE = re.compile(
-    r"point\s+est\s+report[ée]"
-    r"|dit\s+punt\s+wordt\s+(?:\w+\s+)?uitgesteld",
+    _with_lex(
+        r"point\s+est\s+report[ée]"
+        r"|dit\s+punt\s+wordt\s+(?:\w+\s+)?uitgesteld",
+        "report",
+    ),
     re.IGNORECASE,
 )
 # Union des deux — pour « ce point est-il différé d'une manière ou d'une autre ? »
@@ -641,13 +701,18 @@ RE_APPROVED_VOTE = re.compile(
 # ainsi soumis et NON retiré/reporté/rejeté a été approuvé (vote non chiffré →
 # type inconnu). Repli de PLUS BASSE priorité (voir _recover_decision_from_window) :
 # retrait/report et les votes chiffrés passent avant, un rejet le bloque.
-RE_APPROVED_INTENT = re.compile(r"\bapprobation\b|\bgoedkeuring\b", re.IGNORECASE)
+RE_APPROVED_INTENT = re.compile(
+    _with_lex(r"\bapprobation\b|\bgoedkeuring\b", "approbation"), re.IGNORECASE,
+)
 # Bloque le repli « Approbation → APPROUVÉ » : rejet explicite OU tournure
 # négative où « approbation » n'affirme pas l'approbation du point (« sans/ni
 # approbation », « refus/défavorable »). On ne présume alors rien.
 RE_APPROVAL_BLOCK = re.compile(
-    r"rejet[ée]s?|non\s+approuv|verworpen|niet\s+goedgekeurd"
-    r"|sans\s+approbation|ni\s+approbation|refus|défavorable|zonder\s+goedkeuring",
+    _with_lex(
+        r"rejet[ée]s?|non\s+approuv|verworpen|niet\s+goedgekeurd"
+        r"|sans\s+approbation|ni\s+approbation|refus|défavorable|zonder\s+goedkeuring",
+        "rejet",
+    ),
     re.IGNORECASE,
 )
 
