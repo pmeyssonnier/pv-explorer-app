@@ -18,8 +18,8 @@ import {
   selectTheme, setMetric, shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick,
 } from './stats.js';
 import {
-  loadElus, populateElus, onEluSelectChange, onEluYearChange, onEluTypeChange, onEluChipClick,
-  shareElu, setPendingEluKey,
+  loadElus, populateElus, onEluSelectChange, onEluYearChange, onEluTypeChange, onEluThemeChange,
+  onEluChipClick, shareElu, setPendingEluKey,
 } from './elus.js';
 import {
   loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
@@ -95,6 +95,7 @@ function initStaticListeners() {
   bind('eluSelect', 'change', e => onEluSelectChange(e.target));
   bind('eluYear', 'change', onEluYearChange);
   bind('eluType', 'change', onEluTypeChange);
+  bind('eluTheme', 'change', onEluThemeChange);
   bind('seanceYear', 'change', renderSeanceYearList);
   bind('seanceList', 'change', e => onSeanceListChange(e.target));
   bind('adminLoginForm', 'submit', submitAdminLogin);

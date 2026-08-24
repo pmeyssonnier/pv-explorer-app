@@ -14,6 +14,7 @@ let pendingEluKey = null;   // élu·e à présélectionner depuis un lien parta
 let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltrer sans refetch)
 let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
 let eluTypeFilter = 'all';  // type d'intervention sélectionné ("all" = tous) — depose uniquement
+let eluThemeFilter = 'all'; // thématique sélectionnée ("all" = toutes) — depose ET repond
 let eluSelectedKey = null;  // clé actuellement chargée
 
 // Présélection appliquée depuis un lien partagé (?tab=elus&elu=…), voir handleDeepLink.
@@ -147,6 +148,39 @@ export function onEluYearChange() {
 function filterByYear(items, year) {
   if (year === 'all') return items;
   return items.filter(it => (it.date || '').slice(0, 4) === year);
+}
+
+// Thématiques distinctes (dépôts + réponses de l'année sélectionnée), triées
+// alphabétiquement — indépendant du filtre de type, pour que la liste des
+// thématiques disponibles ne se réduise pas selon le type déjà choisi.
+function eluThemes(deposeForYear, repondForYear) {
+  const s = new Set();
+  deposeForYear.forEach(it => (it.thematiques || []).forEach(t => s.add(t)));
+  repondForYear.forEach(it => (it.thematiques || []).forEach(t => s.add(t)));
+  return [...s].sort((a, b) => a.localeCompare(b, 'fr'));
+}
+
+// (Re)remplit le filtre de thématique pour la fiche courante ; conserve la
+// thématique sélectionnée si elle existe encore, sinon "Toutes".
+function populateEluThemeSelect(themes) {
+  const sel = document.getElementById('eluTheme');
+  if (!sel) return;
+  if (!themes.length) { sel.innerHTML = ''; sel.hidden = true; eluThemeFilter = 'all'; return; }
+  if (!themes.includes(eluThemeFilter)) eluThemeFilter = 'all';
+  sel.hidden = false;
+  sel.innerHTML = '<option value="all">Toutes les thématiques</option>' +
+    themes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+  sel.value = eluThemeFilter;
+}
+
+export function onEluThemeChange() {
+  eluThemeFilter = document.getElementById('eluTheme').value;
+  if (currentEluData) renderElu(currentEluData);
+}
+
+function filterByTheme(items, theme) {
+  if (theme === 'all') return items;
+  return items.filter(it => (it.thematiques || []).includes(theme));
 }
 
 // Ordre d'affichage fixe (pas l'ordre d'apparition dans les données) : même
@@ -295,8 +329,12 @@ function renderElu(d) {
   // — sinon sélectionner un type ferait disparaître les puces des autres
   // types (chacune doit rester visible/cliquable pour changer de filtre).
   const deposeForYear = filterByYear(d.depose || [], eluYearFilter);
-  const depose = filterByType(deposeForYear, eluTypeFilter);
-  const repond = filterByYear(d.repond || [], eluYearFilter);
+  const repondForYear = filterByYear(d.repond || [], eluYearFilter);
+  // Thématiques disponibles pour l'année courante — indépendantes du type et
+  // de la thématique déjà choisis, sinon le menu se viderait au filtrage.
+  populateEluThemeSelect(eluThemes(deposeForYear, repondForYear));
+  const depose = filterByType(filterByTheme(deposeForYear, eluThemeFilter), eluTypeFilter);
+  const repond = filterByTheme(repondForYear, eluThemeFilter);
   const roleLabel = d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
     : 'Conseiller·ère';
@@ -327,6 +365,7 @@ function renderElu(d) {
   if (!depose.length && !repond.length) {
     const filters = [];
     if (eluTypeFilter !== 'all') filters.push(`de type « ${eluTypeFilter} »`);
+    if (eluThemeFilter !== 'all') filters.push(`sur la thématique « ${eluThemeFilter} »`);
     if (eluYearFilter !== 'all') filters.push(`en ${eluYearFilter}`);
     html += filters.length
       ? `<div class="trend-empty">Aucune intervention ${filters.join(' ')}.</div>`
