@@ -21,11 +21,6 @@ let eluSelectedKey = null;  // clé actuellement chargée
 // Présélection appliquée depuis un lien partagé (?tab=elus&elu=…), voir handleDeepLink.
 export function setPendingEluKey(key) { pendingEluKey = key; }
 
-// Liste complète [{key,nom,role,depose,repond}] — réutilisée par l'onglet
-// Séances pour connaître le rôle (conseiller/collège) d'un nom (voir
-// seances.js), sans re-fetcher /elus si déjà chargé par cet onglet-ci.
-export function getElusData() { return elusData; }
-
 export async function loadElus() {
   if (elusLoaded) return;
   const input = document.getElementById('eluSelect');
@@ -297,6 +292,28 @@ function eluRepondRow(it, nom) {
   </div>`;
 }
 
+// Historique de mandats lisible (voir /elu/{key} "mandats", services.people.
+// mandats côté backend) : « Conseiller·ère communal·e (2012–2019, 2024–présent)
+// · Échevin·e (2025–présent) » — un même élu·e peut avoir occupé plusieurs
+// rôles successifs, jamais résumé en un seul. null si absent des données
+// déclaratives (repli sur le libellé simple "role", voir renderElu).
+const MANDAT_LABEL = {
+  conseiller: 'Conseiller·ère communal·e',
+  echevin: 'Échevin·e',
+  bourgmestre: 'Bourgmestre',
+};
+const MANDAT_ORDER = ['conseiller', 'echevin', 'bourgmestre'];
+function formatMandats(mandats) {
+  if (!mandats) return null;
+  const parts = MANDAT_ORDER
+    .filter(k => (mandats[k] || []).length)
+    .map(k => {
+      const ranges = mandats[k].map(r => `${r.debut}–${r.fin ?? 'présent'}`).join(', ');
+      return `${MANDAT_LABEL[k]} (${ranges})`;
+    });
+  return parts.length ? parts.join(' · ') : null;
+}
+
 // Regroupe une liste d'items (triés récent→ancien) par année et produit le HTML.
 function groupByYear(items, rowFn) {
   const groups = [];
@@ -332,9 +349,9 @@ function renderElu(d) {
   populateEluThemeSelect(eluThemes(deposeForYear, repondForYear));
   const depose = filterByType(filterByTheme(deposeForYear, eluThemeFilter), eluTypeFilter);
   const repond = filterByTheme(repondForYear, eluThemeFilter);
-  const roleLabel = d.role === 'college'
+  const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
-    : 'Conseiller·ère';
+    : 'Conseiller·ère');
   const chips = TYPE_FILTER_ORDER
     .map(t => eluTypeChip(t, deposeForYear.filter(it => it.type_label === t).length))
     .join('');

@@ -11,12 +11,36 @@ from utils.text import _DECISION_LABELS, _thematique_label
 from utils.video import video_session_map
 
 from services.people.attribution import _TYPE_LABEL, _point_author, _respondents
+from services.people.mandats import role_at
 from services.people.names import (
     _clean, _is_non_person_video_author, _key, _resolve_display_name,
     _split_person_names, _strip_accents, _titlecase,
 )
-from services.people.registry import _load_video, _nom_by_key, _pairs
+from services.people.registry import _index, _load_video, _nom_by_key, _pairs
 from services.video_merge import _match_pv_point
+
+
+def _role_for_key(key, date, idx):
+    """Rôle d'une personne à la date d'un point donné : mandats déclaratifs
+    (voir services.people.mandats, précis à la date) en priorité, repli sur
+    le rôle dominant du registre (services.people.registry, indicatif) —
+    None si la personne n'a ni l'un ni l'autre (ex. citoyen·ne sans mandat)."""
+    if not key:
+        return None
+    return role_at(key, date) or (idx.get(key) or {}).get("role")
+
+
+def _combined_role(keys, date, idx):
+    """Rôle combiné d'une mention à plusieurs personnes (ex. « répondant(e)s »
+    au pluriel) : « college » si l'une d'elles y est, sinon « conseiller » si
+    l'une d'elles y est, sinon None — jamais de mélange contradictoire perdu
+    silencieusement."""
+    roles = [_role_for_key(k, date, idx) for k in keys]
+    if "college" in roles:
+        return "college"
+    if "conseiller" in roles:
+        return "conseiller"
+    return None
 
 
 def _is_reportee(decision) -> bool:
@@ -113,6 +137,7 @@ def seance_detail(date: str):
     pairs = _pairs()
     nom_by_key = _nom_by_key()
     session_map = video_session_map()
+    idx = _index()
 
     def resolve(name):
         return _resolve_display_name(name, pairs, nom_by_key)
@@ -124,6 +149,7 @@ def seance_detail(date: str):
         author_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in author_names))))
         demandeur = " et ".join(author_resolved) if author_resolved else None
         resp_names = _respondents(p.get("repondant"), meta)
+        resp_keys = [_key(n, pairs) for n in resp_names]
         resp_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in resp_names))))
         repondant = " et ".join(resp_resolved) if resp_resolved else (
             _titlecase(_clean(p.get("repondant") or "")) or None
@@ -134,7 +160,14 @@ def seance_detail(date: str):
             "type_label": _TYPE_LABEL.get(p.get("type"), "Point"),
             "titre": p.get("titre") or "",
             "demandeur": demandeur,
+            # Rôle de chacun·e À LA DATE DE CETTE SÉANCE (voir _role_for_key/
+            # _combined_role ci-dessus) : un·e même élu·e peut être conseiller·ère
+            # sur un point ancien et échevin·e sur un point récent — jamais un
+            # rôle unique figé pour toute sa carrière (voir seances.js, filtre
+            # de rôle à facettes, qui consomme ces deux champs).
+            "demandeur_role": _role_for_key(author_key, date, idx),
             "repondant": repondant,
+            "repondant_role": _combined_role(resp_keys, date, idx),
             "reporte": _is_reportee(p.get("decision")),
             "decision": _decision_summary(p.get("decision"), p.get("vote")),
             "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
@@ -190,7 +223,9 @@ def seance_detail(date: str):
                     "type_label": _TYPE_LABEL["video"],
                     "titre": titre,
                     "demandeur": resolve(vauthor),
+                    "demandeur_role": _role_for_key(_key(vauthor, pairs) if vauthor else None, date, idx),
                     "repondant": None,
+                    "repondant_role": None,
                     "reporte": False,
                     "decision": None,
                     "thematiques": [],

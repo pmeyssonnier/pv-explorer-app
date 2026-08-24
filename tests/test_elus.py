@@ -329,6 +329,49 @@ def test_college_member_with_few_answers_counted_correctly_in_list():
     assert d["repond"] == 3
 
 
+# ── Rôle par date (mandats déclaratifs, voir services.people.mandats) ──────
+def test_elu_detail_exposes_declarative_mandate_history():
+    d = elus.elu_detail("verzin")
+    assert d is not None
+    assert d["mandats"] == {
+        "conseiller": [{"debut": 1982, "fin": None}],
+        "echevin": [{"debut": 1988, "fin": 2000}, {"debut": 2006, "fin": 2012}],
+    }
+
+
+def test_elu_detail_mandats_none_when_absent_from_declarative_data():
+    # Une personne du registre PV absente du fichier déclaratif
+    # (elus_mandats.json) : mandats=None (le frontend retombe alors sur le
+    # libellé "role" simple, voir elus.js/renderElu), jamais d'exception.
+    d = elus.elu_detail("dhuyvetter")
+    assert d is not None
+    assert d["mandats"] is None
+
+
+def test_role_field_reflects_current_mandate_not_lifetime_activity_for_ex_college_member():
+    # Cécile Jodogne : très active comme échevine/bourgmestre ff par le
+    # passé (des centaines de réponses en séance) — l'heuristique d'activité
+    # seule (_role_of) la classerait "college" à vie. Ses mandats déclaratifs
+    # montrent qu'elle est aujourd'hui simple conseillère (échevinat clos en
+    # 2014, bourgmestre ff clos en 2024, seul le mandat de conseillère reste
+    # ouvert) : le sélecteur "Tous les rôles" doit refléter son rôle ACTUEL.
+    d = elus.elu_detail("jodogne")
+    assert d is not None
+    assert d["counts"]["repond"] > 400   # l'heuristique seule dirait "college"
+    assert d["role"] == "conseiller"
+
+
+def test_role_field_reflects_current_mandate_not_lifetime_activity_for_new_college_member():
+    # Cédric Mahieu : conseiller de longue date (128 dépôts), échevin
+    # seulement depuis 2025 — l'heuristique d'activité (dominée par ses
+    # années de conseiller) le classerait "conseiller" ; ses mandats
+    # déclaratifs le classent "college" dès qu'il devient échevin.
+    d = elus.elu_detail("mahieu")
+    assert d is not None
+    assert d["counts"]["depose"] > d["counts"]["repond"]   # l'heuristique seule dirait "conseiller"
+    assert d["role"] == "college"
+
+
 def test_case_insensitive_key():
     assert elus.elu_detail("VERZIN")["key"] == "verzin"
 
@@ -537,6 +580,27 @@ def test_seance_detail_demandeur_repondant_and_video_precise_match_elu_view():
     assert it["repondant"] == "Thomas Eraly"
     assert it["video_precise"] is True
     assert "&t=" in it["video_url"]
+    # Rôle résolu à la date de CETTE séance (voir services.people.mandats) :
+    # Douhri conseillère depuis 2024, Eraly échevin depuis 2025 — les deux
+    # exacts pour le 22/04/2026.
+    assert it["demandeur_role"] == "conseiller"
+    assert it["repondant_role"] == "college"
+
+
+def test_seance_detail_role_reflects_mandate_at_seance_date_not_a_fixed_label():
+    # Frédéric Nimal (clé "nimal") n'est devenu échevin qu'en 2012 (mandats
+    # déclaratifs, voir elus_mandats.json) : un point de 2010 où il répond
+    # doit le classer "conseiller", pas "college" — contrairement à un rôle
+    # unique figé par personne (ce que fait la vue Par élu·e, elus.role, pour
+    # le sélecteur "Tous les rôles" — voir test_echevin_has_college_role_and_answers
+    # qui le classe "college" comme rôle DOMINANT sur toute sa carrière).
+    before = elus.seance_detail("2010-03-03")
+    pt = next(p for p in before["points"] if p["repondant"] == "Frédéric Nimal")
+    assert pt["repondant_role"] == "conseiller"
+
+    after = elus.seance_detail("2025-10-15")
+    pt2 = next(p for p in after["points"] if p["repondant"] == "Frédéric Nimal")
+    assert pt2["repondant_role"] == "college"
 
 
 def test_seance_detail_resolves_demandeur_named_only_in_resume():
