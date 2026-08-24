@@ -7,6 +7,7 @@ import pytest
 from pv_extraction_pipeline import (
     _coerce_amount, normalize_point, _fix_point_pages,
     expected_sp_from_pages, verify_completeness, extract_seance_date_from_text,
+    _synthesize_deferred_points, _extract_anchor_title, RE_RETIRE, RE_REPORTE,
 )
 from reextract_targeted import targets_from_audit
 
@@ -83,6 +84,63 @@ def test_verify_completeness_detecte_manquant():
 def test_verify_completeness_complet():
     pages = [{"page_num": 1, "text": "SP 1.- A SP 2.- B"}]
     assert verify_completeness(pages, [{"sp": 1}, {"sp": 2}])["ok"] is True
+
+
+# ── Filet déterministe : points retirés/reportés reconstruits ───────────────
+# Deux statuts DISTINCTS (RETIRÉ vs REPORTÉ) — voir le SYSTEM_PROMPT + backend
+# _is_reportee/_is_retire. Cas réel : SP 22 du PV du 2016-10-26, retiré de
+# l'ordre du jour, omis par le LLM (signalé manquant par verify_completeness).
+_RETIRE_RAW = (
+    "SP 22.- Vivaqua-Hydrobru - Examen du projet de fusion -=- Vivaqua-Hydrobru "
+    "- Studie van het fusieontwerp Ce point est retiré de l'ordre du jour -=- "
+    "Dit punt wordt aan de agenda onttrokken. 25 SP 23.- Autre point"
+)
+
+
+def test_synthesize_withdrawn_point_gets_retire_status():
+    pages = [{"page_num": 25, "text": _RETIRE_RAW}]
+    out = _synthesize_deferred_points(pages, [22])
+    assert len(out) == 1
+    p = out[0]
+    assert p["sp"] == 22
+    assert p["decision"] == "RETIRÉ"                 # PAS "REPORTÉ" — statut distinct
+    assert p["vote"]["type"] is None                 # un point retiré n'est jamais voté
+    assert p["titre"] == "Vivaqua-Hydrobru - Examen du projet de fusion"
+    assert p["page"] == 25
+
+
+def test_synthesize_reported_point_gets_reporte_status():
+    raw = "SP 40.- Un point reporté quelconque -=- NL Ce point est reporté. 12 SP 41.- x"
+    out = _synthesize_deferred_points([{"page_num": 12, "text": raw}], [40])
+    assert len(out) == 1
+    assert out[0]["decision"] == "REPORTÉ"
+    assert out[0]["vote"]["type"] == "reporte"
+    # Le titre ne doit PAS être tronqué par les mots « point reporté » qu'il
+    # contient : seule la formule « est reporté » marque le statut.
+    assert out[0]["titre"] == "Un point reporté quelconque"
+
+
+def test_synthesize_ignores_missing_point_without_deferral_phrase():
+    # Un vrai point de fond omis (sans formule de retrait/report) ne doit JAMAIS
+    # être reconstruit en stub — il relève d'une ré-extraction, pas d'un faux.
+    raw = "SP 50.- Un vrai point avec du contenu -=- NL. Approuvé à l'unanimité. 8"
+    assert _synthesize_deferred_points([{"page_num": 8, "text": raw}], [50]) == []
+
+
+def test_retire_and_reporte_regexes_are_disjoint():
+    # Les deux formules ne se recouvrent pas (statuts distincts).
+    assert RE_RETIRE.search("Ce point est retiré de l'ordre du jour")
+    assert not RE_REPORTE.search("Ce point est retiré de l'ordre du jour")
+    assert RE_REPORTE.search("Ce point est reporté")
+    assert not RE_RETIRE.search("Ce point est reporté")
+    # NL
+    assert RE_RETIRE.search("Dit punt wordt aan de agenda onttrokken")
+    assert RE_REPORTE.search("Dit punt wordt uitgesteld")
+
+
+def test_extract_anchor_title_stops_at_bilingual_separator():
+    window = " Vivaqua-Hydrobru - Examen du projet de fusion -=- NL titre"
+    assert _extract_anchor_title(window, 22) == "Vivaqua-Hydrobru - Examen du projet de fusion"
 
 
 # ── extract_seance_date_from_text : FR/NL + accents/espaces perdus ──────────

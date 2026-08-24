@@ -38,7 +38,7 @@ from services.people.registry import (  # noqa: F401 (réexportés)
 )
 from services.video_merge import _match_pv_point  # noqa: F401 (réexporté)
 from services.seances import (  # noqa: F401 (réexportés)
-    _decision_summary, _is_reportee, _thematique_label, seance_detail, seances_list,
+    _decision_summary, _is_reportee, _is_retire, _thematique_label, seance_detail, seances_list,
 )
 
 # ── API publique (consommée par le routeur) ─────────────────────────────────

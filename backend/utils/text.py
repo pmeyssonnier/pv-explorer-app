@@ -50,6 +50,7 @@ _DECISION_LABELS = {
     "decidé": "Décidé",
     "debat": "Débat",
     "reporte": "Reporté",
+    "retire": "Retiré",
     "prend acte": "Pris acte",
     "prendre acte": "Pris acte",
     "prend pour information": "Pris pour information",

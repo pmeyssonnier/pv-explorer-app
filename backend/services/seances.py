@@ -49,6 +49,13 @@ def _is_reportee(decision) -> bool:
     return _strip_accents(decision or "").strip().lower().startswith("report")
 
 
+def _is_retire(decision) -> bool:
+    """Point RETIRÉ de l'ordre du jour (« RETIRÉ ») : statut DISTINCT du report
+    (le point est ôté, pas renvoyé à une séance ultérieure), mais lui aussi
+    jamais débattu ce jour-là — donc pas de répondant·e ni de débat filmé."""
+    return _strip_accents(decision or "").strip().lower().startswith("retir")
+
+
 def _decision_summary(decision, vote):
     """Résumé lisible de l'issue d'un point (décision + vote quand il y en a
     un), pour indiquer explicitement, selon chaque cas, pourquoi il n'y a
@@ -169,6 +176,7 @@ def seance_detail(date: str):
             "repondant": repondant,
             "repondant_role": _combined_role(resp_keys, date, idx),
             "reporte": _is_reportee(p.get("decision")),
+            "retire": _is_retire(p.get("decision")),
             "decision": _decision_summary(p.get("decision"), p.get("vote")),
             "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
             "montant_eur": p.get("montant_eur"),
@@ -227,6 +235,7 @@ def seance_detail(date: str):
                     "repondant": None,
                     "repondant_role": None,
                     "reporte": False,
+                    "retire": False,
                     "decision": None,
                     "thematiques": [],
                     "montant_eur": None,
