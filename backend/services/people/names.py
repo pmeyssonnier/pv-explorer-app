@@ -10,6 +10,8 @@ plusieurs noms de personne normalisés. La résolution "qui a déposé ce point 
 import re
 import unicodedata
 
+import lexique_store
+
 # ── Normalisation des noms ───────────────────────────────────────────────────
 # Civilités en tête de nom (répétables : « M. le … »).
 _CIV = re.compile(
@@ -146,7 +148,8 @@ def _key(name: str, pairs: set | None = None) -> str:
         a, b = normed
         if (b, a) in pairs:  # ordre inversé (« Nom Prénom ») détecté
             k = a
-    return _KEY_ALIASES.get(k, k)
+    # Lexique éditable (alias ajoutés à chaud) prioritaire sur les alias en dur.
+    return lexique_store.person_aliases().get(k) or _KEY_ALIASES.get(k, k)
 
 
 def _titlecase(name: str) -> str:

@@ -4,6 +4,8 @@ des tags de thématiques (fusion des doublons singulier/pluriel).
 import re
 import unicodedata
 
+import lexique_store
+
 
 def _strip_accents(s: str) -> str:
     return "".join(c for c in unicodedata.normalize("NFD", s)
@@ -26,7 +28,9 @@ def _canon_theme(theme: str) -> str:
             w = w[:-1]
         toks.append(w)
     s = " ".join(toks)
-    return _THEME_CANON.get(s, s)
+    # Lexique éditable (voir lexique_store) : fusions ajoutées à chaud par
+    # l'admin, par-dessus les fusions en dur — mêmes clés canonisées.
+    return lexique_store.thematiques().get(s) or _THEME_CANON.get(s, s)
 
 
 def _thematique_label(t: str) -> str:
@@ -77,7 +81,8 @@ def _decision_status(decision: str, vote_type: str = None) -> str:
     if not d:
         return ""
     norm = _strip_accents(d).lower()
-    label = _DECISION_LABELS.get(norm) or (d[:1].upper() + d[1:].lower())
+    # Lexique éditable en priorité, puis libellés en dur, puis repli casse.
+    label = lexique_store.decisions().get(norm) or _DECISION_LABELS.get(norm) or (d[:1].upper() + d[1:].lower())
     if vote_type == "unanimite":
         return f"{label} à l'unanimité"
     return label

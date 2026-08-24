@@ -6,11 +6,19 @@ protège via `require_admin`.
 import os
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request, Response, UploadFile
+from pydantic import BaseModel
 
+import lexique_store
 from limiter import limiter
 from models.api import AdminLoginRequest, QuestionEcritePublishRequest, SeancePublishRequest
-from services import jobs, pv_integration, questions_ecrites_integration
+from services import github_publish, jobs, pv_integration, questions_ecrites_integration
 from services.auth import SESSION_TTL_S, create_session_token, verify_admin_credentials, verify_session_token
+
+
+class LexiqueEntryRequest(BaseModel):
+    kind: str
+    key: str
+    value: str
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -175,3 +183,34 @@ def _job_status(job_id: str):
     if job["status"] == "error":
         raise HTTPException(status_code=job["code"], detail=job["detail"])
     return {"status": "done", **job["result"]}
+
+
+# ── LEXIQUE éditable (synonymes/associations + glossaire) ────────────────────
+# Enrichi à chaud par l'admin (commande « //lex … » côté chat, réservée à une
+# session admin) : l'ajout est écrit localement (effet immédiat sur l'instance)
+# puis commité dans le dépôt (persistance + redéploiement). Voir lexique_store.
+@router.get("/lexique")
+def get_lexique(username: str = Depends(require_admin)):
+    return lexique_store.load()
+
+
+@router.post("/lexique")
+@limiter.limit("60/hour")
+def add_lexique_entry(request: Request, body: LexiqueEntryRequest, username: str = Depends(require_admin)):
+    """Ajoute une entrée au lexique. `kind` ∈ theme/decision/alias/nom/def/
+    retrait/report/approbation/rejet (voir lexique_store._KINDS)."""
+    try:
+        data = lexique_store.add_entry(body.kind, body.key, body.value)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    try:
+        github_publish.commit_file(
+            "backend/lexique.json", lexique_store.as_json(data),
+            f"lexique: {body.kind} « {body.key} » (via admin)",
+        )
+        committed = True
+    except Exception:
+        # L'écriture locale a réussi (effet immédiat) mais le commit distant a
+        # échoué : on le signale sans perdre l'ajout côté instance courante.
+        committed = False
+    return {"status": "done", "kind": body.kind, "committed": committed, "lexique": data}
