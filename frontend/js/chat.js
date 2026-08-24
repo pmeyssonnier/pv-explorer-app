@@ -4,6 +4,7 @@ import { API_URL } from './config.js';
 import { settings } from './settings.js';
 import { escapeHtml, renderMarkdown, formatDate, renderThemeTags, renderReponseDetails } from './utils.js';
 import { copyShare, shareBaseUrl } from './share.js';
+import { isLexCommand, runLexCommand } from './lexique.js';
 
 let isLoading = false;
 
@@ -407,12 +408,47 @@ export function toggleDictation(btn) {
 renderHistory();
 restoreConversation();
 
+// ── COMMANDE LEXIQUE « //lex … » ──
+// Affiche la commande (bulle question), appelle /admin/lexique (le cookie admin
+// part avec la requête), puis rend le résultat dans une bulle « Lexique ».
+// N'écrit ni dans l'historique des questions ni dans la conversation persistée
+// (ce n'est pas une recherche) et ne touche pas au cache de réponses.
+async function runLex(command) {
+  const input = document.getElementById('askInput');
+  input.value = '';
+  onAskInput();
+  document.getElementById('introCard').style.display = 'none';
+  document.getElementById('newSearchBtn').style.display = '';
+  const conv = document.getElementById('conversation');
+  conv.insertAdjacentHTML('beforeend', renderQuestionMsg(command));
+  const pendingId = 'lex-' + Date.now();
+  conv.insertAdjacentHTML('beforeend', `
+    <div class="msg" id="${pendingId}">
+      <div class="msg-role">Lexique</div>
+      <div class="msg-bubble">
+        <div class="loading"><span>Mise à jour du lexique</span>
+        <span class="dots"><span></span><span></span><span></span></span></div>
+      </div>
+    </div>`);
+  window.scrollTo(0, document.body.scrollHeight);
+  const { html } = await runLexCommand(command);
+  const el = document.getElementById(pendingId);
+  if (el) el.querySelector('.msg-bubble').innerHTML = html;
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
 // ── POSER UNE QUESTION ──
 export async function submitQuestion() {
   if (isLoading) return;
   const input = document.getElementById('askInput');
   const question = input.value.trim();
   if (!question) return;
+
+  // Commande « //lex … » : enrichit le lexique (réservée à l'admin connecté).
+  // Interceptée AVANT /ask — ce n'est pas une question au RAG. On l'affiche
+  // comme une bulle de question, on exécute la commande, puis on rend la
+  // réponse dans une bulle dédiée (sans passer par le cache/l'historique RAG).
+  if (isLexCommand(question)) { await runLex(question); return; }
 
   isLoading = true;
   document.getElementById('askBtn').disabled = true;
