@@ -67,6 +67,24 @@ def _first_named_intervenant(interv: list):
     return None
 
 
+def _sole_named_intervenant(interv: list):
+    """Unique personne nommée d'une liste d'intervenant·e·s — None si zéro,
+    plusieurs, ou entrée COMPOSÉE ambiguë (« MM. X et Y »). Les mentions de rôle
+    pur (« Bourgmestre ff », qui préside/répond mais ne PROPOSE pas) sont
+    ignorées. Sert de repli d'attribution pour les MOTIONS portées par une seule
+    personne au débat (voir _author_of) : le reste des motions, à débat
+    multiple, demeure collectif et non attribué."""
+    names = []
+    for raw in interv or []:
+        part = _split_person_names(raw)
+        if len(part) > 1:        # entrée composée → ambiguïté franche : on renonce
+            return None
+        if part:                 # une personne ; sinon rôle pur → ignoré
+            names.append(part[0])
+    uniq = list(dict.fromkeys(names))
+    return uniq[0] if len(uniq) == 1 else None
+
+
 def _author_from_text(text: str, interv: list):
     """Cherche « Demande/Motion de M./Mme X » dans un texte donné (titre ou
     résumé). Si le nom capté s'arrête avant une particule en minuscule (la
@@ -101,9 +119,14 @@ def _author_of(point: dict):
         name = _author_from_text(title, interv) or _author_from_text(resume, interv)
         return name or _first_named_intervenant(interv)
     if typ == "motion":
-        # Jamais de repli sur les intervenant·e·s (souvent collectif) : seul
-        # un texte le nommant explicitement (titre OU résumé) vaut attribution.
-        return _author_from_text(title, interv) or _author_from_text(resume, interv)
+        # Attribution par le texte qui nomme explicitement l'auteur·e (titre OU
+        # résumé) ; à défaut, repli PRUDENT : une motion portée par une SEULE
+        # personne nommée au débat lui est attribuée. Un débat à plusieurs
+        # intervenant·e·s reste collectif (non attribué) — on ne prend jamais
+        # « le 1er » comme auteur. Voir _sole_named_intervenant.
+        return (_author_from_text(title, interv)
+                or _author_from_text(resume, interv)
+                or _sole_named_intervenant(interv))
     return None
 
 
