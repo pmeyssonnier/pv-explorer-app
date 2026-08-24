@@ -432,7 +432,14 @@ body {
 .pv-pdf .icon { width: 15px; height: 15px; }
 .pv-video { display: inline-flex; color: var(--bordeaux); margin-left: 2px; }
 .pv-video .icon { width: 15px; height: 15px; }
-.pv-meta { flex: 1 1 auto; font-size: 12.5px; color: var(--encre-soft); font-variant-numeric: tabular-nums; }
+/* Points/votes (ligne 1) et montant (ligne 2) toujours empilés — flex-direction
+   column plutôt qu'un flux texte unique, dont le retour à la ligne dépendait
+   de la largeur disponible (montant tantôt sur la 1re ligne, tantôt sur la
+   2e selon la longueur du texte). */
+.pv-meta {
+  flex: 1 1 auto; font-size: 12.5px; color: var(--encre-soft);
+  font-variant-numeric: tabular-nums; display: flex; flex-direction: column; gap: 1px;
+}
 .pv-montant { white-space: nowrap; }
 /* Groupes par année (vue « toutes les années ») */
 .pv-group { border-bottom: 1px solid var(--ligne); }

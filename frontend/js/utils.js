@@ -18,6 +18,21 @@ export const fmtInt = n => Math.round(n || 0).toString().replace(/\B(?=(\d{3})+(
 export const fmtMontant = n => fmtInt(n) + ' €';
 export function fmtEUR(n) { return fmtMontant(n); }   // même format « # ### ##0 € » que les KPI
 
+// Montant compact pour le KPI « Montants engagés » (onglet Statistiques) :
+// « 1 125,5 Mio € » au-delà d'1 million, sinon « 817,1 k € » — le montant
+// brut (fmtMontant/fmtEUR, « # ### ##0 € ») reste utilisé partout ailleurs
+// (liste des PV, sources, évolution par thème).
+export function fmtMontantCompact(n) {
+  const v = n || 0;
+  return Math.abs(v) > 1_000_000
+    ? _fmtDecimal(v / 1_000_000) + ' Mio €'
+    : _fmtDecimal(v / 1_000) + ' k €';
+}
+function _fmtDecimal(n) {
+  const [intPart, decPart] = n.toFixed(1).split('.');
+  return fmtInt(Number(intPart)) + ',' + decPart;
+}
+
 // Rendu Markdown minimal et SÛR (échappe le texte d'abord, puis n'insère que nos
 // propres balises) : tableaux, titres, gras/italique, code, listes, séparateurs.
 export function renderMarkdown(src) {
