@@ -636,6 +636,20 @@ RE_APPROVED_VOTE = re.compile(
     r"(?:\s+et\s+(\d+)\s+abstention)?",
     re.IGNORECASE,
 )
+# « Approbation » / « Goedkeuring » (le suffixe d'agenda « … - Approbation »
+# des points soumis au vote) traité comme SYNONYME d'« approuvé » : un point
+# ainsi soumis et NON retiré/reporté/rejeté a été approuvé (vote non chiffré →
+# type inconnu). Repli de PLUS BASSE priorité (voir _recover_decision_from_window) :
+# retrait/report et les votes chiffrés passent avant, un rejet le bloque.
+RE_APPROVED_INTENT = re.compile(r"\bapprobation\b|\bgoedkeuring\b", re.IGNORECASE)
+# Bloque le repli « Approbation → APPROUVÉ » : rejet explicite OU tournure
+# négative où « approbation » n'affirme pas l'approbation du point (« sans/ni
+# approbation », « refus/défavorable »). On ne présume alors rien.
+RE_APPROVAL_BLOCK = re.compile(
+    r"rejet[ée]s?|non\s+approuv|verworpen|niet\s+goedgekeurd"
+    r"|sans\s+approbation|ni\s+approbation|refus|défavorable|zonder\s+goedkeuring",
+    re.IGNORECASE,
+)
 
 
 def _anchor_window(text: str, sp: int) -> str:
@@ -727,11 +741,15 @@ def _deferred_status_from_window(window: str):
 
 def _recover_decision_from_window(window: str):
     """(decision, vote) complet déduit du texte brut d'un point EXTRAIT mais sans
-    décision. Couvre, par priorité : retrait (RETIRÉ) / report (REPORTÉ), puis
-    approbation par le Conseil — unanimité ou vote nominal chiffré — quand le
-    marqueur « DÉCISION DU CONSEIL … approuvé … / goedgekeurd … » est présent
-    (cas réel SP 7/19/37 du 2010-03-31 : points votés dont le LLM a raté la
-    décision). (None, None) si aucun marqueur fiable : on n'invente jamais."""
+    décision. Couvre, par PRIORITÉ DÉCROISSANTE :
+      1. retrait (RETIRÉ) / report (REPORTÉ) — l'acte prime sur tout le reste ;
+      2. approbation chiffrée : vote nominal (« approuvé par X voix contre Y »)
+         ou unanimité (« approuvé à l'unanimité / goedgekeurd met eenparigheid »)
+         — cas SP 7/19/37 du 2010-03-31 ;
+      3. approbation d'agenda : « Approbation » / « Goedkeuring » seul (le point
+         a été soumis au vote et approuvé, sans détail chiffré) → APPROUVÉ, vote
+         de type inconnu. Bloqué par un signal de rejet explicite.
+    (None, None) si aucun marqueur fiable : on n'invente jamais."""
     w = window or ""
     if RE_RETIRE.search(w):
         return "RETIRÉ", {"type": None, "pour": None, "contre": 0, "abstentions": 0}
@@ -746,18 +764,27 @@ def _recover_decision_from_window(window: str):
         }
     if RE_APPROVED_UNANIME.search(w):
         return "APPROUVÉ", {"type": "unanimite", "pour": None, "contre": 0, "abstentions": 0}
+    # Repli le plus bas : « Approbation »/« Goedkeuring » (synonyme d'approuvé),
+    # sauf rejet explicite. Vote inconnu — on n'invente pas l'unanimité.
+    if RE_APPROVED_INTENT.search(w) and not RE_APPROVAL_BLOCK.search(w):
+        return "APPROUVÉ", {"type": None, "pour": None, "contre": 0, "abstentions": 0}
     return None, None
 
 
 def _recover_missing_decisions(points: list[dict], pages: list[dict]) -> int:
-    """Corrige les points DÉJÀ extraits mais laissés SANS décision, à partir du
-    texte brut (fenêtre autour de l'ancre 'SP n.-') : le LLM garde parfois le
-    titre d'un point mais oublie sa décision, surtout quand le titre est long ou
-    la décision est loin sur la page suivante. Deux cas réels du corpus :
-      • SP 21 (2016-10-26) : point RETIRÉ, gardé sans statut (titre bilingue
-        très long, formule au-delà des 600 premiers caractères, page suivante) ;
-      • SP 7/19/37 (2010-03-31) : points APPROUVÉS (unanimité / vote nominal)
-        dont le « DÉCISION DU CONSEIL … approuvé … » n'a pas été repris.
+    """Corrige les points DÉJÀ extraits mais laissés SANS décision, à partir de
+    DEUX sources de texte : (a) les champs `resume`/`titre` que le LLM a lui-même
+    extraits pour ce point (texte propre, normalisé, attribué sans ambiguïté),
+    et (b) le texte brut du PDF (fenêtre autour de l'ancre 'SP n.-'). Le LLM
+    garde parfois le titre mais oublie la décision, ou décrit le statut dans le
+    `resume` sans remplir `decision`. Trois cas réels du corpus :
+      • SP 21 (2016-10-26) : RETIRÉ, gardé sans statut (titre bilingue très long,
+        formule au-delà des 600 premiers car., sur la page suivante) ;
+      • SP 45 (2016-10-26) : RETIRÉ, `resume`=« Point retiré de l'ordre du jour »
+        mais `decision` vide (le texte brut portait une variante d'espace/
+        apostrophe que la regex ratait ; le resume normalisé, lui, matche) ;
+      • SP 7/19/37 (2010-03-31) : APPROUVÉS (unanimité / vote nominal) dont le
+        « DÉCISION DU CONSEIL … approuvé … » n'a pas été repris.
     Complète _synthesize_deferred_points (qui ne traite que les SP OMIS).
     N'écrase JAMAIS une décision déjà présente. Retourne le nombre corrigé."""
     n = 0
@@ -767,10 +794,12 @@ def _recover_missing_decisions(points: list[dict], pages: list[dict]) -> int:
         sp = pt.get("sp")
         if not isinstance(sp, int):
             continue
-        # Fenêtre GLOBALE (toutes pages, sans plafond) : capte la décision même
-        # pour un point à titre long ou chevauchant une fin de page (voir
-        # _anchor_window_spanning, cas SP 21 2016-10-26).
-        decision, vote = _recover_decision_from_window(_anchor_window_spanning(pages, sp))
+        # Texte du point tel qu'extrait par le LLM (propre) + fenêtre brute
+        # globale (toutes pages, sans plafond) : capte la décision où qu'elle
+        # soit — resume normalisé (cas SP 45) OU texte brut (cas SP 21).
+        extracted_text = f"{pt.get('resume') or ''} {pt.get('titre') or ''}"
+        combined = f"{extracted_text}\n{_anchor_window_spanning(pages, sp)}"
+        decision, vote = _recover_decision_from_window(combined)
         if not decision:
             continue
         pt["decision"] = decision

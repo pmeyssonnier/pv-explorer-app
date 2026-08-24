@@ -197,6 +197,50 @@ def test_apply_deferred_status_spans_pages_and_long_titles():
     assert pts[0]["decision"] == "RETIRÉ"
 
 
+def test_recover_decision_from_normalized_resume_when_raw_text_variant():
+    # Cas réel SP 45 (2016-10-26) : le LLM a mis « Point retiré de l'ordre du
+    # jour » dans le RESUME mais laissé `decision` vide ; le texte brut du PDF
+    # portait une variante d'espace/apostrophe non captée par la regex. Le
+    # resume normalisé, lui, matche → on doit s'en servir.
+    pts = [{"sp": 45, "page": 98, "titre": "Règlement académie de musique - Approbation",
+            "resume": "Point retiré de l'ordre du jour", "decision": "", "vote": {"type": None}}]
+    raw = "SP 45.- Règlement académie - Approbation SP 46.- Autre"  # brut SANS la formule
+    assert _recover_missing_decisions(pts, [{"page_num": 98, "text": raw}]) == 1
+    assert pts[0]["decision"] == "RETIRÉ"
+
+
+def test_recover_decision_approbation_is_synonym_of_approuve():
+    # « Approbation » / « Goedkeuring » (suffixe d'agenda d'un point soumis au
+    # vote) est traité comme synonyme d'« approuvé » : un point ainsi soumis et
+    # non retiré/reporté/rejeté a été approuvé. Vote non chiffré → type inconnu.
+    pts = [{"sp": 50, "page": 1, "titre": "Convention X - Approbation",
+            "resume": "Approbation de la convention X avec l'ASBL Y", "decision": "", "vote": {"type": None}}]
+    raw = "SP 50.- Convention X - Approbation SP 51.- z"
+    assert _recover_missing_decisions(pts, [{"page_num": 1, "text": raw}]) == 1
+    assert pts[0]["decision"] == "APPROUVÉ"
+    assert pts[0]["vote"]["type"] is None       # vote non chiffré : on n'invente pas l'unanimité
+
+
+def test_recover_decision_retrait_wins_over_approbation_in_title():
+    # Un point retiré dont le titre contient AUSSI « - Approbation » (cas réel
+    # SP 45) reste RETIRÉ : le retrait prime sur le repli « Approbation ».
+    pts = [{"sp": 45, "page": 1, "titre": "Règlement académie - Approbation",
+            "resume": "Point retiré de l'ordre du jour", "decision": "", "vote": {"type": None}}]
+    assert _recover_missing_decisions(pts, [{"page_num": 1, "text": "SP 45.- x SP 46.- y"}]) == 1
+    assert pts[0]["decision"] == "RETIRÉ"
+
+
+def test_recover_decision_approbation_blocked_by_rejection_or_negation():
+    # « Approbation » ne doit PAS produire APPROUVÉ en présence d'un rejet ou
+    # d'une tournure négative (« rejeté », « sans/ni approbation », « refus »).
+    for resume in ["Point rejeté par le Conseil", "Adopté sans approbation formelle",
+                   "Refus d'approbation du règlement"]:
+        pts = [{"sp": 9, "page": 1, "titre": "Objet - Approbation",
+                "resume": resume, "decision": "", "vote": {"type": None}}]
+        assert _recover_missing_decisions(pts, [{"page_num": 1, "text": "SP 9.- x SP 10.- y"}]) == 0
+        assert pts[0]["decision"] == ""
+
+
 def test_recover_decision_approved_unanime_on_extracted_empty_decision():
     # Cas réel SP 19/37 (2010-03-31) : point voté (« DÉCISION DU CONSEIL …
     # approuvé à l'unanimité ») dont le LLM a oublié la décision.
