@@ -22,6 +22,7 @@
       "2011-06-22",
       "2011-09-07",
       "2011-09-28",
+      "2011-10-26",
       "2012-01-18",
       "2012-02-15",
       "2012-05-30",
@@ -167,7 +168,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9617,
+    "total_points": 9681,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -25108,6 +25109,1760 @@
             "rentree_scolaire"
           ],
           "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2011-10-26",
+        "date": "2011-10-26",
+        "source_file": "Pv%20CC%202011-10-26%20SP.pdf",
+        "extracted_at": "2026-08-24T09:36:53.793269",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Dero",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 61,
+          "extracted": 61,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/Pv%2520CC%25202011-10-26%2520SP.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Demande d'habitants",
+          "sous_rubrique": "",
+          "titre": "L'expulsion de familles Roms de la gare du Nord",
+          "resume": "Exposé du point par M. Martens. Réponse de Mme la Bourgmestre ff. Interventions de MM. Bouhjar, Köksal, Mmes Nyssens et Durant.",
+          "intervenants": [
+            "Martens",
+            "Jodogne",
+            "Bouhjar",
+            "Köksal",
+            "Nyssens",
+            "Durant"
+          ],
+          "repondant": "Jodogne",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "logement",
+            "roms",
+            "expulsion"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services du Secrétaire communal",
+          "sous_rubrique": "Assemblées",
+          "titre": "Intercommunales SIBELGA et INTERFIN - Modification des statuts - Approbation",
+          "resume": "Approbation des modifications des statuts de Sibelga et Interfin en vue de leur entrée en vigueur au 1er janvier 2013. Attribution de parts matérielles nouvelles aux communes associées et augmentation du capital variable de Sibelga de 3.202,58 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3202.58,
+          "thematiques": [
+            "intercommunales",
+            "statuts",
+            "energie",
+            "sibelga",
+            "interfin"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 4,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services du Secrétaire communal",
+          "sous_rubrique": "Assemblées",
+          "titre": "IBE - IBG - SIBELGAZ - Prolongation des affiliations - Approbation",
+          "resume": "Approbation de la prolongation de l'affiliation de la commune à l'intercommunale IBE, IBG et SIBELGAZ jusqu'au 1er juillet 2019. Charge au Collège de l'exécution des décisions et transmission à l'autorité de tutelle.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "intercommunales",
+            "ibe",
+            "ibg",
+            "sibelgaz",
+            "energie"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 6,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services du Secrétaire communal",
+          "sous_rubrique": "",
+          "titre": "Délégation de contreseing du Secrétaire communal à plusieurs fonctionnaires en application de l'article 111 de la Nouvelle Loi Communale - Pour information",
+          "resume": "Prise pour information de la liste des délégations de contreseing accordées par le Secrétaire communal à des agents communaux pour la signature de documents officiels de diverses directions (Équipement, Affaires Générales, Instruction Publique, Ressources Humaines, Services Spécifiques, etc.).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "administration",
+            "secretariat",
+            "delegations",
+            "signatures"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Recette",
+          "sous_rubrique": "",
+          "titre": "Comptes annuels 2010 - Approbation",
+          "resume": "Approbation des comptes annuels de l'exercice 2010 comprenant le compte budgétaire, le compte de résultats, le bilan au 31/12/2010 et les annexes. Résultat budgétaire service ordinaire: 11.762.862,55 EUR, service extraordinaire: 549.567,13 EUR. Actif et passif du bilan: 384.997.483,30 EUR.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 29,
+            "contre": 11,
+            "abstentions": 0
+          },
+          "montant_eur": 384997483.3,
+          "thematiques": [
+            "comptabilite",
+            "finances_publiques",
+            "comptes_annuels"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Budget",
+          "sous_rubrique": "Equipement",
+          "titre": "Budget 2010 - Services Ordinaire et extraordinaire - Modification budgétaire de clôture n°5 - Approbation",
+          "resume": "Modification budgétaire de clôture n°5 pour 2010 concernant les services ordinaire et extraordinaire.",
+          "intervenants": [
+            "Guillaume",
+            "De Herde",
+            "Grimberghs",
+            "Clerfayt",
+            "Vanhalewyn"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 29,
+            "contre": 11,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget",
+            "modification_budgetaire"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Budget",
+          "sous_rubrique": "",
+          "titre": "Budget 2011 - Service ordinaire - Modification budgétaire n°2 - Service extraordinaire - Modification budgétaire n°3 - Approbation",
+          "resume": "Approbation des modifications budgétaires n°2 (service ordinaire) et n°3 (service extraordinaire) pour l'exercice 2011.",
+          "intervenants": [
+            "De Herde",
+            "Grimberghs",
+            "de Beauffort",
+            "Clerfayt",
+            "Courtheoux"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 14,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget",
+            "modification_budgetaire"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "",
+          "titre": "Fabrique d'église Saint-Albert - Modification budgétaire pour l'exercice 2011 - Avis favorable",
+          "resume": "Avis favorable sur la modification budgétaire 2011 de la Fabrique d'église Saint-Albert. Recettes et dépenses: 55.526,49 €, excédent: 0. Aucune intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 55526.49,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "cultes"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "",
+          "titre": "Fabrique d'église Sainte Alice - Modification budgétaire pour l'exercice 2011 - Avis favorable",
+          "resume": "Avis favorable sur la modification budgétaire 2011 de la Fabrique d'église Sainte Alice. Recettes et dépenses: 57.889,85 €, excédent: 0. Aucune intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 57889.85,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "cultes"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 15,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "",
+          "titre": "Fabrique d'église Sainte Thérèse d'Avila - Modification budgétaire pour l'exercice 2011 - Avis favorable",
+          "resume": "Avis favorable sur la modification budgétaire 2011 de la Fabrique d'église Sainte Thérèse d'Avila. Recettes et dépenses: 58.603,19 €, excédent: 0. Aucune intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 58603.19,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "cultes"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 16,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "",
+          "titre": "Fabrique d'église Sainte Famille - Modification budgétaire pour l'exercice 2011 - Avis favorable",
+          "resume": "Avis favorable sur la modification budgétaire 2011 de la Fabrique d'église Sainte Famille.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "cultes"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'église",
+          "sous_rubrique": "Budget 2012",
+          "titre": "Fabrique d'église de l'Epiphanie - Budget de l'exercice 2012 - Avis favorable",
+          "resume": "Avis favorable au budget 2012 de la Fabrique d'Eglise de l'Epiphanie. Recettes et dépenses: 35.413,74 €. Aucune intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 35413.74,
+          "thematiques": [
+            "fabriques_d_eglise",
+            "budget",
+            "avis_favorable"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'église",
+          "sous_rubrique": "Budget 2012",
+          "titre": "Fabrique d'église de la Sainte Famille - Budget de l'exercice 2012 - Avis favorable",
+          "resume": "Avis favorable au budget 2012 de la Fabrique d'Eglise de la Sainte Famille. Recettes et dépenses: 87.245,81 €. Aucune intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 87245.81,
+          "thematiques": [
+            "fabriques_d_eglise",
+            "budget",
+            "avis_favorable"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'église",
+          "sous_rubrique": "Budget 2012",
+          "titre": "Fabrique d'église Sainte Elisabeth - Budget de l'exercice 2012 - Avis favorable",
+          "resume": "Avis favorable au budget 2012 de la Fabrique d'Eglise Sainte Elisabeth. Intervention communale ordinaire de 18.523,14 € (Schaerbeek: 18.237 €, Bruxelles: 286,14 €).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 18523.14,
+          "thematiques": [
+            "fabriques_d_eglise",
+            "budget",
+            "avis_favorable",
+            "intervention_communale"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'église",
+          "sous_rubrique": "Budget 2012",
+          "titre": "Fabrique d'église du Divin Sauveur - Budget de l'exercice 2012 - Avis favorable",
+          "resume": "Avis favorable au budget 2012 de la Fabrique d'Eglise du Divin Sauveur. Intervention communale ordinaire de 7.590 € (Schaerbeek: 2.526 €, Woluwé Saint-Lambert: 5.064 €).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 7590,
+          "thematiques": [
+            "fabriques_d_eglise",
+            "budget",
+            "avis_favorable",
+            "intervention_communale"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'église",
+          "sous_rubrique": "Budget 2012",
+          "titre": "Fabrique d'église Saint Albert - Budget de l'exercice 2012 - Avis favorable",
+          "resume": "Avis favorable au budget 2012 de la Fabrique d'Eglise Saint Albert. Intervention communale ordinaire de 9.312,19 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 9312.19,
+          "thematiques": [
+            "fabriques_d_eglise",
+            "budget",
+            "avis_favorable",
+            "intervention_communale"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL",
+          "sous_rubrique": "Comptes 2010",
+          "titre": "ASBL \"Guichet d'Economie Locale de Schaerbeek - GELS\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL GELS affichant un résultat positif de 430,72 € et un résultat cumulé de 7.575,36 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 430.72,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "economie_locale"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL",
+          "sous_rubrique": "Comptes 2010",
+          "titre": "ASBL \"Harmonisation Sociale Schaerbeekoise - HSS\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL HSS affichant un résultat positif de 10.386,11 € et un résultat cumulé de 0 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10386.11,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "social"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL",
+          "sous_rubrique": "Comptes 2010",
+          "titre": "ASBL \"Liens de Quartier Petite Enfance - LQPE\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL LQPE affichant un résultat positif de 14.773,44 € et un résultat cumulé de 17.825,40 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 14773.44,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "petite_enfance"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL",
+          "sous_rubrique": "Comptes 2010",
+          "titre": "ASBL \"Promotion de l'Emploi à Schaerbeek\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL Promotion de l'Emploi à Schaerbeek.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "emploi"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes et rapports",
+          "sous_rubrique": "ASBL - Comptes 2010",
+          "titre": "ASBL « Travail de Rue à Schaerbeek » - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 affichant une perte de -14.297,64 € pour l'exercice 2010 et un résultat cumulé de -14.354,07 €",
+          "intervenants": [
+            "M. Grimberghs"
+          ],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "comptes_asbl",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes et rapports",
+          "sous_rubrique": "ASBL - Comptes 2010",
+          "titre": "ASBL « Rénovation à Schaerbeek - RenovaS » - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 affichant une perte de -55.418,33 € pour l'exercice 2010 et un résultat cumulé de -161.181,16 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "comptes_asbl",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes et rapports",
+          "sous_rubrique": "ASBL - Comptes 2010",
+          "titre": "ASBL « Schaerbeek la Dynamique » - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 affichant une perte de -1.827,61 € pour l'exercice 2010 et un résultat cumulé de 10.900,84 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "comptes_asbl",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes et rapports",
+          "sous_rubrique": "ASBL - Comptes 2010",
+          "titre": "ASBL « Pater Baudry - Centre 1 » - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 affichant une perte de -12.383,89 € pour l'exercice 2010 et un résultat cumulé de -20,78 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "comptes_asbl",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes et rapports",
+          "sous_rubrique": "ASBL - Comptes 2010",
+          "titre": "ASBL « Association des Mosquées de Schaerbeek - ADMS » - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 affichant une perte de -13.387,65 € pour l'exercice 2010 et un résultat cumulé de 13.986,73 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "comptes_asbl",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Acquisitions",
+          "titre": "Accueil - Expédition et Protocole - Acquisition de compléments et d'extensions pour l'armoire à clefs avec enregistrement électronique - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise pour information de la décision du Collège du 4 août 2011 concernant l'acquisition de compléments et d'extensions pour l'armoire à clefs avec enregistrement électronique auprès de BE-MORSE. Dépense de 9.984,32 € TVAI, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 9984.32,
+          "thematiques": [
+            "achats_publics",
+            "equipements"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Acquisitions",
+          "titre": "Schaerbeek Propreté & Espaces Verts - Travaux de plantation le long des voiries - Acquisition d'arbres, de plantes, de terre et de matériaux divers - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise pour information de la décision du Collège du 4 octobre 2011 concernant l'acquisition d'arbres, plantes, terre et matériaux divers pour les travaux de plantation. Dépense estimée à 60.000,00 € TTC (49.586,78 € HT), financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 60000,
+          "thematiques": [
+            "achats_publics",
+            "espaces_verts",
+            "travaux"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "TRANSPORTS",
+          "sous_rubrique": "",
+          "titre": "Externalisation du service de transports par bus - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Marché de service de transports par bus d'une durée de trois ans en adjudication publique. Montant total estimé 510.000 € TVA comprise. Imputation aux articles 104/127-EQ-12/14 ; 722/127-IP-12/80 ; 722/127-SS-12/85 ; 762/127-SS-12/75 ; 871/127-IP-12/83 du budget ordinaire.",
+          "intervenants": [
+            "M. Lahlali",
+            "M. Verzin",
+            "MM. Clerfayt",
+            "MM. Grimberghs",
+            "MM. Courtheoux"
+          ],
+          "repondant": "M. Verzin",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 12
+          },
+          "montant_eur": 510000,
+          "thematiques": [
+            "transports",
+            "marches_publics",
+            "services_communaux"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Plan Stratégique de Sécurité et de Prévention 2007-2010 - Nouvelle prolongation pour 6 mois - Approbation",
+          "resume": "Approbation de la proposition de convention au plan stratégique de sécurité et de prévention 2011 relatif à la prolongation des plans stratégiques de sécurité et de prévention 2007-2010 pour une période de six mois, juillet-décembre 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "securite",
+            "prevention_urbaine",
+            "plans_strategiques"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Subventions et Partenariats",
+          "titre": "Projets de collaboration intercommunales - Pour information",
+          "resume": "Approbation de trois projets de collaboration intercommunales : continuation du Groupe de Travail Subventions mené par Schaerbeek en association avec Anderlecht ; projet de prévention à la récidive (RePR) mené par Schaerbeek avec Evere ; et projet de développement des activités de la plate-forme GTI MP BXL porté par Ixelles avec Schaerbeek comme partenaire. Sollicitation de l'intervention de la Région Bruxelles-Capitale par voie de subsides.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "collaborations_intercommunales",
+            "subventions",
+            "prevention_recidive",
+            "partenariats"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 37,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES GÉNÉRAUX",
+          "sous_rubrique": "Affaires Juridiques",
+          "titre": "Demande d'autorisation d'ester en justice dans l'aff. c/Agence Régionale pour la Propreté",
+          "resume": "Autorisation pour le Collège des Bourgmestre et Echevins à interjeter appel contre les jugements rendus par le Tribunal de 1ère instance de Bruxelles – 32ème chambre les 9 et 8 septembre 2011 relatifs à la taxe sur les salissures sur les voies et lieux publics (affaires sous les articles de rôle 1038 et 671, 808, 988 pour l'exercice 2007). Dépens condamnés : 440,00 EUR (première affaire) et 220,00 EUR (deuxième affaire).",
+          "intervenants": [
+            "M. Grimberghs"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 14,
+            "abstentions": 0
+          },
+          "montant_eur": 660,
+          "thematiques": [
+            "affaires_juridiques",
+            "appel",
+            "taxe_salissures",
+            "agence_propretes"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments communaux",
+          "sous_rubrique": "Sécurité - Système d'alarme",
+          "titre": "RENOVAS - Rue d'Aerschot 208 - Placement d'un système d'alarme anti-intrusion - Mode de passation et fixation des conditions du marché",
+          "resume": "Installation d'un système d'alarme anti-intrusion pour sécuriser les locaux de l'asbl RENOVAS lors de son déménagement au n°208 de la rue d'Aerschot. Marché estimé à 2.500 € TVAC. Procédure négociée sans publicité après consultation de trois firmes spécialisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2500,
+          "thematiques": [
+            "securite",
+            "alarme",
+            "batiments_communaux"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Hôtel communal",
+          "sous_rubrique": "Aménagements intérieurs",
+          "titre": "Hôtel communal - Hall d'entrée - Fourniture et pose d'un 2ème comptoir d'accueil - Mode de passation et fixation des conditions du marché",
+          "resume": "Installation d'un deuxième comptoir d'accueil dans le hall d'entrée de l'hôtel communal pour la distribution de tickets et l'accueil du personnel. Travaux estimés à 30.000 € TVAI. Procédure négociée sans publicité après consultation de trois firmes.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "amenagement_interieur",
+            "accueil_public",
+            "hotel_communal"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Hôtel communal",
+          "sous_rubrique": "Accessibilité",
+          "titre": "Hôtel communal - Aménagement des accès pour les personnes à mobilité réduite - Mode de passation et fixation des conditions du marché",
+          "resume": "Aménagement et sécurisation des accès de l'hôtel communal pour les personnes à mobilité réduite : installation d'un système de vidéoparlophonie, entretien/remplacement de 3 caméras extérieures, placement d'un bouton de type vitre-à-briser, équipement des portes du sas d'entrée d'un système de rétention électromagnétique. Marché à lots estimé à 10.000 €. Procédure négociée sans publicité après consultation de quatre entreprises.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "accessibilite",
+            "pmr",
+            "securite",
+            "videosurveillance"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments communaux",
+          "sous_rubrique": "Travaux de rénovation - Toitures",
+          "titre": "Neptunium - Etanchéité et traitement des murs acrotères en façade avant - Mode de passation et fixation des conditions du marché",
+          "resume": "Rénovation de la toiture du bâtiment des bains communaux (rue Jérusalem 54-56) : travaux d'étanchéité et traitement des murs acrotères en façade avant. Montant estimé à 55.000 € TVAC. Procédure négociée sans publicité après consultation de 6 firmes spécialisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 55000,
+          "thematiques": [
+            "toiture",
+            "etancheite",
+            "travaux_renovation",
+            "batiments_communaux"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 46,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments communaux",
+          "sous_rubrique": "Environnement - Décontamination",
+          "titre": "Neutralisation et évacuation de plusieurs réservoirs à mazout des bâtiments communaux - Mode de passation et fixation des conditions du marché",
+          "resume": "Mise hors service de plusieurs citernes à mazout dans les bâtiments communaux : neutralisation (dégazage), démontage et évacuation de réservoirs. Opération estimée à 60.000 €. Procédure négociée sans publicité après consultation de trois firmes.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 60000,
+          "thematiques": [
+            "environnement",
+            "decontamination",
+            "reglementations_sanitaires",
+            "batiments_communaux"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 48,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipements communaux",
+          "sous_rubrique": "Travaux de maintenance",
+          "titre": "Centre Aéré d'Ittre - Route de Clabecq 72 - Traitement des portes extérieures - Mode de passation et fixation des conditions du marché",
+          "resume": "Remise en état des portes extérieures du centre aéré d'Ittre dont les boiseries sont dégradées. Montant estimé à 15.000 € TVAC. Procédure négociée sans publicité après consultation de cinq firmes spécialisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 15000,
+          "thematiques": [
+            "maintenance",
+            "travaux_renovation",
+            "centre_aere"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipements communaux",
+          "sous_rubrique": "Centre aéré",
+          "titre": "Centre aéré d'Ohain - Placement d'un escalier de secours - Mode de passation et fixation des conditions du marché",
+          "resume": "Placement d'une échelle de secours externe au bâtiment central du centre aéré de Ohain. Procédure négociée sans publicité après consultation de trois firmes spécialisées. Coût estimé à 5.223,57 EUR, financé par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5223.57,
+          "thematiques": [
+            "equipements_scolaires",
+            "marches_publics",
+            "investissements"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 50,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Patrimoine",
+          "sous_rubrique": "Restauration",
+          "titre": "Église Sainte Famille - Restauration du vitrail en façade avant et au côté de la tour - Mode de passation et fixation des conditions du marché",
+          "resume": "Deuxième partie de la restauration des vitraux de l'Église Sainte-Famille portant sur la façade principale et la face latérale de la tour. Procédure négociée sans publicité après consultation de 4 firmes spécialisées. Dépense estimée à 55.000 EUR, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 55000,
+          "thematiques": [
+            "patrimoine",
+            "restauration",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 52,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipements scolaires",
+          "sous_rubrique": "Travaux de rénovation",
+          "titre": "École 17 sise avenue R. Foucart, 7 - Remplacement de la menuiserie extérieure au 2ème étage de la façade à rue - Mode de passation et fixation des conditions du marché",
+          "resume": "Remplacement des menuiseries extérieures au deuxième étage de la façade côté rue de l'école n°17. Adjudication publique. Dépense totale de 150.000 EUR : 26.824 EUR financés par emprunt et 123.176 EUR par subside du Fonds Politique des Grandes Villes.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "equipements_scolaires",
+            "marches_publics",
+            "renovations"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 54,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Aménagement urbain",
+          "sous_rubrique": "Partenariat public-privé",
+          "titre": "Revitalisation des sites Van Oost, Capronnier et Voltaire - Opération de partenariat public-privé - Approbation des nouvelles conditions du marché",
+          "resume": "Approbation des nouvelles conditions du marché pour la revitalisation des trois sites suite aux remarques du Ministère de la Communauté française. Conception et construction d'une école francophone (650 élèves), d'une école néerlandophone (250 élèves), d'un hall omnisports, et de résidences. Investissements de 16.000.000 EUR en dépenses et 10.000.000 EUR en recettes prévus au budget 2012.",
+          "intervenants": [
+            "Mme Smeysters",
+            "M. Grimberghs",
+            "Mme Durant",
+            "M. Clerfayt"
+          ],
+          "repondant": "Mme Smeysters",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 36,
+            "contre": 0,
+            "abstentions": 4
+          },
+          "montant_eur": 16000000,
+          "thematiques": [
+            "amenagement_urbain",
+            "partenariat_public_prive",
+            "equipements_scolaires",
+            "logement"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 57,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments et travaux",
+          "sous_rubrique": "Lycée Emile Max",
+          "titre": "Lycée Emile Max - Rénovation des anciennes écuries - Majoration des dépenses",
+          "resume": "Majoration des dépenses pour la rénovation des anciennes écuries du lycée Emile Max section Haecht. Les travaux estimés à 124.957 € TVAC ont augmenté à 185.429,71 € TVAC suite à des travaux supplémentaires et révisions de prix.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 40430,
+          "thematiques": [
+            "renovation",
+            "batiments",
+            "travaux",
+            "majorations_depenses"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 59,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion Immobilière",
+          "sous_rubrique": "Hôtel communal",
+          "titre": "Hôtel communal - Aménagement de la partie arrière du rez-de-chaussée - Majoration des dépenses",
+          "resume": "Majoration des dépenses pour l'aménagement de la partie arrière du rez-de-chaussée de l'hôtel communal. Les travaux estimés à 530.000 € ont augmenté à 1.120.460 €. La mission d'architecture a également été majorée de 79.500 € à 221.612 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 1120460,
+          "thematiques": [
+            "hotel_communal",
+            "amenagement",
+            "travaux",
+            "majorations_depenses",
+            "police"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 60,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Signalétique",
+          "titre": "Mission d'étude de signalétique directionnelle destinée à guider les piétons dans l'espace public schaerbeekois",
+          "resume": "Point retiré de l'ordre du jour.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "signalisation",
+            "pietons",
+            "espace_public"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 61,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "Contrats de quartier",
+          "titre": "Contrat de quartier durable Coteaux-Josaphat - Programme quadriennal 2012-2015",
+          "resume": "Approbation du programme quadriennal 2012-2015 du contrat de quartier durable Coteaux-Josaphat. Le programme a été soumis à enquête publique du 5 au 19 septembre 2011 et a reçu un avis favorable de la Commission de concertation le 30 septembre 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "renovation_urbaine",
+            "quartier_coteaux_josaphat",
+            "contrat_quartier",
+            "programme_quadriennal"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 62,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion Immobilière",
+          "sous_rubrique": "Maison des Femmes",
+          "titre": "Maison des Femmes - Convention d'occupation avec l'ASBL 'Synergie Plus' pour l'organisation de cours d'informatique pour les seniors",
+          "resume": "Accord sur l'occupation d'un local de la Maison des Femmes rue Josaphat, 253 par l'asbl 'Synergie Plus' pour des cours d'informatique destinés aux seniors. Loyer mensuel de 35 euros charges comprises à partir de novembre 2011.",
+          "intervenants": [
+            "M. Ayad"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": 35,
+          "thematiques": [
+            "maison_des_femmes",
+            "convention_occupation",
+            "informatique",
+            "seniors"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 47,
+          "page": 63,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion Immobilière",
+          "sous_rubrique": "Maison des Femmes",
+          "titre": "Maison des Femmes - Mise à disposition d'un local pour des cours de français par la méthode 'audio-phonologique'",
+          "resume": "Accord sur l'occupation à titre gracieux d'un local au 1er étage de la Maison des Femmes rue Josaphat, 253 par l'asbl 'Euro Idea' pour l'apprentissage intensif du français par la méthode audio-phonologique. 2 après-midis par semaine de janvier à mars 2012 puis de septembre à octobre 2013.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "maison_des_femmes",
+            "cours_francais",
+            "methode_audio_phonologique",
+            "femmes_immigrees"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 48,
+          "page": 64,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion Immobilière",
+          "sous_rubrique": "Complexe Kinetix",
+          "titre": "Complexe Kinetix - Acte de base modificatif d'une servitude",
+          "resume": "Accord sur l'acte de base modificatif d'une servitude relative au complexe Kinétix.",
+          "intervenants": [
+            "Mme Vriamont"
+          ],
+          "repondant": "M. Nimal",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 0,
+            "abstentions": 10
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "complexe_kinetix",
+            "servitude",
+            "acte_base"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 49,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Actes et contrats",
+          "sous_rubrique": "",
+          "titre": "Acte de concession sportive - Nouvelle mouture - Approbation",
+          "resume": "Point retiré de l'ordre du jour",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 50,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bien communal",
+          "sous_rubrique": "",
+          "titre": "Bien communal sis rue d'Aerschot 208 - Convention d'occupation avec l'ASBL \"RenovaS\" - Approbation",
+          "resume": "Approbation de la convention d'occupation de locaux rue d'Aerschot 208 par l'asbl Renovas en charge de la coordination des contrats de quartiers",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "logement",
+            "conventions"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 51,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Navez-Portaels",
+          "titre": "Contrat de quartier Navez-Portaels - Opération 4C.4. - Réalisation d'un espace vert semi-public et d'une infrastructure collective en intérieur d'îlot",
+          "resume": "Approbation du principe d'élaboration d'une étude pour la réalisation d'un espace vert semi-public et d'une infrastructure collective en intérieur d'îlot. Passage du marché de service par procédure négociée sans publicité. Imputation des frais d'études (74.171,00 € TVAC) et des frais d'indemnisation (3.977,00 € TVAC) au budget extraordinaire 2012. Subsidiation à 80% par la Région et financement du solde par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 78148,
+          "thematiques": [
+            "contrat_de_quartier",
+            "espaces_verts",
+            "infrastructure",
+            "etudes",
+            "financement"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 52,
+          "page": 68,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Classes Moyennes",
+          "sous_rubrique": "",
+          "titre": "Octroi d'un subside, pour l'exercice 2011, aux associations actives dans le domaine du folklore Schaerbeekois - Approbation",
+          "resume": "Répartition de subsides aux groupes folkloriques de Schaerbeek pour l'année 2011 pour un montant total de 1.500 € : Buûmdroegers (250 €), Jules Van Geele (250 €), Koninklijke Sint Sebastiaans Gilde Shaarbeek (250 €), Musée de la Bière (250 €), Schaerbeek la Dynamique asbl (500 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "folklore",
+            "culture",
+            "subsides",
+            "associations"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 53,
+          "page": 68,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Intégration et Prévention",
+          "sous_rubrique": "",
+          "titre": "Fonds d'Impulsion à la Politique des Immigrés - FIPI - Exercices 2011 - Approbation",
+          "resume": "Approbation des conventions du Fonds n°2011/FR/0741 et de partenariat pour l'exercice 2011, ainsi que la proposition de répartition budgétaire. Subvention de 50.874,00 € versée par la Loterie Nationale et financement complémentaire de 63.966,00 € de la Commission Communautaire Française",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 114840,
+          "thematiques": [
+            "immigration",
+            "politique_sociale",
+            "subsides",
+            "fonds_impulsion"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 54,
+          "page": 69,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Intégration et Prévention",
+          "sous_rubrique": "",
+          "titre": "Programme Cohésion Sociale 2011-2015 (CoCoF) - Réserve annuelle 2011 - Approbation",
+          "resume": "Approbation de l'attribution du montant en réserve annuelle de 5.622,64 € à l'asbl \"Femmes épanouies et actives\" (Feza asbl) pour l'exercice 2011 dans le cadre du Contrat-programme communal de Cohésion sociale 2011-2015",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5622.64,
+          "thematiques": [
+            "cohesion_sociale",
+            "politique_sociale",
+            "contrat_programme"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 55,
+          "page": 70,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Culture Néerlandophone",
+          "sous_rubrique": "",
+          "titre": "Octroi d'un subside, pour l'exercice 2011, aux associations néerlandophones des seniors",
+          "resume": "Octroi de subsides aux associations néerlandophones de seniors pour l'exercice 2011 pour un montant total de 1.350 € : Die Schare (750 €), Aktieve Senioren Schaarbeek (600 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 1350,
+          "thematiques": [
+            "culture_neerlandophone",
+            "seniors",
+            "subsides",
+            "associations"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 56,
+          "page": 71,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Culture Néerlandophone",
+          "sous_rubrique": "",
+          "titre": "Octroi d'un subside, pour l'exercice 2011, aux associations néerlandophones de jeunes",
+          "resume": "Octroi de subsides aux associations néerlandophones de jeunes pour l'exercice 2011 pour un montant total de 3.250 € : KAJ Schaarbeek (750 €), Elmer (600 €), Kamo vzw (650 €), WMKJ Ratatouille (650 €), Nasci (600 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 3250,
+          "thematiques": [
+            "culture_neerlandophone",
+            "jeunesse",
+            "subsides",
+            "associations"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 57,
+          "page": 73,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subsides aux associations",
+          "sous_rubrique": "Associations néerlandophones socioculturelles",
+          "titre": "Octroi d'un subside, pour l'exercice 2011, aux associations néerlandophones socioculturelles",
+          "resume": "Attribution de subsides pour l'exercice 2011 aux 13 associations néerlandophones socioculturelles listées pour un montant total de 6300 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 6300,
+          "thematiques": [
+            "subsides",
+            "associations_socioculturelles",
+            "communaute_neerlandophone"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 58,
+          "page": 74,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subsides aux associations",
+          "sous_rubrique": "Associations néerlandophones sportives",
+          "titre": "Octroi d'un subside, pour l'exercice 2011, aux associations néerlandophones sportives",
+          "resume": "Attribution de subsides pour l'exercice 2011 aux 5 associations néerlandophones sportives listées pour un montant total de 3600 €",
+          "intervenants": [
+            "Vriamont"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 3600,
+          "thematiques": [
+            "subsides",
+            "associations_sportives",
+            "communaute_neerlandophone"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 59,
+          "page": 78,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "L'état des lieux de notre participation financière dans le Holding Communal Dexia et l'impact de nos finances à court et à long terme",
+          "resume": "Demande de Monsieur Yvan de BEAUFFORT concernant l'état des lieux de la participation financière dans le Holding Communal Dexia et ses impacts financiers",
+          "intervenants": [
+            "de Beauffort",
+            "Vanhalewyn",
+            "Grimberghs",
+            "Courtheoux",
+            "Charels"
+          ],
+          "repondant": "de Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "holding_dexia",
+            "finances_communales"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 60,
+          "page": 78,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "La situation du Holding communal",
+          "resume": "Question de Monsieur Vincent VANHALEWYN débattue lors de l'exposé du point 59",
+          "intervenants": [
+            "Vanhalewyn"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "holding_communal"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 61,
+          "page": 78,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "La situation du Holding Communal et les répercussions sur les finances de notre commune",
+          "resume": "Demande de Monsieur Denis GRIMBERGHS débattue lors de l'exposé du point 59",
+          "intervenants": [
+            "Grimberghs"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "holding_communal",
+            "finances_communales"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 61.2,
+          "page": 78,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "La dangerosité des poteaux d'éclairage public",
+          "resume": "Question de Monsieur Larbi KADDOUR concernant la dangerosité des poteaux d'éclairage public",
+          "intervenants": [
+            "Kaddour"
+          ],
+          "repondant": "Smeysters",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "eclairage_public",
+            "securite"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 61.3,
+          "page": 78,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "La lutte contre la traite des êtres humains",
+          "resume": "Question de Madame Colienne LEJEUNE de SCHIERVEL concernant la lutte contre la traite des êtres humains",
+          "intervenants": [
+            "Lejeune de Schiervel"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "lutte_traite_etres_humains",
+            "securite"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
+        },
+        {
+          "sp": 61.4,
+          "page": 78,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Le Fonds pour la patrimoine à Schaerbeek",
+          "resume": "Question de Madame Colienne LEJEUNE de SCHIERVEL concernant le Fonds pour le patrimoine à Schaerbeek",
+          "intervenants": [
+            "Lejeune de Schiervel"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "patrimoine",
+            "fonds"
+          ],
+          "source_file": "Pv%20CC%202011-10-26%20SP.pdf"
         }
       ]
     },
