@@ -99892,13 +99892,13 @@
           "urgence": false,
           "type": "point_normal",
           "rubrique": "Sports",
-          "sous_rubrique": "",
+          "sous_rubrique": "Convention annuelle",
           "titre": "Convention annuelle entre la commune de l'ASBL Neptunium - Approbation",
-          "resume": "Approbation de la convention annuelle liant la Commune et l'ASBL Neptunium",
+          "resume": "Approbation de la convention annuelle liant la Commune et l'ASBL 'Neptunium'",
           "intervenants": [
-            "Monsieur Bernard"
+            "Bernard"
           ],
-          "repondant": "Monsieur le Bourgmestre",
+          "repondant": "Bourgmestre",
           "decision": "APPROUVÉ",
           "vote": {
             "type": "unanimite",
@@ -99908,8 +99908,9 @@
           },
           "montant_eur": null,
           "thematiques": [
-            "sports",
-            "conventions"
+            "sport",
+            "convention",
+            "asbl"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
