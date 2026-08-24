@@ -13,6 +13,7 @@ from pv_extraction_pipeline import (
     _recover_missing_decisions, _loosen, _with_lex,
 )
 from reextract_targeted import targets_from_audit
+from audit_completeness import audit_decisions, TYPES_SANS_DECISION
 
 
 # ── targets_from_audit : sélection des séances à re-extraire ────────────────
@@ -139,6 +140,38 @@ def test_retire_and_reporte_regexes_are_disjoint():
     # NL
     assert RE_RETIRE.search("Dit punt wordt aan de agenda onttrokken")
     assert RE_REPORTE.search("Dit punt wordt uitgesteld")
+
+
+# ── Audit des décisions (compteur « sans statut », questions exclues) ───────
+def test_audit_decisions_excludes_questions_and_counts_only_deliberatif():
+    db = {"seances": [{
+        "seance": {"date": "2018-01-31"},
+        "points": [
+            {"sp": 1, "type": "point_normal", "decision": "APPROUVÉ"},   # OK, décidé
+            {"sp": 2, "type": "point_normal", "decision": ""},           # trou réel
+            {"sp": 3, "type": "point_normal", "decision": None},         # trou réel
+            {"sp": 4, "type": "question_orale", "decision": ""},         # normal → exclu
+            {"sp": 5, "type": "demande_habitant", "decision": None},     # normal → exclu
+        ],
+    }]}
+    report = audit_decisions(db)
+    assert len(report) == 1
+    r = report[0]
+    assert r["date"] == "2018-01-31"
+    assert r["sans_decision"] == 2       # seuls SP2 et SP3 comptent
+    assert r["sp"] == [2, 3]             # questions/demandes exclues
+    assert "question_orale" in TYPES_SANS_DECISION
+
+
+def test_audit_decisions_ignores_seance_fully_decided():
+    db = {"seances": [{
+        "seance": {"date": "2020-01-01"},
+        "points": [
+            {"sp": 1, "type": "point_normal", "decision": "PREND ACTE"},
+            {"sp": 2, "type": "question_orale", "decision": ""},   # exclu
+        ],
+    }]}
+    assert audit_decisions(db) == []      # aucune séance à signaler
 
 
 # ── Lexique éditable → formules d'extraction ajoutées aux regex ─────────────
