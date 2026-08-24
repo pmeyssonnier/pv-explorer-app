@@ -15,6 +15,7 @@
       "2010-10-27",
       "2010-12-01",
       "2010-12-22",
+      "2011-02-23",
       "2012-01-18",
       "2012-02-15",
       "2012-05-30",
@@ -160,7 +161,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9307,
+    "total_points": 9324,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -16473,6 +16474,522 @@
             "developpement_durable"
           ],
           "source_file": "pv-2010-12-22-sp.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2011-02-23",
+        "date": "2011-02-23",
+        "source_file": "Pv%20CC%202011-02-23%20SP.pdf",
+        "extracted_at": "2026-08-24T08:53:46.574852",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 14,
+          "extracted": 14,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/Pv%2520CC%25202011-02-23%2520SP.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Inscription d'un point à la demande d'habitants",
+          "titre": "Projet Quadrilatère - Risques d'expropriation",
+          "resume": "Exposition du point par Mme Laurent et Mme Kotaoglu. Réponse de Mme la Bourgmestre ff. Interventions de M. Grimberghs, Mme Onkelinx, MM. Vanhalewyn et Clerfayt.",
+          "intervenants": [
+            "Laurent",
+            "Kotaoglu",
+            "Jodogne",
+            "Grimberghs",
+            "Onkelinx",
+            "Vanhalewyn",
+            "Clerfayt"
+          ],
+          "repondant": "Jodogne",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "urbanisme",
+            "expropriation"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Frais de réception et de représentation",
+          "sous_rubrique": "Manifestations patriotiques, réception d'accueil des nouveaux habitants, réception pour les plus de 60 ans",
+          "titre": "105/123-BG-16/01",
+          "resume": "Frais de réception et de représentation - Manifestations patriotiques, réception d'accueil des nouveaux habitants, réception pour les plus de 60 ans",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 12,
+            "abstentions": 4
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "reception",
+            "manifestations",
+            "habitants",
+            "seniors"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Assemblées",
+          "sous_rubrique": "",
+          "titre": "Educateurs de rue - Projet Millenium - Mise à l'honneur",
+          "resume": "Discours de Mme Essaidi. Interventions de MM. Charels et Van Gorp évoquant les médailles à octroyer aux membres du personnel communal. Réponse de Mme la Bourgmestre ff.",
+          "intervenants": [
+            "Essaidi",
+            "Charels",
+            "Van Gorp",
+            "Jodogne"
+          ],
+          "repondant": "Jodogne",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "jeunesse",
+            "personnel"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Budget 2011 - Services ordinaire et extraordinaire - Approbation",
+          "resume": "Exposition du budget par M. De Herde. Interventions de M. El Arnouki, Mme Onkelinx, MM. Vanhalewyn, Clerfayt, Grimberghs, Van Gorp, Courtheoux, Dönmez, Bouhjar et Mme Vriamont. Réponses de M. Guillaume, Mme Smeysters, MM. Denys et Noël.",
+          "intervenants": [
+            "De Herde",
+            "El Arnouki",
+            "Onkelinx",
+            "Vanhalewyn",
+            "Clerfayt",
+            "Grimberghs",
+            "Van Gorp",
+            "Courtheoux",
+            "Dönmez",
+            "Bouhjar",
+            "Vriamont",
+            "Guillaume",
+            "Smeysters",
+            "Denys",
+            "Noël"
+          ],
+          "repondant": "Guillaume",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 16,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget",
+            "finance"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Budget 2011 - Douzièmes provisoires pour les mois d'avril, mai et juin 2011 - Approbation",
+          "resume": "Autorisation au Collège des Bourgmestre et Echevins de disposer de crédits provisoires pour le paiement des dépenses indispensables des mois d'avril, mai et juin 2011, limitées aux traitements, salaires, pensions, charges sociales, subsides au CPAS, dépenses de travaux et fournitures, et dépenses imposées par nécessité impérieuse.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 29,
+            "contre": 12,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget",
+            "finance",
+            "credits_provisoires"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 4,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "ASBL \"PATRIS\" - Compte 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl \"Patrimoine de Schaerbeek – PatriS\" affichant un résultat positif de 5.212,91€ pour l'exercice 2009 et un résultat cumulé de 27.319,50€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5212.91,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "patrimoine"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Association de fait \"YAMA-TSUKI KARATE DO\" - Compte 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Association de fait \"Yama-Tsuki Karaté Do\" affichant un résultat positif de 252€ pour l'exercice 2009.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 252,
+          "thematiques": [
+            "association",
+            "comptes",
+            "sport"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 6,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "",
+          "titre": "Renouvellement du parc de copieurs et imprimantes multifonctionnels - Marché conjoint Commune-CPAS de leasing - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation d'un marché conjoint pour la location et maintenance omnium d'un parc de copieurs/imprimantes multifonctions sur 60 mois pour l'Administration communale et le CPAS. Passation par appel d'offres général. Dépense annuelle estimée à 150.000€ TVAC.",
+          "intervenants": [
+            "Courtheoux"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "marche_public",
+            "equipement",
+            "informatique"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Subventions et Partenariats",
+          "titre": "Fonds politique des Grandes Villes-propositions de projets 2011 - Ajustements obligatoires - Approbation",
+          "resume": "Approbation du programme 2011 du Fonds pour la Politique des Grandes Villes avec les ajustements obligatoires.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fonds_grandes_villes",
+            "subventions",
+            "politique"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 9,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Construction d'une école fondamentale néerlandophone temporaire sise 76 Grande rue au Bois - Mode de passation et condition du marché - Approbation",
+          "resume": "Approbation du cahier spécial des charges et du montant estimé pour la construction d'une école fondamentale temporaire néerlandophone (991.735,54 € HT ou 1.200.000,00 € TTC). Choix de l'adjudication publique comme mode de passation. Demande de subsides auprès du Ministère de la Communauté flamande à hauteur de 70% et financement de la part communale par emprunt.",
+          "intervenants": [
+            "Mme Vriamont",
+            "Mme Nyssens"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1200000,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "education",
+            "marche_public",
+            "adjudication"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Hôtel communal - Rénovation des installations électriques - Majoration de la dépense",
+          "resume": "Prise pour information de la décision du collège du 28 décembre 2010 concernant une majoration de dépense de 15.000 € TTC pour travaux supplémentaires aux installations électriques de l'hôtel communal (déplacement du tableau général basse tension, placement de deux nouvelles alimentations électriques, placement de différentiels généraux et nouveaux disjoncteurs). Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 15000,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "installations_electriques",
+            "renovation"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "",
+          "titre": "Projet de compostage et de jardins potagers sur un terrain sis avenue Cambier - Adoption de la convention d'occupation à titre précaire d'un terrain d'Infrabel par la Commune - Adoption de la convention d'occupation d'une parcelle de terrain par des habitants dans le cadre du projet",
+          "resume": "Adoption de la convention modifiée d'occupation d'une parcelle du terrain Infrabel avenue Cambier à des fins potagères dans le cadre du potager partagé « Cambier ». Adoption de la convention d'occupation d'un terrain d'Infrabel.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gestion_immobiliere",
+            "espaces_verts",
+            "jardins_potagers",
+            "compostage",
+            "infrabel"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 14,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "SERVICES COMMUNAUX SPECIFIQUES",
+          "sous_rubrique": "",
+          "titre": "Fonds d'Impulsion à la Politique des immigrés - FIPI - Exercices 2010 - Approbation",
+          "resume": "Approbation des conventions du Fonds n°2010/FR/0685 et de partenariat pour l'exercice 2010. Approbation de la proposition de répartition budgétaire pour les actions envisagées. Subvention attribuée de 50.874,00 € (Loterie Nationale) avec financement complémentaire de 63.966,00 € de la Commission Communautaire Française.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 114840,
+          "thematiques": [
+            "services_communaux",
+            "politique_immigres",
+            "fonds_impulsion",
+            "subvention"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 21,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "L'inoccupation et la vente éventuelle de la maison de maître",
+          "sous_rubrique": "Avenue Plasky, 40",
+          "titre": "SP 14 - L'inoccupation et la vente éventuelle de la maison de maître située avenue Plasky, 40",
+          "resume": "L'inoccupation et la vente éventuelle de la maison de maître située avenue Plasky, 40",
+          "intervenants": [
+            "Bernadette VRIAMONT"
+          ],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": "reporte",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immobilier",
+            "plasky",
+            "vente"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 14.2,
+          "page": 21,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "La dangerosité de certains poteaux d'éclairage public",
+          "sous_rubrique": "",
+          "titre": "SP 14/2 - La dangerosité de certains poteaux d'éclairage public",
+          "resume": "La dangerosité de certains poteaux d'éclairage public",
+          "intervenants": [
+            "Larbi KADDOUR"
+          ],
+          "repondant": "Smeysters",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "eclairage_public",
+            "securite"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 14.3,
+          "page": 21,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Le Musée des Chemins de Fer à Schaerbeek",
+          "sous_rubrique": "",
+          "titre": "SP 14/3 - Le Musée des Chemins de Fer à Schaerbeek",
+          "resume": "Le Musée des Chemins de Fer à Schaerbeek",
+          "intervenants": [
+            "Colienne LEJEUNE de SCHIERVEL"
+          ],
+          "repondant": "Bourgmestre",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "musee",
+            "chemins_de_fer",
+            "culture"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        },
+        {
+          "sp": 14.4,
+          "page": 21,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Les normes de bruits fixées par la Région Bruxelloise",
+          "sous_rubrique": "Nuisances sonores liées au survol de son territoire par les avions de Zaventem",
+          "titre": "SP 14/4 - Les normes de bruits fixées par la Région Bruxelloise pour limiter les nuisances sonores liées au survol de son territoire par les avions décollant et atterrissant à l'aéroport national de Zaventem",
+          "resume": "Les normes de bruits fixées par la Région Bruxelloise pour limiter les nuisances sonores liées au survol de son territoire par les avions décollant et atterrissant à l'aéroport national de Zaventem",
+          "intervenants": [
+            "Yvan de BEAUFFORT"
+          ],
+          "repondant": "Guillaume",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "bruit",
+            "aviation",
+            "zaventem",
+            "environnement"
+          ],
+          "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
         }
       ]
     },
