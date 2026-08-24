@@ -199,11 +199,9 @@ def test_author_of_falls_back_to_resume_when_title_has_no_author_mention():
     assert elus._author_of(point) == "Bernadette Dupont"
 
 
-def test_author_of_motion_checks_resume_but_never_guesses_from_intervenants():
-    # Une motion doit rester non attribuée si ni le titre ni le résumé ne
-    # nomment explicitement l'auteur·e (jamais de repli sur les
-    # intervenant·e·s, contrairement aux demandes — motions souvent
-    # collectives, cf. docstring de _author_of).
+def test_author_of_motion_checks_resume_and_stays_collective_on_multiple_intervenants():
+    # Une motion est attribuée si le titre ou le résumé nomme explicitement
+    # l'auteur·e…
     point = {
         "type": "motion",
         "titre": "Retrait du règlement",
@@ -212,13 +210,42 @@ def test_author_of_motion_checks_resume_but_never_guesses_from_intervenants():
     }
     assert elus._author_of(point) == "Georges Verzin"
 
-    point_no_mention = {
+    # …mais reste COLLECTIVE (non attribuée) si aucun texte ne la nomme ET que
+    # PLUSIEURS personnes sont intervenues (on ne prend jamais « la 1re »).
+    point_collectif = {
         "type": "motion",
         "titre": "Retrait du règlement",
         "resume": "Le Collège présente un amendement.",
         "intervenants": ["Georges Verzin", "Cédric Mahieu"],
     }
-    assert elus._author_of(point_no_mention) is None
+    assert elus._author_of(point_collectif) is None
+
+
+def test_author_of_motion_attributes_sole_named_intervenant():
+    # Repli d'attribution : une motion sans auteur nommé dans le texte, mais
+    # portée par UNE SEULE personne au débat, lui est attribuée.
+    solo = {
+        "type": "motion",
+        "titre": "Motion pour le climat",   # pas de nom capté par la regex
+        "resume": "",
+        "intervenants": ["Vanhalewyn"],
+    }
+    assert elus._author_of(solo) == "Vanhalewyn"
+
+    # Les mentions de rôle pur (préside/répond, ne propose pas) sont ignorées :
+    # une seule personne nommée subsiste → attribution.
+    solo_role = {
+        "type": "motion", "titre": "Motion de soutien", "resume": "",
+        "intervenants": ["Courtheoux", "Bourgmestre ff"],
+    }
+    assert elus._author_of(solo_role) == "Courtheoux"
+
+    # Entrée composée (« MM. X et Y ») → ambiguë → jamais attribuée.
+    ambigu = {
+        "type": "motion", "titre": "Motion", "resume": "",
+        "intervenants": ["MM. Bouhjar et El Arnouki"],
+    }
+    assert elus._author_of(ambigu) is None
 
 
 def test_audit_authors_separates_anomalies_from_collective_motions():
@@ -231,11 +258,11 @@ def test_audit_authors_separates_anomalies_from_collective_motions():
             # OK : demande avec auteur dans le titre → pas signalée.
             {"sp": 64, "type": "demande_habitant",
              "titre": "Demande de Monsieur Georges Verzin sur X", "intervenants": []},
-            # Motion collective (débat multiple) → bucket motions, pas candidate.
+            # Motion collective (débat multiple) → non attribuée, bucket motions.
             {"sp": 65, "type": "motion", "titre": "Motion sur le climat",
              "resume": "", "intervenants": ["Durant", "Verzin", "Goldstein"]},
-            # Motion à intervenant·e unique → candidate à attribution.
-            # (titre volontairement sans nom propre capté par la regex d'auteur)
+            # Motion à intervenant·e unique → désormais ATTRIBUÉE (donc ABSENTE
+            # du bucket). Titre volontairement sans nom capté par la regex.
             {"sp": 66, "type": "motion", "titre": "Motion pour le climat",
              "resume": "", "intervenants": ["Vanhalewyn"]},
         ],
@@ -244,10 +271,8 @@ def test_audit_authors_separates_anomalies_from_collective_motions():
     anos = report["anomalies"]
     motions = report["motions_non_attribuees"]
     assert [(a["sp"], a["type"]) for a in anos] == [(63, "question_orale")]
-    assert sorted(m["sp"] for m in motions) == [65, 66]
-    cand = [m for m in motions if m["intervenant_unique"]]
-    assert [m["sp"] for m in cand] == [66]
-    assert cand[0]["intervenants"] == ["Vanhalewyn"]
+    # SP66 (intervenant·e unique) est maintenant attribuée → seule SP65 reste.
+    assert [m["sp"] for m in motions] == [65]
 
 
 def test_author_from_text_prefers_full_name_over_particle_truncation():
@@ -308,12 +333,12 @@ def test_verzin_is_conseiller_with_expected_activity():
     assert c["questions"] >= 25
     assert c["demandes"] >= 20
     assert c["videos"] >= 1
-    # INVARIANT clé : les motions ne sont attribuées que si l'auteur·e est
-    # nommé·e explicitement (titre OU résumé) — on ne devine jamais depuis
-    # les intervenant·e·s (motions souvent collectives). Verzin a 3 motions
-    # dont il est nommément l'auteur au résumé (ex. « Motion de Monsieur
-    # Georges VERZIN... »), aucune de plus.
-    assert c["motions"] == 3
+    # INVARIANT : une motion n'est attribuée que si l'auteur·e est nommé·e
+    # explicitement (titre OU résumé) OU s'il/elle en est le/la SEUL·E
+    # intervenant·e (jamais « le 1er » d'un débat collectif). Verzin a 3 motions
+    # où il est nommé au résumé + 1 dont il est l'unique intervenant
+    # (2017-12-20 « Schaerbeek commune hospitalière »), soit 4.
+    assert c["motions"] == 4
 
 
 def test_detail_items_sorted_recent_first():
