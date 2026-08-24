@@ -661,13 +661,8 @@ def _synthesize_deferred_points(pages: list[dict], missing_sp: list[int]) -> lis
     for sp in missing_sp:
         pg = expected.get(sp)
         window = _anchor_window(text_by_page.get(pg, ""), sp)
-        # RETIRÉ prioritaire si les deux formules apparaissent (rare) : le retrait
-        # de l'ordre du jour est l'acte final, il prime sur un éventuel report.
-        if RE_RETIRE.search(window):
-            decision, vote_type = "RETIRÉ", None
-        elif RE_REPORTE.search(window):
-            decision, vote_type = "REPORTÉ", "reporte"
-        else:
+        decision, vote_type = _deferred_status_from_window(window)
+        if not decision:
             continue
         out.append({
             "sp": sp,
@@ -678,6 +673,51 @@ def _synthesize_deferred_points(pages: list[dict], missing_sp: list[int]) -> lis
             "vote": {"type": vote_type, "pour": None, "contre": 0, "abstentions": 0},
         })
     return out
+
+
+def _deferred_status_from_window(window: str):
+    """(decision, vote_type) déduit du texte brut d'un point : RETIRÉ (vote_type
+    None) si retrait de l'ordre du jour, REPORTÉ ("reporte") si report, sinon
+    (None, None). RETIRÉ prioritaire si les deux formules coexistent (rare) : le
+    retrait est l'acte final, il prime sur un report antérieur."""
+    if RE_RETIRE.search(window or ""):
+        return "RETIRÉ", None
+    if RE_REPORTE.search(window or ""):
+        return "REPORTÉ", "reporte"
+    return None, None
+
+
+def _apply_deferred_status_to_extracted(points: list[dict], pages: list[dict]) -> int:
+    """Corrige les points DÉJÀ extraits mais laissés SANS décision alors que leur
+    texte brut (fenêtre autour de l'ancre 'SP n.-') porte une formule de retrait/
+    report : le LLM garde parfois le titre d'un point différé (surtout s'il est
+    long) sans lui attribuer le statut — cas réel du SP 21 (2016-10-26), gardé
+    avec une décision vide alors que le SP 22 voisin, plus court, était bien
+    marqué RETIRÉ. Complète _synthesize_deferred_points (qui, lui, ne traite que
+    les SP totalement OMIS). N'écrase JAMAIS une décision déjà présente — on ne
+    réécrit pas une vraie décision. Retourne le nombre de points corrigés."""
+    text_by_page = {p["page_num"]: p["text"] for p in pages}
+    n = 0
+    for pt in points:
+        if (pt.get("decision") or "").strip():
+            continue  # décision réelle déjà présente — ne pas toucher
+        sp = pt.get("sp")
+        if not isinstance(sp, int):
+            continue
+        window = _anchor_window(text_by_page.get(pt.get("page"), ""), sp)
+        if not window:
+            # page absente/mal bornée : cherche l'ancre dans toutes les pages
+            for txt in text_by_page.values():
+                window = _anchor_window(txt, sp)
+                if window:
+                    break
+        decision, vote_type = _deferred_status_from_window(window)
+        if not decision:
+            continue
+        pt["decision"] = decision
+        pt["vote"] = {"type": vote_type, "pour": None, "contre": 0, "abstentions": 0}
+        n += 1
+    return n
 
 
 def expected_sp_from_pages(pages: list[dict]) -> dict:
@@ -823,6 +863,14 @@ def process_pdf(pdf_path: Path, progress_cb: Optional[Callable[[dict], None]] = 
                 )
     else:
         log.info(f"  ✅ Complétude : {check['extracted']}/{check['expected']} points (regex = LLM)")
+
+    # Filet déterministe (2/2) : un point EXTRAIT mais sans décision, dont le
+    # texte brut porte une formule de retrait/report, reçoit le bon statut
+    # (RETIRÉ/REPORTÉ). Complète la reconstruction des SP omis ci-dessus —
+    # ici le LLM a gardé le point mais oublié le statut (cas SP 21, 2016-10-26).
+    fixed = _apply_deferred_status_to_extracted(deduped, pages)
+    if fixed:
+        log.info(f"  ⊛ Statut retiré/reporté rétabli sur {fixed} point(s) déjà extrait(s)")
 
     # GREFFE 1 : chaque point porte son fichier source (page déjà présente) →
     # lien vérifiable vers le PV d'origine.
