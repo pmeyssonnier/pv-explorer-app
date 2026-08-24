@@ -18,6 +18,7 @@
       "2011-02-02",
       "2011-02-23",
       "2011-03-30",
+      "2011-05-25",
       "2012-01-18",
       "2012-02-15",
       "2012-05-30",
@@ -163,7 +164,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9419,
+    "total_points": 9465,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -19626,6 +19627,1303 @@
             "mobilite"
           ],
           "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2011-05-25",
+        "date": "2011-05-25",
+        "source_file": "Pv%20CC%202011-05-25%20SP.pdf",
+        "extracted_at": "2026-08-24T09:08:48.536304",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 43,
+          "extracted": 46,
+          "missing_sp": [],
+          "extra_sp": [
+            3,
+            40,
+            41
+          ],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/Pv%2520CC%25202011-05-25%2520SP.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande d'habitants",
+          "sous_rubrique": "",
+          "titre": "La politique en faveur du vélo à Schaerbeek",
+          "resume": "",
+          "intervenants": [
+            "Degraer",
+            "Jodogne",
+            "Nyssens",
+            "Courtheoux",
+            "Vanhalewyn",
+            "Clerfayt"
+          ],
+          "repondant": "Jodogne",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "mobilite",
+            "cyclisme"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande d'habitants",
+          "sous_rubrique": "",
+          "titre": "Le ramassage des déchets verts par l'Agence Bruxelloise de Propreté",
+          "resume": "",
+          "intervenants": [
+            "Bouche",
+            "Jodogne",
+            "De Herde",
+            "Grimberghs",
+            "Van Gorp",
+            "Durant",
+            "de Beauffort"
+          ],
+          "repondant": "De Herde",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "dechets",
+            "environnement",
+            "propretes"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 2,
+          "urgence": false,
+          "type": "motion",
+          "rubrique": "Motion du Collège des Bourgmestre et Echevins",
+          "sous_rubrique": "",
+          "titre": "La collecte des déchets verts à domicile",
+          "resume": "Le Conseil Communal exige que la collecte à domicile des déchets verts par l'Agence Bruxelles-Propreté soit étendue au territoire de Schaerbeek dans les plus brefs délais. La motion sera adressée au Ministre-Président du Gouvernement de la Région de Bruxelles-Capitale et au Secrétaire d'État en charge de la Propreté publique.",
+          "intervenants": [
+            "Courtheoux"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 89,
+          "thematiques": [
+            "dechets",
+            "environnement",
+            "propretes",
+            "collecte"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services du Receveur Communal - Taxes",
+          "sous_rubrique": "",
+          "titre": "Règlement taxe sur les surfaces commerciales - Exercices 2011 à 2015 - Modification",
+          "resume": "Ce point est retiré de l'ordre du jour",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "taxe",
+            "surface_commerciale"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services du Receveur Communal - Taxes",
+          "sous_rubrique": "",
+          "titre": "Règlement redevance relatif aux cartes communales de stationnement - Modification",
+          "resume": "Modification du règlement redevance relatif aux cartes communales de stationnement. Approbation des tarifs pour les différentes catégories d'usagers (firmes et indépendants, visiteurs occasionnels, commerçants ambulants, chantiers temporaires, riverains bruxellois et cartes de riverain).",
+          "intervenants": [
+            "Dönmez",
+            "El Arnouki",
+            "Lahlali",
+            "Clerfayt"
+          ],
+          "repondant": "Guillaume",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "cartes_communales",
+            "redevance",
+            "mobilite"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "Fabrique d'église Sainte Suzanne - Comptes 2010 - Avis favorable",
+          "resume": "Avis favorable sur le compte de l'exercice 2010 de la Fabrique d'Eglise Sainte Suzanne. Recettes: 78.068,47 €, Dépenses: 72.921,83 €, Excédent: 5.146,64 €. De petits dépassements de crédits constatés, compensés par des dépenses non réalisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 38,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 78068.47,
+          "thematiques": [
+            "comptes_publics",
+            "fabrique_eglise",
+            "equipement"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "Association de fait \"Cercle d'Art du Personnel Communal\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'Association \"Cercle d'Art du Personnel Communal\". Résultat négatif de -1.287,02 € pour l'exercice 2010, avoirs cumulés de 3.924,61 €. Subside communal versé: 12.000 € en date du 28/09/2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 12000,
+          "thematiques": [
+            "comptes_publics",
+            "association",
+            "subvention"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT - UITRUSTING",
+          "sous_rubrique": "Contrôle - Controle",
+          "titre": "ASBL \"Joyeuses Enfance de Schaerbeek - JES\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL \"Joyeuse Enfance de Schaerbeek - JES\". Résultat négatif de -88.017,64 € pour l'exercice 2010, résultat cumulé de 28.721,72 €. Subsides communaux versés: 229.000 € (28/05/2010) et 6.856 € (11/08/2010), pour un total de 235.856 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 235856,
+          "thematiques": [
+            "comptes_publics",
+            "asbl",
+            "subvention",
+            "enfance"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats - Aankopen",
+          "sous_rubrique": "",
+          "titre": "Accueil - Expédition - Acquisition d'un module supplémentaire pour la machine de mise sous enveloppe - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise d'acte de la décision du Collège du 3 mai 2011 de passer un marché par procédure négociée sans publicité pour l'acquisition d'un module supplémentaire pour la machine de mise sous enveloppe auprès de NEOPOST. Dépense de 810,7 € (TVAI), imputée au budget extraordinaire 2011 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 810.7,
+          "thematiques": [
+            "marche_public",
+            "achat_materiel",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 15,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats - Aankopen",
+          "sous_rubrique": "",
+          "titre": "Service Infrastructures - Bâtiments - Acquisition de fournitures pour la réalisation de sanitaires supplémentaires au CSA - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise d'acte de la décision du Collège du 3 mai 2011 de passer un marché par procédure négociée sans publicité pour l'achat de fournitures pour la réalisation de sanitaires supplémentaires au CSA auprès des adjudicataires annuels SANISTOCK, VANDEN BERGH, TUBAROB, METALUNION, CLABOTS, WIJNS et ROELS. Dépense estimée à 5.215,16 € (TTC), imputée au budget extraordinaire 2011 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5215.16,
+          "thematiques": [
+            "marche_public",
+            "infrastructures",
+            "batiments",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service Infrastructures",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Acquisition de matériaux pour la rénovation des bâtiments sis avenue Cambier 2 et occupé par le mouvement \"Scouts et Guides Pluralistes de Belgique\" - Mode de passation et fixation des conditions du marché",
+          "resume": "Acquisition de matériaux pour la rénovation des bâtiments sis avenue Cambier 2 occupés par le mouvement Scouts et Guides Pluralistes de Belgique auprès des sociétés FIEREMANS et DESSART.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2671.55,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "renovation"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service Infrastructures",
+          "sous_rubrique": "Service techniques Spéciales",
+          "titre": "Acquisition d'appareils téléphoniques pour le CTR et l'hôtel communal - Mode de passation et fixation des conditions du marché",
+          "resume": "Acquisition d'appareils téléphoniques pour le CTR et l'Hôtel Communal tel que décrit dans le cahier des charges SCHA/EQUIP/2011/020. Dépense estimée à 8.264,46 € hors TVA ou 10.000,00 € TTC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "infrastructure",
+            "telephonie",
+            "equipement"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service Infrastructures",
+          "sous_rubrique": "Service techniques Spéciales",
+          "titre": "Plan climat - Acquisition de pompes de circulation à débit variable - Mode de passation et fixation des conditions du marché",
+          "resume": "Infrastructure – Techniques Spéciales – Plan Climat Communal – Acquisition de pompes de circulation à débit variable tel que décrit dans le cahier des charges SCHA/EQUIP/2011/024. Dépense estimée à 42.975,21 € hors TVA ou 52.000,00 € TTC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 52000,
+          "thematiques": [
+            "infrastructure",
+            "techniques_speciales",
+            "plan_climat",
+            "environnement"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service Infrastructures",
+          "sous_rubrique": "Bâtiments et Service techniques Spéciales",
+          "titre": "Acquisition d'outillage - Mode de passation et fixation des conditions du marché",
+          "resume": "Infrastructure – Bâtiments et Techniques spéciales - Acquisition d'outillage tel que décrit dans le cahier des charges SCHA/EQUIP/2011/022. Dépense estimée à 49.586,78 € hors TVA ou 60.000,00 € TTC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 60000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "equipement",
+            "outillage"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Instruction Publique",
+          "sous_rubrique": "Institut Frans Fischer",
+          "titre": "Centre de Technologie avancée - Acquisition et placement de système de vidéosurveillance et de contrôle d'accès - Mode de passation et fixation des conditions du marché",
+          "resume": "Instruction Publique – Institut Frans Fischer – Centre de Technologie avancée – Acquisition et placement de systèmes de vidéosurveillance et de contrôle d'accès tel que décrit dans le cahier des charges SCHA/EQUIP/2011/013. Dépense estimée à 22.314,05 € hors TVA ou 27.000,00 € TTC. Financée par subsides.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 27000,
+          "thematiques": [
+            "instruction_publique",
+            "institut_frans_fischer",
+            "securite",
+            "videosurveillance",
+            "controle_acces"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Instruction Publique",
+          "sous_rubrique": "Institut Frans Fischer - Centre de Technologie avancée",
+          "titre": "Acquisition de divers matériaux didactiques et techniques - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation par le Collège du mode de passation et des conditions d'un marché par procédure négociée sans publicité pour l'acquisition de matériels techniques et didactiques. Dépense estimée à 48.961,98 € HT ou 59.244 € TTC (21% TVA), financée par subsides (50% FEDER et 50% Communauté française).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 59244,
+          "thematiques": [
+            "education",
+            "marche_public",
+            "equipements",
+            "technologie"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Schaerbeek Propreté & Espaces Verts",
+          "sous_rubrique": "Parc Josaphat",
+          "titre": "Acquisition de chaises pour le kiosque - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation par le Collège du mode de passation et des conditions d'un marché par procédure négociée sans publicité pour l'acquisition de chaises pour le kiosque du Parc Josaphat. Dépense estimée à 8.264,46 € HT ou 10.000 € TTC (21% TVA), financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "espaces_verts",
+            "marche_public",
+            "equipements",
+            "parc"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Schaerbeek Propreté & Espaces Verts",
+          "sous_rubrique": "Parc Josaphat",
+          "titre": "Acquisition d'engins pour la plaine de jeux Terdelt - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation par le Collège du mode de passation et des conditions d'un marché par procédure négociée sans publicité auprès de BOER SPEELTOESTELLEN pour l'acquisition d'engins pour la plaine de jeux Terdelt. Dépense estimée à 4.167,5 € HT ou 5.042,68 € TTC (21% TVA), financée par emprunt.",
+          "intervenants": [
+            "M. Vanhalewyn"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5042.68,
+          "thematiques": [
+            "espaces_verts",
+            "marche_public",
+            "equipements",
+            "loisirs_enfants"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Schaerbeek Propreté & Espaces Verts",
+          "sous_rubrique": "",
+          "titre": "Acquisition d'une remorque type VAN pour transport des 2 chevaux de trait - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation par le Collège du mode de passation et des conditions d'un marché par procédure négociée sans publicité pour l'acquisition d'une remorque type VAN pour le transport des deux chevaux de trait. Dépense estimée à 5.123 € HT ou 6.198 € TTC (21% TVA), financée par emprunt.",
+          "intervenants": [
+            "M. Vanhalewyn"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 6198,
+          "thematiques": [
+            "marche_public",
+            "equipements",
+            "transport"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Population",
+          "sous_rubrique": "",
+          "titre": "Acquisition de 4 imprimantes - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation par le Collège du mode de passation et des conditions d'un marché par procédure négociée sans publicité auprès de DG EUROPEAN TRADING pour l'acquisition de 4 imprimantes. Dépense estimée à 2.468,40 € TTC (21% TVA), financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2468.4,
+          "thematiques": [
+            "marche_public",
+            "equipements",
+            "informatique"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENTS ET SERVICES",
+          "sous_rubrique": "Marchés publics",
+          "titre": "Marché pour la conclusion d'assurances",
+          "resume": "Passage d'un marché pour la conclusion d'assurances pour une dépense annuelle estimée à 896.500 €, par appel d'offres général, avec possibilité de prolongation jusqu'au 31 décembre 2015.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 896500,
+          "thematiques": [
+            "marches_publics",
+            "assurances",
+            "equipements"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DEVELOPPEMENT STRATEGIQUE ET DURABLE",
+          "sous_rubrique": "Subventions et Partenariats",
+          "titre": "Programme Triennal d'Investissement 2010-2012 - Dotation triennal de Développement - Appel à projets dotations 'Utilisation Rationnelle de l'Energie' Bâtiment et Logement - Approbation de la liste des projets identifiés et leur ordre de priorité",
+          "resume": "Approbation de la liste des projets proposés par le département Infrastructures, l'estimation du prix et l'ordre de priorité pour les dotations URE Bâtiment et Logement.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "investissements",
+            "energie",
+            "developpement_durable",
+            "batiments",
+            "logement"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES GENERAUX",
+          "sous_rubrique": "Eco-conseil",
+          "titre": "Dimanche sans voiture le 18 septembre 2011 - Règlement d'administration intérieure",
+          "resume": "Approbation de l'accord conclu le 23 mars 2011 entre le bourgmestre de Schaerbeek et les bourgmestres des dix-huit autres communes de l'arrondissement administratif de Bruxelles-Capitale concernant l'organisation de la journée sans voiture du 18 septembre 2011.",
+          "intervenants": [
+            "Mme Durant"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "environnement",
+            "mobilite",
+            "accord_intercommunal"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES GENERAUX",
+          "sous_rubrique": "Affaires Juridiques",
+          "titre": "Demande d'autorisation d'ester en justice dans l'aff. c/ONSS-APL",
+          "resume": "Autorisation au Collège des Bourgmestre et Echevins d'agir en justice contre l'ONSS-APL concernant la régularisation des titres-repas octroyés aux agents contractuels depuis le 1er octobre 2007, demandant au Tribunal du Travail de Bruxelles de déclarer que ces titres-repas ne constituent pas une rémunération soumise aux cotisations de sécurité sociale.",
+          "intervenants": [
+            "Mme Onkelinx"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 37,
+            "contre": 0,
+            "abstentions": 2
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "affaires_juridiques",
+            "litiges",
+            "securite_sociale",
+            "personnel"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 40,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Ecole 3 sise rue Rogier 188 - Remplacement de deux chaudières au gaz - Majoration de la dépense",
+          "resume": "Approbation de la majoration de dépense pour le remplacement de deux chaudières au gaz vétustes de l'école primaire n°3. Le coût estimé était de 30.000 € et l'offre reçue est de 31.474,06 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 31474.06,
+          "thematiques": [
+            "batiments_scolaires",
+            "chauffage",
+            "marches_publics",
+            "infrastructures"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et infrastructures",
+          "sous_rubrique": "Rénovation des installations",
+          "titre": "Centre de vacance à Ittre - Ecole 5-6, Ecole 10 et Lycée Emile Max - Rénovation des chaudières - Majoration de la dépense",
+          "resume": "Majoration de dépense de 126.900 EUR pour les travaux de rénovation des installations de chaufferies et de régulation dans quatre bâtiments communaux. L'offre régulière la plus basse s'élève à 828.492,01 EUR (TVAC), supérieure aux crédits prévus de 785.000 EUR.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 126900,
+          "thematiques": [
+            "travaux_renovation",
+            "equipements_scolaires",
+            "chauffage",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et infrastructures",
+          "sous_rubrique": "Réparations structurelles",
+          "titre": "Athénée Fernand Blum - Section Roodebeek - Démolition et reconstruction de deux murs mitoyens - Majoration de la dépense",
+          "resume": "Majoration de dépense de 30.000 EUR pour la démolition et reconstruction de deux murs mitoyens de l'athénée F. Blum. L'offre actualisée s'élève à 46.225,60 EUR (TVA incluse) hors révision de prix, le coût maximum avoisinant 50.000 EUR. Le financement comprend une contribution de propriétaires voisins et un emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "travaux_renovation",
+            "equipements_scolaires",
+            "structure_batiment",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et infrastructures",
+          "sous_rubrique": "Rénovation de bâtiments",
+          "titre": "Maison de quartier sise chaussée de Haecht - Ragréage de la façade arrière - Exécution de travaux supplémentaires et complémentaires",
+          "resume": "Approbation de travaux complémentaires de remise en peinture des murs de la cour et du jardinet pour un montant de 5.973,50 EUR (TVAC), en complément aux travaux supplémentaires de 5.905,28 EUR (TVAC) déjà autorisés. Dépense totale de 11.879 EUR (TVAC) financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 11879,
+          "thematiques": [
+            "travaux_renovation",
+            "batiments_publics",
+            "peinture",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 47,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et infrastructures",
+          "sous_rubrique": "Sécurité et santé",
+          "titre": "Crèche 'Petites Etoiles' sise rue Godefroid Guffens 26 - Travaux d'enlèvement d'amiante - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation des travaux de désamiantage de la chaufferie de la crèche 'Petites Etoiles'. Dépense estimée à 20.000 EUR (TVAC). Mode de passation : procédure négociée sans publicité après consultation de onze firmes spécialisées. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 20000,
+          "thematiques": [
+            "travaux_renovation",
+            "environnement",
+            "amiante",
+            "petite_enfance",
+            "securite",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments et Infrastructure",
+          "sous_rubrique": "Hôtel communal - CSA",
+          "titre": "Hôtel communal - CSA - Extension du système de contrôle d'accès - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Extension du système de contrôle d'accès de l'hôtel communal par mise à jour du logiciel de gestion des entrées et équipement de gâches électriques et lecteurs de badges pour trois portes d'accès aux locaux d'accueil du service Expédition. Coût estimé : 8.107 € TVAC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 8107,
+          "thematiques": [
+            "controle_acces",
+            "securite",
+            "hotel_communal"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 50,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments et Infrastructure",
+          "sous_rubrique": "Hôtel communal - CSA",
+          "titre": "Hôtel communal - CSA - Extension du système de télésurveillance - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Extension du système de sécurité et de télésurveillance équipant les bâtiments administratifs de l'hôtel communal et du CSA par l'ajout d'une caméra de part et d'autre. Coût estimé : 3.235,36 € TVAC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3235.36,
+          "thematiques": [
+            "telesurveillance",
+            "securite",
+            "hotel_communal",
+            "csa"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 52,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments et Infrastructure",
+          "sous_rubrique": "Écoles",
+          "titre": "Ecole 1 sise rue Josaphat - Reconstruction des sanitaires de l'école primaire - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Reconstruction des sanitaires de la section primaire de l'école n°1, rue Josaphat 229. Coût total estimé à 250.000 € TVAC, majoré de 10% pour révision des prix et dépassements éventuels, soit 275.000 €. Sollicitation de subsides à 80% auprès de la Direction des Monuments et Sites.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 275000,
+          "thematiques": [
+            "ecoles",
+            "sanitaires",
+            "reconstruction",
+            "monuments_sites"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 54,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments et Infrastructure",
+          "sous_rubrique": "Écoles",
+          "titre": "Groupe scolaire Josaphat-Ruche - Renforcement des plafonds plats en briques et restauration de linteaux droits de baies - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Renforcement des plafonds plats en briques et restauration de linteaux droits de baies au groupe scolaire Josaphat-Ruche. Coût estimé : 117.780,40 € TVAC, majoré de 10%, soit 130.000 € estimé. Sollicitation de subsides à 80% auprès de la Direction des Monuments et Sites.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 130000,
+          "thematiques": [
+            "ecoles",
+            "restauration",
+            "stabilite_structurelle",
+            "monuments_sites"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 56,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Parcs et jardins",
+          "titre": "Parc Josaphat - Sécurisation de la pergola - Pour information",
+          "resume": "Sécurisation de la pergola du Parc Josaphat.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "parc_josaphat",
+            "securite",
+            "espaces_publics"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 58,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Aménagement zone 30",
+          "titre": "Aménagement de la zone 30 'Linthout' délimitée par le boulevard Reyers, l'avenue de Roodebeek, la rue du Noyer et la limite communale - Majoration de la dépense",
+          "resume": "Majoration du coût des travaux d'aménagement de la zone 30 'Linthout' de 200.000 € à 220.000 € TVAC. Offre régulière la moins disante : 197.663,75 € TVAC. Six offres reçues. Budget disponible à l'article 421/735-IN 60/53 du budget extraordinaire 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 220000,
+          "thematiques": [
+            "voirie",
+            "travaux",
+            "zone_30"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 60,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Trottoirs",
+          "titre": "Rénovation des trottoirs côté pairs de l'avenue Paul Deschanel, entre la rue de la Consolation et le square Armand Steurs - Majoration de la dépense",
+          "resume": "Rénovation des trottoirs côté pairs de l'avenue Paul Deschanel. Adjudicataire désigné pour montant 112.032,16 € TVAC. Engagement estimé 124.000 € TVAC. Majorration à 150.000 € TVAC incluant asphaltage complémentaire de la chaussée. Dépense supplémentaire de 26.000 € financée par le Fonds Politique des Grandes Villes.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "voirie",
+            "trottoirs",
+            "travaux",
+            "fonds_grandes_villes"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 61,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Trottoirs",
+          "titre": "Rénovation des trottoirs côté impairs de l'avenue Paul Deschanel, entre les rues Thiéfry et Roelandts - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation du projet de rénovation des trottoirs côté impairs de l'avenue Paul Deschanel. Coût total estimé 110.000 € TVAC. Cahier spécial des charges n° Scha/Infra/2011/021. Mode de passation : adjudication publique. Financement via Fonds Politique des Grandes Villes.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 110000,
+          "thematiques": [
+            "voirie",
+            "trottoirs",
+            "travaux",
+            "fonds_grandes_villes"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 63,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Navez-Portaels",
+          "titre": "Contrat de quartier Navez-Portaels - Opération 4B.4 - Aménagement de la rue Portaels par la mise en place de mobilier urbain - Opération 4C.1 - Formalisation esthétique fonctionnelle d'un lieu multimodal de rencontre place Verboeckhoven - Avenant à la convention - Honoraires supplémentaires",
+          "resume": "Approbation d'un avenant à la convention SCHAE/INFRA/2011/CQNP/4B.4-4C.1 portant augmentation des honoraires du bureau MS-A de 36.221,00 € TVAC à 48.822,84 € TVAC (augmentation de 12.601,84 € TVAC). Avant-projet estimé à 568.845,20 € TVAC, subsidié à concurrence de 426.272,86 €. Subsidy régionale pour cette augmentation : 35.130,49 € TVAC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 48822.84,
+          "thematiques": [
+            "contrat_de_quartier",
+            "navez_portaels",
+            "mobilier_urbain",
+            "aménagement"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Contrat de quartier Navez-Portaels",
+          "titre": "Contrat de quartier Navez-Portaels - Opération 4B.4 - Aménagement de la rue Portaels par la mise en place de mobilier urbain - Opération 4C.1 - Formalisation esthétique fonctionnelle d'un lieu multimodal de rencontre place Verboeckhoven - Marché d'étude - Garde-corps des ponts existants",
+          "resume": "Approbation de l'aménagement de la rue Portaels et de la création d'un lieu multimodal place Verboeckhoven. Décision de mettre à l'essai pendant 1 an les garde-corps de 1,20 mètre (+ bavette 2,25m) sur les 2 ponts existants, conformément aux normes Infrabel, avec évaluation des problèmes de propreté.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "amenagement_urbain",
+            "mobilier_urbain",
+            "infrastructures"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 67,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Contrat de quartier durable Helmet",
+          "titre": "Contrat de quartier durable Helmet - Désignation d'un membre supplémentaire à la commission de quartier",
+          "resume": "Désignation de Monsieur Alain Herdies (directeur de l'asbl Jeunes Schaerbeekois au Travail) comme membre de la commission de quartier du contrat de quartier durable Helmet.",
+          "intervenants": [
+            "Alain Herdies"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gouvernance",
+            "quartier_helmet"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 68,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Contrat de quartier durable Helmet",
+          "titre": "Contrat de quartier durable Helmet - Convention tripartite avec les opérateurs de projet",
+          "resume": "Approbation des projets de conventions tripartites (opérateur, Commune, Région) pour la réalisation de certaines opérations du programme du contrat de quartier durable Helmet confiées à la Maison de quartier d'Helmet asbl, Darna asbl et La Gerbe AMO asbl. Prise d'acte de la subsidiation à 100% par la Région.",
+          "intervenants": [
+            "Maison de quartier d'Helmet asbl",
+            "Darna asbl",
+            "La Gerbe AMO asbl"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrats_quartier",
+            "partenariats",
+            "subventions"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 70,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Services du Secrétaire Communal",
+          "sous_rubrique": "Assemblées",
+          "titre": "Intercommunale d'inhumation - Désignation d'un commissaire",
+          "resume": "Désignation de M. ECHOUEL, conseiller communal, comme candidat-commissaire au sein de l'intercommunale d'inhumation scrl.",
+          "intervenants": [
+            "ECHOUEL"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "intercommunale",
+            "inhumation",
+            "gouvernance"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 75,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Budget",
+          "sous_rubrique": "Taxe sur les immeubles",
+          "titre": "Le budget communal et plus précisément l'instauration de la taxe sur les immeubles",
+          "resume": "",
+          "intervenants": [
+            "Denis Grimberghs",
+            "De Herde"
+          ],
+          "repondant": "De Herde",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget_communal",
+            "fiscalite"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 75,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Associations",
+          "sous_rubrique": "RPC Schaerbeek",
+          "titre": "La situation du club RPC à propos de ses infrastructures",
+          "resume": "Ce point est traité dans l'exposé du point 42",
+          "intervenants": [
+            "Jean-Pierre Van Gorp"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "associations",
+            "sports",
+            "infrastructures"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 75,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Petite enfance",
+          "sous_rubrique": "Crèches",
+          "titre": "Les crèches",
+          "resume": "",
+          "intervenants": [
+            "Larbi Kaddour",
+            "De Herde"
+          ],
+          "repondant": "De Herde",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "petite_enfance",
+            "creches"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 75,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Navez-Portaels",
+          "titre": "Le contrat de quartier \"Navez-Portaels\"",
+          "resume": "",
+          "intervenants": [
+            "Larbi Kaddour",
+            "Bourgmestre ff"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrat_quartier"
+          ],
+          "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
         }
       ]
     },
