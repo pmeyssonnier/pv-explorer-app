@@ -28,6 +28,7 @@
       "2012-01-18",
       "2012-02-15",
       "2012-03-28",
+      "2012-04-25",
       "2012-05-30",
       "2012-06-27",
       "2012-09-19",
@@ -174,7 +175,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 10000,
+    "total_points": 10023,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -33668,6 +33669,684 @@
             "place_publique"
           ],
           "source_file": "pv_2012.03.28.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2012-04-25",
+        "date": "2012-04-25",
+        "source_file": "pv_2012.04.25.pdf",
+        "extracted_at": "2026-08-24T14:15:59.571022",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": "Clerfayt",
+        "bourgmestre_ff": null,
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 23,
+          "extracted": 23,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/pv_2012.04.25.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRÉTAIRE COMMUNAL",
+          "sous_rubrique": "Bureau des Assemblées",
+          "titre": "ASBL \"Maison Autrique\" - Rapport d'activité",
+          "resume": "Rapport d'activité de l'ASBL Maison Autrique",
+          "intervenants": [
+            "Clerfayt",
+            "Courtheoux",
+            "Jodogne"
+          ],
+          "repondant": "Jodogne",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "culture",
+            "associations"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRÉTAIRE COMMUNAL",
+          "sous_rubrique": "Bureau des Assemblées",
+          "titre": "Délégation de contreseing du Secrétaire communal à Monsieur Guy Van Reepingen en application de l'article 111 de la Nouvelle Loi Communale - Pour information",
+          "resume": "Délégation de contreseing du Secrétaire communal à Guy Van Reepingen pour l'urbanisme et les formalités administratives",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "administration",
+            "urbanisme"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Saint-Servais - Budget 2012 - Avis favorable",
+          "resume": "Avis favorable sur le budget 2012 de la Fabrique d'église Saint-Servais avec recettes et dépenses équilibrées de 281.841,13 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 281841.13,
+          "thematiques": [
+            "budget",
+            "cultes",
+            "fabrique_eglise"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 4,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Sainte Elisabeth - Comptes 2011 - Avis favorable",
+          "resume": "Avis favorable sur les comptes 2011 de la Fabrique d'église Sainte Elisabeth affichant un mali de 279,26 € (recettes 24.666,24 €, dépenses 24.945,50 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 24666.24,
+          "thematiques": [
+            "budget",
+            "cultes",
+            "fabrique_eglise",
+            "comptes"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Sainte Suzanne - Comptes 2011 - Avis favorable",
+          "resume": "Avis favorable sur les comptes 2011 de la Fabrique d'église Sainte Suzanne affichant un excédent de 13.457,74 € (recettes 37.790,92 €, dépenses 24.333,18 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 37790.92,
+          "thematiques": [
+            "budget",
+            "cultes",
+            "fabrique_eglise",
+            "comptes"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 6,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Sainte Alice - Comptes 2011 - Avis favorable",
+          "resume": "Avis favorable sur les comptes 2011 de la Fabrique d'église Sainte Alice affichant un excédent de 2.008,79 € (recettes 31.770,97 €, dépenses 29.762,18 €)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 35,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 31770.97,
+          "thematiques": [
+            "budget",
+            "cultes",
+            "fabrique_eglise",
+            "comptes"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "ASBL \"Maison Autrique\" - Comptes 2011 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2011 de l'ASBL Maison Autrique affichant un bénéfice de 5.523,83 € pour l'exercice 2011 et un résultat cumulé de -38.675,61 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 0,
+            "abstentions": 9
+          },
+          "montant_eur": 5523.83,
+          "thematiques": [
+            "associations",
+            "comptes",
+            "subventions"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "ASBL \"Schaerbeek Information\" - Comptes 2011 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2011 de l'ASBL Schaerbeek Information",
+          "intervenants": [
+            "Grimberghs",
+            "Clerfayt"
+          ],
+          "repondant": "Clerfayt",
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "associations",
+            "comptes",
+            "information",
+            "communication"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 10,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances",
+          "sous_rubrique": "Comptes et subventions",
+          "titre": "ASBL \"Bibla Lire en Classe\" - Comptes 2011 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2011 de l'ASBL \"Bibla Lire en Classe\" affichant une perte de -12.790,73€ pour l'exercice 2011 et un résultat cumulé de 11.644,92€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": -12790.73,
+          "thematiques": [
+            "finances",
+            "comptes_annuels",
+            "asbl"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances",
+          "sous_rubrique": "Comptes et subventions",
+          "titre": "Association de fait \"Cercle d'Art du Personnel Communal de Schaerbeek\" - Comptes 2011 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2011 de l'Association de fait \"Cercle d'Art du Personnel communal de Schaerbeek\" affichant un bénéfice de 2.109,71€ pour l'exercice 2011 et un résultat cumulé de 6.034,32€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2109.71,
+          "thematiques": [
+            "finances",
+            "comptes_annuels",
+            "association"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Infrastructures",
+          "titre": "Infrastructures - Bâtiments & Techniques spéciales - Achat de matériel pour la rénovation des installations sanitaires au sein de diverses écoles et infrastructures sportives - Pour information",
+          "resume": "Prise pour information de la décision du Collège du 17 avril 2012 d'acquérir du matériel pour la rénovation des installations sanitaires au sein de diverses écoles et infrastructures sportives. Dépense estimée à 41.322,31€ HT ou 50.000€ TTC (21% TVA), imputée au budget extraordinaire 2012 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 50000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "renovation",
+            "sanitaires",
+            "sports"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique et durable",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Convention à conclure entre la commune de Schaerbeek et l'ASBL \"TRS\" - Approbation",
+          "resume": "Approbation de la convention 2012 entre la Commune et l'a.s.b.l. T.R.S. dans le cadre du Programme de Prévention Urbaine.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "prevention_urbaine",
+            "convention",
+            "partenariat",
+            "asbl"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique et durable",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Convention à conclure entre la commune de Schaerbeek et l'ASBL \"Sport Schaerbeekois\" - Approbation",
+          "resume": "Approbation de la convention 2012 entre la Commune et l'a.s.b.l. Sport Schaerbeekois dans le cadre du Programme de Prévention Urbaine.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "prevention_urbaine",
+            "convention",
+            "partenariat",
+            "sport",
+            "asbl"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 15,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique et durable",
+          "sous_rubrique": "Subventions et Partenariats",
+          "titre": "Plan Triennal d'Investissement 2010-2012 - Appel à projet Dotation triennale de Développement - Sécurité urbaine - Liste des projets identifiés et leur ordre de priorité - Approbation",
+          "resume": "Approbation de la liste des projets proposés par le département Infrastructures, l'estimation du prix et l'ordre de priorité dans le cadre de la Dotation Triennale de Développement – Sécurité urbaine.",
+          "intervenants": [
+            "M. le Bourgmestre",
+            "M. de Beauffort"
+          ],
+          "repondant": "M. le Bourgmestre",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "investissement",
+            "plan_triennal",
+            "securite_urbaine",
+            "subventions",
+            "infrastructure"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 16,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Eco-Conseil",
+          "sous_rubrique": "Plan d'urgence",
+          "titre": "Plan d'Urgence et d'Intervention de la commune de Schaerbeek - Arrêté d'approbation du Gouverneur de l'Arrondissement administratif de Bruxelles-Capitale - Pour information",
+          "resume": "Prise pour information du plan d'urgence et d'intervention de la commune de Schaerbeek approuvé par le Gouverneur de l'Arrondissement administratif de Bruxelles-Capitale, conformément aux dispositions légales en matière de protection civile.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "protection_civile",
+            "plan_urgence",
+            "intervention"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Mobilité",
+          "sous_rubrique": "Mobilité",
+          "titre": "Convention cadre mobilité - Plan communal vélo et Audit préparatoire BYPAD (Bicycle Policy Audit) - Avenant n°1 - Approbation",
+          "resume": "Approbation de l'avenant n°1 à la convention-cadre mobilité entre la Région de Bruxelles-Capitale et la Commune, la STIB et la zone de Police. Cet avenant permet à la commune de réaliser un audit de sa politique communale en faveur des cyclistes afin d'établir un Plan Vélo Communal.",
+          "intervenants": [
+            "Van Gorp",
+            "Nyssens"
+          ],
+          "repondant": "Smeysters",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "mobilite",
+            "velo",
+            "audit",
+            "plan_communal"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux",
+          "sous_rubrique": "Cabinet du Bourgmestre",
+          "titre": "Plan caméra sur la zone de police - Approbation",
+          "resume": "Installation de caméras de surveillance dans plusieurs quartiers de Schaerbeek pour améliorer la circulation, l'ordre public, la sécurité et réduire les nuisances. Plus de 80 emplacements sont approuvés avec différents types de caméras (dôme, fixe).",
+          "intervenants": [
+            "Bourgmestre",
+            "Durant",
+            "Nyssens",
+            "Vriamont",
+            "Köksal",
+            "Courtheoux",
+            "Dönmez"
+          ],
+          "repondant": "Bourgmestre",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "surveillance",
+            "camera",
+            "securite",
+            "ordre_public",
+            "police",
+            "circulation"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Crèche \"La Petite Ourse\" - Remplacement du garde corps - Mode de passation et fixation des conditions du marché",
+          "resume": "Remplacement de l'ancien garde-corps longeant la terrasse de la crèche 'la petite ourse' pour mesure de sécurité. Procédure négociée sans publicité après consultation de trois firmes spécialisées. Dépense de 12.000 € financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 12000,
+          "thematiques": [
+            "batiments",
+            "securite",
+            "marche_public",
+            "emprunt"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Voirie",
+          "titre": "Etude en vue de la caractérisation des sols à excaver dans le cadre des travaux de réaménagement de la Cité-Jardin Terdelt - Etude complémentaire - Majoration des dépenses",
+          "resume": "Etudes complémentaires pour caractériser les sols à excaver. Les analyses initiales ont montré que 3 échantillons présentaient des taux trop importants de métaux et huile. Deux études complémentaires pour affiner la caractérisation des terres polluées (1/5 des terres). Dépense supplémentaire de 1.600 € TVAC dépassant de 10% le montant initial, financée par emprunt.",
+          "intervenants": [
+            "Mme Nyssens"
+          ],
+          "repondant": "Mme Smeysters",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 9,
+            "abstentions": 0
+          },
+          "montant_eur": 1600,
+          "thematiques": [
+            "etude_sols",
+            "pollution",
+            "voirie",
+            "realmenagement",
+            "emprunt"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Gestion immobilière",
+          "titre": "Complexe Tamines - rue Stephenson 80-84 - Bail locatif avec l'ASBL Sport Jeunes - Avenant - Approbation",
+          "resume": "Adoption de l'avenant au bail du complexe Tamines (199 m²) avec l'asbl Sports Jeunes pour un loyer de 97,51 €/mois.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 97.51,
+          "thematiques": [
+            "bail_locatif",
+            "gestion_immobiliere",
+            "asbl"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Gestion immobilière",
+          "titre": "Complexe Tamines - rue Stephenson 80-84 - Convention d'occupation avec l'ASBL CréACtions - Approbation",
+          "resume": "Adoption de la convention d'occupation du complexe Tamines (432,36 m²) avec l'asbl CreACtions pour un loyer de 211,86 €/mois.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 211.86,
+          "thematiques": [
+            "occupation_locaux",
+            "gestion_immobiliere",
+            "asbl"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 33,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "INFRASTRUCTURE",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Ecole 14 - Travaux en urgence de consolidation conservatoire du mur côté des locaux 29 à 34",
+          "resume": "Travaux de consolidation en urgence du mur côté cour longeant les locaux 29 à 34 de l'école 14, rue Capronnier, suite à un rapport de stabilité du 12 avril 2012. Passation en procédure négociée sans publicité. Dépense imputée à l'article 722/724IN-60/-51 du budget extraordinaire de 2012, financée par emprunt.",
+          "intervenants": [
+            "Bourgmestre",
+            "Lahlali",
+            "Smeysters",
+            "Durant",
+            "Grimberghs",
+            "Bouhjar",
+            "de Beauffort",
+            "Verzin"
+          ],
+          "repondant": "Verzin",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 22082.5,
+          "thematiques": [
+            "infrastructure",
+            "bâtiments_scolaires",
+            "travaux_urgence",
+            "consolidation",
+            "marche_public"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 42,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "La mise en service du stade du Crossing et son intégration dans le quartier",
+          "resume": "Demande de Monsieur Yvan de Beauffort concernant la mise en service du stade du Crossing et son intégration dans le quartier",
+          "intervenants": [
+            "Yvan de Beauffort",
+            "Le Bourgmestre"
+          ],
+          "repondant": "Le Bourgmestre",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "amenagements_sportifs",
+            "urbanisme_quartier"
+          ],
+          "source_file": "pv_2012.04.25.pdf"
         }
       ]
     },
