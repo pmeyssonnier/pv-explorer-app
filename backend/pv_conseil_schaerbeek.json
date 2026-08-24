@@ -16,6 +16,7 @@
       "2010-12-01",
       "2010-12-22",
       "2011-02-23",
+      "2011-03-30",
       "2012-01-18",
       "2012-02-15",
       "2012-05-30",
@@ -161,7 +162,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9324,
+    "total_points": 9372,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -16990,6 +16991,1339 @@
             "environnement"
           ],
           "source_file": "Pv%20CC%202011-02-23%20SP.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2011-03-30",
+        "date": "2011-03-30",
+        "source_file": "Pv%20CC%202011-03-30%20SP.pdf",
+        "extracted_at": "2026-08-24T08:58:31.384083",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 48,
+          "extracted": 48,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/Pv%2520CC%25202011-05-25%2520SP.pdf"
+      },
+      "points": [
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Société coopérative de crémation - Modification des statuts - Approbation",
+          "resume": "Approbation des modifications des statuts de la société coopérative intercommunale de crémation, telles qu'adressées par l'Intercommunale en date du 17 février 2011",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "intercommunales",
+            "cremation",
+            "statuts"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement redevance relatif au stationnement payant - Modifications",
+          "resume": "Modification du règlement de la redevance de stationnement payant fixant les tarifs et modalités de paiement du stationnement sur la voie publique",
+          "intervenants": [
+            "Charels",
+            "Van Gorp",
+            "Grimberghs"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "redevance",
+            "parking",
+            "tarification"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Budget 2011 - Service extraordinaire - Modification budgétaire n°1 - Approbation",
+          "resume": "Approbation de la modification budgétaire n°1 du budget 2011 pour le service extraordinaire",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget",
+            "2011",
+            "modification_budgetaire"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "CHU Brugmann - Prolongation de la garantie communale sur les dettes du CHU Brugmann - Approbation",
+          "resume": "Déclaration de la commune comme caution solidaire et octroi de garantie communale aux lignes de crédit du CHU Brugmann pour 2011, à concurrence de 35.762.090,10 EUR (33,33% des montants totaux)",
+          "intervenants": [
+            "Grimberghs",
+            "de Beauffort"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 35762090.1,
+          "thematiques": [
+            "chu_brugmann",
+            "garantie_communale",
+            "tresorerie",
+            "emprunt"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 10,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrôle",
+          "sous_rubrique": "CPAS",
+          "titre": "CPAS - Comptes 2009 - Approbation",
+          "resume": "Approbation définitive du compte de l'exercice 2009 du Centre public d'Aide sociale présentant un déficit de 1.951.895,29 € (résultat négatif de -600.533,07 € et dotation à la provision pour créances aléatoires de -1.351.362,22 €).",
+          "intervenants": [
+            "M. De Herde"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 11,
+            "abstentions": 0
+          },
+          "montant_eur": 1951895.29,
+          "thematiques": [
+            "finances_publiques",
+            "cpas"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'églises",
+          "sous_rubrique": "Sainte Thérèse d'Avila",
+          "titre": "Fabrique d'église Sainte Thérèse d'Avilla - Budget 2011 - Approbation",
+          "resume": "Approbation du budget 2011 de la Fabrique d'Eglise Sainte Thérèse d'Avila et octroi d'un subside communal ordinaire de 1.000 € pour équilibrer le budget, imputé à l'article 790/435EQ01/12 du budget 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 38,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 1000,
+          "thematiques": [
+            "finances_publiques",
+            "fabriques_eglises"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'églises",
+          "sous_rubrique": "Saint-Albert",
+          "titre": "Fabrique d'église Saint-Albert - Modification budgétaire de l'exercice 2010 - Budget de l'exercice 2011 - Approbation",
+          "resume": "Rejet de la modification budgétaire 2010 (devenue sans objet suite à la clôture de l'exercice). Approbation du budget 2011 et octroi d'un subside communal ordinaire de 14.081,20 € pour équilibrer le budget, imputé à l'article 790/435EQ01/12 de la prochaine modification budgétaire communale 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 38,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 14081.2,
+          "thematiques": [
+            "finances_publiques",
+            "fabriques_eglises"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Sécurité et Prévention",
+          "sous_rubrique": "Plan Stratégique",
+          "titre": "Avenant aux conventions conclues dans le cadre du Plan Stratégique de Sécurité et de Prévention 2010 - Approbation",
+          "resume": "Approbation des avenants aux conventions conclues dans le cadre du Plan Stratégique de Sécurité et de Prévention 2010 (ASBL Transit et ASBL Riso) pour rendre les montants justifiés compatibles avec le traitement appliqué par le pouvoir subsidiant. Mandat au Collège pour la signature de ces avenants.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "securite",
+            "prevention",
+            "conventions"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "Intercommunale",
+          "titre": "ASBL Intercommunale \"Académie des arts de la parole, de la danse et de la musique de Saint-Josse-ten-Noode/Schaerbeek\" - Comptes 2009 - Rétrocession du bénéfice cumulé - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL affichant un résultat positif de 38.393,28 € et un résultat cumulé de 350.004,45 €. Prise d'acte de la décision de l'Assemblée Générale de rétrocéder le bénéfice cumulé de 350.004 € aux deux communes proportionnellement à leur part contributive, soit 210.000 € pour Schaerbeek.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 210000,
+          "thematiques": [
+            "subventions",
+            "culture",
+            "intercommunale"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 16,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "Associations sportives",
+          "titre": "ASBL \"FC Kosova\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL FC Kosova affichant un résultat positif de 4.970,93 € et des avoirs de 1.365 €. Prise d'acte du versement du subside communal de 3.000 € en date du 10/12/2009.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3000,
+          "thematiques": [
+            "subventions",
+            "sport"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions aux ASBL",
+          "sous_rubrique": "Comptes 2009",
+          "titre": "ASBL \"Le Bus Bavard\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl Le Bus Bavard affichant une perte de 2.992,49 € pour l'exercice et un résultat cumulé de 46.159,98 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2992.49,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions aux ASBL",
+          "sous_rubrique": "Comptes 2009",
+          "titre": "ASBL \"Le Fanal des Animaux\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl Le Fanal des Animaux affichant une perte de -24.631,81 € pour l'exercice et un résultat cumulé de 101.111,32 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 24631.81,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions aux ASBL",
+          "sous_rubrique": "Comptes 2009",
+          "titre": "ASBL \"Trabzon Schaerbeek\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl Trabzon Schaerbeek affichant une perte de -6.434,48 € pour l'exercice et un résultat cumulé de -23.315,54 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 6434.48,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions aux ASBL",
+          "sous_rubrique": "Comptes 2009",
+          "titre": "ASBL \"Unis Vers Cite\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl Unis Vers Cité affichant un bénéfice de 3.029,99 € pour l'exercice et un montant des avoirs de 28.567,29 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3029.99,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Marchés publics",
+          "titre": "Marché d'emprunts destiné au financement du service extraordinaire de l'exercice 2011 - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du marché pour la conclusion d'emprunts pour un montant indicatif de 22.006.913 € destinés au financement des dépenses d'investissements du budget extraordinaire 2011, par procédure négociée avec publicité",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 22006913,
+          "thematiques": [
+            "emprunts",
+            "financement",
+            "investissements",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Developpement strategique et durable",
+          "sous_rubrique": "Planification urbaine",
+          "titre": "Elaboration du Plan Communal de Développement et de l'Agenda Local 21 - Approbation du projet de cahier des charges et du Rapport d'Incidences Environnementales",
+          "resume": "Approbation du cahier des charges du rapport d'incidences environnementales pour l'élaboration du Plan Communal de Développement et de l'Agenda Local 21",
+          "intervenants": [
+            "Bouhjar",
+            "Grimberghs"
+          ],
+          "repondant": "Smeysters",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "amenagement_territoire",
+            "environnement",
+            "agenda_21",
+            "developpement_durable"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Programme de Prevention Urbaine",
+          "sous_rubrique": "Gardiens de la Paix",
+          "titre": "Gardiens de la Paix - Prolongation, pour une période de 6 mois, du Contingent complémentaire - Convention 2011 entre le Service Public Fédéral Intérieur et la commune - Approbation",
+          "resume": "Approbation de la convention Gardiens de la Paix – Contingent complémentaire 2010 et 2011 entre la commune et l'État pour une prolongation de 6 mois",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gardiens_paix",
+            "securite",
+            "prevention_urbaine",
+            "emploi"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Mobilité",
+          "sous_rubrique": "",
+          "titre": "Plan de stationnement - Règlement de police complémentaire - Modifications (extension de zones de stationnement règlementé) - Approbation",
+          "resume": "Approbation des modifications du plan de stationnement avec extension de zones de stationnement réglémenté. Ajout de zones bleues (stationnement limité dans le temps) sur plusieurs rues dont Boulevard Lambermont, Avenue des Glycines, Rue des Mimosas, etc.",
+          "intervenants": [
+            "Nyssens",
+            "Van Gorp",
+            "Dönmez",
+            "Vraimont",
+            "Grimberghs"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 0,
+            "abstentions": 14
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "circulation_routiere",
+            "voirie_communale"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Mobilité",
+          "sous_rubrique": "",
+          "titre": "Plan de stationnement - Règlement de police complémentaire - Modifications (test : extension horaire du contrôle 9h-22h) - Approbation",
+          "resume": "Approbation des modifications du plan de stationnement avec test d'extension horaire du contrôle de 9h à 22h. Ajout de zones bleues (stationnement limité dans le temps) avec plage horaire 9-22h et zones payantes (excepté riverains) avec plage horaire 9-22h.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 0,
+            "abstentions": 14
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "circulation_routiere",
+            "voirie_communale",
+            "controle_parking"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Mobilité",
+          "sous_rubrique": "",
+          "titre": "Plan de stationnement - Règlement de police complémentaire - Modifications (20 minutes gratuites en zones rouges) - Approbation",
+          "resume": "Point retiré de l'ordre du jour",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "circulation_routiere"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Affaires Juridiques",
+          "sous_rubrique": "",
+          "titre": "Demande d'autorisation d'ester en justice dans l'aff. c/S.A. BELGACOM Mobile - S.A. MOBISTAR - S.A. KPN ORANGE - Contentieux relatif à la taxe communale sur les antennes relais de mobilophonie",
+          "resume": "Demande d'autorisation pour le Collège des Bourgmestre et Echevins d'intervenir dans la procédure sur la question préjudicielle posée à la Cour constitutionnelle par l'arrêt de la Cour d'appel de Liège du 26 janvier 2011 concernant la conformité des articles 97 et 98 de la loi du 21 mars 1991 avec l'article 170 § 4 de la Constitution, relative à la taxe communale sur les antennes relais de mobilophonie.",
+          "intervenants": [
+            "Vanhalewyn"
+          ],
+          "repondant": "De Herde",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contentieux",
+            "fiscalite",
+            "telecommunications",
+            "antennes_relais"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "RESSOURCES HUMAINES",
+          "sous_rubrique": "Cadre du personnel",
+          "titre": "Cadre du personnel - Département infrastructure - Division administrative - Modification",
+          "resume": "Modification du cadre du personnel du Département Infrastructure – Division administrative avec transformation et création d'emplois de secrétaires administratifs et d'administration aux bureaux Affaires générales et Voirie-Espaces verts-Propreté publique.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "cadre_personnel",
+            "infrastructure"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Ecole 3 sise rue Rogier 188 - Remplacement de deux chaudières au gaz - Mode de passation et fixation des conditions du marché",
+          "resume": "Remplacement de deux chaudières au gaz vétustes (1991) à l'école primaire n°3. Coût estimé à 30.000 € avec possibilité de prime IBGE de 2.000 € pour chauffage performant. Marché confié par procédure négociée sans publicité après consultation de quatre firmes.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "chauffage",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Divers bâtiments communaux - Inventaire de l'amiante - Mode de passation et fixation des conditions du marché",
+          "resume": "Inventaire d'amiante dans vingt-sept écoles et bâtiments communaux. Marché de services confié à un laboratoire agréé par procédure négociée sans publicité après consultation de cinq laboratoires. Coût estimé à 30.000 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "amiante",
+            "sante_securite",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 37,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Ecole 11-13 sise avenue de Roodebeek 103 - Etudes de stabilité de la dalle de la cour de récréation - Mode de passation et fixation des conditions du marché",
+          "resume": "Étude de stabilité de la dalle de la cour de récréation de l'école 11-13 avenue de Roodebeek n°103. Marché confié à un bureau privé par procédure négociée sans publicité après consultation de neuf bureaux. Coût estimé à 30.000 € TTC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "etudes_techniques",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Site Roodebeek - Section secondaire (Athénée Fernand Blum), section primaire (Ecole 13) et crèches (Les Etoiles Filantes) - Sécurisation des bâtiments - Mode de passation et fixation des conditions du marché",
+          "resume": "Sécurisation du site Roodebeek (école 13, Athénée Fernand Blum, crèche Les Etoiles Filantes) par installation de vidéo-parlophonie, vidéosurveillance et système d'ouverture sécurisée. Marché à lots par procédure négociée sans publicité après consultation de six firmes. Coût estimé à 25.000 € réparti sur trois articles budgétaires.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 25000,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "securite",
+            "videosurveillance",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "Installations sportives",
+          "titre": "Travaux supplémentaires - Système de régulation thermique des halles de tennis",
+          "resume": "Approbation des travaux supplémentaires pour centraliser le système de régulation thermique des halles de tennis du complexe Terdelt. Montant: 4.864,20 EUR TVAC. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 4864.2,
+          "thematiques": [
+            "travaux_supplementaires",
+            "installations_sportives",
+            "efficacite_energetique",
+            "financement_emprunt"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "Marchés publics",
+          "titre": "Mission de coordinateur de sécurité et de santé pour les chantiers temporaires - Mode de passation et fixation des conditions du marché",
+          "resume": "Passation de marché par procédure négociée sans publicité pour la désignation d'un coordinateur sécurité et santé pour les chantiers temporaires 2011. Montant estimé: 80.000 EUR. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 80000,
+          "thematiques": [
+            "marche_public",
+            "securite_chantiers",
+            "sante_travail",
+            "financement_emprunt"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Fontaines et installations",
+          "titre": "Fontaine sise Place de la Patrie - Remise en état de la salle de pompage - Marché de travaux",
+          "resume": "Marché de travaux pour la remise en état de la salle de pompage de la fontaine Place de la Patrie suite à une inondation. Remplacement du matériel électrique endommagé. Montant estimé: 20.000 EUR HTVA. Procédure négociée sans publicité. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 20000,
+          "thematiques": [
+            "espaces_publics",
+            "fontaines",
+            "travaux_restauration",
+            "marche_public",
+            "financement_emprunt"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 44,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Trottoirs",
+          "titre": "Plan de rénovation des trottoirs - Année 2011 - Mode de passation et fixation des conditions du marché",
+          "resume": "Plan pluriannuel de rénovation des trottoirs sur 30 ans. Pour l'année 2011, travaux comprenant renouvellement complet des trottoirs communaux. Adjudication publique. Montant estimé: 1.000.000 EUR TTC. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1000000,
+          "thematiques": [
+            "voirie",
+            "trottoirs",
+            "renovation_routes",
+            "adjudication_publique",
+            "financement_emprunt"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 46,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Espaces publics",
+          "titre": "Réaménagement de la place Jansen - Mode de passation et fixation des conditions du marché",
+          "resume": "Réaménagement complet de la place Jansen (carrefour rue Jacques Jansen, Grande rue au Bois et avenue Chazal). Adjudication publique. Montant estimé: 998.868,43 EUR TTC, majoré à 1.100.000 EUR pour révision prix et dépassements. Subsides 90% Région Bruxelles-Capitale, financement complémentaire par emprunt.",
+          "intervenants": [
+            "M. Van Gorp"
+          ],
+          "repondant": "Mme Smeysters et Mme la Bourgmestre ff",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1100000,
+          "thematiques": [
+            "espace_public",
+            "place_jansen",
+            "reammenagement",
+            "subsides_region",
+            "financement_emprunt",
+            "entretien_20_ans"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 48,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Espaces publics",
+          "titre": "Réaménagement de la place des Chasseurs Ardennais - Mode de passation et fixation des conditions du marché",
+          "resume": "Réaménagement de la place des Chasseurs Ardennais. Montant estimé: 1.126.785,58 EUR TTC (à majorer). Adjudication publique. Subsides et financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1126785.58,
+          "thematiques": [
+            "espace_public",
+            "place_chasseurs_ardennais",
+            "reammenagement",
+            "adjudication_publique",
+            "subsides_region"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 50,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux publics",
+          "sous_rubrique": "Aménagements de voirie",
+          "titre": "Réalisation de divers aménagements de voirie - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation d'un marché stock pour la réalisation de divers aménagements de voirie (plateaux, ralentisseurs, oreilles de trottoirs, aménagements PMR, renouvellement raccordements égouts). Adjudication publique. Montant maximum des travaux 320.000 € TVA incluse. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 320000,
+          "thematiques": [
+            "travaux_publics",
+            "amenagements_voirie",
+            "marches_publics",
+            "pmr"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 52,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux publics",
+          "sous_rubrique": "Entretien des chaussées",
+          "titre": "Entretien des chaussées - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du renouvellement total ou partiel du revêtement hydrocarboné de plusieurs rues et avenues (37.300 m² pour 800.000 € TVA incluse). Adjudication publique selon cahier spécial des charges Scha/Infra/2011/010. Dépense totale estimée à 880.000 € TVA comprise, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 880000,
+          "thematiques": [
+            "travaux_publics",
+            "entretien_chaussees",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 54,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Biens communaux",
+          "titre": "Boutique de Quartier sise rue Richard Vandevelde 85 - Convention d'occupation avec l'ASBL RenovaS - Prendre acte",
+          "resume": "Prise d'acte de l'occupation du local rue Richard Vandevelde 85 par l'asbl RenovaS qui versera 50% du loyer et des charges (550 € + 20 €/mois). Adoption de la convention entre la Commune et l'asbl RenovaS.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gestion_immobiliere",
+            "biens_communaux"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 54,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Contrat de quartier",
+          "titre": "Contrat de quartier \"Princesse Elisabeth\" - Bien communal sis rue Van Camp 1A - Fixation de la valeur locative - Approbation",
+          "resume": "Adoption de la valeur locative fixée par le Géomètre communal pour l'immeuble rue Van Camp 1A (3 chambres, 116,85 m²) à 680 €/mois.",
+          "intervenants": [
+            "M. Van Gorp"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 680,
+          "thematiques": [
+            "gestion_immobiliere",
+            "contrat_quartier"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 55,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Contrat de quartier",
+          "titre": "Contrat de quartier \"Navez-Portaels\" - Acquisition de gré à gré, pour cause d'utilité publique, du bien sis rue d'Anethan, 6-8 - Approbation",
+          "resume": "Approbation de l'acquisition de gré à gré pour cause d'utilité publique du bien rue d'Anethan 6-8 (4a 30ca), propriété de l'asbl \"Les Aumôniers du Travail\", pour 140.000 euros dans le cadre du Contrat de Quartier \"Navez-Portaels\". Financement à 90% par le Contrat de Quartier.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 140000,
+          "thematiques": [
+            "gestion_immobiliere",
+            "contrat_quartier",
+            "acquisitions"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 56,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Baux",
+          "titre": "Rez-de-chaussée communal sis rue Navez 1 - Contrat de bail - Approbation",
+          "resume": "Approbation de la prise en location du rez-de-chaussée commercial communal rue Navez 1 par la sprl IND Group à partir du 1er mai 2011 pour un loyer mensuel de 653,98 euros, destiné à y tenir une agence de voyages. Approbation du bail déposé au dossier.",
+          "intervenants": [
+            "M. Ayad"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 653.98,
+          "thematiques": [
+            "gestion_immobiliere",
+            "baux",
+            "biens_communaux"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 57,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Navez-Portaels",
+          "titre": "Opération 1 C - Démolition/reconstruction de logement assimilé à du logement social - Création d'un espace pour accueillir les ateliers mécaniques de l'Institut Cardinal Mercier au rez-de-chaussée et au sous-sol - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du principe d'élaboration d'une étude pour la démolition/construction de logements assimilés à du logement social et la création d'un espace pour accueillir les ateliers mécanique de l'Institut Technique Cardinal Mercier au rez-de-chaussée et sous-sol sis rue d'Anethan 6-8. Passation du marché par procédure négociée avec publicité. Dépense de 114.369,00 € à imputer à l'article 922/733-CQ-60/06 du budget extraordinaire de 2011. Subsidiation régionale à concurrence de 90%.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 114369,
+          "thematiques": [
+            "logement_social",
+            "renovation_construction",
+            "marche_public",
+            "contrat_quartier"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 59,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Navez-Portaels",
+          "titre": "Opération 1 F - Démolition d'un ancien garage au rez-de-chaussée et construction d'un immeuble de logement assimilé à du logement social - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du principe d'élaboration d'une étude pour la démolition d'un ancien garage au rez-de-chaussée et la construction d'un immeuble de logement assimilés à du logement social sis avenue Princesse Élisabeth 48. Passation du marché par procédure négociée avec publicité. Dépense de 140.787,00 € à imputer à l'article 922/733-CQ-60/06 du budget extraordinaire de 2011. Subsidiation régionale à concurrence de 90%.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 140787,
+          "thematiques": [
+            "logement_social",
+            "renovation_construction",
+            "marche_public",
+            "contrat_quartier"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 61,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Navez-Portaels",
+          "titre": "Opération 5 A.3 - Rénovation et transformation de la maison de quartier Navez sise 43 rue J.F. Navez - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Passation du marché de travaux à confier à une entreprise par adjudication publique pour la rénovation et la transformation de la maison de quartier sise au 43 de la rue Navez. Dépense de 511.000,00 € à imputer à l'article 922/723-CQ-60/06 du budget extraordinaire 2011. Subsidiation régionale à concurrence de 370.260,00 €. Financement de la part communale par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 511000,
+          "thematiques": [
+            "renovation_construction",
+            "marche_public",
+            "contrat_quartier",
+            "equipements_publics"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 62,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Coteaux-Josaphat",
+          "titre": "Composition de la Commission de Quartier",
+          "resume": "Approbation de la composition de la Commission de quartier du contrat de quartier durable « Coteaux-Josaphat ». Représentation des habitants du quartier et du secteur associatif et scolaire suite à l'Assemblée Générale du 15 février 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gouvernance",
+            "contrat_quartier",
+            "participation_citoyenne"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 63,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Lehon-Kessels",
+          "titre": "Opération 4 E - Renouvellement de l'éclairage public - Approbation",
+          "resume": "Accord sur la commande à Sibelga de la réfection de l'éclairage des rues Josaphat, Coteaux, Kessels, Van Hoorde, Poste et Brichaut selon six offres de prix. Dépense totale de 294.994,00 € TTC à imputer à l'article 922/731-CQ-60/05. Subsidiation régionale à concurrence de 90%. Financement de la part communale par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 294994,
+          "thematiques": [
+            "eclairage_public",
+            "marche_public",
+            "contrat_quartier",
+            "infrastructures"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES COMMUNAUX SPECIFIQUES",
+          "sous_rubrique": "Intégration et Prévention",
+          "titre": "Conseil Consultatif Bruxellois Francophone de l'Aide aux personnes et de la santé - Candidature du coordinateur du programme communal de cohésion sociale - Approbation",
+          "resume": "Approbation de la candidature de Mr Juan LATORRE, coordinateur du programme communal de Cohésion sociale, pour représenter la Commune au Conseil Consultatif bruxellois francophone de l'aide aux personnes et de la santé, section Cohésion sociale.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "cohesion_sociale",
+            "aide_personnes",
+            "sante"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 67,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Achats",
+          "titre": "Libéralisation des services postaux - Service postal universel - Convention de mandat entre la Commune de Schaerbeek et la Commune d'Ixelles dans le cadre d'un marché conjoint",
+          "resume": "Acceptation de la convention de mandat de la commune d'Ixelles pour réaliser un marché public de services conjoint avec Bpost via procédure négociée sans publicité pour les services postaux relevant du service universel. Marché portant sur les envois postaux jusqu'à 2kg, soumis à l'obtention d'une licence pendant un an.",
+          "intervenants": [
+            "Charels",
+            "Clerfayt"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "services_postaux",
+            "marche_public",
+            "bpost",
+            "cooperation_communale"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 47,
+          "page": 70,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "La taxe sur immeubles abandonnés et la vente éventuelle de la maison de maître sise avenue Plasky 40",
+          "resume": "Demande de Madame Bernadette VRIAMONT concernant la taxe sur immeubles abandonnés et la vente éventuelle de la maison de maître sise avenue Plasky 40.",
+          "intervenants": [
+            "Vriamont"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immeubles_abandonnes",
+            "taxe",
+            "vente_immobiliere"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 48,
+          "page": 70,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "Le suivi du test Helmet/Nestor de Tière",
+          "resume": "Demande de Monsieur Denis GRIMBERGHS concernant le suivi du test Helmet/Nestor de Tière.",
+          "intervenants": [
+            "Grimberghs"
+          ],
+          "repondant": "Smeysters",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "securite_routiere",
+            "test_technology"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
+        },
+        {
+          "sp": 49,
+          "page": 70,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "La desserte de la commune par la STIB",
+          "resume": "Demande de Monsieur Denis GRIMBERGHS concernant la desserte de la commune par la STIB.",
+          "intervenants": [
+            "Grimberghs"
+          ],
+          "repondant": "Smeysters",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "transports_publics",
+            "stib",
+            "mobilite"
+          ],
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
         }
       ]
     },
