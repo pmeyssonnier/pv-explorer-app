@@ -176,7 +176,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 10061,
+    "total_points": 10062,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -2589,6 +2589,32 @@
       },
       "points": [
         {
+          "sp": 1,
+          "page": 9,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Règlements",
+          "sous_rubrique": "Redevances administratives",
+          "titre": "REGLEMENT FIXANT LES REDEVANCES SUR L'ETABLISSEMENT ET/OU LA DELIVRANCE DE CERTIFICATS ET DE DOCUMENTS ADMINISTRATIFS - Modification",
+          "resume": "Modification du règlement fixant les redevances pour l'établissement et/ou la délivrance de certificats et documents administratifs. Le règlement détaille les tarifs applicables pour cartes d'identité, passeports, permis de conduire, actes de l'état civil, certificats d'urbanisme, permis de travail, etc. Il précise également les exemptions de redevance et les modalités de paiement.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "redevances_administratives",
+            "certificats_documents",
+            "tarification"
+          ],
+          "source_file": "Pv%202010.03.31%20SP (1).pdf"
+        },
+        {
           "sp": 2,
           "page": 2,
           "urgence": false,
@@ -2787,10 +2813,10 @@
           "page": 20,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Contrôle",
-          "sous_rubrique": "",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
           "titre": "C.P.A.S. - Ajustement interne du budget de l'exercice 2009 - Approbation",
-          "resume": "Approbation de la délibération du 27 janvier 2010 par laquelle le Conseil de l'Action Sociale arrête l'ajustement interne du budget des dépenses et des recettes du CPAS pour l'exercice 2009. Recettes totales : 118.068.877,00 €. Dépenses totales : 118.068.877,00 €",
+          "resume": "Approbation de la délibération du 27 janvier 2010 par laquelle le Conseil de l'Action Sociale arrête l'ajustement interne du budget des dépenses et des recettes du CPAS pour l'exercice 2009. Service d'exploitation : Recettes : 92.200.893,00 € / Dépenses : 91.202.761,00 €. Service d'investissements : Recettes : 20.201.306,00 € / Dépenses : 26.676.116,00 €.",
           "intervenants": [],
           "repondant": null,
           "decision": "APPROUVÉ",
@@ -2806,17 +2832,17 @@
             "budget",
             "ajustement_interne"
           ],
-          "source_file": "Pv%202010.03.31%20SP.pdf"
+          "source_file": "Pv%202010.03.31%20SP (1).pdf"
         },
         {
           "sp": 10,
           "page": 22,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Contrôle",
-          "sous_rubrique": "",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
           "titre": "C.P.A.S. - Extension du cadre Maribel - Approbation",
-          "resume": "Approbation de l'extension au 1er mars 2010 du cadre Maribel subsidié par le Fonds sectoriel de l'ONSSAPL. Nouvelle mesure du Maribel Fiscal destinée aux emplois de travailleurs sociaux de première ligne",
+          "resume": "Approbation de l'extension au 1er mars 2010 du cadre Maribel subsidié par le Fonds sectoriel de l'ONSSAPL. Application du Maribel Social et instauration d'une nouvelle mesure le Maribel Fiscal.",
           "intervenants": [],
           "repondant": null,
           "decision": "APPROUVÉ",
@@ -2830,19 +2856,20 @@
           "thematiques": [
             "cpas",
             "maribel",
-            "emploi"
+            "emploi",
+            "travailleur_social"
           ],
-          "source_file": "Pv%202010.03.31%20SP.pdf"
+          "source_file": "Pv%202010.03.31%20SP (1).pdf"
         },
         {
           "sp": 11,
           "page": 23,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Contrôle",
-          "sous_rubrique": "",
-          "titre": "C.P.A.S. - Statuts de l'ASBL chargée d'assurer la production, la gestion et la distribution d'énergie par co-génération - Approbation",
-          "resume": "Approbation des statuts de l'asbl chargée d'assurer la production, la gestion et la distribution, au sein de ses membres (partenaires du Site Paul Brien), d'énergie produite par la technique de la co-génération. Projet pilote d'utilisation rationnelle des énergies et de développement durable",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "C.P.A.S. - Statuts de l'ASBL chargée d'assurer la production, la gestion et la distribution au sein de ses membres, d'énergie produite par la technique de la co-génération - Approbation",
+          "resume": "Approbation des statuts de l'asbl chargée d'assurer la production, la gestion et la distribution, au sein de ses membres (Les partenaires du Site Paul Brien), d'énergie produite par la technique de la co-génération. Projet lié au réaménagement du Site Paul Brien et à l'installation de la Maison de Repos et de Soins « La Cerisaie ».",
           "intervenants": [
             "Courtheoux",
             "Güles"
@@ -2858,12 +2885,14 @@
           "montant_eur": null,
           "thematiques": [
             "cpas",
-            "energie",
-            "co-generation",
             "asbl",
+            "energie",
+            "co_generation",
+            "site_paul_brien",
+            "maison_repos_soins",
             "developpement_durable"
           ],
-          "source_file": "Pv%202010.03.31%20SP.pdf"
+          "source_file": "Pv%202010.03.31%20SP (1).pdf"
         },
         {
           "sp": 12,
@@ -3054,10 +3083,10 @@
           "page": 32,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Marchés et Achats",
-          "sous_rubrique": "Marchés Publics",
-          "titre": "Désignation de la zone de Police 5344 comme opérateur intervenant en nom collectif pour l'attribution et l'exécution du marché conjoint concernant l'installation et l'entretien d'un réseau de caméras de surveillance",
-          "resume": "Approbation de la Convention désignant la zone de Police 5344 comme opérateur intervenant en nom collectif pour le marché conjoint passé entre les communes de Schaerbeek, Evere et Saint-Josse-ten-Noode ayant pour objet l'installation et l'entretien d'un réseau de caméras de surveillance sur leurs territoires respectifs.",
+          "rubrique": "Achats et marchés",
+          "sous_rubrique": "Marché de surveillance",
+          "titre": "Désignation de la zone de Police 5344 comme opérateur intervenant en nom collectif pour l'attribution et l'exécution du marché conjoint pour l'installation et l'entretien d'un réseau de caméras de surveillance - Convention - Approbation",
+          "resume": "Approbation de la désignation de la zone de Police 5344 comme opérateur intervenant en nom collectif pour l'exécution du marché conjoint pour l'installation et l'entretien d'un réseau de caméras de surveillance sur les territoires de Schaerbeek, Evere et Saint-Josse-ten-Noode.",
           "intervenants": [
             "Mme Nyssens",
             "Mme Bouarfa",
@@ -3066,20 +3095,21 @@
             "M. Köksal"
           ],
           "repondant": "Mme la Bourgmestre ff",
-          "decision": "",
+          "decision": "APPROUVÉ",
           "vote": {
-            "type": null,
+            "type": "unanimite",
             "pour": null,
             "contre": 0,
             "abstentions": 0
           },
           "montant_eur": null,
           "thematiques": [
+            "surveillance",
+            "cameras",
             "marche_public",
-            "videosurveillance",
-            "securite"
+            "cooperation_intercommunale"
           ],
-          "source_file": "Pv%202010.03.31%20SP.pdf"
+          "source_file": "Pv%202010.03.31%20SP (1).pdf"
         },
         {
           "sp": 20,
@@ -3542,29 +3572,30 @@
         },
         {
           "sp": 37,
-          "page": 72,
+          "page": 73,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Bâtiments",
-          "sous_rubrique": "",
-          "titre": "Eglise Sainte-Suzanne - Travaux de dépose conservatoire de quatre vitraux exceptionnels - Mode de passation et fixation des conditions du marché - Pour information",
-          "resume": "Dépose conservatoire de quatre vitraux exceptionnels de l'église Sainte-Suzanne.",
+          "rubrique": "Immeubles communaux",
+          "sous_rubrique": "Église Sainte-Suzanne",
+          "titre": "Église Sainte-Suzanne - Dépose conservatoire de vitraux - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Approbation du principe de travaux visant à la dépose conservatoire de quatre vitraux exceptionnels situés dans les verrières du chœur de l'église Sainte-Suzanne. Mode de passation : procédure négociée sans publicité après consultation de trois firmes. Coût estimé à 3.000 €. Financement : 80% par subside régional et solde par emprunt.",
           "intervenants": [],
           "repondant": null,
-          "decision": "",
+          "decision": "PREND POUR INFORMATION",
           "vote": {
-            "type": null,
+            "type": "unanimite",
             "pour": null,
             "contre": 0,
             "abstentions": 0
           },
-          "montant_eur": null,
+          "montant_eur": 3000,
           "thematiques": [
+            "immeubles_communaux",
             "patrimoine",
-            "culture",
-            "restauration"
+            "travaux",
+            "marchés_publics"
           ],
-          "source_file": "Pv%202010.03.31%20SP.pdf"
+          "source_file": "Pv%202010.03.31%20SP (1).pdf"
         },
         {
           "sp": 38,
@@ -3977,12 +4008,12 @@
           "urgence": false,
           "type": "point_normal",
           "rubrique": "Contrat de quartier",
-          "sous_rubrique": "",
+          "sous_rubrique": "Reprise de chantier",
           "titre": "Reprise de chantier de construction de deux immeubles sis aux angles Dupont 29/Linné et Dupont 11/Plantes - Nouveau mode passation et conditions de marché - Approbation",
-          "resume": "Approbation de la procédure négociée sans publicité pour la reprise du chantier de construction de deux immeubles. Le montant estimé des travaux est de 435.000,00 euros. Les offres initiales des sociétés Gilicon et Vandezande ont été écartées comme anormalement élevées.",
+          "resume": "Approbation de la reprise du chantier de construction de deux immeubles aux angles Dupont 29/Linné et Dupont 11/Plantes. Passage en procédure négociée sans publicité suite à l'écartement des deux offres reçues (Gilicon et Vandezande) jugées anormalement élevées. Le montant estimé des travaux est 435.000,00 €.",
           "intervenants": [],
           "repondant": null,
-          "decision": "APPROUVÉ",
+          "decision": "DÉCIDE",
           "vote": {
             "type": "unanimite",
             "pour": null,
@@ -3993,22 +4024,22 @@
           "thematiques": [
             "marche_public",
             "construction",
-            "contrat_de_quartier"
+            "travaux"
           ],
-          "source_file": "Pv%202010.03.31%20SP.pdf"
+          "source_file": "Pv%202010.03.31%20SP (1).pdf"
         },
         {
           "sp": 54,
-          "page": 100,
+          "page": 99,
           "urgence": false,
           "type": "point_normal",
           "rubrique": "Planification",
-          "sous_rubrique": "",
+          "sous_rubrique": "Plan Particulier d'Affectation du Sol",
           "titre": "Elaboration d'un Plan Particulier d'Affectation du Sol \"RTBF\" en ce compris un rapport sur les incidences environnementales - Mode de passation et fixation des conditions du marché - Approbation",
-          "resume": "Approbation de l'élaboration d'un Plan Particulier d'Affectation du Sol (PPAS) \"RTBF\" avec rapport sur les incidences environnementales. Confier la mission d'auteur de projet au secteur privé par procédure négociée sans publicité. Montant estimé des études : 80.000 euros TTC. Financement par subside et emprunt pour éventuels dépassements.",
+          "resume": "Approbation de l'élaboration d'un PPAS et d'un rapport sur les incidences environnementales pour le site RTBF. Confier la mission au secteur privé par procédure négociée sans publicité. Budget estimé à 80.000€ TTC (augmenté de 35.000€ initialement prévu). Financement par subside régional et emprunt pour dépassement.",
           "intervenants": [],
           "repondant": null,
-          "decision": "APPROUVÉ",
+          "decision": "DÉCIDE",
           "vote": {
             "type": "vote_nominal",
             "pour": 30,
@@ -4018,11 +4049,11 @@
           "montant_eur": 80000,
           "thematiques": [
             "urbanisme",
-            "plan_affectation_sol",
             "environnement",
-            "marche_public"
+            "marche_public",
+            "rtbf"
           ],
-          "source_file": "Pv%202010.03.31%20SP.pdf"
+          "source_file": "Pv%202010.03.31%20SP (1).pdf"
         },
         {
           "sp": 55,
