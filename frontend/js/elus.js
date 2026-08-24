@@ -15,6 +15,7 @@ let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltr
 let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
 let eluTypeFilter = 'all';  // type d'intervention sélectionné ("all" = tous) — depose uniquement
 let eluThemeFilter = 'all'; // thématique sélectionnée ("all" = toutes) — depose ET repond
+let eluRoleFilter = 'all';  // rôle sélectionné ("all" = tous) — filtre le menu élu·e, voir puces
 let eluSelectedKey = null;  // clé actuellement chargée
 
 // Présélection appliquée depuis un lien partagé (?tab=elus&elu=…), voir handleDeepLink.
@@ -34,6 +35,7 @@ export async function loadElus() {
     if (!res.ok) throw new Error('Erreur ' + res.status);
     elusData = (await res.json()).elus || [];
     elusLoaded = true;
+    renderEluRoleChips();
     populateElus();
   } catch (err) {
     input.disabled = true;
@@ -41,15 +43,37 @@ export async function loadElus() {
   }
 }
 
+// Puces de rôle (Conseiller·ère·s / Collège) — même widget que les puces de
+// l'onglet Séances (.elu-chip/.elu-chip-active) : reclique sur la puce déjà
+// active → "Tous les rôles" ; comptent le nombre d'élu·e·s ayant ce rôle
+// (indépendant du filtre lui-même, contrairement aux puces à facettes de
+// l'onglet Séances — ici un seul filtre, pas de comptage croisé nécessaire).
+function eluRoleChip(role, label, count) {
+  const active = eluRoleFilter === role ? ' elu-chip-active' : '';
+  return `<button type="button" class="elu-chip${active}" data-click="onEluRoleChipClick" data-arg="${role}">${escapeHtml(label)} (${count})</button>`;
+}
+function renderEluRoleChips() {
+  const box = document.getElementById('eluRoleChips');
+  if (!box || !elusData) return;
+  const nConseiller = elusData.filter(e => e.role === 'conseiller').length;
+  const nCollege = elusData.filter(e => e.role === 'college').length;
+  box.innerHTML = eluRoleChip('conseiller', 'Conseiller·ère·s', nConseiller)
+    + eluRoleChip('college', 'Collège', nCollege);
+}
+export function onEluRoleChipClick(role) {
+  eluRoleFilter = eluRoleFilter === role ? 'all' : role;
+  renderEluRoleChips();
+  populateElus();
+}
+
 // (Re)remplit le menu déroulant selon le filtre de rôle courant.
 export function populateElus() {
   const select = document.getElementById('eluSelect');
-  const role = (document.getElementById('eluRole') || {}).value || 'all';
   if (!select || !elusData) return;
   const prevKey = eluSelectedKey;
   // Tri par nom de famille (la clé backend gère déjà les particules, ex.
   // « de Fierlant » → clé « fierlant »), pas par nombre d'interventions.
-  const list = elusData.filter(e => role === 'all' || e.role === role)
+  const list = elusData.filter(e => eluRoleFilter === 'all' || e.role === eluRoleFilter)
     .slice()
     .sort((a, b) => a.key.localeCompare(b.key, 'fr'));
   select.innerHTML = list.map(e => `<option value="${escapeHtml(e.key)}">${escapeHtml(e.nom)}</option>`).join('');
