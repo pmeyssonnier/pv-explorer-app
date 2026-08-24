@@ -109,6 +109,18 @@ def test_normalize_question_builds_stable_id_from_year_and_number():
     assert q["repondant"] == "Bernard Clerfayt"
 
 
+def test_normalize_question_cleans_thematiques_list():
+    q = qe.normalize_question(_raw(thematiques=["stationnement", "securite_routiere"]), "x.pdf")
+    assert q["thematiques"] == ["stationnement", "securite_routiere"]
+
+
+def test_normalize_question_thematiques_defaults_to_empty_list():
+    # Absente de la réponse Claude (ancien schéma, ou champ omis) : jamais
+    # None, toujours une liste — cohérent avec un point de PV normalisé.
+    q = qe.normalize_question(_raw(), "x.pdf")
+    assert q["thematiques"] == []
+
+
 def test_normalize_question_repondant_none_when_not_signed():
     # Comme "reponse" : une réponse non signée nommément (ou absente) ne
     # doit jamais produire un nom deviné.

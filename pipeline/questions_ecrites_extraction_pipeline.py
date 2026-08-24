@@ -39,7 +39,7 @@ import pdfplumber
 import anthropic
 from tqdm import tqdm
 
-from pv_extraction_pipeline import _clean_str, _coerce_int_or_none  # noqa: E402
+from pv_extraction_pipeline import _clean_str, _clean_str_list, _coerce_int_or_none  # noqa: E402
 
 # ══════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
@@ -173,6 +173,9 @@ SCHÉMA JSON :
                                 // "Bernard Clerfayt"), tel qu'indiqué en tête ou en signature de
                                 // la réponse (ex. "Réponse de M. Bernard Clerfayt, Bourgmestre :")
                                 // ; null si la réponse est absente ou non signée nommément
+  "thematiques": <array snake_case>   // sujets abordés (ex. ["stationnement", "securite_routiere"])
+                                       // — même style libre que pour un point de PV, pas de liste
+                                       // fermée ; 1 à 4 tags pertinents, jamais un par phrase
 }
 
 RÈGLES :
@@ -185,7 +188,7 @@ RÈGLES :
   brut lisible, pas de markdown.
 
 RÉPONDS UNIQUEMENT en JSON valide, sans markdown, sans texte avant/après :
-{"numero": ..., "date": ..., "auteur": ..., "titre": ..., "question": ..., "reponse": ..., "repondant": ...}
+{"numero": ..., "date": ..., "auteur": ..., "titre": ..., "question": ..., "reponse": ..., "repondant": ..., "thematiques": [...]}
 """
 
 
@@ -298,6 +301,7 @@ def normalize_question(data: dict, filename: str) -> Optional[dict]:
         "question": _clean_str(data.get("question")),
         "reponse": _clean_str(data.get("reponse")) or None,
         "repondant": _clean_str(data.get("repondant")) or None,
+        "thematiques": _clean_str_list(data.get("thematiques")),
         "source_file": filename,
         "extracted_at": datetime.now().isoformat(),
     }

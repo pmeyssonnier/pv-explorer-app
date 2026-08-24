@@ -246,6 +246,7 @@ export function buildSourcesHtml(srcs) {
       <div class="source-ref">${ref}</div>
       <div class="source-titre">${escapeHtml(s.titre)}</div>
       ${s.decision ? `<div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>` : ''}
+      ${renderThemeTags(s.thematiques)}
       ${renderReponseDetails(s.reponse)}
     </div>`;
   };
