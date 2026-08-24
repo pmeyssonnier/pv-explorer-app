@@ -73,9 +73,9 @@
 
 <nav class="tabs">
   <button class="tab active" data-click="switchTab" data-arg="chat" id="tab-chat"><svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg><span>Question</span></button>
-  <button class="tab" data-click="switchTab" data-arg="stats" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
-  <button class="tab" data-click="switchTab" data-arg="elus" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
   <button class="tab" data-click="switchTab" data-arg="seances" id="tab-seances"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg><span>Séances</span></button>
+  <button class="tab" data-click="switchTab" data-arg="elus" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
+  <button class="tab" data-click="switchTab" data-arg="stats" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
   <button class="tab" data-click="switchTab" data-arg="admin" id="tab-admin" hidden><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg><span>Admin</span></button>
 </nav>
 
@@ -104,6 +104,41 @@
     <button class="new-search" id="newSearchBtn" type="button" data-click="newSearch" style="display:none">↻ Nouvelle recherche</button>
 
     <div class="conversation" id="conversation"></div>
+  </section>
+
+  <!-- ── ONGLET SÉANCES ── -->
+  <section class="panel" id="panel-seances">
+    <div class="elus-panel">
+      <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séances du Conseil communal</h3>
+      <p class="trend-intro">Parcourez les procès-verbaux <strong>séance par séance</strong> : pour chaque point à l'ordre du jour, l'objet, qui l'a déposé, qui y a répondu, et le débat filmé quand il existe.</p>
+      <div class="elus-bar">
+        <select id="seanceYear" class="elu-select" aria-label="Filtrer par année"></select>
+        <select id="seanceList" class="elu-select elu-select-date" aria-label="Choisir une séance"></select>
+      </div>
+      <div id="seanceResult"></div>
+    </div>
+  </section>
+
+  <!-- ── ONGLET INTERVENTIONS PAR ÉLU·E ── -->
+  <section class="panel" id="panel-elus">
+    <div class="stats-toolbar">
+      <button class="msg-act" type="button" data-click="shareElu" title="Partager le lien vers cette fiche">Partager</button>
+    </div>
+    <div class="elus-panel">
+      <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg>Interventions par élu·e</h3>
+      <p class="trend-intro">Recherche <strong>structurée et exhaustive</strong> : choisissez un·e élu·e → la liste complète de ses interventions, <strong>indépendante de la formulation</strong> (contrairement au chat). Les rôles diffèrent : les <strong>conseiller·ère·s</strong> déposent questions, demandes et motions ; les membres du <strong>Collège</strong> (échevin·e·s, bourgmestre) répondent en séance.</p>
+      <div class="elus-bar">
+        <select id="eluRole" class="elu-select" aria-label="Filtrer par rôle">
+          <option value="all">Tous les rôles</option>
+          <option value="conseiller">Conseiller·ère·s</option>
+          <option value="college">Collège (échevin·e·s)</option>
+        </select>
+        <select id="eluSelect" class="elu-select elu-select-name" aria-label="Choisir un·e élu·e"></select>
+        <select id="eluType" class="elu-select elu-select-type" aria-label="Filtrer par type d'intervention" hidden></select>
+        <select id="eluYear" class="elu-select elu-select-year" aria-label="Filtrer par année" hidden></select>
+      </div>
+      <div id="eluResult"></div>
+    </div>
   </section>
 
   <!-- ── ONGLET STATS ── -->
@@ -137,41 +172,6 @@
 
     <div id="statsContent">
       <div class="loading"><span>Chargement des statistiques</span><span class="dots"><span></span><span></span><span></span></span></div>
-    </div>
-  </section>
-
-  <!-- ── ONGLET INTERVENTIONS PAR ÉLU·E ── -->
-  <section class="panel" id="panel-elus">
-    <div class="stats-toolbar">
-      <button class="msg-act" type="button" data-click="shareElu" title="Partager le lien vers cette fiche">Partager</button>
-    </div>
-    <div class="elus-panel">
-      <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg>Interventions par élu·e</h3>
-      <p class="trend-intro">Recherche <strong>structurée et exhaustive</strong> : choisissez un·e élu·e → la liste complète de ses interventions, <strong>indépendante de la formulation</strong> (contrairement au chat). Les rôles diffèrent : les <strong>conseiller·ère·s</strong> déposent questions, demandes et motions ; les membres du <strong>Collège</strong> (échevin·e·s, bourgmestre) répondent en séance.</p>
-      <div class="elus-bar">
-        <select id="eluRole" class="elu-select" aria-label="Filtrer par rôle">
-          <option value="all">Tous les rôles</option>
-          <option value="conseiller">Conseiller·ère·s</option>
-          <option value="college">Collège (échevin·e·s)</option>
-        </select>
-        <select id="eluSelect" class="elu-select elu-select-name" aria-label="Choisir un·e élu·e"></select>
-        <select id="eluType" class="elu-select elu-select-type" aria-label="Filtrer par type d'intervention" hidden></select>
-        <select id="eluYear" class="elu-select elu-select-year" aria-label="Filtrer par année" hidden></select>
-      </div>
-      <div id="eluResult"></div>
-    </div>
-  </section>
-
-  <!-- ── ONGLET SÉANCES ── -->
-  <section class="panel" id="panel-seances">
-    <div class="elus-panel">
-      <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séances du Conseil communal</h3>
-      <p class="trend-intro">Parcourez les procès-verbaux <strong>séance par séance</strong> : pour chaque point à l'ordre du jour, l'objet, qui l'a déposé, qui y a répondu, et le débat filmé quand il existe.</p>
-      <div class="elus-bar">
-        <select id="seanceYear" class="elu-select" aria-label="Filtrer par année"></select>
-        <select id="seanceList" class="elu-select elu-select-date" aria-label="Choisir une séance"></select>
-      </div>
-      <div id="seanceResult"></div>
     </div>
   </section>
 
