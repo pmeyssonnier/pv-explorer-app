@@ -8,6 +8,7 @@ from pv_extraction_pipeline import (
     _coerce_amount, normalize_point, _fix_point_pages,
     expected_sp_from_pages, verify_completeness, extract_seance_date_from_text,
     _synthesize_deferred_points, _extract_anchor_title, RE_RETIRE, RE_REPORTE,
+    _apply_deferred_status_to_extracted,
 )
 from reextract_targeted import targets_from_audit
 
@@ -141,6 +142,36 @@ def test_retire_and_reporte_regexes_are_disjoint():
 def test_extract_anchor_title_stops_at_bilingual_separator():
     window = " Vivaqua-Hydrobru - Examen du projet de fusion -=- NL titre"
     assert _extract_anchor_title(window, 22) == "Vivaqua-Hydrobru - Examen du projet de fusion"
+
+
+# ── _apply_deferred_status_to_extracted : corrige un point EXTRAIT sans statut ──
+# Cas réel SP 21 (2016-10-26) : le LLM garde le point (titre long) mais oublie
+# le statut RETIRÉ, contrairement au SP 22 voisin plus court.
+def test_apply_deferred_status_sets_retire_on_extracted_empty_decision():
+    raw = ("SP 21.- Convention de collaboration entre la VRT, la RTBF et la Commune "
+           "- Addendum -=- NL. Ce point est retiré de l'ordre du jour -=- Dit punt "
+           "wordt aan de agenda onttrokken. SP 22.- Vivaqua")
+    pts = [{"sp": 21, "page": 24, "titre": "Convention…", "decision": "", "vote": {"type": None}}]
+    n = _apply_deferred_status_to_extracted(pts, [{"page_num": 24, "text": raw}])
+    assert n == 1
+    assert pts[0]["decision"] == "RETIRÉ"
+    assert pts[0]["vote"]["type"] is None
+
+
+def test_apply_deferred_status_never_overwrites_a_real_decision():
+    raw = "SP 30.- x Ce point est retiré de l'ordre du jour. SP 31.- y"
+    pts = [{"sp": 30, "page": 1, "titre": "x", "decision": "APPROUVÉ", "vote": {"type": "unanimite"}}]
+    assert _apply_deferred_status_to_extracted(pts, [{"page_num": 1, "text": raw}]) == 0
+    assert pts[0]["decision"] == "APPROUVÉ"
+
+
+def test_apply_deferred_status_leaves_undecided_point_without_deferral_phrase():
+    # Un point sans décision ET sans formule de retrait/report reste tel quel
+    # (ex. point débattu sans vote formel) — pas de statut inventé.
+    raw = "SP 40.- Un point normal sans phrase de statut. SP 41.- y"
+    pts = [{"sp": 40, "page": 1, "titre": "x", "decision": "", "vote": {"type": None}}]
+    assert _apply_deferred_status_to_extracted(pts, [{"page_num": 1, "text": raw}]) == 0
+    assert pts[0]["decision"] == ""
 
 
 # ── extract_seance_date_from_text : FR/NL + accents/espaces perdus ──────────
