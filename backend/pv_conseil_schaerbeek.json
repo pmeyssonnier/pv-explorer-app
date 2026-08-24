@@ -27,6 +27,7 @@
       "2011-12-21",
       "2012-01-18",
       "2012-02-15",
+      "2012-03-28",
       "2012-05-30",
       "2012-06-27",
       "2012-09-19",
@@ -173,7 +174,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9954,
+    "total_points": 10000,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -32393,6 +32394,1280 @@
             "associations",
             "subvention"
           ]
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2012-03-28",
+        "date": "2012-03-28",
+        "source_file": "pv_2012.03.28.pdf",
+        "extracted_at": "2026-08-24T14:13:01.482778",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": "Clerfayt",
+        "bourgmestre_ff": null,
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 46,
+          "extracted": 46,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/pv_2012.03.28.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Bureau des Assemblées",
+          "titre": "ASBL \"Crèches de Schaerbeek\" - Rapport annuel 2011",
+          "resume": "Exposé du rapport annuel 2011 de l'ASBL Crèches de Schaerbeek présenté à l'aide d'un Powerpoint. Plusieurs conseillers et le Bourgmestre interviennent.",
+          "intervenants": [
+            "De Herde",
+            "El Arnouki",
+            "de Beauffort",
+            "Vriamont",
+            "Vanhalweyn",
+            "Lahlali",
+            "Bourgmestre"
+          ],
+          "repondant": "De Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enfance",
+            "creches",
+            "rapport_annuel"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement redevance relatif aux cartes communales de stationnement - Modification",
+          "resume": "Modification du règlement redevance relatif aux cartes communales de stationnement. Regroupement proposé des points 2, 3, 4, 16, 20, 28, 41 et 42. Établissement de règles pour les différentes catégories d'usagers (firmes, indépendants, visiteurs occasionnels, riverains, établissements d'enseignement) avec tarifs et conditions d'accès.",
+          "intervenants": [
+            "Bourgmestre",
+            "Guillaume",
+            "de Beauffort",
+            "Grimberghs",
+            "Van Gorp",
+            "Vanhalewyn",
+            "Reghif",
+            "Vriamont"
+          ],
+          "repondant": "Guillaume",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 10,
+            "abstentions": 5
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "cartes_communales",
+            "redevances",
+            "mobilite",
+            "tarification"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 10,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Stationnement",
+          "sous_rubrique": "Zone bleue",
+          "titre": "Règlement redevance relatif au stationnement en zone bleue - Modification",
+          "resume": "Modification du règlement de redevance pour le stationnement en zone bleue. Tarif fixé à 25€ par demi-journée pour les véhicules immatriculés en Belgique. Gratuité pour les personnes handicapées, les riverains avec carte valable, les véhicules prioritaires et de carsharing.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 10,
+            "abstentions": 5
+          },
+          "montant_eur": 25,
+          "thematiques": [
+            "stationnement",
+            "redevance",
+            "zone_bleue",
+            "tarification"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Stationnement",
+          "sous_rubrique": "Stationnement payant",
+          "titre": "Règlement redevance relatif au stationnement payant - Modification",
+          "resume": "Modification du règlement de redevance pour le stationnement payant. Tarif 2 : 1,50€ première heure, 2,50€ deuxième heure, 20 minutes gratuites. Tarif 1 forfaitaire : 25€ demi-journée pour véhicules immatriculés en Belgique. Gratuité pour personnels médicaux, handicapés, riverains avec carte valable, véhicules prioritaires et carsharing.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 10,
+            "abstentions": 5
+          },
+          "montant_eur": 25,
+          "thematiques": [
+            "stationnement",
+            "redevance",
+            "tarification",
+            "horodateur"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipement",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Sainte Thérèse d'Avilla - Comptes de l'exercice 2011 - Avis favorable",
+          "resume": "Avis favorable sur les comptes de l'exercice 2011 de la Fabrique d'Eglise Sainte Thérèse d'Avila. Recettes: 19.597,15 €, Dépenses: 16.063,05 €, Excédent: 3.534,10 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fabriques_eglises",
+            "comptes_exercice"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipement",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Saint Albert - Comptes de l'exercice 2011 - Avis favorable",
+          "resume": "Avis favorable sur les comptes de l'exercice 2011 de la Fabrique d'Eglise Saint Albert. Recettes: 65.039,92 €, Dépenses: 53.257,78 €, Boni: 11.782,14 €. Petits dépassements de crédits constatés mais compensés par des dépenses non réalisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fabriques_eglises",
+            "comptes_exercice"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipement",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église de l'Epiphanie - Comptes de l'exercice 2011 - Avis favorable",
+          "resume": "Avis favorable sur les comptes de l'exercice 2011 de la Fabrique d'Eglise de l'Epiphanie. Recettes: 55.646,86 €, Dépenses: 29.153,79 €, Boni: 26.493,07 €. Petits dépassements de crédits compensés par des dépenses non réalisées.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fabriques_eglises",
+            "comptes_exercice"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipement",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Sainte Alice - Modification budgétaire pour l'exercice 2011",
+          "resume": "Pas d'avis donné sur la modification budgétaire de l'exercice 2011 de la Fabrique d'Eglise Sainte Alice car l'exercice 2011 est clôturé et aucune intervention communale n'est sollicitée. Le budget 2012 est soumis au Conseil communal avec proposition d'avis favorable.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fabriques_eglises",
+            "modification_budgetaire"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipement",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Sainte Suzanne - Budget pour l'exercice 2012 - Avis favorable",
+          "resume": "Avis favorable sur le budget pour l'exercice 2012 de la Fabrique d'Eglise Sainte Suzanne. Recettes: 123.152,65 €, Dépenses: 123.152,65 €, Excédent: 0 €. Aucune intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fabriques_eglises",
+            "budget_exercice"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipement",
+          "sous_rubrique": "Contrôle",
+          "titre": "Fabrique d'église Sainte Alice - Budget de l'exercice 2012 - Avis favorable",
+          "resume": "Avis favorable sur le budget pour l'exercice 2012 de la Fabrique d'Eglise Sainte Alice. Recettes: 59.254,28 €, Dépenses: 59.254,28 €, Excédent: 0 €. Aucune intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fabriques_eglises",
+            "budget_exercice"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances",
+          "sous_rubrique": "Comptes et rapports",
+          "titre": "ASBL \"La Maison de la Laïcité de Schaerbeek\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL \"La Maison de la Laïcité de Schaerbeek\" affichant un résultat positif de 1.985,75€ pour l'exercice 2010 et un résultat cumulé de 13.023,10€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1985.75,
+          "thematiques": [
+            "finances",
+            "comptes_asbl"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances",
+          "sous_rubrique": "Comptes et rapports",
+          "titre": "ASBL \"Centre Culturel de Schaerbeek\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL \"Centre Culturel de Schaerbeek\" affichant un résultat positif de 16.362,05€ pour l'exercice 2010 et un résultat cumulé de 72.778,47€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 16362.05,
+          "thematiques": [
+            "finances",
+            "comptes_asbl",
+            "culture"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances",
+          "sous_rubrique": "Comptes et rapports",
+          "titre": "ASBL \"Joyeuse Enfance de Schaerbeek - JES\" - Comptes 2011 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2011 de l'ASBL \"Joyeuse Enfance de Schaerbeek - JES\" affichant un résultat positif de 5.753,24€ pour l'exercice 2011 et un résultat cumulé de 34.474,36€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5753.24,
+          "thematiques": [
+            "finances",
+            "comptes_asbl",
+            "enfance"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Finances",
+          "sous_rubrique": "Comptes et rapports",
+          "titre": "ASBL \"Crèches de Schaerbeek\" - Comptes 2011 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2011 de l'ASBL \"Crèches de Schaerbeek\" affichant un résultat positif de 1.806,62€ pour l'exercice 2011 et un résultat cumulé de 169.335,79€.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1806.62,
+          "thematiques": [
+            "finances",
+            "comptes_asbl",
+            "creches"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Infrastructures - Bâtiments",
+          "titre": "Acquisition de 40 sondes de températures et d'humidité sans fil pour divers bâtiments communaux - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise pour information de la décision du Collège du 28 février 2012 concernant le marché pour l'acquisition de 40 sondes de température et d'humidité sans fil auprès de la société FISSETTE. Dépense estimée à 2.161,96€ HT (2.615,97€ TTC 21%), financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2615.97,
+          "thematiques": [
+            "achats",
+            "infrastructures",
+            "batiments",
+            "marche_public"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Stationnement",
+          "sous_rubrique": "",
+          "titre": "Extension de la concession relative à la gestion du stationnement - Ajout de 300 horodateurs supplémentaires - Approbation",
+          "resume": "Décision d'étendre la concession accordée à RAUWERS-CONTROLE à 300 horodateurs supplémentaires et d'approuver l'avenant à la convention relative à la gestion du stationnement.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 10,
+            "abstentions": 4
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "horodateurs",
+            "marche_public"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique et durable",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Convention Eurotop 2011 - Approbation",
+          "resume": "Approbation de la convention Eurotop 2011 relative aux dépenses liées à la prévention de la criminalité dans le cadre des Sommets européens.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "prevention_urbaine",
+            "criminalite",
+            "convention"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement stratégique et durable",
+          "sous_rubrique": "Gardiens de la paix",
+          "titre": "Gardiens de la paix - Prolongation pour une période de 6 mois du Contingent complémentaire et du Contingent complémentaire 90 ETP - Approbation",
+          "resume": "Approbation de deux conventions \"Gardiens de la Paix\" pour la période 01/01/2012-30/06/2012 : le Contingent complémentaire et le Contingent complémentaire 90 ETP entre la commune et l'Etat.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gardiens_paix",
+            "securite",
+            "emploi"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Sécurité et Prévention",
+          "sous_rubrique": "Plan Stratégique de Sécurité et de Prévention - Volet Fédéral",
+          "titre": "Convention - Prolongation",
+          "resume": "Approbation de la prolongation sans modification de la convention au plan stratégique de sécurité et de prévention 2012 pour une période de six mois, janvier-juin 2012",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "securite",
+            "prevention",
+            "convention"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Mobilité",
+          "sous_rubrique": "Règlement complémentaire de police",
+          "titre": "Modifications - Approbation",
+          "resume": "Modifications au règlement complémentaire de police concernant l'arrêt et stationnement (signaux routiers, zones payantes excepté riverains) sur diverses voiries communales",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 10,
+            "abstentions": 4
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "police",
+            "circulation",
+            "stationnement",
+            "voirie"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux - Affaires Juridiques",
+          "sous_rubrique": "Affaires Juridiques",
+          "titre": "Demande d'autorisation d'ester en justice dans affaire c/S.A. HOLDING COMMUNAL",
+          "resume": "Autorisation d'agir en justice contre la S.A. HOLDING COMMUNAL pour nullité de souscription à augmentation de capital et demande de restitution de 9.520.701,44 EUR et dommages et intérêts estimés à 1.891.554,08 EUR",
+          "intervenants": [
+            "M. le Bourgmestre",
+            "M. Grimberghs",
+            "Mme Vriamont"
+          ],
+          "repondant": "M. De Herde",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 27,
+            "contre": 10,
+            "abstentions": 4
+          },
+          "montant_eur": 9520701.44,
+          "thematiques": [
+            "affaires_juridiques",
+            "holding_communal",
+            "capital",
+            "litige"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Ressources Humaines",
+          "sous_rubrique": "Cadre du personnel ACS",
+          "titre": "Modification du cadre du personnel ACS - Département des Services spécifiques (Culture et Santé) et Département Infrastructures (Techniques spéciales - HVAC) - Approbation",
+          "resume": "Modifications du cadre du personnel ACS : suppression d'1 emploi d'adjoint technique au service Techniques spéciales (HVAC), création d'1 emploi de secrétaire administratif au service Santé, transformation d'1 emploi de secrétaire administratif en assistant administratif au service Culture",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "cadre_personnel",
+            "culture",
+            "sante",
+            "infrastructures"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 39,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Ressources Humaines",
+          "sous_rubrique": "Cadre du personnel",
+          "titre": "Modification du cadre du personnel - Département des Services généraux - Approbation",
+          "resume": "Modifications du cadre du personnel du département des Services généraux : transformation d'1 emploi de secrétaire d'administration A1 en secrétaire d'administration-chef du service Gardiens de la paix A2 au service Gardiens de la paix, création d'1 emploi d'assistant administratif au service Sanctions administratives",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "cadre_personnel",
+            "gardiens_paix",
+            "sanctions_administratives"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Patrimoine et Tourisme",
+          "titre": "Diffusion des coffrets de 12 parcours promenade - Fixation des redevances",
+          "resume": "Approbation de la fixation des redevances pour la diffusion des coffrets de 12 parcours promenades : 5 euros si diffusion directe par la commune, 4 euros si diffusion via intermédiaire. Montant d'impression : 8.854 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 8854,
+          "thematiques": [
+            "patrimoine",
+            "tourisme",
+            "communication"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments",
+          "sous_rubrique": "Patrimoine",
+          "titre": "Convention de partenariat entre l'ASBL Schaerbeek Action Emploi et la commune de Schaerbeek - Approbation",
+          "resume": "Approbation de la convention de partenariat entre l'ASBL Schaerbeek Action Emploi et le service Bâtiments pour la formation professionnelle en pavage, menuiserie et jardinage.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "emploi",
+            "formation",
+            "partenariat"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments",
+          "sous_rubrique": "Immeubles",
+          "titre": "Immeuble de logement sis rue des Palais, 195 - Traitement en vue de remédier à l'humidité ascensionnelle - Mode de passation et fixation des conditions du marché",
+          "resume": "Information relative à la passation du marché pour le traitement de l'humidité ascensionnelle. Procédure négociée sans publicité après consultation de trois firmes. Dépense : 4.764,70 € financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 4764.7,
+          "thematiques": [
+            "logements",
+            "travaux",
+            "humidite"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 44,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments",
+          "sous_rubrique": "Infrastructures",
+          "titre": "Centre de vacances d'Ittre, Ecole 5-6, Ecole 10 et Lycée Emile Max - Rénovation des chaufferies et des installations de régulation - Nouveau mode de passation",
+          "resume": "Approbation du nouveau mode de passation (procédure négociée sans publicité) pour la rénovation des chaufferies et installations de régulation. Dépense estimée : 911.900 €, financée par emprunt et subsides IBGE sollicités.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 911900,
+          "thematiques": [
+            "travaux",
+            "chauffage",
+            "installations",
+            "ecoles",
+            "vacation"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 46,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Parking",
+          "titre": "Mise à disposition d'emplacement de parking appartenant au patrimoine communal sise place Colignon - Convention - Approbation",
+          "resume": "Approbation de la mise à disposition de 4 places de parking sur la place Colignon moyennant redevance et approbation de la convention.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 30,
+            "contre": 11,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "parking",
+            "espace_public",
+            "convention"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 47,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Propreté et Espaces Verts",
+          "titre": "Schaerbeek Propreté et Espaces Verts - Convention entre la commune de Schaerbeek et la Ville de Bruxelles relative à une meilleur collaboration pour l'entretien de voiries limitrophes - Approbation",
+          "resume": "Approbation de la convention de collaboration avec la Ville de Bruxelles pour l'entretien des voiries limitrophes. Indemnité forfaitaire annuelle : 40.000 € pour la gestion unifiée des voiries frontière.",
+          "intervenants": [
+            "De Herde"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 40000,
+          "thematiques": [
+            "proprete",
+            "espaces_verts",
+            "voirie",
+            "partenariat",
+            "collaboration"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Convention",
+          "sous_rubrique": "Fête du Sacrifice",
+          "titre": "Convention entre la commune de Schaerbeek et le Ministère de la Région de Bruxelles-capitale concernant l'octroi d'un subside pour l'organisation de la fête du Sacrifice",
+          "resume": "Approbation de la convention octroyant un subside de 25.000 € à la commune pour l'organisation d'un abattoir temporaire pour la fête du sacrifice.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 25000,
+          "thematiques": [
+            "subside_regional",
+            "fete_sacrifice"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 50,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "Contrat de quartier Navez-Portaels",
+          "titre": "Contrat de quartier Navez-Portaels - Etudes complémentaires de sol de la parcelle sise rue Gallait 94",
+          "resume": "Marché par procédure négociée sans publicité pour études complémentaires de sol, constaté sur simple facture acceptée. Dépense de 5.532,47 € financée par le vendeur.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5532.47,
+          "thematiques": [
+            "contrat_quartier",
+            "etude_sol",
+            "marche_public"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 51,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Espace Vogler",
+          "titre": "Espace Vogler - Avenant à la convention d'occupation par les Iront d'Elles",
+          "resume": "Approbation de l'avenant à la convention d'occupation à titre précaire et révocable de l'Espace Vogler rue Vogler 38 par l'association Les Iront d'Elles.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention_occupation",
+            "association"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 51,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Immeuble rue d'Aerschot",
+          "titre": "Immeuble communal sis rue d'Aerschot 208 - Convention d'occupation avec l'ASBL RenovaS - Avenant",
+          "resume": "Approbation de l'avenant à la convention d'occupation par l'ASBL RenovaS du bien situé rue d'Aerschot 208.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention_occupation",
+            "asbl"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 52,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Contrat de quartier durable Coteaux-Josaphat",
+          "titre": "Contrat de quartier durable Coteaux-Josaphat - Projet rénovation/location de 10 logements - Dérogation",
+          "resume": "Approbation de la dérogation au règlement d'attribution des logements communaux pour permettre le relogement de maximum 4 grands ménages sur une période de 4 ans dans le cadre du projet de rénovation/location de 10 logements en collaboration avec ASIS.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrat_quartier",
+            "logement",
+            "relogement",
+            "derogation"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 54,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Contrat de quartier durable Reine-Progrès",
+          "titre": "Contrat de quartier Durable Reine-Progrès - Commission de quartier - Composition",
+          "resume": "Désignation des membres habitants et des personnes issues des secteurs associatif et scolaire de la commission de quartier du Contrat de Quartier Durable Reine-Progrès.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrat_quartier",
+            "commission_quartier",
+            "gouvernance"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 55,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Contrat de quartier Coteaux-Josaphat",
+          "titre": "Contrat de quartier Coteaux-Josaphat - Convention avec les auteurs de projets",
+          "resume": "Approbation des conventions tripartites (opérateur, Commune, Région) relatives à la réalisation des opérations prévues au programme du Contrat de Quartier Durable Coteaux-Josaphat, confiées à diverses associations et ASBL (Action Josaphat, Bouillon de Cultures, EVA, Halles de Schaerbeek, Jeunes Schaerbeekois au travail, La Gerbe/Mémoire vivante, RenovaS, TSR). Subsidiation par la Région à 100%.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrat_quartier",
+            "convention",
+            "partenariat",
+            "projets_sociaux",
+            "subsides_region"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 57,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Coteaux-Josaphat",
+          "titre": "Contrat de quartier Coteaux-Josaphat - Convention tripartite relative au projet Rénovation/Location porté par ASIS - Approbation",
+          "resume": "Approbation de la convention tripartite (opérateur, Commune, Région) pour le projet « Rénovation Location » porté par l'Agence Schaerbeekoise Immobilière Sociale (ASIS). La Commune se porte garante des emprunts pour un montant maximal de 350.000 euros et prend en charge les éventuels surcoûts résiduels (80.000 euros maximum en 2015).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 350000,
+          "thematiques": [
+            "contrat_de_quartier",
+            "logement_social",
+            "renovation",
+            "renovation_location"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 58,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrats de quartier",
+          "sous_rubrique": "Coteaux-Josaphat",
+          "titre": "Contrat de quartier Coteaux-Josaphat - Convention tripartite relative à l'opération 6.1 du programme intitulé \"Plateforme Emploi Jeunesse\" portée par la Mission Locale - Approbation",
+          "resume": "Approbation de la convention tripartite pour l'opération « Plateforme emploi jeunes » du contrat de quartier durable Coteaux-Josaphat, confiée à la Mission locale asbl. Subsidiation de cette opération par la Région à concurrence de 100%.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrat_de_quartier",
+            "emploi_jeunes",
+            "plateforme_emploi",
+            "mission_locale"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 60,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Planification",
+          "sous_rubrique": "",
+          "titre": "Projets de Règlement Communal d'Urbanisme Zoné - Adoption",
+          "resume": "Adoption provisoire de deux projets de règlement communal d'urbanisme zoné distincts sur le quartier des Fleurs d'une part et le quartier Terdelt – Chomé d'autre part. Soumission de ces projets à enquête publique de 30 jours. Ces nouveaux outils réglementaires visent à remplacer le Règlement Différentiel sur les Bâtisses devenu inapplicable.",
+          "intervenants": [
+            "Mme Nyssens"
+          ],
+          "repondant": "Mme Jodogne",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 37,
+            "contre": 0,
+            "abstentions": 4
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "urbanisme",
+            "reglement_communal",
+            "zone_fleurs",
+            "zone_terdelt_chome",
+            "enquete_publique"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 62,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Espaces Publics",
+          "titre": "Groupe scolaire 11/13 - Réparation de la cheminée industrielle - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Approbation du cahier spécial des charges et du montant estimé (230.000 euros TVAC) pour la réparation de la cheminée industrielle du groupe scolaire 11/13 avenue de Roodebeek. Choix de la procédure négociée sans publicité en vertu de l'urgence impérieuse résultant d'événements imprévisibles (risque d'effondrement). Financement par subsides des Monuments et Sites et part communale par emprunt.",
+          "intervenants": [
+            "Mme Smeysters"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 230000,
+          "thematiques": [
+            "groupe_scolaire",
+            "infrastructure_scolaire",
+            "patrimoine",
+            "monuments_et_sites",
+            "restauration",
+            "urgence",
+            "marche_public"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 68,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Le stationnement réglementé",
+          "resume": "Demande de Monsieur Yvan de Beauffort concernant le stationnement réglementé. Le point a été exposé lors de la discussion du point 2.",
+          "intervenants": [
+            "de Beauffort"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 68,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "L'évaluation de la politique de stationnement organisé sur le territoire de notre commune",
+          "resume": "Demande de Monsieur Denis Grimberghs. Le point a été exposé lors de la discussion du point 2.",
+          "intervenants": [
+            "Grimberghs"
+          ],
+          "repondant": null,
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "politique_communale"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 68,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "L'évaluation de la motion 'Violences conjugales'",
+          "resume": "Demande de Madame Mahinur Ozdemir concernant l'évaluation de la motion sur les violences conjugales.",
+          "intervenants": [
+            "Ozdemir",
+            "Hemamou"
+          ],
+          "repondant": "Hemamou",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "violences_conjugales",
+            "droits_humains"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 70,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Les heures d'ouverture du parc Reine-Vert",
+          "resume": "Demande de Madame Bernadette Vriamont concernant les heures d'ouverture du parc Reine-Vert.",
+          "intervenants": [
+            "Vriamont"
+          ],
+          "repondant": "Bourgmestre",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "espaces_verts",
+            "parc_public"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 70,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Les travaux d'aménagement à Helmet en 2013",
+          "resume": "Question de Monsieur Jean-Pierre Van Gorp concernant les travaux d'aménagement à Helmet prévus en 2013.",
+          "intervenants": [
+            "Van Gorp"
+          ],
+          "repondant": "Jodogne",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "travaux",
+            "amenagement",
+            "helmet"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 70,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Le planning des travaux de la place des Chausseurs Ardennais",
+          "resume": "Question de Monsieur Jean-Pierre Van Gorp sur le planning des travaux de la place des Chausseurs Ardennais.",
+          "intervenants": [
+            "Van Gorp"
+          ],
+          "repondant": "Smeysters",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "travaux",
+            "planning",
+            "place_publique"
+          ],
+          "source_file": "pv_2012.03.28.pdf"
         }
       ]
     },
