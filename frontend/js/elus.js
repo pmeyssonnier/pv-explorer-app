@@ -43,7 +43,7 @@ export async function loadElus() {
   }
 }
 
-// Puces de rôle (Conseiller·ère·s / Collège) — même widget que les puces de
+// Puces de rôle (Conseiller·ère / Collège) — même libellé/widget que les puces de
 // l'onglet Séances (.elu-chip/.elu-chip-active) : reclique sur la puce déjà
 // active → "Tous les rôles" ; comptent le nombre d'élu·e·s ayant ce rôle
 // (indépendant du filtre lui-même, contrairement aux puces à facettes de
@@ -57,7 +57,7 @@ function renderEluRoleChips() {
   if (!box || !elusData) return;
   const nConseiller = elusData.filter(e => e.role === 'conseiller').length;
   const nCollege = elusData.filter(e => e.role === 'college').length;
-  box.innerHTML = eluRoleChip('conseiller', 'Conseiller·ère·s', nConseiller)
+  box.innerHTML = eluRoleChip('conseiller', 'Conseiller·ère', nConseiller)
     + eluRoleChip('college', 'Collège', nCollege);
 }
 export function onEluRoleChipClick(role) {
@@ -104,7 +104,6 @@ function selectElu(key, list) {
     if (select) select.value = '';
     document.getElementById('eluResult').innerHTML = '';
     document.getElementById('eluYear').hidden = true;
-    document.getElementById('eluType').hidden = true;
   }
 }
 
@@ -129,7 +128,6 @@ async function loadElu(key) {
   if (!key) {
     box.innerHTML = '';
     document.getElementById('eluYear').hidden = true;
-    document.getElementById('eluType').hidden = true;
     return;
   }
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
@@ -212,42 +210,14 @@ function filterByTheme(items, theme) {
 // sens quel que soit l'élu·e sélectionné·e.
 const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
 
-// Types d'intervention distincts présents parmi les points DÉPOSÉS de cette
-// fiche (les réponses en séance n'ont pas de "type" — voir renderElu, le
-// filtre ne s'applique qu'à la liste "depose").
-function eluTypes(d) {
-  const present = new Set((d.depose || []).map(it => it.type_label).filter(Boolean));
-  return TYPE_FILTER_ORDER.filter(t => present.has(t));
-}
-
-// (Re)remplit le filtre de type pour la fiche courante ; conserve le type
-// sélectionné s'il existe encore pour cette personne, sinon "Tous".
-function populateEluTypeSelect(d) {
-  const sel = document.getElementById('eluType');
-  if (!sel) return;
-  const types = eluTypes(d);
-  if (types.length < 2) { sel.innerHTML = ''; sel.hidden = true; eluTypeFilter = 'all'; return; }
-  if (!types.includes(eluTypeFilter)) eluTypeFilter = 'all';
-  sel.hidden = false;
-  sel.innerHTML = '<option value="all">Tous les types</option>' +
-    types.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
-  sel.value = eluTypeFilter;
-}
-
-export function onEluTypeChange() {
-  eluTypeFilter = document.getElementById('eluType').value;
-  if (currentEluData) renderElu(currentEluData);
-}
-
 function filterByType(items, typeLabel) {
   if (typeLabel === 'all') return items;
   return items.filter(it => it.type_label === typeLabel);
 }
 
-// Puce cliquable par type présent — raccourci visuel vers le même filtre que
-// le menu déroulant #eluType (les deux pilotent le même état eluTypeFilter,
-// se resynchronisent l'un l'autre). '' si aucune intervention de ce type
-// cette année (jamais de puce à 0).
+// Puce cliquable par type présent — seul filtre de type de l'onglet (plus de
+// menu déroulant redondant, voir onEluChipClick). '' si aucune intervention
+// de ce type cette année (jamais de puce à 0).
 function eluTypeChip(typeLabel, count) {
   if (!count) return '';
   const active = eluTypeFilter === typeLabel ? ' elu-chip-active' : '';
@@ -256,11 +226,9 @@ function eluTypeChip(typeLabel, count) {
 }
 
 // Reclique sur la puce déjà active → bascule vers "Tous les types" ; sinon
-// sélectionne ce type. Synchronise aussi le menu déroulant #eluType.
+// sélectionne ce type.
 export function onEluChipClick(typeLabel) {
   eluTypeFilter = eluTypeFilter === typeLabel ? 'all' : typeLabel;
-  const sel = document.getElementById('eluType');
-  if (sel) sel.value = eluTypeFilter;
   if (currentEluData) renderElu(currentEluData);
 }
 
@@ -346,7 +314,6 @@ function groupByYear(items, rowFn) {
 function renderElu(d) {
   currentEluData = d;
   populateEluYearSelect(d);
-  populateEluTypeSelect(d);
 
   const box = document.getElementById('eluResult');
   // Base pour les puces/compteurs : filtrée par ANNÉE seulement, pas par type
@@ -354,6 +321,12 @@ function renderElu(d) {
   // types (chacune doit rester visible/cliquable pour changer de filtre).
   const deposeForYear = filterByYear(d.depose || [], eluYearFilter);
   const repondForYear = filterByYear(d.repond || [], eluYearFilter);
+  // Un type resté sélectionné en changeant d'élu·e/d'année peut ne plus être
+  // présent (sa puce ne s'affiche alors plus, voir eluTypeChip) : retombe sur
+  // "Tous les types" plutôt que de filtrer silencieusement sans puce active.
+  if (eluTypeFilter !== 'all' && !deposeForYear.some(it => it.type_label === eluTypeFilter)) {
+    eluTypeFilter = 'all';
+  }
   // Thématiques disponibles pour l'année courante — indépendantes du type et
   // de la thématique déjà choisis, sinon le menu se viderait au filtrage.
   populateEluThemeSelect(eluThemes(deposeForYear, repondForYear));

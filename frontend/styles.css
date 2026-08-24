@@ -522,7 +522,6 @@ body {
 }
 .elu-select:focus { border-color: var(--or); }
 .elu-select-name { flex: 1 1 260px; min-width: 0; }
-.elu-select-type { flex: 0 0 auto; }
 .elu-select-theme { flex: 0 1 200px; min-width: 0; }
 .elu-select-year { flex: 0 0 auto; }
 .elu-select-date { flex: 0 1 220px; min-width: 0; }
@@ -539,9 +538,8 @@ body {
   font-size: 13.5px; color: var(--encre-soft); margin: 8px 0 4px;
 }
 .elu-summary strong { color: var(--bordeaux); font-size: 16px; }
-/* Puces cliquables du résumé (voir elus.js/eluTypeChip) : raccourci visuel
-   vers le filtre par type déjà disponible via #eluType — profil d'activité
-   visible et actionnable sans ouvrir le menu déroulant. */
+/* Puces cliquables du résumé (voir elus.js/eluTypeChip) : seul filtre par
+   type de l'onglet — profil d'activité visible et actionnable directement. */
 .elu-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 4px; }
 .elu-chip {
   font: inherit; font-size: 12.5px; color: var(--encre-soft);
