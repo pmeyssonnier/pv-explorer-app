@@ -20,6 +20,7 @@
       "2011-03-30",
       "2011-05-25",
       "2011-06-22",
+      "2011-09-28",
       "2012-01-18",
       "2012-02-15",
       "2012-05-30",
@@ -165,7 +166,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9512,
+    "total_points": 9535,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -22215,6 +22216,669 @@
             "mobilite"
           ],
           "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2011-09-28",
+        "date": "2011-09-28",
+        "source_file": "Pv%20CC%202011-09-28%20SP.pdf",
+        "extracted_at": "2026-08-24T09:24:32.265955",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 21,
+          "extracted": 23,
+          "missing_sp": [],
+          "extra_sp": [
+            4,
+            9
+          ],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/Pv%2520CC%25202011-09-28%2520SP.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement taxe sur des emplacements de parcage - Exercices 2012 à 2016 - Renouvellement et modification",
+          "resume": "Établissement d'une taxe communale annuelle sur les emplacements de parcage desservant des bureaux, connexes à une activité commerciale ou exploités commercialement pour les exercices 2012 à 2016, avec taux respectifs de 51,60€, 63,70€ et 51,60€ par emplacement pour 2012, indexés de 2,5% annuellement.",
+          "intervenants": [
+            "M. Guillaume"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fiscalite",
+            "parking",
+            "taxe_communale"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement taxe sur les appareils de distribution de carburant installés sur la voie publique ou sur un terrain privé le long de la voie publique - Exercices 2012 à 2016 - Renouvellement et modification",
+          "resume": "Établissement d'une taxe communale annuelle sur les appareils de distribution de carburant pour les exercices 2012 à 2016. Taux de 479€ par compteur (taux 1) doublé pour les appareils avec paiement automatique (taux 2), réduit de 25% pour les carburants alternatifs. Taux indexés de 2,5% annuellement.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 479,
+          "thematiques": [
+            "fiscalite",
+            "carburant",
+            "taxe_communale",
+            "energie_alternative"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fiscalité",
+          "sous_rubrique": "Taxes communales",
+          "titre": "Règlement taxe sur la distribution à domicile de feuilles et cartes publicitaires ainsi que catalogues et journaux contenant de la publicité - Exercices 2012 à 2016 - Renouvellement et modification",
+          "resume": "Renouvellement et modification du règlement relatif à la taxation de la distribution à domicile de feuilles et cartes publicitaires à caractère commercial ainsi que de catalogues et journaux contenant de la publicité commerciale pour les exercices 2012 à 2016. Taux d'imposition: 0,31 € par tranche de 100 exemplaires (format A4), 1,53 € (format > A4), 3,07 € (catalogues/journaux), avec indexation 2,5%. Régimes forfaitaires mensuels également prévus.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 36,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "taxation",
+            "publicite",
+            "distribution_domicile"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "FINANCES",
+          "sous_rubrique": "Fiscalité",
+          "titre": "Droits de place sur les marchés et brocantes et règlement redevances sur l'exercice d'activités ambulantes - Exercices 2012 à 2016 - Renouvellement",
+          "resume": "Renouvellement des droits de place sur les marchés et brocantes et des redevances sur l'exercice d'activités ambulantes pour les années 2012 à 2016. Fixation des tarifs indexés à 2,5% annuellement.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "marches_publics",
+            "redevances",
+            "fiscalite",
+            "activites_ambulantes"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "CPAS",
+          "sous_rubrique": "Budget",
+          "titre": "C.P.A.S. - Modification budgétaire n° 1 de l'exercice 2011 - Approbation",
+          "resume": "Approbation de la modification budgétaire n°1 du CPAS pour l'exercice 2011. Dotation communale totale de 34.796.329 €, dont 3.789.271 € pour l'ancien hôpital. Augmentation de 589.506 € par rapport à la dotation initiale.",
+          "intervenants": [
+            "De Herde",
+            "Köksal",
+            "Grimberghs"
+          ],
+          "repondant": "Decoux",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 34796329,
+          "thematiques": [
+            "cpas",
+            "budget",
+            "modification_budgetaire",
+            "ancien_hopital"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Infrastructure - Voirie",
+          "titre": "Infrastructure - Voirie - Fourniture, pose et installation de 6 bornes escamotables à divers emplacements de la commune",
+          "resume": "Information relative à la décision du Collège du 6 septembre 2011 concernant la fourniture, pose et installation de 6 bornes escamotables en divers emplacements de la commune. Marché par procédure négociée sans publicité. Dépense estimée à 41.322,31 € HT ou 50.000,21 € TTC (21%), financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 50000.21,
+          "thematiques": [
+            "infrastructure",
+            "voirie",
+            "marche_public",
+            "bornes_escamotables",
+            "emprunt"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Acquisition de divers matériel pour le travail en hauteur (échafaudages, passerelles, …) - Mode de passation et fixation des conditions du marché",
+          "resume": "Acquisition de divers matériel pour le travail en hauteur (échafaudages, passerelles, …) par procédure négociée sans publicité. Dépense estimée à 24.793,39 € hors TVA ou 30.000 € TVA 21% comprise, imputée à l'article 137/744-EQ-51/14 du budget extraordinaire 2011 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "infrastructure",
+            "batiments",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Instruction Publique",
+          "sous_rubrique": "Centres Psycho-Médico-Social",
+          "titre": "Acquisition de jeux et de test psycho pédagogiques - Mode de passation et fixation des conditions du marché",
+          "resume": "Acquisition de jeux et de tests psycho pédagogiques par procédure négociée sans publicité, constaté sur simple facture acceptée. Dépense estimée à 2.744,62 € hors TVA ou 3.321 € TVA 21% comprise, imputée à l'article 706/744-EQ-51/14 du budget extraordinaire 2011 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3321,
+          "thematiques": [
+            "instruction_publique",
+            "education",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service des Sports",
+          "sous_rubrique": "",
+          "titre": "Acquisition de matériel d'équipement sportif pour la salle de sport du Crossing et la salle de sport de la rue Royale Sainte-Marie - Mode de passation et fixation des conditions du marché",
+          "resume": "Acquisition de matériel d'équipement sportif pour la salle de sport du Crossing et la salle de sport Rue Royale Sainte Marie par procédure négociée sans publicité. Dépense estimée à 41.322,31 € hors TVA ou 50.000 € TVA 21% comprise, imputée à l'article 764/744-EQ-51/14 du budget extraordinaire 2011 et financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 50000,
+          "thematiques": [
+            "sports",
+            "equipement",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Charroi communal",
+          "sous_rubrique": "",
+          "titre": "Acquisition d'un fourgon équipé d'une machine anti graffiti - Mode de passation et fixation des conditions du marché",
+          "resume": "Acquisition d'un fourgon équipé d'une machine anti graffiti par appel d'offres général. Dépense estimée à 107.438,02 € hors TVA ou 130.000 € TVA 21% comprise, imputée aux articles 876/743-EQ-51/14 et 876/744-EQ-51/14 du budget extraordinaire 2011 et financée par emprunts.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 130000,
+          "thematiques": [
+            "charroi_communal",
+            "equipement",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Ressources Humaines",
+          "sous_rubrique": "",
+          "titre": "Accueil de jeunes en formation en alternance - Convention 2011-2012 avec la Région de Bruxelles-Capitale",
+          "resume": "Adoption de la convention 2011-2012 pour l'accueil de 3 jeunes en formation en alternance durant la période du 1er septembre 2011 au 31 août 2012. Subvention de 30.000 € accordée par la Région de Bruxelles-Capitale.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "ressources_humaines",
+            "formation",
+            "alternance",
+            "emploi_jeunes"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Statut administratif",
+          "sous_rubrique": "",
+          "titre": "Modification aux règlements relatifs aux congés et à la position de disponibilité",
+          "resume": "Modification aux règlements relatifs aux congés et à la position de disponibilité.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "statut_administratif",
+            "congés"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Complexe Terdelt - Remise en état du système de chauffage au gaz des halles de tennis nr 1-2-3 - Travaux supplémentaires",
+          "resume": "Approbation des travaux supplémentaires visant le renfort des aérothermes et l'intervention par l'Intercommunale du gaz pour un montant de 1.816,67 €. Imputation au crédit de l'article 764/724-IN-60/51 du budget extraordinaire de 2011. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1816.67,
+          "thematiques": [
+            "infrastructure_sportive",
+            "chauffage",
+            "travaux_supplementaires"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Plaine Wahis - Aménagement de deux terrains de sport en gazon synthétique - Majoration des dépenses",
+          "resume": "Prise pour information de la majoration du coût des travaux relatifs à l'aménagement de deux terrains de sport en gazon synthétique, de leurs abords et de la mise en place d'un éclairage adéquat sur le site de la plaine Wahis à 1.874.642,62 € TTC. Imputation de la majoration de 14.642,62 € à l'article 764/721IN-60/-52 du budget extraordinaire 2010. Financement de la dépense supplémentaire par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1874642.62,
+          "thematiques": [
+            "infrastructure_sportive",
+            "terrain_synthétique",
+            "eclairage",
+            "majoration_devis"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Site Optima - Grande rue au Bois 78 - Aménagement de locaux - Travaux complémentaires",
+          "resume": "Approbation des travaux complémentaires concernant la peinture de cloisons intérieures du centre PMS (15.486,12 €) et l'aménagement d'un escalier de secours pour la salle de psychomotricité (11.695,75 €). Coût total des travaux de 240.000 € TTC. Imputation de la majoration de 27.181,87 € à l'article 706/724-IN 60 /51 du budget extraordinaire 2011. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 240000,
+          "thematiques": [
+            "amenagement_locaux",
+            "travaux_complementaires",
+            "peinture",
+            "escalier_secours",
+            "securite"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Centre technique Rodenbach",
+          "titre": "Centre technique Rodenbach - Réaménagement et isolation du premier et deuxième étage - Marché par adjudication publique",
+          "resume": "Réaménagement et isolation des locaux du premier et deuxième étages du Centre Technique Rodenbach suite à leur mauvais état et aux conditions difficiles de travail en période hivernale. Marché par adjudication publique selon cahier des charges n° Scha/Infra/2011/038. Dépense estimée à 125.000 € TVAC imputée à l'article 137/724-IN-60/51 du budget extraordinaire 2011, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 125000,
+          "thematiques": [
+            "travaux_renovation",
+            "centre_technique",
+            "isolation_thermique",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Centre technique Rodenbach",
+          "titre": "Centre technique Rodenbach - Etude de reconnaissance du sol - Marché par procédure négociée sans publicité",
+          "resume": "Lancement d'un marché de services pour étudier la pollution potentielle des sols au CTR suite à l'inventaire de Bruxelles-Environnement. Consultation de cinq bureaux d'études. Dépense estimée à 10.000 € TVAC imputée à l'article 137/733 IN-60/53 du budget 2011, financée par emprunt. Date d'ouverture des offres fixée au 13 octobre 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 10000,
+          "thematiques": [
+            "environnement",
+            "pollution_des_sols",
+            "etude_technique",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "Contrat de quartier Navez Stadsrenovatie",
+          "titre": "Contrat de quartier Navez Stadsrenovatie -Portaels - Certificats PEB pour les immeubles de la rue Portaels 3-5-7 - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 13 septembre 2011 concernant un marché par procédure négociée sans publicité pour la réalisation des certificats PEB (Performance Energétique du Bâtiment) pour les immeubles rue Portaels 3, 5 et 7. Prix forfaitaire de 850 € TVAC imputé à l'article 137/733-IN-60/53 du budget extraordinaire 2011, financé par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 850,
+          "thematiques": [
+            "renovation_urbaine",
+            "performance_energetique",
+            "certification_peb",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services communaux spécifiques",
+          "sous_rubrique": "Rénovation urbaine",
+          "titre": "Projet Quadrilatère de la s.a. Infrabel - Règlement organisant les modalités d'octroi d'une allocation pour les locataires des immeubles sis rue du Progrès 214-270 - Modification",
+          "resume": "Modification du règlement d'octroi d'allocation pour les locataires des immeubles rue du Progrès 214-270 qui seront démolis lors de la réalisation du projet Quadrilatère. Modifications : ajout de la condition de résidence effective au 1er juin 2010 pour la définition des bénéficiaires ; modification des modalités de versement pour les candidats acquéreurs permettant la liquidation de 100% de l'allocation lors de la signature de l'acte de vente. Montants : 3.000 € par chef de ménage + 1.000 € par membre supplémentaire + compléments selon ancienneté (0 à 8.000 €).",
+          "intervenants": [
+            "M. Dönmez",
+            "M. Grimberghs"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "relogement",
+            "allocation_locataires",
+            "projet_quadrilatere",
+            "infrabel"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 48,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services communaux spécifiques",
+          "sous_rubrique": "Jeunesse et Sports",
+          "titre": "Octroi de subsides pour l'exercice 2011 aux clubs sportifs - Approbation",
+          "resume": "Approbation de la répartition des subsides aux cercles sportifs pour l'exercice 2011 pour un montant global de 88.000 € imputé à l'article 76 4/332-SS-02/71 du budget ordinaire 2011. Répartition entre différentes disciplines sportives (mini-foot, lutte, natation, football, taekwondo, basket, athlétisme, judo, tennis de table, etc.).",
+          "intervenants": [
+            "M. Bouhjar",
+            "M. Grimberghs"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 33,
+            "contre": 0,
+            "abstentions": 4
+          },
+          "montant_eur": 88000,
+          "thematiques": [
+            "subsides_sports",
+            "clubs_sportifs",
+            "jeunesse_sports"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 51,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Prégardiennat \"l'île aux Enfants\" sis avenue Raymond Foucart 7 - Rénovation - Majoration de la dépense - Approbation",
+          "resume": "Approbation de la majoration du coût à 280.000 € TTC pour la rénovation et mise en conformité aux normes de l'ONE des locaux du prégardiennat, financement par emprunt",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 280000,
+          "thematiques": [
+            "renovation_batiments",
+            "garderie",
+            "conformite_normes",
+            "emprunt"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 65,
+          "urgence": false,
+          "type": "motion",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "La valorisation du volontariat dans le cadre associatif à l'occasion de l'année européenne du volontariat",
+          "resume": "Motion de Monsieur Denis GRIMBERGHS visant à reconnaître l'importance du volontariat et du secteur associatif, à encourager le volontariat dans le cadre d'associations établies sur le territoire, à préparer une charte de collaboration avec le secteur associatif et à maintenir un inventaire des associations sur le site de la Commune.",
+          "intervenants": [
+            "Denis GRIMBERGHS",
+            "Mme Durant",
+            "M. Köksal"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "volontariat",
+            "associations",
+            "cohesion_sociale",
+            "charte_associative"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 66,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINTS INSCRITS À LA DEMANDE DE CONSEILLERS COMMUNAUX",
+          "sous_rubrique": "",
+          "titre": "La rentrée scolaire à Schaerbeek",
+          "resume": "Demande de Monsieur Yvan de BEAUFFORT concernant la rentrée scolaire à Schaerbeek.",
+          "intervenants": [
+            "Yvan de BEAUFFORT",
+            "M. Verzin",
+            "M. Denys"
+          ],
+          "repondant": "M. Denys",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement",
+            "rentree_scolaire"
+          ],
+          "source_file": "Pv%20CC%202011-09-28%20SP.pdf"
         }
       ]
     },
