@@ -176,7 +176,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 10060,
+    "total_points": 10061,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -98723,15 +98723,15 @@
           "page": 2,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
-          "sous_rubrique": "",
+          "rubrique": "Secrétaire Communal",
+          "sous_rubrique": "Assemblées",
           "titre": "Remise de Brevet d'Elite du Travail à 2 citoyens schaerbeekois",
-          "resume": "Remise de brevets d'Elite du Travail à 2 citoyens schaerbeekois. Le Bourgmestre expose le point et félicite les deux citoyens.",
+          "resume": "Remise de brevets d'élite du travail à 2 citoyens schaerbeekois",
           "intervenants": [
             "Bourgmestre"
           ],
           "repondant": null,
-          "decision": "",
+          "decision": "DÉBAT",
           "vote": {
             "type": null,
             "pour": null,
@@ -98747,10 +98747,10 @@
           "page": 3,
           "urgence": false,
           "type": "demande_habitant",
-          "rubrique": "POINT(S) INSCRIT(S) À LA DEMANDE D'HABITANTS",
+          "rubrique": "Points inscrits à la demande d'habitants",
           "sous_rubrique": "",
           "titre": "Le projet de construction sur le site Optima",
-          "resume": "Demande de Monsieur John Paul Van Vreckem concernant le projet de construction sur le site Optima. Monsieur Van Vreckem expose le point. Le Bourgmestre et Monsieur Vanhalewyn répondent. Interventions de plusieurs conseillers.",
+          "resume": "Demande de Monsieur John Paul VAN VRECKEM concernant le projet de construction sur le site Optima",
           "intervenants": [
             "Van Vreckem",
             "Bourgmestre",
@@ -98764,7 +98764,7 @@
             "Jodogne"
           ],
           "repondant": "Bourgmestre",
-          "decision": "",
+          "decision": "DÉBAT",
           "vote": {
             "type": null,
             "pour": null,
@@ -98773,8 +98773,8 @@
           },
           "montant_eur": null,
           "thematiques": [
-            "construction",
-            "urbanisme"
+            "urbanisme",
+            "construction"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
@@ -98783,10 +98783,10 @@
           "page": 3,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
-          "sous_rubrique": "",
+          "rubrique": "Secrétaire Communal",
+          "sous_rubrique": "Assemblées",
           "titre": "Procès-verbal du Conseil du 28 septembre 2016 - Approbation",
-          "resume": "Approbation du procès-verbal de la séance du 28 septembre 2016.",
+          "resume": "Approbation du procès-verbal de la séance du 28 septembre 2016",
           "intervenants": [],
           "repondant": null,
           "decision": "APPROUVÉ",
@@ -98805,10 +98805,10 @@
           "page": 3,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
-          "sous_rubrique": "",
+          "rubrique": "Secrétaire Communal",
+          "sous_rubrique": "Assemblées",
           "titre": "Démission de Monsieur Yves Goldstein de ses fonctions de conseiller communal - Prise d'acte - Vérification des pouvoirs et installation de son remplaçant",
-          "resume": "Prise d'acte de la démission de Monsieur Yves Goldstein de ses fonctions de conseiller communal et de chef de groupe PS. Vérification des pouvoirs et installation de Monsieur El Maslouhi comme remplaçant. Monsieur El Maslouhi prête serment en français.",
+          "resume": "Prise d'acte de la démission de Monsieur Yves Goldstein et installation de Monsieur El Maslouhi comme conseiller communal",
           "intervenants": [
             "El Maslouhi"
           ],
@@ -98851,10 +98851,10 @@
           "page": 5,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
-          "sous_rubrique": "",
-          "titre": "Intercommunale d'Inhumation scrl - Rapport annuel 2015",
-          "resume": "Rapport annuel 2015 de l'Intercommunale d'Inhumation scrl présenté pour information. Madame Durant expose le point.",
+          "rubrique": "Secrétaire Communal",
+          "sous_rubrique": "Assemblées",
+          "titre": "Intercommunale d'Inhumation scrl - Rapport annuel 2015 - Pour information",
+          "resume": "Présentation du rapport annuel 2015 de l'Intercommunale d'Inhumation",
           "intervenants": [
             "Durant"
           ],
@@ -98875,17 +98875,17 @@
           "page": 6,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "FINANCES - Enrôlement et règlement",
-          "sous_rubrique": "",
+          "rubrique": "Finances",
+          "sous_rubrique": "Enrôlement et règlement",
           "titre": "Taxe sur la mise à disposition et location de chambres et appartements - Exercices 2017 à 2021 – Nouveau règlement - Approbation",
-          "resume": "Nouveau règlement de taxe sur la mise à disposition et location de chambres et appartements pour les exercices 2017 à 2021. Intervention de Monsieur Dönmez. Réponses de Monsieur Grimberghs et du Bourgmestre. Ce point est retiré de l'ordre du jour.",
+          "resume": "Approbation du nouveau règlement sur la taxe concernant les chambres et appartements pour les exercices 2017 à 2021",
           "intervenants": [
             "Dönmez",
             "Grimberghs",
             "Bourgmestre"
           ],
           "repondant": "Grimberghs",
-          "decision": "REPORTÉ",
+          "decision": "RETIRÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -98894,7 +98894,6 @@
           },
           "montant_eur": null,
           "thematiques": [
-            "finances",
             "fiscalite",
             "logement"
           ],
@@ -98905,10 +98904,10 @@
           "page": 7,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "FINANCES - Budget",
-          "sous_rubrique": "",
+          "rubrique": "Finances",
+          "sous_rubrique": "Budget",
           "titre": "Fonds Régional Bruxellois de Refinancement des Trésoreries Communales - Prêt de trésorerie - Convention - Avenant - Approbation",
-          "resume": "Approbation de l'avenant n°6 à la convention d'accès de la commune de Schaerbeek au Fonds Régional Bruxellois de Refinancement des Trésoreries Communales.",
+          "resume": "Approbation de l'avenant n°6 à la convention d'accès de la commune au Fonds Régional Bruxellois de Refinancement des Trésoreries Communales",
           "intervenants": [],
           "repondant": null,
           "decision": "APPROUVÉ",
@@ -98920,8 +98919,8 @@
           },
           "montant_eur": null,
           "thematiques": [
-            "finances",
-            "tresorie"
+            "tresorerie",
+            "financement"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
@@ -98930,18 +98929,17 @@
           "page": 7,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "FINANCES - Budget",
-          "sous_rubrique": "",
+          "rubrique": "Finances",
+          "sous_rubrique": "Budget",
           "titre": "Budget 2016 - Modifications Budgétaires - Service ordinaire nr 6 - Service extraordinaire nr 7 - Approbation",
-          "resume": "Modifications budgétaires au Budget 2016 concernant le Service ordinaire nr 6 et le Service extraordinaire nr 7. Monsieur De Herde expose le point. Interventions de plusieurs conseillers et réponses du Bourgmestre.",
+          "resume": "Approbation des modifications budgétaires au budget 2016 pour le service ordinaire n°6 et le service extraordinaire n°7",
           "intervenants": [
             "De Herde",
             "Platteau",
             "Verzin",
             "Querton",
             "Sanhayi",
-            "Vriamont",
-            "Bourgmestre"
+            "Vriamont"
           ],
           "repondant": "De Herde",
           "decision": "DÉCIDE",
@@ -98953,7 +98951,6 @@
           },
           "montant_eur": null,
           "thematiques": [
-            "finances",
             "budget"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
@@ -98963,10 +98960,10 @@
           "page": 8,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "FINANCES - Contrôle et stratégie",
-          "sous_rubrique": "",
+          "rubrique": "Finances",
+          "sous_rubrique": "Contrôle et stratégie",
           "titre": "ASBL \"Amis de la Morale Laïque de Schaerbeek\" - Convention annuelle 2016 - Approbation",
-          "resume": "Approbation de la convention annuelle 2016 de l'ASBL \"Amis de la Morale Laïque de Schaerbeek\".",
+          "resume": "Approbation de la convention annuelle 2016 avec l'ASBL Amis de la Morale Laïque de Schaerbeek",
           "intervenants": [],
           "repondant": null,
           "decision": "APPROUVÉ",
@@ -98977,7 +98974,9 @@
             "abstentions": 0
           },
           "montant_eur": null,
-          "thematiques": [],
+          "thematiques": [
+            "associations"
+          ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
         {
@@ -99197,16 +99196,16 @@
           "urgence": false,
           "type": "point_normal",
           "rubrique": "Subventions et partenariats",
-          "sous_rubrique": "",
-          "titre": "Propreté publique - Convention 2016 avec Bruxelles Propreté - Approbation",
-          "resume": "Approbation de la convention 2016 liant la commune avec Bruxelles Propreté pour couvrir les frais de personnel, de fonctionnement et d'investissement en matière de propreté publique.",
+          "sous_rubrique": "Propreté publique",
+          "titre": "Propreté publique - Convention 2016 avec Bruxelles Propreté",
+          "resume": "Approbation de la convention 2016 liant la commune avec Bruxelles Propreté pour le financement des actions de propreté publique avec un subside annuel de 1.031.989,00€.",
           "intervenants": [
-            "Köksal",
-            "Verzin",
-            "Dönmez",
-            "Sanhayi"
+            "Monsieur Köksal",
+            "Monsieur Verzin",
+            "Monsieur Dönmez",
+            "Madame Sanhayi"
           ],
-          "repondant": "Köksal",
+          "repondant": "Monsieur Köksal",
           "decision": "APPROUVÉ",
           "vote": {
             "type": "unanimite",
@@ -99217,8 +99216,8 @@
           "montant_eur": 1031989,
           "thematiques": [
             "proprete_publique",
-            "subventions",
-            "services_communaux"
+            "subvention",
+            "convention"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
@@ -99228,12 +99227,14 @@
           "urgence": false,
           "type": "point_normal",
           "rubrique": "Développement Urbain et Mobilité",
-          "sous_rubrique": "",
-          "titre": "Contrat de quartier durable Pogge - Adoption du programme quadriennal 2017-2020 et désignation des membres de la commission de quartier - Approbation",
-          "resume": "Adoption du programme quadriennal 2017-2020 du contrat de quartier durable Pogge, désignation des membres de la commission de quartier, transmission au Gouvernement et sollicitation des subventions régionales.",
-          "intervenants": [],
+          "sous_rubrique": "Contrat de quartier durable",
+          "titre": "Contrat de quartier durable Pogge - Adoption du programme quadriennal 2017-2020 et désignation des membres de la commission de quartier",
+          "resume": "Adoption du programme quadriennal 2017-2020 du contrat de quartier durable Pogge, désignation des membres habitants et des secteurs associatif et scolaire de la commission de quartier, transmission du programme au Gouvernement de la Région de Bruxelles-Capitale et sollicitation des subventions régionales.",
+          "intervenants": [
+            "Monsieur le Bourgmestre"
+          ],
           "repondant": null,
-          "decision": "APPROUVÉ",
+          "decision": "DÉCIDE",
           "vote": {
             "type": "unanimite",
             "pour": null,
@@ -99242,9 +99243,10 @@
           },
           "montant_eur": null,
           "thematiques": [
-            "contrat_quartier",
+            "quartier_pogge",
             "developpement_urbain",
-            "amenagement_territorial"
+            "concertation",
+            "subvention"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
@@ -99272,6 +99274,28 @@
             "partenariats",
             "developpement_urbain"
           ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES GÉNÉRAUX",
+          "sous_rubrique": "Affaires juridiques",
+          "titre": "Vivaqua-Hydrobru - Examen du projet de fusion",
+          "resume": "",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "RETIRÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
         {
@@ -99460,9 +99484,9 @@
           "urgence": false,
           "type": "point_normal",
           "rubrique": "Voirie",
-          "sous_rubrique": "",
+          "sous_rubrique": "Mobilier urbain",
           "titre": "Mission d'étude pour la conception de nouveau mobilier urbain schaerbeekois - Mode de passation et conditions du marché de service - Pour information",
-          "resume": "Étude pour la conception d'un nouveau mobilier urbain cohérent et adapté aux besoins de la population. Réflexion sur le paysage urbain et l'espace public avec mobilier durable, innovant et fonctionnel. Crédits de 20.000€ prévus au budget extraordinaire 2016.",
+          "resume": "Approbation de la mission d'étude pour la conception de nouveau mobilier urbain schaerbeekois. Procédure négociée sans publicité. Crédit de 20.000€ prévu au budget extraordinaire 2016. Financement par emprunt.",
           "intervenants": [],
           "repondant": null,
           "decision": "PREND POUR INFORMATION",
@@ -99476,8 +99500,7 @@
           "thematiques": [
             "mobilier_urbain",
             "espace_public",
-            "marche_public",
-            "design_urbain"
+            "marche_public"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
@@ -99486,10 +99509,10 @@
           "page": 47,
           "urgence": false,
           "type": "point_normal",
-          "rubrique": "Equipement",
-          "sous_rubrique": "",
-          "titre": "Services Voirie et Schaerbeek Propreté & Espaces Verts - Achat de 10 GSM Crosscall et 6 smartphones et 1 flatscreen - Pour information",
-          "resume": "Achat de 10 GSM Crosscall pour le service Schaerbeek Propreté & Espaces Verts, de 6 smartphones pour le service Voirie auprès d'un adjudicataire dans le cadre du marché stock en cours, et d'un flatscreen pour le service Voirie auprès du CIRB. Dépenses: 999,90€ (GSM), 1139,94€ (smartphones), 1335,84€ (flatscreen).",
+          "rubrique": "Équipement",
+          "sous_rubrique": "Achats",
+          "titre": "Services Voirie et Schaerbeek Propreté & Espaces Verts - Achat de 10 GSM Crosscall pour le service Schaerbeek Propreté & Espaces Verts et de 6 smartphones pour le service Voirie auprès d'un adjudicataire dans le cadre du marché stock en cours, ainsi qu'un flatscreen pour le service Voirie auprès du CIRB - Pour information",
+          "resume": "Approbation des achats suivants : 10 GSM Crosscall pour Schaerbeek Propreté & Espaces Verts (999,90€ TVAC), 6 smartphones pour Voirie (1.139,94€ TVAC), 1 flatscreen pour Voirie via CIRB (1.335,84€ TVAC). Financements par emprunts et subsides.",
           "intervenants": [],
           "repondant": null,
           "decision": "PREND POUR INFORMATION",
@@ -99501,10 +99524,9 @@
           },
           "montant_eur": 3475.68,
           "thematiques": [
-            "equipements",
-            "telephones_mobiles",
-            "marche_public",
-            "services_techniques"
+            "equipement",
+            "achat",
+            "telecom"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
