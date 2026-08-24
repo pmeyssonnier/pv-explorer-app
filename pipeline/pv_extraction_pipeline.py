@@ -636,6 +636,20 @@ RE_APPROVED_VOTE = re.compile(
     r"(?:\s+et\s+(\d+)\s+abstention)?",
     re.IGNORECASE,
 )
+# « Approbation » / « Goedkeuring » (le suffixe d'agenda « … - Approbation »
+# des points soumis au vote) traité comme SYNONYME d'« approuvé » : un point
+# ainsi soumis et NON retiré/reporté/rejeté a été approuvé (vote non chiffré →
+# type inconnu). Repli de PLUS BASSE priorité (voir _recover_decision_from_window) :
+# retrait/report et les votes chiffrés passent avant, un rejet le bloque.
+RE_APPROVED_INTENT = re.compile(r"\bapprobation\b|\bgoedkeuring\b", re.IGNORECASE)
+# Bloque le repli « Approbation → APPROUVÉ » : rejet explicite OU tournure
+# négative où « approbation » n'affirme pas l'approbation du point (« sans/ni
+# approbation », « refus/défavorable »). On ne présume alors rien.
+RE_APPROVAL_BLOCK = re.compile(
+    r"rejet[ée]s?|non\s+approuv|verworpen|niet\s+goedgekeurd"
+    r"|sans\s+approbation|ni\s+approbation|refus|défavorable|zonder\s+goedkeuring",
+    re.IGNORECASE,
+)
 
 
 def _anchor_window(text: str, sp: int) -> str:
@@ -727,11 +741,15 @@ def _deferred_status_from_window(window: str):
 
 def _recover_decision_from_window(window: str):
     """(decision, vote) complet déduit du texte brut d'un point EXTRAIT mais sans
-    décision. Couvre, par priorité : retrait (RETIRÉ) / report (REPORTÉ), puis
-    approbation par le Conseil — unanimité ou vote nominal chiffré — quand le
-    marqueur « DÉCISION DU CONSEIL … approuvé … / goedgekeurd … » est présent
-    (cas réel SP 7/19/37 du 2010-03-31 : points votés dont le LLM a raté la
-    décision). (None, None) si aucun marqueur fiable : on n'invente jamais."""
+    décision. Couvre, par PRIORITÉ DÉCROISSANTE :
+      1. retrait (RETIRÉ) / report (REPORTÉ) — l'acte prime sur tout le reste ;
+      2. approbation chiffrée : vote nominal (« approuvé par X voix contre Y »)
+         ou unanimité (« approuvé à l'unanimité / goedgekeurd met eenparigheid »)
+         — cas SP 7/19/37 du 2010-03-31 ;
+      3. approbation d'agenda : « Approbation » / « Goedkeuring » seul (le point
+         a été soumis au vote et approuvé, sans détail chiffré) → APPROUVÉ, vote
+         de type inconnu. Bloqué par un signal de rejet explicite.
+    (None, None) si aucun marqueur fiable : on n'invente jamais."""
     w = window or ""
     if RE_RETIRE.search(w):
         return "RETIRÉ", {"type": None, "pour": None, "contre": 0, "abstentions": 0}
@@ -746,6 +764,10 @@ def _recover_decision_from_window(window: str):
         }
     if RE_APPROVED_UNANIME.search(w):
         return "APPROUVÉ", {"type": "unanimite", "pour": None, "contre": 0, "abstentions": 0}
+    # Repli le plus bas : « Approbation »/« Goedkeuring » (synonyme d'approuvé),
+    # sauf rejet explicite. Vote inconnu — on n'invente pas l'unanimité.
+    if RE_APPROVED_INTENT.search(w) and not RE_APPROVAL_BLOCK.search(w):
+        return "APPROUVÉ", {"type": None, "pour": None, "contre": 0, "abstentions": 0}
     return None, None
 
 
