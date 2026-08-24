@@ -198,3 +198,70 @@ def _respondents(raw: str, seance: dict) -> list:
             if b and _looks_like_name(b):
                 names.append(b)
     return names
+
+
+# ── Audit « sans demandeur » (hors-ligne, sans PDF ni LLM) ───────────────────
+# Types de points pour lesquels un·e AUTEUR·E individuel·le est ATTENDU·E. Les
+# motions en sont EXCLUES : elles sont souvent collectives et volontairement
+# attribuées par le seul titre (voir _author_of) — une motion sans auteur nommé
+# n'est donc PAS une anomalie d'extraction. On les recense néanmoins à part.
+_TYPES_AUTEUR_ATTENDU = frozenset({"question_orale", "demande_habitant", "interpellation"})
+
+
+def audit_authors(db: dict, pairs: set | None = None) -> dict:
+    """Recense les points où un·e demandeur·se est ATTENDU·E mais introuvable,
+    en séparant deux catégories très différentes :
+
+      • anomalies : questions orales / demandes / interpellations SANS auteur
+        attribuable — de vrais trous d'extraction (l'auteur figure normalement
+        dans le PDF « Question de M. X - … ») à corriger par ré-extraction ;
+      • motions_non_attribuees : motions sans auteur — souvent COLLECTIVES (pas
+        une anomalie). Chaque entrée porte `intervenants` et `intervenant_unique`
+        (True si un seul intervenant·e nommé·e → candidate raisonnable à une
+        attribution, contrairement aux motions à débat multiple).
+
+    Hors-ligne : n'utilise que la base déjà extraite (aucun PDF, aucun LLM).
+    `pairs` (jeu de paires nom↔clé) n'influence que la résolution de clé, pas la
+    détection d'un auteur — l'audit fonctionne donc avec l'ensemble vide."""
+    pairs = pairs if pairs is not None else set()
+    anomalies, motions = [], []
+    for s in db.get("seances", []):
+        date = (s.get("seance") or {}).get("date")
+        for p in s.get("points", []):
+            typ = p.get("type")
+            if typ not in _TYPES_AUTEUR_ATTENDU and typ != "motion":
+                continue
+            author, _key = _point_author(p, pairs, date)
+            if author:
+                continue
+            interv = list(p.get("intervenants") or [])
+            entry = {
+                "date": date, "sp": p.get("sp"), "type": typ,
+                "titre": (p.get("titre") or "").replace("\n", " ").strip(),
+                "intervenants": interv, "intervenant_unique": len(interv) == 1,
+            }
+            (motions if typ == "motion" else anomalies).append(entry)
+    anomalies.sort(key=lambda e: (e["date"] or "", e["sp"] or 0))
+    motions.sort(key=lambda e: (e["date"] or "", e["sp"] or 0))
+    return {"anomalies": anomalies, "motions_non_attribuees": motions}
+
+
+def print_author_audit(report: dict) -> dict:
+    """Résumé lisible de audit_authors : anomalies détaillées, motions non
+    attribuées agrégées (dont candidates à intervenant·e unique). Retourne un
+    dict de compteurs."""
+    anomalies = report.get("anomalies", [])
+    motions = report.get("motions_non_attribuees", [])
+    candidates = [m for m in motions if m["intervenant_unique"]]
+    bar = "━" * 56
+    print(f"\n{bar}\n  AUDIT « SANS DEMANDEUR » (hors-ligne)\n{bar}")
+    print(f"  Anomalies (question/demande sans auteur) : {len(anomalies)}")
+    for e in anomalies:
+        print(f"    ⚠ {e['date']} SP{e['sp']} [{e['type']}] : {e['titre'][:70]}")
+    print(f"  Motions non attribuées : {len(motions)} "
+          f"(dont {len(candidates)} à intervenant·e unique — attribuables)")
+    for m in candidates:
+        print(f"    ? {m['date']} SP{m['sp']} — intervenant : {m['intervenants'][0]}")
+    print(f"{bar}\n")
+    return {"anomalies": len(anomalies), "motions_non_attribuees": len(motions),
+            "motions_attribuables": len(candidates)}

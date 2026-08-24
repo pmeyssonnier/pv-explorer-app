@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 
 import app
 from services import elus
+from services.people.attribution import audit_authors
 
 client = TestClient(app.app)
 ROOT = Path(__file__).resolve().parent.parent
@@ -218,6 +219,35 @@ def test_author_of_motion_checks_resume_but_never_guesses_from_intervenants():
         "intervenants": ["Georges Verzin", "Cédric Mahieu"],
     }
     assert elus._author_of(point_no_mention) is None
+
+
+def test_audit_authors_separates_anomalies_from_collective_motions():
+    db = {"seances": [{
+        "seance": {"date": "2017-05-31"},
+        "points": [
+            # Anomalie : question orale sans intervenant ni auteur dans le titre.
+            {"sp": 63, "type": "question_orale", "titre": "Le taux de participation",
+             "resume": "", "intervenants": []},
+            # OK : demande avec auteur dans le titre → pas signalée.
+            {"sp": 64, "type": "demande_habitant",
+             "titre": "Demande de Monsieur Georges Verzin sur X", "intervenants": []},
+            # Motion collective (débat multiple) → bucket motions, pas candidate.
+            {"sp": 65, "type": "motion", "titre": "Motion sur le climat",
+             "resume": "", "intervenants": ["Durant", "Verzin", "Goldstein"]},
+            # Motion à intervenant·e unique → candidate à attribution.
+            # (titre volontairement sans nom propre capté par la regex d'auteur)
+            {"sp": 66, "type": "motion", "titre": "Motion pour le climat",
+             "resume": "", "intervenants": ["Vanhalewyn"]},
+        ],
+    }]}
+    report = audit_authors(db)
+    anos = report["anomalies"]
+    motions = report["motions_non_attribuees"]
+    assert [(a["sp"], a["type"]) for a in anos] == [(63, "question_orale")]
+    assert sorted(m["sp"] for m in motions) == [65, 66]
+    cand = [m for m in motions if m["intervenant_unique"]]
+    assert [m["sp"] for m in cand] == [66]
+    assert cand[0]["intervenants"] == ["Vanhalewyn"]
 
 
 def test_author_from_text_prefers_full_name_over_particle_truncation():
