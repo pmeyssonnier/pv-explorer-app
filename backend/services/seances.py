@@ -6,6 +6,7 @@ demandeur/répondant résolus via le même registre de noms canoniques (voir
 services.people.registry) pour un affichage homogène — et pour chaque point,
 un résumé lisible de sa décision/vote et de ses thématiques.
 """
+import lexique_store
 from services.statistics import load_db
 from utils.text import _DECISION_LABELS, _thematique_label
 from utils.video import video_session_map
@@ -66,7 +67,7 @@ def _decision_summary(decision, vote):
     if not d:
         return None
     norm = _strip_accents(d).lower()
-    label = _DECISION_LABELS.get(norm)
+    label = lexique_store.decisions().get(norm) or _DECISION_LABELS.get(norm)
     if not label:
         # Repli pour les variantes rares/coquilles non répertoriées
         # (ex. « PREND ACTE + DÉROGATION ART.12 ») : casse homogène.

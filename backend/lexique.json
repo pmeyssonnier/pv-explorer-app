@@ -1,0 +1,17 @@
+{
+  "thematiques": {},
+  "decisions": {},
+  "personnes": {
+    "alias": {},
+    "noms": {}
+  },
+  "extraction": {
+    "retrait": [],
+    "report": [],
+    "approbation": [],
+    "rejet": []
+  },
+  "glossaire": {
+    "dropzone": "Périmètre où il est permis de stationner les véhicules de cyclopartage en flotte libre : trottinettes, vélos et scooters."
+  }
+}

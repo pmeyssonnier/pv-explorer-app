@@ -11,6 +11,7 @@ import json
 import os
 from collections import defaultdict
 
+import lexique_store
 from services.statistics import load_db
 from services.questions_ecrites import QE_JSON_PATH, load_qe_db
 from utils.text import _thematique_label
@@ -310,8 +311,11 @@ def _build_all():
     # réutilisés ensuite pour résoudre "repondant"/"demandeur" en noms
     # complets et homogènes (même casse/ordre que la fiche de la personne),
     # plutôt que le texte brut du PV (ex. « ERALY » ou « VANHALEWYN VINCENT »).
+    # Noms d'affichage : lexique éditable prioritaire, puis surcharges en dur,
+    # puis meilleure variante observée.
+    _lex_noms = lexique_store.person_names()
     nom_by_key = {
-        k: _DISPLAY_NAME_OVERRIDES.get(k) or _titlecase(_best_display_variant(d["variants"], k))
+        k: _lex_noms.get(k) or _DISPLAY_NAME_OVERRIDES.get(k) or _titlecase(_best_display_variant(d["variants"], k))
         for k, d in people.items()
     }
 
