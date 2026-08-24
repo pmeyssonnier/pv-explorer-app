@@ -23,7 +23,7 @@ import {
 } from './elus.js';
 import {
   loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
-  jumpToSeance, setPendingSeanceDate, onSeanceRoleChipClick,
+  jumpToSeance, setPendingSeanceDate, onSeanceRoleChipClick, onSeanceTypeChipClick,
 } from './seances.js';
 import {
   checkAdminSession, openAdminLogin, closeAdminLogin, initAdminLoginOverlay,
@@ -75,7 +75,7 @@ registerActions({
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick,
   shareElu, onEluChipClick,
-  shareSeance, jumpToSeance, onSeanceRoleChipClick,
+  shareSeance, jumpToSeance, onSeanceRoleChipClick, onSeanceTypeChipClick,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
   cancelQeExtract, confirmQePublish,
 });
