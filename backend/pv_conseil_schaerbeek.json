@@ -69,6 +69,7 @@
       "2016-05-25",
       "2016-06-29",
       "2016-09-28",
+      "2016-10-26",
       "2016-11-30",
       "2016-12-21",
       "2017-02-22",
@@ -170,7 +171,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9828,
+    "total_points": 9883,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -93650,6 +93651,1561 @@
             "laiterie",
             "infrastructures"
           ]
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2016-10-26",
+        "date": "2016-10-26",
+        "source_file": "PV Conseil 2016.10.26.pdf",
+        "extracted_at": "2026-08-24T13:52:25.079823",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": "Bernard Clerfayt",
+        "bourgmestre_ff": null,
+        "secretaire_communal": "David Neuprez",
+        "presents_count": 25,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 56,
+          "extracted": 55,
+          "missing_sp": [
+            22
+          ],
+          "extra_sp": [],
+          "missing_pages": [
+            25
+          ],
+          "ok": false
+        },
+        "source_url": "https://www.1030.be/data/media/import/PV%20Conseil%202016.10.26.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
+          "sous_rubrique": "",
+          "titre": "Remise de Brevet d'Elite du Travail à 2 citoyens schaerbeekois",
+          "resume": "Remise de brevets d'Elite du Travail à 2 citoyens schaerbeekois. Le Bourgmestre expose le point et félicite les deux citoyens.",
+          "intervenants": [
+            "Bourgmestre"
+          ],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 3,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "POINT(S) INSCRIT(S) À LA DEMANDE D'HABITANTS",
+          "sous_rubrique": "",
+          "titre": "Le projet de construction sur le site Optima",
+          "resume": "Demande de Monsieur John Paul Van Vreckem concernant le projet de construction sur le site Optima. Monsieur Van Vreckem expose le point. Le Bourgmestre et Monsieur Vanhalewyn répondent. Interventions de plusieurs conseillers.",
+          "intervenants": [
+            "Van Vreckem",
+            "Bourgmestre",
+            "Vanhalewyn",
+            "Van Gorp",
+            "Verzin",
+            "Durant",
+            "Lorenzino",
+            "Sag",
+            "Bernard",
+            "Jodogne"
+          ],
+          "repondant": "Bourgmestre",
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "construction",
+            "urbanisme"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
+          "sous_rubrique": "",
+          "titre": "Procès-verbal du Conseil du 28 septembre 2016 - Approbation",
+          "resume": "Approbation du procès-verbal de la séance du 28 septembre 2016.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 3,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
+          "sous_rubrique": "",
+          "titre": "Démission de Monsieur Yves Goldstein de ses fonctions de conseiller communal - Prise d'acte - Vérification des pouvoirs et installation de son remplaçant",
+          "resume": "Prise d'acte de la démission de Monsieur Yves Goldstein de ses fonctions de conseiller communal et de chef de groupe PS. Vérification des pouvoirs et installation de Monsieur El Maslouhi comme remplaçant. Monsieur El Maslouhi prête serment en français.",
+          "intervenants": [
+            "El Maslouhi"
+          ],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
+          "sous_rubrique": "",
+          "titre": "Monsieur Halis KÖKTEN, conseiller indépendant - Prise d'acte",
+          "resume": "Prise d'acte concernant Monsieur Halis Kökten, conseiller indépendant.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 5,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SECRÉTAIRE COMMUNAL - Assemblées",
+          "sous_rubrique": "",
+          "titre": "Intercommunale d'Inhumation scrl - Rapport annuel 2015",
+          "resume": "Rapport annuel 2015 de l'Intercommunale d'Inhumation scrl présenté pour information. Madame Durant expose le point.",
+          "intervenants": [
+            "Durant"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 6,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "FINANCES - Enrôlement et règlement",
+          "sous_rubrique": "",
+          "titre": "Taxe sur la mise à disposition et location de chambres et appartements - Exercices 2017 à 2021 – Nouveau règlement - Approbation",
+          "resume": "Nouveau règlement de taxe sur la mise à disposition et location de chambres et appartements pour les exercices 2017 à 2021. Intervention de Monsieur Dönmez. Réponses de Monsieur Grimberghs et du Bourgmestre. Ce point est retiré de l'ordre du jour.",
+          "intervenants": [
+            "Dönmez",
+            "Grimberghs",
+            "Bourgmestre"
+          ],
+          "repondant": "Grimberghs",
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "finances",
+            "fiscalite",
+            "logement"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "FINANCES - Budget",
+          "sous_rubrique": "",
+          "titre": "Fonds Régional Bruxellois de Refinancement des Trésoreries Communales - Prêt de trésorerie - Convention - Avenant - Approbation",
+          "resume": "Approbation de l'avenant n°6 à la convention d'accès de la commune de Schaerbeek au Fonds Régional Bruxellois de Refinancement des Trésoreries Communales.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "finances",
+            "tresorie"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "FINANCES - Budget",
+          "sous_rubrique": "",
+          "titre": "Budget 2016 - Modifications Budgétaires - Service ordinaire nr 6 - Service extraordinaire nr 7 - Approbation",
+          "resume": "Modifications budgétaires au Budget 2016 concernant le Service ordinaire nr 6 et le Service extraordinaire nr 7. Monsieur De Herde expose le point. Interventions de plusieurs conseillers et réponses du Bourgmestre.",
+          "intervenants": [
+            "De Herde",
+            "Platteau",
+            "Verzin",
+            "Querton",
+            "Sanhayi",
+            "Vriamont",
+            "Bourgmestre"
+          ],
+          "repondant": "De Herde",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 13,
+            "abstentions": 4
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "finances",
+            "budget"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "FINANCES - Contrôle et stratégie",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Amis de la Morale Laïque de Schaerbeek\" - Convention annuelle 2016 - Approbation",
+          "resume": "Approbation de la convention annuelle 2016 de l'ASBL \"Amis de la Morale Laïque de Schaerbeek\".",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 9,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL",
+          "sous_rubrique": "Aide aux Familles de Schaerbeek",
+          "titre": "ASBL Aide aux Familles de Schaerbeek - Comptes 2015 - Prise d'acte",
+          "resume": "Prise d'acte des comptes 2015 de l'ASBL Aide aux Familles de Schaerbeek affichant un résultat positif de 81.363,87€ et des fonds propres s'élevant à 244.676,82€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 81363.87,
+          "thematiques": [
+            "asbl",
+            "comptes_annuels",
+            "aide_aux_familles"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL",
+          "sous_rubrique": "Mission Locale de Schaerbeek",
+          "titre": "ASBL Mission Locale de Schaerbeek pour l'Emploi et la Formation - Comptes 2015 - Prise d'acte",
+          "resume": "Ce point est retiré de l'ordre du jour",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "asbl",
+            "comptes_annuels",
+            "emploi_formation"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 11,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL",
+          "sous_rubrique": "Transit",
+          "titre": "ASBL Transit - Comptes 2015 - Prise d'acte",
+          "resume": "Prise d'acte des comptes 2015 de l'ASBL Transit affichant un résultat positif de 234,04€ et des fonds propres négatifs s'élevant à -256.631,68€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 234.04,
+          "thematiques": [
+            "asbl",
+            "comptes_annuels",
+            "transit"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'Églises",
+          "sous_rubrique": "Fabrique d'Eglise Divin Sauveur",
+          "titre": "Fabrique d'Eglise Divin Sauveur - Modification budgétaire n°1 de 2016 - Aviser favorablement",
+          "resume": "Avis favorable sur la modification budgétaire n°1 pour l'exercice 2016 de la Fabrique d'Eglise Divin Sauveur avec recettes et dépenses de 39.283,44€ et excédent de 0€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 39283.44,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "modification_budgetaire"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'Églises",
+          "sous_rubrique": "Fabrique d'Eglise Saint Jean et Nicolas",
+          "titre": "Fabrique d'Eglise Saint Jean et Nicolas - Budget 2017 - Aviser favorablement",
+          "resume": "Avis favorable sur le budget 2017 de la Fabrique d'Eglise Saint Jean et Nicolas avec recettes totales de 464.241,00€ et dépenses de 464.241,00€",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 464241,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "budget_2017"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 15,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Fabriques d'Églises",
+          "sous_rubrique": "Fabrique d'Eglise Saint Servais",
+          "titre": "Fabrique d'Eglise Saint Servais - Budget 2017 - Aviser favorablement sous réserve des corrections proposées",
+          "resume": "Avis favorable sur le budget 2017 de la Fabrique d'Eglise Saint Servais avec recettes totales de 360.784,53€ et dépenses de 360.784,53€, sous réserve des corrections proposées",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 360784.53,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "budget_2017",
+            "corrections_budgetaires"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "Programme de prévention urbaine",
+          "titre": "Programme de Prévention Urbaine - Service Educateurs de rue et Cellule Quartiers - Groupe de parole Assuétudes destiné à l'entourage schaerbeekois des personnes dépendantes - Approbation",
+          "resume": "Approbation de la reconduction de la convention de partenariat entre Le Figuier asbl, Infor-Drogues asbl, TRS asbl et la Commune de Schaerbeek pour les projets collectifs et le suivi de familles de personnes dépendantes.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "prevention_urbaine",
+            "assuetudes",
+            "action_sociale",
+            "partenariats"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "DÉVELOPPEMENT STRATÉGIQUE ET DURABLE",
+          "sous_rubrique": "PPU - Cellule Quartiers",
+          "titre": "Convention de subvention avec l'asbl \"Save Belgium\" pour le projet \"Repli identitaire et radicalisation violente, un support pédagogique d'expression groupale au départ du récit de jeunes concernés\" de Madame I.Seret - Approbation",
+          "resume": "Approbation de la modification de la convention de subvention avec l'asbl \"2 Bouts\" et approbation de la convention de subvention avec l'asbl \"Save Belgium\" pour le projet sur l'identité et la radicalisation violente.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 18490,
+          "thematiques": [
+            "subventions",
+            "jeunesse",
+            "prevention_radicalisation",
+            "action_sociale"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions et partenariats",
+          "sous_rubrique": "",
+          "titre": "Propreté publique - Convention 2016 avec Bruxelles Propreté - Approbation",
+          "resume": "Approbation de la convention 2016 liant la commune avec Bruxelles Propreté pour couvrir les frais de personnel, de fonctionnement et d'investissement en matière de propreté publique.",
+          "intervenants": [
+            "Köksal",
+            "Verzin",
+            "Dönmez",
+            "Sanhayi"
+          ],
+          "repondant": "Köksal",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1031989,
+          "thematiques": [
+            "proprete_publique",
+            "subventions",
+            "services_communaux"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Urbain et Mobilité",
+          "sous_rubrique": "",
+          "titre": "Contrat de quartier durable Pogge - Adoption du programme quadriennal 2017-2020 et désignation des membres de la commission de quartier - Approbation",
+          "resume": "Adoption du programme quadriennal 2017-2020 du contrat de quartier durable Pogge, désignation des membres de la commission de quartier, transmission au Gouvernement et sollicitation des subventions régionales.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrat_quartier",
+            "developpement_urbain",
+            "amenagement_territorial"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Urbain et Mobilité",
+          "sous_rubrique": "",
+          "titre": "Convention de collaboration entre la VRT, la RTBF, la Région de Bruxelles-Capitale et la Commune de Schaerbeek, d'une part, et l'ADT, d'autre part, concernant le projet de réaménagement du site VRT/RTBF - Addendum",
+          "resume": "",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "conventions",
+            "partenariats",
+            "developpement_urbain"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux",
+          "sous_rubrique": "Gestion immobilière technique",
+          "titre": "Bail type pour immeubles sis rue des Palais d'Anethan, 2 et rue des Palais, 195 - Approbation",
+          "resume": "Approbation du contrat-type de bail à résidence principale pour les appartements situés rue d'Anethan, 2 et rue des Palais, 195. Le contrat a une durée maximale de 9 années avec possibilité de tacite reconduction. Les valeurs locatives sont indexées annuellement au 01/10 sur base de l'index santé.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immobilier",
+            "baux_residentiels",
+            "gestion_immobiliere"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux",
+          "sous_rubrique": "Gestion immobilière technique",
+          "titre": "Parc Josaphat - \"La Laiterie\" - Appel à projet - Approbation",
+          "resume": "Adoption de l'appel à projets pour l'espace Horeca La Laiterie au parc Josaphat.",
+          "intervenants": [
+            "Monsieur Van Gorp",
+            "Madame Durant",
+            "Monsieur de Beauffort",
+            "Monsieur Bernard",
+            "Monsieur van den Hove",
+            "Madame Vriamont"
+          ],
+          "repondant": "Monsieur le Bourgmestre",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "parcs_et_espaces_verts",
+            "horeca",
+            "appels_a_projets"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services Généraux",
+          "sous_rubrique": "Gestion immobilière technique",
+          "titre": "Théâtre de la Balsamine - Avenue Félix Marchal, 1 - Prise en charge de travaux pour remise en état et entretien périodique du bâtiment par la Balsamine - Avenant à la convention - Modification - Approbation",
+          "resume": "Approbation de la modification de l'avenant à la convention avec l'asbl Théâtre de la Balsamine. Paiement d'une avance de 80.000 € pour les travaux de remise en état et d'entretien périodique du bâtiment.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 80000,
+          "thematiques": [
+            "culture",
+            "theatre",
+            "travaux_immobiliers",
+            "convention_asbl"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Architecture et Bâtiments",
+          "titre": "Installation d'un éclairage festif en 2016 - Mode de passation et des conditions du marché - Approbation",
+          "resume": "Marché divisé en 6 lots pour l'installation de nouvelles décorations lumineuses à différents endroits de la commune (Carrefour avenue Latinis/avenue des Glycines, rue de Brabant, square Duployé, place Colignon, Place Princesse Elisabeth, Parvis de l'église Saint-Servais). Montant global estimé à 40.000 € TVAC. Mode de passation : procédure négociée sans publicité après consultation de trois firmes spécialisées. Financement par emprunt.",
+          "intervenants": [
+            "El Maslouhi",
+            "Vanhalewyn",
+            "Noël",
+            "Bourgmestre"
+          ],
+          "repondant": "Vanhalewyn",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 40000,
+          "thematiques": [
+            "infrastructures",
+            "eclairage_public",
+            "marche_public",
+            "decorations"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Architecture et Bâtiments",
+          "titre": "Inventaire de l'amiante dans divers bâtiments communaux - Marché de services - Mode de passation et conditions du marché - Pour information",
+          "resume": "Marché public de services pour compléter l'inventaire amiante des bâtiments communaux réalisé en 2011. Certains locaux n'ont pas pu être visités en 2011. Mission confiée à un laboratoire agréé. Procédure négociée sans publicité après consultation de trois laboratoires. Montant estimé à 15.000 € TVAC. Imputation à l'article 137/733-60/-/51 du budget extraordinaire 2016. Financement par emprunt.",
+          "intervenants": [
+            "Bernard",
+            "Vanhalewyn"
+          ],
+          "repondant": "Vanhalewyn",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 15000,
+          "thematiques": [
+            "infrastructures",
+            "amiante",
+            "batiments_communaux",
+            "marche_service",
+            "sante_securite"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 40,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Architecture et Bâtiments",
+          "titre": "Cadastre des opportunités d'amélioration, d'extension et de développement des équipements ludiques et sportifs de proximité sur l'espace public - Marché de service - Mode de passation et conditions du marché - Pour information",
+          "resume": "Marché de service pour établir un cadastre des opportunités d'amélioration, d'extension et de développement des équipements ludiques et sportifs de proximité dans l'espace public. Le montant du marché HTVA n'atteint pas le seuil de 85.000,00 €.",
+          "intervenants": [
+            "Bouhjar",
+            "El Arnouki"
+          ],
+          "repondant": "El Arnouki",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "infrastructures",
+            "equipements_sportifs",
+            "espace_public",
+            "loisirs",
+            "marche_service"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 44,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "",
+          "titre": "Mission d'étude pour la conception de nouveau mobilier urbain schaerbeekois - Mode de passation et conditions du marché de service - Pour information",
+          "resume": "Étude pour la conception d'un nouveau mobilier urbain cohérent et adapté aux besoins de la population. Réflexion sur le paysage urbain et l'espace public avec mobilier durable, innovant et fonctionnel. Crédits de 20.000€ prévus au budget extraordinaire 2016.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 20000,
+          "thematiques": [
+            "mobilier_urbain",
+            "espace_public",
+            "marche_public",
+            "design_urbain"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 47,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Equipement",
+          "sous_rubrique": "",
+          "titre": "Services Voirie et Schaerbeek Propreté & Espaces Verts - Achat de 10 GSM Crosscall et 6 smartphones et 1 flatscreen - Pour information",
+          "resume": "Achat de 10 GSM Crosscall pour le service Schaerbeek Propreté & Espaces Verts, de 6 smartphones pour le service Voirie auprès d'un adjudicataire dans le cadre du marché stock en cours, et d'un flatscreen pour le service Voirie auprès du CIRB. Dépenses: 999,90€ (GSM), 1139,94€ (smartphones), 1335,84€ (flatscreen).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3475.68,
+          "thematiques": [
+            "equipements",
+            "telephones_mobiles",
+            "marche_public",
+            "services_techniques"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 50,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Informatique",
+          "sous_rubrique": "Commandes",
+          "titre": "Commande de 2 ordinateurs pour le service Schaerbeek Propreté & Espaces Verts auprès du CIRB",
+          "resume": "Commande de 2 ordinateurs pour le service Schaerbeek Propreté & Espaces Verts dans le cadre des marchés conjoints conclus par le CIRB sur base d'un mandat communal. Dépense de 5.000 € TVAC imputée à l'article 875/742-53/521 du budget extraordinaire 2016 et financée par emprunts.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5000,
+          "thematiques": [
+            "informatique",
+            "marche_public",
+            "equipement"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 52,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Informatique",
+          "sous_rubrique": "Commandes",
+          "titre": "Service informatique - Commande de l'anti-virus TREND MICRO DEEP SECURITY (Application + Licence Server + Licence Enduser) sur 3 ans ainsi que de 5 jours de consultance",
+          "resume": "Commande pour le service informatique de l'anti-virus TREND MICRO DEEP SECURITY (Application + Licence Server + Licence Enduser) sur 3 ans ainsi que de 5 jours de consultance dans le cadre des marchés conjoints conclus par le CIRB. Dépense de 112 222,47 € TVAC imputée à l'article 139/742-53/26 du budget extraordinaire 2016 et financée par emprunts.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 112222.47,
+          "thematiques": [
+            "informatique",
+            "logiciel",
+            "marche_public"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 54,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Accueil-Expédition",
+          "sous_rubrique": "Achat d'équipement",
+          "titre": "Accueil-Expédition - Achat d'une imprimante à tickets - Mode de passation et fixation des conditions du marché",
+          "resume": "Marché par procédure négociée sans publicité sur base d'une facture acceptée ayant pour objet l'achat d'une imprimante à tickets. Dépense de 2 662 € imputée à l'article 104/744-51/14 du budget extraordinaire 2016 et financée par emprunts.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2662,
+          "thematiques": [
+            "marche_public",
+            "accueil_expedition",
+            "equipement"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 56,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement",
+          "sous_rubrique": "Achat d'équipement",
+          "titre": "Enseignement communal francophone - Achat de 2 machines à laver et 2 séchoirs pour usage industriel - Mode de passation et fixation des conditions du marché",
+          "resume": "Marché par procédure négociée sans publicité sur base d'une facture acceptée ayant pour objet l'achat de 2 machines à laver et 2 séchoirs pour usage industriel pour l'enseignement communal francophone. Dépense de 9 317 € TVA comprise imputée à l'article 700/744-51/14 du budget extraordinaire 2016 et financée par emprunts.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 9317,
+          "thematiques": [
+            "enseignement",
+            "marche_public",
+            "equipement"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 58,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service Informatique",
+          "sous_rubrique": "Marché public de fournitures",
+          "titre": "Service Informatique - Marché public de fournitures visant l'achat de licences server et de services SAM - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation de l'attribution du marché à la SA ECONOCOM PRODUCTS SOLUTIONS pour l'achat de licences server et services SAM, pour un montant de 55.172,52 € TVAI.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 55172.52,
+          "thematiques": [
+            "marche_public",
+            "informatique",
+            "licences_logicielles"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 61,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure, techniques spéciales",
+          "sous_rubrique": "Achat de téléphones portables",
+          "titre": "Infrastructure, techniques spéciales - Achat de téléphones portables pour l'Hôtel communal - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation de l'achat de téléphones portables pour l'Hôtel communal via procédure négociée sans publicité, pour un montant de 1.801,91 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1801.91,
+          "thematiques": [
+            "marche_public",
+            "infrastructure",
+            "equipements_informatiques"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 63,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Equipement",
+          "sous_rubrique": "Achat de matériel",
+          "titre": "Equipement - Achat de matériel pour les divers services communaux - Mode de passation et fixation des conditions de marchés",
+          "resume": "Approbation de l'achat de matériel pour les divers services communaux via procédure négociée sans publicité, pour un montant estimé à 102.850 € TVA comprise, financé par emprunts et subsides.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 102850,
+          "thematiques": [
+            "marche_public",
+            "equipement",
+            "services_communaux"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 66,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Equipement",
+          "sous_rubrique": "Achat de mobilier pour les divers services communaux",
+          "titre": "Equipement - Achat de mobilier pour les divers services communaux - Mode de passation et fixation des conditions de marchés - Pour information",
+          "resume": "Marché pour l'achat de mobilier pour les divers services communaux. Mode de passation : procédure négociée sans publicité. Dépense estimée à 102.850 € TVA comprise, financée par emprunts et subsides.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 102850,
+          "thematiques": [
+            "marches_publics",
+            "equipement",
+            "mobilier",
+            "budget_extraordinaire"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 69,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructure, bâtiments",
+          "sous_rubrique": "Achat de plaques RF60 pour les finitions de type Promatect 100",
+          "titre": "Infrastructure, bâtiments - Achat de plaques RF60 pour les finitions de type Promatect 100 pour des travaux de parachèvement à l'école16 - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Marché pour l'achat de plaques RF60 de type Promatect 100 pour les travaux de parachèvement de l'école 16. Mode de passation : procédure négociée sans publicité sur base d'une facture acceptée. Dépense de 4.872 € TVA comprise, financée par emprunts.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 4872,
+          "thematiques": [
+            "marches_publics",
+            "infrastructure",
+            "batiments",
+            "ecole",
+            "budget_extraordinaire"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 71,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Techniques Spéciales",
+          "sous_rubrique": "Achat d'une centrale de régénération d'adoucisseurs mobiles",
+          "titre": "Techniques Spéciales - Achat d'une centrale de régénération d'adoucisseurs mobiles - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Marché pour l'achat d'une centrale de régénération d'adoucisseurs mobiles. Mode de passation : procédure négociée sans publicité sur base d'une facture acceptée. Dépense de 9.676,37 € TVA comprise, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 9676.37,
+          "thematiques": [
+            "marches_publics",
+            "techniques_speciales",
+            "equipement",
+            "budget_extraordinaire"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 74,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier durable Helmet",
+          "sous_rubrique": "Transformation de logements en équipements communautaires",
+          "titre": "Contrat de quartier durable Helmet - Transformation de logements en équipements communautaires dans les socles des deux immeubles Apollo - Majoration de coût des travaux - Approbation",
+          "resume": "Prise en compte de la majoration de coût des travaux de transformation de logements en équipements communautaires dans les socles des deux immeubles Apollo, passant de 763.219,64 € TVAC à 860.000,00 € TVAC. Les surcoûts proviennent d'imprévus survenus en cours de chantier, notamment le désamiantage, les travaux de stabilité, l'adaptation de la ventilation, l'installation d'une hotte de cuisine et la réparation des châssis. Imputation de la majoration de 96.780,36 € au budget extraordinaire 2014, 2015 et 2016. Subsidiation à concurrence de 688.500,00 € dans le cadre du contrat de quartier durable Helmet.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 860000,
+          "thematiques": [
+            "contrat_quartier_durable",
+            "renovation",
+            "immobilier",
+            "travaux_publics",
+            "budget"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 77,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier durable Reine-Progrès",
+          "sous_rubrique": "Modifications du protocole d'accord Beliris",
+          "titre": "Contrat de quartier durable Reine-Progrès - Modifications du protocole d'accord Beliris relatif aux opérations - Approbation",
+          "resume": "Approbation de la version modifiée du protocole d'accord précisant les droits et obligations de l'État fédéral, de la Région de Bruxelles-Capitale et de la Commune de Schaerbeek dans le cadre des études et travaux relatifs au contrat de quartier durable Reine-Progrès. La modification du programme quadriennal approuvée par le gouvernement le 15 décembre 2014 a des incidences sur la ventilation du subside Beliris entre les différentes opérations.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3125000,
+          "thematiques": [
+            "contrat_quartier_durable",
+            "cooperation_etat",
+            "beliris",
+            "protocole"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 80,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services communaux spécifiques",
+          "sous_rubrique": "Sports",
+          "titre": "Chèques-Sport - Nouveau règlement - Approbation",
+          "resume": "Approbation des propositions d'amélioration et du nouveau règlement sur les chèques sports. Le règlement s'applique exclusivement au principe et aux modalités d'octroi d'un subside aux jeunes schaerbeekois et à leurs familles dans le cadre de la politique sportive. Les activités sportives doivent être organisées par un groupement sportif ou par la Vlaamse Gemeenschapscommissie (Sportdienst). Le règlement est complémentaire au règlement relatif aux subventions communales adapté le 25 juin 2014.",
+          "intervenants": [
+            "Monsieur Köse",
+            "Madame Byttebier",
+            "Monsieur Eraly",
+            "Madame Querton",
+            "Monsieur Bernard",
+            "Monsieur Bouhjar",
+            "Monsieur le Bourgmestre"
+          ],
+          "repondant": "Monsieur le Bourgmestre",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "sports",
+            "jeunesse",
+            "subventions",
+            "reglements"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 97,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Sports",
+          "sous_rubrique": "",
+          "titre": "Convention annuelle entre la commune de l'ASBL Neptunium - Approbation",
+          "resume": "Approbation de la convention annuelle liant la Commune et l'ASBL Neptunium",
+          "intervenants": [
+            "Monsieur Bernard"
+          ],
+          "repondant": "Monsieur le Bourgmestre",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "sports",
+            "conventions"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 98,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement artistique",
+          "sous_rubrique": "Académie de musique",
+          "titre": "Règlement concernant les rapports entre les différents intervenants de l'académie de musique, notamment les élèves et la personne investie de l'autorité parentale - Approbation",
+          "resume": "Point retiré de l'ordre du jour",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement_artistique",
+            "academie_musique"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 98,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enseignement artistique",
+          "sous_rubrique": "Académie",
+          "titre": "Enseignement artistique – Règlement de travail du personnel enseignant de l'Académie - Approbation",
+          "resume": "Approbation du règlement de travail du personnel enseignant de l'Académie. Vote sur un amendement de suppression d'une phrase du titre IV Comportement. Entrée en application au 1er novembre 2016.",
+          "intervenants": [
+            "De Herde",
+            "Bernard",
+            "Ozdemir",
+            "Onkelinx",
+            "Durant",
+            "Verzin",
+            "Bouhjar",
+            "Dönmez",
+            "Mettioui",
+            "Sag"
+          ],
+          "repondant": "De Herde, Bourgmestre",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 38,
+            "contre": 0,
+            "abstentions": 5
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "enseignement_artistique",
+            "personnel_enseignant",
+            "reglement_travail"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 47,
+          "page": 101,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service du personnel non-enseignant",
+          "sous_rubrique": "Service d'accueil en milieu scolaire",
+          "titre": "Service d'accueil en milieu scolaire (Sams) - Modification des horaires théoriques moyens des éducateurs - Approbation",
+          "resume": "Approbation de la réduction du nombre d'horaires théoriques moyens des éducateurs à 7 nouveaux horaires (18h00, 20h00, 23h00, 25h00, 28h00, 30h00) pour simplifier la gestion administrative. Approbation de l'intégration dans les nouveaux contrats de travail.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "service_accueil_scolaire",
+            "horaires_educateurs",
+            "gestion_administrative"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 48,
+          "page": 104,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Service du personnel non-enseignant",
+          "sous_rubrique": "Service d'accueil en milieu scolaire",
+          "titre": "Règlement du Service d'Accueil en Milieu Scolaire (SAMS) - Approbation",
+          "resume": "Approbation du nouveau règlement du Service d'Accueil en Milieu Scolaire fixant de nouvelles règles claires pour les prestations durant l'année scolaire, les petits congés et les vacances d'été, avec mise en œuvre au 1er janvier 2017.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "service_accueil_scolaire",
+            "reglement_service"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 115,
+          "page": 105,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Finances",
+          "sous_rubrique": "Garanties bancaires",
+          "titre": "ASBL \"Mission Locale pour l'Emploi et la Formation de Schaerbeek\" - Octroi d'une garantie bancaire de 500.000,00 € - Pour information",
+          "resume": "Déclaration que la Commune de Schaerbeek se porte irrécouvrablement caution solidaire en faveur de l'ASBL \"Mission Locale pour l'Emploi et la Formation de Schaerbeek\" auprès de CREDAL SC scrl-fs à concurrence d'un montant maximum de 500.000,00 €.",
+          "intervenants": [
+            "Onkelinx",
+            "Sag",
+            "Bernard",
+            "Verzin",
+            "Koyuncu"
+          ],
+          "repondant": "Noël",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 500000,
+          "thematiques": [
+            "finances",
+            "garantie_bancaire",
+            "mission_locale_emploi_formation"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 116,
+          "page": 106,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "SERVICES GÉNÉRAUX",
+          "sous_rubrique": "Affaires juridiques",
+          "titre": "Fusion par absorption d'HYDROBRU par VIVAQUA – Augmentation du capital de VIVAQUA – Modification des statuts - Fin de mandat et désignation d'administrateurs - Fin de mandat des membres du collège des commissaires - Pouvoirs - Assemblée générale extraordinaire de VIVAQUA du 8 novembre 2016 ou à une date proche - Mandat",
+          "resume": "Fusion par absorption d'HYDROBRU par VIVAQUA, augmentation du capital, modification des statuts, changement d'administrateurs et de commissaires, mandat pour l'assemblée générale extraordinaire de VIVAQUA du 8 novembre 2016",
+          "intervenants": [
+            "Monsieur le Bourgmestre",
+            "Monsieur Verzin",
+            "Monsieur Dönmez",
+            "Madame Lorenzino",
+            "Monsieur de Beauffort",
+            "Monsieur Sag",
+            "Madame Onkelinx"
+          ],
+          "repondant": "Monsieur le Bourgmestre",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 2
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fusion_societes",
+            "eau_potable",
+            "intercommunale",
+            "gouvernance"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 117,
+          "page": 114,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "SERVICES GÉNÉRAUX",
+          "sous_rubrique": "Affaires juridiques",
+          "titre": "Fusion par absorption d'HYDROBRU par VIVAQUA – Dissolution d'HYDROBRU – Assemblée générale extraordinaire d'HYDROBRU du 8 novembre 2016 ou à une date proche - Mandat",
+          "resume": "Fusion par absorption d'HYDROBRU par VIVAQUA, dissolution d'HYDROBRU, mandat pour l'assemblée générale extraordinaire d'HYDROBRU du 8 novembre 2016",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 39,
+            "contre": 0,
+            "abstentions": 2
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "fusion_societes",
+            "dissolution",
+            "intercommunale",
+            "eau_potable"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 118,
+          "page": 121,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "INFRASTRUCTURES",
+          "sous_rubrique": "Architecture et Bâtiments",
+          "titre": "9 fontaines communales - Remplacement de la régulation et des équipements défaillants - Mode de passation et conditions du marché - Approbation",
+          "resume": "Rénovation de neuf fontaines publiques sur le territoire communal aux emplacements suivants : Place Princesse Elisabeth, Crossing, Parc Josaphat, Parc Reine Verte, Place des Chasseurs Ardennais, Place de la Patrie, Maison des Arts, Mini Golf, Plaine Galopin. Mode de passation : procédure négociée directe avec publicité. Dépense estimée à 150.000 € TVAC imputable à l'article 766/724-60/-/51 du budget extraordinaire 2016, financée par emprunt.",
+          "intervenants": [
+            "Monsieur van den Hove",
+            "Monsieur El Arnouki"
+          ],
+          "repondant": "Monsieur El Arnouki",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "fontaines_publiques",
+            "infrastructure",
+            "renovation",
+            "marche_public"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 119,
+          "page": 123,
+          "urgence": true,
+          "type": "point_normal",
+          "rubrique": "Divers bâtiments communaux",
+          "sous_rubrique": "Travaux de mise en conformité des ascenseurs et contrat d'entretien (phase II)",
+          "titre": "Travaux de mise en conformité des ascenseurs et contrat d'entretien (phase II) - Mode de passation et conditions du marché - Approbation",
+          "resume": "Mise en conformité de dix ascenseurs (école 6: 2 ascenseurs, Seniorie Brems: 1 ascenseur, CSA: 3 ascenseurs, CTR: 4 ascenseurs) afin de lever les remarques de l'organisme de contrôle de sécurité. Travaux de modernisation et entretien durant deux ans.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 150000,
+          "thematiques": [
+            "ascenseurs",
+            "mise_en_conformite",
+            "securite",
+            "bâtiments_communaux",
+            "travaux",
+            "entretien"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 120,
+          "page": 130,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Demande de conseillers",
+          "sous_rubrique": "Accès aux écoles",
+          "titre": "L'accès aux écoles communales par les parents des élèves",
+          "resume": "Demande de Monsieur Axel BERNARD concernant l'accès aux écoles communales par les parents des élèves.",
+          "intervenants": [
+            "Axel Bernard",
+            "Barbara Trachte",
+            "Michel De Herde"
+          ],
+          "repondant": "Michel De Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ecoles",
+            "acces",
+            "parents"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 121,
+          "page": 130,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "DOCKS BRUXSEL",
+          "titre": "L'opportunité DOCKS BRUXSEL : Les retombées schaerbeekoises?",
+          "resume": "Question de Monsieur Eric PLATTEAU sur les retombées schaerbeekoises du projet DOCKS BRUXSEL.",
+          "intervenants": [
+            "Eric Platteau",
+            "Etienne Noël"
+          ],
+          "repondant": "Etienne Noël",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "docks_bruxsel",
+            "economie",
+            "amenagement"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
+        },
+        {
+          "sp": 122,
+          "page": 130,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "Accès aux écoles",
+          "titre": "L'accès aux écoles communales",
+          "resume": "Question de Madame Barbara TRACHTE sur l'accès aux écoles communales. Cette question a été posée lors de l'élaboration du point 120.",
+          "intervenants": [
+            "Barbara Trachte"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ecoles",
+            "acces"
+          ],
+          "source_file": "PV Conseil 2016.10.26.pdf"
         }
       ]
     },
