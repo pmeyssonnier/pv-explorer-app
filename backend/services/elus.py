@@ -31,6 +31,7 @@ from services.people.names import (  # noqa: F401 (réexportés)
     _best_display_variant, _clean, _HOMONYM_KEY_OVERRIDES, _is_non_person_video_author,
     _is_role_token, _key, _norm_tok, _resolve_display_name, _split_person_names, _titlecase,
 )
+from services.people.mandats import mandats_for  # noqa: F401 (réexporté)
 from services.people.registry import (  # noqa: F401 (réexportés)
     _build_all, _build_name_registry, _ensure_cache, _index, _load_video,
     _nom_by_key, _pairs, _role_of, _sig,
@@ -105,6 +106,10 @@ def elu_detail(key: str):
         "key": e["key"],
         "nom": e["nom"],
         "role": e["role"],
+        # Historique de mandats déclaratif (voir services.people.mandats),
+        # None si la personne n'y figure pas — le frontend retombe alors sur
+        # le libellé "role" simple (voir elus.js/renderElu).
+        "mandats": mandats_for(e["key"]),
         "counts": {
             "depose": len(depose),
             "repond": len(e["repond"]),

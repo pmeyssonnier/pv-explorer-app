@@ -1,0 +1,779 @@
+[
+  {
+    "nom": "Mohammed Abkoui",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Taoufik Ben Addi",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Fatiha Ahcini",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élue / Candidate"
+  },
+  {
+    "nom": "Elias Ammi",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Fadaoua Amrani",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Mohamed el Arnouki",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Mamadou Bah",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Abdourahmane Balde",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Yvan de Beauffort",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Yuri de Belder",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Naïma Belkhatir",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Axel Bernard",
+    "conseiller_communal": "2012-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Sarah Bestrioui",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Mehmet Bilge",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Jacques Bouché",
+    "conseiller_communal": "1994-2006",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Ancien conseiller communal"
+  },
+  {
+    "nom": "Abobakre Bouhjar",
+    "conseiller_communal": "2018-présent",
+    "echevin": "2025-présent",
+    "bourgmestre": null,
+    "statut": "Échevin(e) / Conseiller communal"
+  },
+  {
+    "nom": "Martin de Brabant",
+    "conseiller_communal": "2018-présent",
+    "echevin": "2025-présent",
+    "bourgmestre": "2026-présent (faisant fonction)",
+    "statut": "Bourgmestre f.f. / Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Adelheid Byttebier",
+    "conseiller_communal": "2006-2024",
+    "echevin": "2012-2024",
+    "bourgmestre": null,
+    "statut": "Échevine / Conseillère communale"
+  },
+  {
+    "nom": "Angelina Chan",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Bernard Clerfayt",
+    "conseiller_communal": "1988-présent",
+    "echevin": "1995-2000",
+    "bourgmestre": "2001-2024 (en titre)",
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Eddy Courtheoux",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Dominique Decoux",
+    "conseiller_communal": "2006-2018",
+    "echevin": "2012-2018",
+    "bourgmestre": null,
+    "statut": "Échevine / Conseillère communale"
+  },
+  {
+    "nom": "Luc Degraer",
+    "conseiller_communal": "2006-2012",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Matthieu Degrez",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Chloé Deguide",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Salih Demirhan",
+    "conseiller_communal": "2025-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Luc Denys",
+    "conseiller_communal": "2000-2018",
+    "echevin": "2006-2012",
+    "bourgmestre": null,
+    "statut": "Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Benjamin Devos",
+    "conseiller_communal": "2012-2018, 2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Bertrand Dhuyvetter",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Ibrahim Dönmez",
+    "conseiller_communal": "2006-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Yousra Douhri",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Isabelle Durant",
+    "conseiller_communal": "2000-2006, 2012-2017, 2024-présent",
+    "echevin": "2004-2009",
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Ayat Elkholti",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élue / Candidate"
+  },
+  {
+    "nom": "Thomas Eraly",
+    "conseiller_communal": "2018-présent",
+    "echevin": "2020-2024, 2025-présent",
+    "bourgmestre": null,
+    "statut": "Échevin(e) / Conseiller communal"
+  },
+  {
+    "nom": "Tamimount Essaidi",
+    "conseiller_communal": "2000-2018",
+    "echevin": "2006-2012",
+    "bourgmestre": null,
+    "statut": "Échevine / Conseillère communale"
+  },
+  {
+    "nom": "Lorraine de Fierlant",
+    "conseiller_communal": "2018-2024",
+    "echevin": "2018-2024",
+    "bourgmestre": null,
+    "statut": "Échevine / Conseillère communale"
+  },
+  {
+    "nom": "Claire Geraets",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Marie Gervais",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Yves Goldstein",
+    "conseiller_communal": "2006-2014",
+    "echevin": "2012-2014",
+    "bourgmestre": null,
+    "statut": "Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Jean-Pierre van Gorp",
+    "conseiller_communal": "1994-2018",
+    "echevin": "2000-2012",
+    "bourgmestre": null,
+    "statut": "Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Denis Grimberghs",
+    "conseiller_communal": "1994-2024",
+    "echevin": "2006-2018",
+    "bourgmestre": null,
+    "statut": "Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Bernard Guillaume",
+    "conseiller_communal": "1988-2024",
+    "echevin": "2000-2018",
+    "bourgmestre": null,
+    "statut": "Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Mathias Gyselen",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Sihame Haddioui",
+    "conseiller_communal": "2018-2024",
+    "echevin": "2020-2024",
+    "bourgmestre": null,
+    "statut": "Échevine / Conseillère communale"
+  },
+  {
+    "nom": "Youssef Hammouti",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Justine Harzé",
+    "conseiller_communal": "2018-présent",
+    "echevin": "2025-présent",
+    "bourgmestre": null,
+    "statut": "Échevin(e) / Conseiller communal"
+  },
+  {
+    "nom": "Hamza Hemamou",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Audrey Henry",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": "2025-présent (en titre; empêchée en 2026)",
+    "statut": "Bourgmestre empêchée / Conseillère communale"
+  },
+  {
+    "nom": "Michel De Herde",
+    "conseiller_communal": "1988-2024",
+    "echevin": "1998-2022",
+    "bourgmestre": null,
+    "statut": "Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Rik van Hoecke",
+    "conseiller_communal": "2006-2012",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Quentin van den Hove",
+    "conseiller_communal": "2012-présent",
+    "echevin": "2018-2024",
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Cécile Jodogne",
+    "conseiller_communal": "2001-présent",
+    "echevin": "2006-2014",
+    "bourgmestre": "2019-2024 (faisant fonction)",
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Larbi Kaddour",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Abdallah Kanfaoui",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Abdelhakim el Karaoui",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Sadik Köksal",
+    "conseiller_communal": "2006-présent",
+    "echevin": "2010-2024",
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Saït Köse",
+    "conseiller_communal": "2000-présent",
+    "echevin": "2006-2020",
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Hasan Koyuncu",
+    "conseiller_communal": "2012-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Président du conseil communal / Conseiller communal"
+  },
+  {
+    "nom": "Mohamed Lahlali",
+    "conseiller_communal": "2006-2018",
+    "echevin": "2012-2018",
+    "bourgmestre": null,
+    "statut": "Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Leila Lahssaini",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Luc Laurence",
+    "conseiller_communal": "2006-2012",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Michel Lefebure",
+    "conseiller_communal": "2000-2012",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Kevin Likaj",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Laure Lita",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Vanessa Loodts",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Deborah Lorenzino",
+    "conseiller_communal": "2012-présent",
+    "echevin": "2018-2024, 2025-présent",
+    "bourgmestre": null,
+    "statut": "Échevin(e) / Conseiller communal"
+  },
+  {
+    "nom": "Cédric Mahieu",
+    "conseiller_communal": "2012-présent",
+    "echevin": "2025-présent",
+    "bourgmestre": null,
+    "statut": "Échevin(e) / Conseiller communal"
+  },
+  {
+    "nom": "Alain Malingreau",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Philippe Martin",
+    "conseiller_communal": "1982-1994",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Ancien conseiller communal"
+  },
+  {
+    "nom": "Ahmed el Maslouhi",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Catherine Moureaux",
+    "conseiller_communal": "2012-2015",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale (Schaerbeek)"
+  },
+  {
+    "nom": "Ufuk Narinc",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Frédéric Nimal",
+    "conseiller_communal": "2000-présent",
+    "echevin": "2012-2024, 2025-présent",
+    "bourgmestre": "2024-2025 (faisant fonction)",
+    "statut": "Ancien bourgmestre f.f. / Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Etienne Noel",
+    "conseiller_communal": "2006-2024",
+    "echevin": "2006-2018",
+    "bourgmestre": null,
+    "statut": "Échevin / Conseiller communal"
+  },
+  {
+    "nom": "Clotilde Nyssens",
+    "conseiller_communal": "2000-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Marie Nyssens",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Houaria Ouazrhari",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Mahinur Özdemir",
+    "conseiller_communal": "2006-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Emin Özkara",
+    "conseiller_communal": "2000-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Lucie Petre",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élue / Candidate"
+  },
+  {
+    "nom": "Stéphane Pire",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Eric Platteau",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Sophie Querton",
+    "conseiller_communal": "2018-2024",
+    "echevin": "2018-2020",
+    "bourgmestre": null,
+    "statut": "Échevine / Conseillère communale"
+  },
+  {
+    "nom": "Seydi Sag",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Colienne Lejeune de Schiervel",
+    "conseiller_communal": "2018-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Anton Schuurmans",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Leticia Sere",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élue / Candidate"
+  },
+  {
+    "nom": "Christine Smeysters",
+    "conseiller_communal": "2006-2018",
+    "echevin": "2010-2012",
+    "bourgmestre": null,
+    "statut": "Échevine / Conseillère communale"
+  },
+  {
+    "nom": "Christine Sobieski",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Donia Sönmez",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élue / Candidate"
+  },
+  {
+    "nom": "Marie Speeckaert",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "André Steinbach",
+    "conseiller_communal": "1988-1994",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Ancien conseiller communal"
+  },
+  {
+    "nom": "Farida Tahar",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Sedat Tekes",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Barbara Trachte",
+    "conseiller_communal": "2012-2019, 2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Quentin Vanbaelen",
+    "conseiller_communal": "2018-présent",
+    "echevin": "2020-2024",
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Vincent Vanhalewyn",
+    "conseiller_communal": "2006-présent",
+    "echevin": "2012-2024, 2025-présent",
+    "bourgmestre": null,
+    "statut": "Échevin(e) / Conseiller communal"
+  },
+  {
+    "nom": "Arnaud Verstraete",
+    "conseiller_communal": "2012-2024",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Georges Verzin",
+    "conseiller_communal": "1982-présent",
+    "echevin": "1988-2000, 2006-2012",
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Bernadette Vriamont",
+    "conseiller_communal": "2000-2018",
+    "echevin": "2000-2006",
+    "bourgmestre": null,
+    "statut": "Échevine / Conseillère communale"
+  },
+  {
+    "nom": "Michèle Willems",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élue / Candidate"
+  },
+  {
+    "nom": "Elyass el Yakoubi",
+    "conseiller_communal": null,
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Non élu / Candidat"
+  },
+  {
+    "nom": "Yusuf Yildiz",
+    "conseiller_communal": "2018-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Joëlle van Zuylen",
+    "conseiller_communal": "2012-2018",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseillère communale"
+  },
+  {
+    "nom": "Gudrun Willems",
+    "conseiller_communal": "2024-présent",
+    "echevin": "2025-présent",
+    "bourgmestre": null,
+    "statut": "Échevin(e) / Conseiller communal"
+  },
+  {
+    "nom": "Döne Sönmez",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Présidente du CPAS / Conseillère communale"
+  },
+  {
+    "nom": "Emel Köse",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Ahmed El Bargeragei",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Yousra Ouchen",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Ayse Ygit",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Olivier Willocx",
+    "conseiller_communal": "2024-présent",
+    "echevin": null,
+    "bourgmestre": null,
+    "statut": "Conseiller communal"
+  }
+]

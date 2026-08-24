@@ -17,6 +17,7 @@ from utils.text import _thematique_label
 from utils.video import video_session_map
 
 from services.people.attribution import _author_of, _point_author, _respondents
+from services.people.mandats import current_role
 from services.people.names import (
     _DISPLAY_NAME_OVERRIDES, _best_display_variant, _clean, _is_non_person_video_author,
     _is_role_token, _key, _norm_tok, _split_person_names, _titlecase,
@@ -52,7 +53,9 @@ def _sig():
 
 
 def _role_of(n_depose: int, n_repond: int) -> str:
-    """Étiquette de rôle dominante, dérivée de l'activité (indicatif).
+    """Étiquette de rôle dominante, dérivée de l'activité (indicatif) — repli
+    quand les mandats déclaratifs (services.people.mandats) ne couvrent pas
+    la personne, voir `_current_role_of` ci-dessous.
 
     Le champ "répondant" d'un point n'est renseigné que par le membre du
     Collège qui a répondu ; une personne qui répond au moins une fois et
@@ -64,6 +67,16 @@ def _role_of(n_depose: int, n_repond: int) -> str:
     if n_repond >= 8 and n_repond > n_depose:
         return "college"      # échevin·e / bourgmestre (répond en séance)
     return "conseiller"       # conseiller·ère (dépose des points)
+
+
+def _current_role_of(key: str, n_depose: int, n_repond: int) -> str:
+    """Rôle utilisé pour le sélecteur "Tous les rôles" (Par élu·e) :
+    priorité aux mandats déclaratifs (`services.people.mandats`, dates
+    réelles), qui distinguent p. ex. un·e ancien·ne échevin·e aujourd'hui
+    simple conseiller·ère — repli sur l'heuristique d'activité `_role_of`
+    quand la personne n'y figure pas (citoyen·ne, archives antérieures à
+    1988…)."""
+    return current_role(key) or _role_of(n_depose, n_repond)
 
 
 def _build_name_registry(pv: list, video: list) -> set:
@@ -323,7 +336,7 @@ def _build_all():
         index[k] = {
             "key": k,
             "nom": nom_by_key[k],
-            "role": _role_of(len(d["depose"]), len(d["repond"])),
+            "role": _current_role_of(k, len(d["depose"]), len(d["repond"])),
             "depose": d["depose"],
             "repond": d["repond"],
         }

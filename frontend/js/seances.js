@@ -6,7 +6,6 @@ import {
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
-import { loadElus, getElusData } from './elus.js';
 
 let seancesData = null;       // liste complète [{date,n_points,url,video_url}]
 let seancesLoaded = false;
@@ -113,14 +112,11 @@ async function loadSeanceYearAll(year) {
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   const dates = seancesData.filter(s => s.date.startsWith(year)).map(s => s.date);
   try {
-    const [results] = await Promise.all([
-      Promise.all(dates.map(async d => {
-        const res = await fetch(API_URL + '/seance/' + encodeURIComponent(d));
-        if (!res.ok) throw new Error('Erreur ' + res.status);
-        return res.json();
-      })),
-      loadElus(),   // rôles par nom (voir ensureNomToRole) — filtre "Conseiller·ère / Collège"
-    ]);
+    const results = await Promise.all(dates.map(async d => {
+      const res = await fetch(API_URL + '/seance/' + encodeURIComponent(d));
+      if (!res.ok) throw new Error('Erreur ' + res.status);
+      return res.json();
+    }));
     const points = results
       .flatMap(d => d.points.map(p => ({ ...p, _seanceDate: d.date })))
       .sort((a, b) => b._seanceDate.localeCompare(a._seanceDate) || a.sp - b.sp);
@@ -200,10 +196,7 @@ export async function loadSeance(date, opts = {}) {
   const box = document.getElementById('seanceResult');
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   try {
-    const [res] = await Promise.all([
-      fetch(API_URL + '/seance/' + encodeURIComponent(date)),
-      loadElus(),   // rôles par nom (voir ensureNomToRole) — filtre "Conseiller·ère / Collège"
-    ]);
+    const res = await fetch(API_URL + '/seance/' + encodeURIComponent(date));
     if (!res.ok) throw new Error('Erreur ' + res.status);
     renderSeance(await res.json(), !!opts.scroll);
     renderSeanceYearList();  // synchronise le menu déroulant (option/année sélectionnées)
@@ -230,27 +223,15 @@ function matchesTheme(p) {
 function matchesPerson(p) {
   return seancePersonFilter === 'all' || p.demandeur === seancePersonFilter || p.repondant === seancePersonFilter;
 }
-// Nom (canonique, identique à d.nom/it.demandeur/it.repondant) -> rôle
-// ("conseiller"/"college"), depuis /elus (voir loadElus ci-dessus). Construite
-// une seule fois dès que les données sont là ; une personne à activité
-// négligeable (absente de /elus, voir elus.elus_list) reste sans rôle connu
-// — elle ne matche alors aucun filtre de rôle, mais reste visible en "Tous
-// les rôles".
-let _nomToRole = null;
-function ensureNomToRole() {
-  if (_nomToRole) return _nomToRole;
-  const data = getElusData();
-  if (!data) return new Map();
-  _nomToRole = new Map(data.map(e => [e.nom, e.role]));
-  return _nomToRole;
-}
-function personRole(nom) {
-  return nom ? ensureNomToRole().get(nom) : undefined;
-}
+// Rôle ("conseiller"/"college") DE CE POINT PRÉCIS, déjà résolu côté serveur
+// à la date de la séance (voir backend/services/seances.py, demandeur_role/
+// repondant_role — mandats déclaratifs par date, services.people.mandats) :
+// jamais un rôle unique figé par personne, un même nom peut être conseiller·ère
+// sur un point ancien et échevin·e sur un point récent.
 function matchesRole(p) {
   return seanceRoleFilter === 'all'
-    || personRole(p.demandeur) === seanceRoleFilter
-    || personRole(p.repondant) === seanceRoleFilter;
+    || p.demandeur_role === seanceRoleFilter
+    || p.repondant_role === seanceRoleFilter;
 }
 function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && matchesPerson(p) && matchesRole(p); }
 
@@ -285,9 +266,9 @@ function seanceThemeFilterOptions(points) {
 function seancePersonFilterOptions(points) {
   const counts = new Map();
   points.forEach(p => {
-    [p.demandeur, p.repondant].forEach(name => {
+    [[p.demandeur, p.demandeur_role], [p.repondant, p.repondant_role]].forEach(([name, role]) => {
       if (!name) return;
-      if (seanceRoleFilter !== 'all' && personRole(name) !== seanceRoleFilter) return;
+      if (seanceRoleFilter !== 'all' && role !== seanceRoleFilter) return;
       counts.set(name, (counts.get(name) || 0) + 1);
     });
   });
@@ -325,7 +306,7 @@ function seanceTypeChips(points) {
 function seanceRoleCounts(points) {
   let conseiller = 0, college = 0;
   points.forEach(p => {
-    const roles = new Set([personRole(p.demandeur), personRole(p.repondant)]);
+    const roles = new Set([p.demandeur_role, p.repondant_role]);
     if (roles.has('conseiller')) conseiller++;
     if (roles.has('college')) college++;
   });
@@ -394,9 +375,18 @@ export function onSeanceTypeChipClick(type) {
 // Reclique sur la puce déjà active → "Tous les rôles" ; sinon sélectionne ce
 // rôle. Une personne déjà choisie qui n'a plus ce rôle est désélectionnée
 // (elle disparaîtrait sinon du menu sans que rien n'explique pourquoi).
+// Un même nom peut avoir des rôles différents selon le point (voir
+// matchesRole) : "cette personne a-t-elle CE rôle sur au moins un point du
+// périmètre actuel" remplace donc un simple lookup par nom.
+function personHasRole(name, role) {
+  if (!currentSeanceDetail) return false;
+  return currentSeanceDetail.points.some(p =>
+    (p.demandeur === name && p.demandeur_role === role) ||
+    (p.repondant === name && p.repondant_role === role));
+}
 export function onSeanceRoleChipClick(role) {
   seanceRoleFilter = seanceRoleFilter === role ? 'all' : role;
-  if (seanceRoleFilter !== 'all' && seancePersonFilter !== 'all' && personRole(seancePersonFilter) !== seanceRoleFilter) {
+  if (seanceRoleFilter !== 'all' && seancePersonFilter !== 'all' && !personHasRole(seancePersonFilter, seanceRoleFilter)) {
     seancePersonFilter = 'all';
   }
   refreshSeanceFilteredView();
