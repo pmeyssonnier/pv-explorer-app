@@ -15,6 +15,7 @@
       "2010-10-27",
       "2010-12-01",
       "2010-12-22",
+      "2011-02-02",
       "2011-02-23",
       "2011-03-30",
       "2012-01-18",
@@ -162,7 +163,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9372,
+    "total_points": 9419,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -16475,6 +16476,1307 @@
             "developpement_durable"
           ],
           "source_file": "pv-2010-12-22-sp.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2011-02-02",
+        "date": "2011-02-02",
+        "source_file": "Pv%20CC%202011-02-02%20SP.pdf",
+        "extracted_at": "2026-08-24T09:03:55.211289",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 47,
+          "extracted": 47,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/Pv%2520CC%25202011-02-02%2520SP.pdf"
+      },
+      "points": [
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement taxe sur les surfaces commerciales - Exercices 2011 à 2015 - Instauration",
+          "resume": "Instauration d'une taxe communale annuelle sur les surfaces commerciales pour les exercices 2011 à 2015. Taux progressif selon la surface : 5,00€/m² pour les premiers 1.000 m², 6,00€/m² de 1.001 à 2.000 m², 7,00€/m² au-delà de 2.000 m². Indexation annuelle de 2,5% à partir de 2012. Exonérations pour les premiers 500 m² et certains établissements publics ou subventionnés.",
+          "intervenants": [
+            "Guillaume",
+            "El Arnouki",
+            "Dönmez",
+            "Bouhjar",
+            "Durant",
+            "Courtheoux"
+          ],
+          "repondant": "Noël",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 16,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "taxation_commerciale",
+            "surfaces_commerciales",
+            "finances_communales"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement redevance relatif aux cartes de stationnement - Modification",
+          "resume": "Modification du règlement redevance relatif aux cartes communales de stationnement. Définition des catégories d'usagers (firmes/indépendants, visiteurs occasionnels, commerçants ambulants, chantiers temporaires). Tarifs : 175€ pour première carte firmes/indépendants, 350€ par carte supplémentaire, 50€-100€ pour visiteurs occasionnels selon durée.",
+          "intervenants": [
+            "Guillaume",
+            "Dönmez",
+            "Grimberghs",
+            "Bouhjar",
+            "Courtheoux"
+          ],
+          "repondant": "Jodogne",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 16,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "cartes_stationnement",
+            "mobilite"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Stationnement",
+          "sous_rubrique": "Règlement redevance zone bleue",
+          "titre": "Règlement redevance relatif sur le stationnement en zone bleue - Modification",
+          "resume": "Modification du règlement redevance relatif au stationnement en zone bleue. Établissement d'une redevance de 25€ par demi-journée pour le stationnement en zone bleue. Stationnement gratuit pour disque de stationnement, personnes handicapées, cartes communales de stationnement, véhicules prioritaires et communaux.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 16,
+            "abstentions": 0
+          },
+          "montant_eur": 25,
+          "thematiques": [
+            "stationnement",
+            "redevance",
+            "zone_bleue",
+            "circulation"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Stationnement",
+          "sous_rubrique": "Redevance de stationnement payant",
+          "titre": "Règlement redevance relatif sur le stationnement payant - Modification",
+          "resume": "Modification du règlement relatif au stationnement payant incluant les tarifs horaires (1,50€ première heure, 2,50€ deuxième heure, 0,10€ moins de 15 min), les exemptions pour riverains et personnes handicapées, et les procédures de recouvrement des impayés.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 16,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "stationnement",
+            "redevance",
+            "tarification"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Budget 2011 - Services ordinaire et extraordinaire - Approbation",
+          "resume": "",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 21,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "C.P.A.S.",
+          "sous_rubrique": "Budget",
+          "titre": "C.P.A.S. - Budget 2011 - Approbation",
+          "resume": "Approbation du budget 2011 du C.P.A.S. Administration centrale à 128.642.035€, fixation de l'intervention communale à 30.417.552€ pour couvrir le manque de ressources et de la dotation communale à 3.755.000€ résultant de la restructuration des hôpitaux.",
+          "intervenants": [
+            "Mme Decoux",
+            "MM. El Arnouki",
+            "Dönmez",
+            "Courtheoux",
+            "Clerfayt",
+            "Vanhalewyn"
+          ],
+          "repondant": "Mme Decoux",
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 13,
+            "abstentions": 3
+          },
+          "montant_eur": 128642035,
+          "thematiques": [
+            "cpas",
+            "budget",
+            "aide_sociale",
+            "hopitaux"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Equipement",
+          "sous_rubrique": "Fabrique d'église",
+          "titre": "Fabrique d'église Saint-Servais - Modification budgétaire 2010 - Approbation",
+          "resume": "Approbation de la modification budgétaire 2010 de la Fabrique d'église Saint-Servais avec recettes et dépenses équilibrées à 203.975,10€, sans intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 40,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 203975.1,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "saint_servais"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Equipement",
+          "sous_rubrique": "Fabrique d'église",
+          "titre": "Fabrique d'église Saint-Servais - Budget 2011 - Approbation",
+          "resume": "Approbation du budget 2011 de la Fabrique d'église Saint-Servais avec recettes et dépenses équilibrées à 87.168,91€, sans intervention communale sollicitée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 40,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 87168.91,
+          "thematiques": [
+            "fabrique_eglise",
+            "budget",
+            "saint_servais"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Asbl",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Aide aux consultations de nourrissons établies dans les écoles communales de Schaerbeek\" - Comptes 2008 et 2009 - Prendre acte",
+          "resume": "Prise acte des comptes de l'Asbl affichant un résultat positif de 13.813,63 € pour 2008, 1.138,75 € pour 2009 et un montant total des avoirs de 9.606,51 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 13200,
+          "thematiques": [
+            "subventions_communales",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 26,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Asbl",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Central Academy\" - Comptes 2008 et 2009 - Prendre acte",
+          "resume": "Prise acte des comptes de l'Asbl affichant un résultat positif de 53,05 € pour 2008, un résultat négatif de -99,61 € pour 2009 et un résultat cumulé de -46,56 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2000,
+          "thematiques": [
+            "subventions_communales",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 27,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Asbl",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Royale Union Sportive Albert Schaerbeek - RUSAS\" - Comptes 2008 et 2009 - Prendre acte",
+          "resume": "Prise acte des comptes de l'Asbl affichant un résultat positif de 18.179,90 € pour l'exercice 2008-2009 et un résultat cumulé de 51.644,74 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 7000,
+          "thematiques": [
+            "subventions_communales",
+            "asbl",
+            "comptes",
+            "sports"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Asbl",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Aides aux Familles de Schaerbeek\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise acte des comptes de l'Asbl affichant un résultat positif de 150.929,40 € pour 2009 et un résultat cumulé de 254.799,73 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 100000,
+          "thematiques": [
+            "subventions_communales",
+            "asbl",
+            "comptes",
+            "famille"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Asbl",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Animar - Le Magic Land Théâtre\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise acte des comptes de l'Asbl affichant une perte de -60.316,95 € pour 2009 et un résultat cumulé de -1.509,47 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subventions_communales",
+            "asbl",
+            "comptes",
+            "culture"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 30,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Asbl",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Association de Pensée d'Atatürk de Belgique - APAB\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise acte des comptes de l'Asbl affichant une perte de -7.039,81 € pour 2009",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subventions_communales",
+            "asbl",
+            "comptes"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 31,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Asbl",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Canter Basket Club de Schaerbeek\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise acte des comptes de l'Asbl affichant un résultat positif de 731,06 € pour 2009 et un montant des avoirs de 3.463,04 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 4000,
+          "thematiques": [
+            "subventions_communales",
+            "asbl",
+            "comptes",
+            "sports"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 32,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Asbl",
+          "sous_rubrique": "Comptes",
+          "titre": "ASBL \"Centre Culturel de Schaerbeek\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise acte des comptes 2009 de l'Asbl",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subventions_communales",
+            "asbl",
+            "comptes",
+            "culture"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'associations",
+          "sous_rubrique": "ASBL Centre Culturel de Schaerbeek",
+          "titre": "ASBL Centre Culturel de Schaerbeek - Comptes 2009 - Prendre acte",
+          "resume": "Approbation des comptes 2009 de l'ASBL Centre Culturel de Schaerbeek affichant un résultat positif de 38.866,76 € pour l'exercice et un résultat cumulé de 56.416,42 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 50000,
+          "thematiques": [
+            "subventions",
+            "comptes_asbl",
+            "culture"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'associations",
+          "sous_rubrique": "ASBL Crèches de Schaerbeek",
+          "titre": "ASBL Crèches de Schaerbeek - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL Crèches de Schaerbeek affichant un résultat négatif de 1.043,17 € pour l'exercice et un résultat cumulé de 110.785,75 €. Subside communal de 635.760 € et subside complémentaire de 114.240 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 750000,
+          "thematiques": [
+            "subventions",
+            "comptes_asbl",
+            "creches",
+            "aide_enfance"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 36,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'associations",
+          "sous_rubrique": "ASBL Gemeenschapscentrum De Kriekelaar",
+          "titre": "ASBL Gemeenschapscentrum De Kriekelaar - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL Gemeenschapscentrum De Kriekelaar affichant un résultat positif de 27.984,44 € pour l'exercice et un résultat cumulé de 140.885,05 €. Subside communal de 21.000 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 21000,
+          "thematiques": [
+            "subventions",
+            "comptes_asbl",
+            "centre_communautaire"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 37,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'associations",
+          "sous_rubrique": "ASBL Enfants & Compagnie",
+          "titre": "ASBL Enfants & Compagnie - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL Enfants & Compagnie affichant un résultat positif de 1.550,13 € pour l'exercice et un résultat cumulé de 10.261,45 €. Subside communal global de 4.300 € versé avant 2009",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 4300,
+          "thematiques": [
+            "subventions",
+            "comptes_asbl",
+            "aide_enfance"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 38,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'associations",
+          "sous_rubrique": "ASBL La Maison de la Laïcité de Schaerbeek",
+          "titre": "ASBL La Maison de la Laïcité de Schaerbeek - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL La Maison de la Laïcité affichant un résultat positif de 2.302,46 € pour l'exercice et un montant total des avoirs de 11.037,35 €. Subside communal de 6.000 € versé en 2010",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 6000,
+          "thematiques": [
+            "subventions",
+            "comptes_asbl",
+            "laicite"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 39,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes d'associations",
+          "sous_rubrique": "ASBL Les Amis de la Morale Laïque - AML",
+          "titre": "ASBL Les Amis de la Morale Laïque - AML - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'ASBL Les Amis de la Morale Laïque - AML affichant un résultat positif de 435,46 € pour l'exercice et un montant total des avoirs de 1.929,77 €. Subside communal de 6.000 € versé en 2010",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 6000,
+          "thematiques": [
+            "subventions",
+            "comptes_asbl",
+            "laicite"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL et Subventions",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Neptunium\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl Neptunium affichant un bénéfice de 43.107,18 € pour l'exercice, des réserves cumulées de 300.176,04 € et des pertes reportées de -230.352,56 €. Subside communal versé intégralement: 786.101 €.",
+          "intervenants": [
+            "M. Bouhjar"
+          ],
+          "repondant": "Mme la Bourgmestre ff et M. Köse",
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 786101,
+          "thematiques": [
+            "asbl",
+            "comptes_financiers",
+            "subventions"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 42,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL et Subventions",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Royal Cercle Athlétique de Schaerbeek - RCAS\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl Royal Cercle Athlétique de Schaerbeek affichant une perte de -1.273 € pour l'exercice 2009. Subside communal de 5.000 € versé le 08/01/2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 5000,
+          "thematiques": [
+            "asbl",
+            "comptes_financiers",
+            "subventions",
+            "sport"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "ASBL et Subventions",
+          "sous_rubrique": "",
+          "titre": "ASBL \"Union Belge Contre les Nuisances des Avions - UBCNA\" - Comptes 2009 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2009 de l'Asbl Union Belge Contre les Nuisances des Avions affichant une perte de -2.570,41 € pour l'exercice et un montant des avoirs de 6.395,85 €. Subside communal de 2.500 € versé le 28/01/2010.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2500,
+          "thematiques": [
+            "asbl",
+            "comptes_financiers",
+            "subventions",
+            "environnement"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 44,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Subventions D.A.S. 2010-2011 - Convention entre la Région de Bruxelles-Capitale et la commune - Approbation",
+          "resume": "Approbation de la convention D.A.S. 2010-2011 entre la Commune et la Région de Bruxelles-Capitale concernant le Dispositif d'accrochage Scolaire. Subvention régionale de 1.434.209,00 € pour 2010. Délégation au Collège pour signer les conventions particulières avec les partenaires.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1434209,
+          "thematiques": [
+            "education",
+            "prevention",
+            "subventions",
+            "accrochage_scolaire"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Subventions et Partenariats",
+          "titre": "Projets de collaborations intercommunales - Pour information",
+          "resume": "Approbation de la convention avec la Région de Bruxelles-Capitale concernant le projet de plate-forme intercommunale d'échanges sur l'amélioration du financement de projets (Schaerbeek chef de file). Approbation également de projets partenaires: étude infrastructures scolaires Evere-Schaerbeek, enquête absentéisme scolaire Anderlecht, projets GTI Marchés publics Ixelles. Délégation au Collège pour signer les conventions particulières.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "collaborations_intercommunales",
+            "gouvernance",
+            "education",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 47,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Informatique",
+          "sous_rubrique": "",
+          "titre": "Télécom - Réseau IRISnet 2.0 - Participation au marché conjoint régional - Convention de mandat - Approbation",
+          "resume": "Approbation de la participation de la Commune au marché conjoint régional pour la télécommunication IRISnet 2.0, mandaté à la Région de Bruxelles-Capitale. Souscription aux lots 1 (téléphonie fixe et transport data) et 2 (mobilophonie). Délégation au Collège pour signer les conventions particulières de mise en œuvre.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "informatique",
+            "telecommunications",
+            "marches_publics",
+            "irisnet"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Personnel",
+          "sous_rubrique": "Cadre du personnel",
+          "titre": "Cadre du personnel - Modification",
+          "resume": "Modification du cadre du personnel : création d'1 emploi de secrétaire administratif au service Traitements/Pensions et transformation d'1 emploi d'adjoint administratif en 1 emploi d'assistant administratif au service Personnel.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "personnel",
+            "cadre_du_personnel",
+            "ressources_humaines"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 50,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Personnel",
+          "sous_rubrique": "Statut pécuniaire",
+          "titre": "Statut pécuniaire - Modification des échelles de traitement",
+          "resume": "Modification des articles 6, 8, 9, 9bis, 9ter, 10, 11, 12, 16 et 20 du statut pécuniaire applicable au 1er janvier 2011. Intégration des suppléments de traitement dans les échelles barémiques et adaptation du régime de carrière pécuniaire avec introduction d'échelles de base (code 1), premières échelles supérieures (code 2) et deuxièmes échelles supérieures (code 3).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "personnel",
+            "statut_pecuniaire",
+            "echelles_de_traitement",
+            "ressources_humaines"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 55,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures",
+          "sous_rubrique": "Bâtiments",
+          "titre": "Bâtiment communal rue Josaphat 215 - Travaux de transformation et rénovation - Aménagement du CTA Frans Fischer - Majoration des dépenses",
+          "resume": "Prise pour information de la décision du Collège du 28 décembre 2010 actant le montant final des travaux de transformation et rénovation du bâtiment communal rue Josaphat 215 et de l'aménagement du Centre de Technologie Avancée (CTA) Frans Fischer à 278.528,99 €. Le décompte final fait état de travaux supplémentaires pour 38.223,45 €, d'un dépassement de quantités pour 2.724,61 € et de révisions de prix de 11.190,94 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 13
+          },
+          "montant_eur": 278528.99,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "travaux",
+            "renovation",
+            "centre_technologie_avancee"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 57,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures et bâtiments communaux",
+          "sous_rubrique": "Sécurisation des bâtiments",
+          "titre": "Maison du citoyen - Projet de sécurisation du bâtiment - Majoration des dépenses",
+          "resume": "Majoration des dépenses pour les travaux de sécurisation de la Maison du citoyen sise place Gaucheret n°20 à 1030 Schaerbeek. Désignation des adjudicataires pour un total de 33.798,38 € TVAC avec majoration de 2.298,38 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 13
+          },
+          "montant_eur": 33798.38,
+          "thematiques": [
+            "securisation_batiments",
+            "travaux_publics",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 58,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures et bâtiments communaux",
+          "sous_rubrique": "Rénovation de la façade",
+          "titre": "Maison de quartier sise chaussée de Haecht - Rénovation de la façade arrière - Majoration des dépenses",
+          "resume": "Approbation des décomptes 1, 2 et 3 pour les travaux supplémentaires de rénovation de la façade arrière de la Maison de quartier sise 535 chaussée de Haecht. Montant de 28.979,20 € TVAC pour remplacement de faux-plafonds, de moulures, d'appareils d'éclairage et de portes coupe-feu.",
+          "intervenants": [
+            "M. Bouhjar"
+          ],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 13
+          },
+          "montant_eur": 28979.2,
+          "thematiques": [
+            "renovation_facades",
+            "travaux_publics",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 60,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures et bâtiments communaux",
+          "sous_rubrique": "Dépollution des terres",
+          "titre": "Cimetière communal - Assainissement des terres polluées - Majoration des dépenses",
+          "resume": "Approbation du coût total des travaux d'assainissement des terres polluées du cimetière communal pour un montant de 72.782,08 € TVAC. Surcoût de 11.730,54 € dû au dépassement du tonnage présumé à excaver et dépolluer.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 13
+          },
+          "montant_eur": 72782.08,
+          "thematiques": [
+            "environnement",
+            "depollution",
+            "cimetiere",
+            "travaux_publics"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 61,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures et bâtiments communaux",
+          "sous_rubrique": "Restauration de patrimoine",
+          "titre": "Ecole 11/13 - Étude de la restauration des sgraffites de la cour - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation de la restauration des sgraffites situés en haut des façades de la cour de l'école 11/13 (avenue de Roodebeek 59, 61 et 103). Procédure négociée sans publicité, après consultation de trois restaurateurs spécialisés. Dépense estimée à 7.350 €.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 7350,
+          "thematiques": [
+            "restauration_patrimoine",
+            "ecoles",
+            "travaux_publics"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 63,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Infrastructures et bâtiments communaux",
+          "sous_rubrique": "Installation de climatisation",
+          "titre": "Hôtel communal - Installation d'un système de climatisation pour le système UPS (Informatique) - Mode de passation et fixation des conditions du marché",
+          "resume": "Approbation de l'installation d'un système de climatisation pour le serveur informatique de l'hôtel communal. Travaux confiés à une entreprise privée après consultation de 3 firmes spécialisées. Dépense estimée à 7.177,18 € TVAC.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 7177.18,
+          "thematiques": [
+            "informatique",
+            "infrastructures",
+            "climatisation",
+            "travaux_publics"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 64,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Espaces Publics",
+          "sous_rubrique": "Événements",
+          "titre": "Convention entre la commune de Schaerbeek et le Ministère de la Région de Bruxelles-Capitale concernant l'octroi d'un subside pour l'organisation de la Fête du Sacrifice - Approbation",
+          "resume": "Approbation de la convention octroyant un subside de 25.000 € à la commune pour l'organisation d'un abattoir temporaire lors de la Fête du Sacrifice. La commune s'associe à deux autres communes bruxelloises (Anderlecht, Bruxelles-Ville, Molenbeek-Saint-Jean).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 25000,
+          "thematiques": [
+            "evenements_culturels",
+            "subventions",
+            "fetes_religieuses"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 65,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Voirie",
+          "titre": "Plan hygiénique rues d'Aerschot et de Quatrecht - Nouveau mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Changement du mode de passation du marché pour le plan hygiénique des rues d'Aerschot et de Quatrecht de l'adjudication publique à la procédure négociée avec publicité. Fixation des conditions du marché et approbation du cahier spécial des charges Scha/Infra/2010/041-BIS. Dépense estimée à 390.000 EUR financée par le Fonds Politique des Grandes Villes.",
+          "intervenants": [
+            "M. Dönmez"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 390000,
+          "thematiques": [
+            "voirie",
+            "marches_publics",
+            "amenagements_urbains"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 67,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Voirie",
+          "titre": "Aménagement de la zone 30 \"Linthout\" - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du projet d'aménagement de la zone 30 Linthout délimitée par le boulevard Reyers, l'avenue de Roodebeek, la rue du Noyer et la limite communale. Passation du marché par adjudication publique. Fixation des conditions du marché et cahier spécial des charges Scha/Infra/2011/001. Dépense estimée à 200.000 EUR financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 13
+          },
+          "montant_eur": 200000,
+          "thematiques": [
+            "voirie",
+            "zones_30",
+            "amenagements_urbains",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 69,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "Rénovation urbaine",
+          "titre": "Nouveau contrat de quartier durable Coteaux-Josaphat - Prendre acte",
+          "resume": "Prise de connaissance de la décision du Collège des Bourgmestre et Echevins du 11 janvier 2011 concernant le lancement d'un nouveau contrat de quartier durable sur le territoire de Schaerbeek pour le périmètre Coteaux Josaphat. Confier l'étude préalable à un bureau d'étude. Dépense de 81.070 EUR TTC entièrement subsidiée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 28,
+            "contre": 0,
+            "abstentions": 13
+          },
+          "montant_eur": 81070,
+          "thematiques": [
+            "contrats_quartier",
+            "renovation_urbaine",
+            "etudes"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 71,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Gestion immobilière",
+          "titre": "Boutique de quartier - prise en location d'un rez-de-chaussée sis rue Richard Vandevelde, 85",
+          "resume": "Prise en location pour une durée de 9 ans du rez-de-chaussée sis rue Richard Vandevelde 85 dans le cadre du projet \"Boutique de quartier\" à partir du 01.02.2011 à raison de 1.100 EUR/mois + 40 EUR d'avance sur charges dont 50% seront à charge de l'asbl RENOVA'S. Imputation des dépenses locatives mensuelles à l'article 104/126 DS-01/22.",
+          "intervenants": [
+            "M. Van Gorp"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1100,
+          "thematiques": [
+            "immobilier",
+            "location",
+            "boutique_quartier"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 72,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Contrat de quartier",
+          "titre": "Navez-Portaels - Opérations 5 B 4 - Convention ISP façade avec l'asbl Régie de Quartier",
+          "resume": "Information sur l'approbation par le Collège du projet de convention tripartite entre la Région de Bruxelles-Capitale, la commune et l'asbl Régie de Quartier pour la réalisation de l'opération 5B4 ISP façade du contrat de quartier Navez-Portaels. Opération de rénovation de façade dans le cadre d'une entreprise d'insertion socioprofessionnelle, subsidiée par la Région à concurrence de 100%.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrats_quartier",
+            "renovation_facades",
+            "insertion_socioprofessionnelle"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 73,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Navez-Portaels",
+          "sous_rubrique": "Opération 5 B",
+          "titre": "Navez-Portaels - Opération 5 B - Avenant aux conventions 5B5, 5B7a, c, d, e et 5B8c",
+          "resume": "Approbation des projets des avenants aux conventions de la Mission Locale, des asbl Patrimoine à roulettes, Zumba, Le Vide Technique, RenovaS et Feza. Subsidiation de ces opérations par la Région à concurrence de 100%.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "contrat_de_quartier",
+            "subvention",
+            "logement"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 74,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Navez-Portaels",
+          "sous_rubrique": "Opération 4 B 4 et 4 C 1",
+          "titre": "Navez-Portaels - Opération 4 B 4 - Aménagement de la rue Portaels par la mise en place de mobilier urbain - Opération 4 C 1 - Formalisation esthétique fonctionnelle d'un lieu multimodal de rencontre place Verboeckhoven",
+          "resume": "Indemnisation des bureaux non retenus (BUUR et Landinzicht) à concurrence de 1.645,60€ TVAC chacun. Imputation des frais d'indemnisation soit 3.291,20€ TVAC. Subsidiation de ces frais à concurrence de 90% dans le cadre du contrat de quartier Navez-Portaels. Financement de la part communale par emprunt.",
+          "intervenants": [
+            "Mme Vriamont"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 25,
+            "contre": 16,
+            "abstentions": 0
+          },
+          "montant_eur": 3291.2,
+          "thematiques": [
+            "contrat_de_quartier",
+            "travaux_publics",
+            "subvention",
+            "mobilier_urbain"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 79,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Points inscrits à la demande de conseillers communaux",
+          "sous_rubrique": "",
+          "titre": "Le carrefour Cerisiers-Knapen-Smekens",
+          "resume": "Demande de Madame Clotilde NYSSENS concernant le carrefour Cerisiers-Knapen-Smekens",
+          "intervenants": [
+            "Mme Nyssens",
+            "M. van de Werve de Schilde"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "voirie",
+            "circulation"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 47,
+          "page": 79,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Le tri sélectif des déchets et manquements de Bruxelles Propreté",
+          "resume": "Question de Monsieur Larbi KADDOUR concernant le tri sélectif des déchets et les manquements de Bruxelles Propreté",
+          "intervenants": [
+            "M. Kaddour"
+          ],
+          "repondant": "M. De Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "dechets",
+            "environnement",
+            "propreté"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
+        },
+        {
+          "sp": 48,
+          "page": 79,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Questions orales",
+          "sous_rubrique": "",
+          "titre": "Le parc Josaphat",
+          "resume": "Question de Monsieur Yvan de BEAUFFORT concernant le parc Josaphat",
+          "intervenants": [
+            "M. de Beauffort"
+          ],
+          "repondant": "M. De Herde",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "espaces_verts",
+            "environnement"
+          ],
+          "source_file": "Pv%20CC%202011-02-02%20SP.pdf"
         }
       ]
     },
