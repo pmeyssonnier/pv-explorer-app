@@ -106,13 +106,30 @@ def test_seances_resume_carries_per_seance_activite_breakdown(monkeypatch):
     assert resume["activite"] == {"Question orale": 2, "Demande": 1}
 
 
-def test_qe_dates_lists_written_question_dates(monkeypatch):
+def test_qe_resume_lists_written_question_dates_and_thematiques(monkeypatch):
     # Bucketage par mois côté client (les questions écrites n'ont pas de séance).
     monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": [
-        {"annee": 2025, "numero": 1, "date": "2025-03-05"},
+        {"annee": 2025, "numero": 1, "date": "2025-03-05", "thematiques": ["voirie"]},
         {"annee": 2025, "numero": 2, "date": "2025-04-12"},
         {"annee": 2025, "numero": 3},   # pas de date → ignorée
     ]})
     db = _db(("2025-03-10", [{"type": "question_orale", "sp": 1}]))
     s = statistics.compute_stats(db)
-    assert s["qe_dates"] == ["2025-03-05", "2025-04-12"]
+    assert s["qe_resume"] == [
+        {"date": "2025-03-05", "thematiques": ["voirie"]},
+        {"date": "2025-04-12", "thematiques": []},
+    ]
+
+
+def test_qe_thematiques_merge_into_themes_par_annee(monkeypatch):
+    # Les thématiques des questions écrites doivent s'ajouter à celles des
+    # points de PV dans le même compteur par année (voir themes_par_annee).
+    monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": [
+        {"annee": 2025, "numero": 1, "date": "2025-03-05", "thematiques": ["voirie"]},
+    ]})
+    db = _db(("2025-01-10", [
+        {"type": "point_normal", "sp": 1, "thematiques": ["voirie"]},
+    ]))
+    s = statistics.compute_stats(db)
+    assert dict(s["themes_par_annee"]["2025"])["voirie"] == 2
+    assert dict(s["themes_par_annee"]["toutes"])["voirie"] == 2

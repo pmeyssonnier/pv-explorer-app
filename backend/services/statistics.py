@@ -203,14 +203,22 @@ def compute_stats(db: dict) -> dict:
     # Questions écrites : canal séparé, sans séance/PV associé — comptées par
     # leur propre champ "annee" (voir services/questions_ecrites*.py), pas par
     # date de séance.
-    qe_dates = []   # dates ISO des questions écrites — bucketage par mois côté client
+    qe_resume = []   # {date, thematiques} par question — bucketage par mois ET
+                      # fusion dans les thématiques de l'onglet Stats, côté client
+                      # (voir frontend/js/stats.js activityRows/qeThemesInScope) ;
+                      # jamais rattachées à une séance précise.
     try:
         for q in load_qe_db().get("questions", []):
             y = str(q.get("annee") or "")
             if y:
                 activite_year[y]["Question écrite"] += 1
+            canon_thematiques = [_canon_theme(t) for t in (q.get("thematiques") or [])]
+            for c in canon_thematiques:
+                themes_all[c] += 1
+                if y:
+                    themes_year.setdefault(y, Counter())[c] += 1
             if q.get("date"):
-                qe_dates.append(q["date"])
+                qe_resume.append({"date": q["date"], "thematiques": canon_thematiques})
     except Exception:
         pass
     activite_types_par_annee = [
@@ -282,7 +290,7 @@ def compute_stats(db: dict) -> dict:
         "pv_par_annee": pv_par_annee,
         "activite_types_par_annee": activite_types_par_annee,
         "activite_type_order": ACTIVITY_TYPE_ORDER,
-        "qe_dates": qe_dates,
+        "qe_resume": qe_resume,
         "themes_par_annee": themes_par_annee,
         "dates_par_annee": dates_par_annee,
         "seances_resume": seances_resume,
