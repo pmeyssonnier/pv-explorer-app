@@ -34,6 +34,38 @@ from pathlib import Path
 
 from index_pv import SCHEMA_VERSION, get_client, index_chunks  # réutilise get_client/l'upsert batché
 
+# Limite Pinecone : 40 960 octets de métadonnées par vecteur. Une question
+# écrite n'est JAMAIS sous-découpée en plusieurs chunks (contrairement à un
+# point de PV dense, voir index_pv.py) — sans garde-fou, un document dense
+# (10-30 pages, texte intégral demandé par le pipeline d'extraction depuis
+# MAX_TOKENS=32768, voir questions_ecrites_extraction_pipeline.py) peut
+# produire des métadonnées dépassant la limite et faire échouer TOUT le
+# batch d'indexation (pinecone.errors.exceptions.ApiError 400, rencontré en
+# pratique : 58 384 octets pour une seule question). Marge de sécurité sous
+# la limite dure pour les champs fixes (titre, date, url, decision…).
+_PINECONE_METADATA_LIMIT_BYTES = 40960
+_METADATA_SAFETY_MARGIN_BYTES = 2000
+
+
+def _fit_metadata_to_pinecone_limit(metadata: dict) -> dict:
+    """Réduit chunk_text/reponse par paliers jusqu'à repasser sous la limite
+    Pinecone — jamais les autres champs (bien plus courts, jamais
+    responsables d'un dépassement). Le texte intégral reste consultable via
+    l'URL du PDF source (champ "url"), donc une troncature ne perd rien de
+    définitivement inaccessible."""
+    budget = _PINECONE_METADATA_LIMIT_BYTES - _METADATA_SAFETY_MARGIN_BYTES
+    while len(json.dumps(metadata, ensure_ascii=False).encode("utf-8")) > budget:
+        shrunk = False
+        for key in ("chunk_text", "reponse"):
+            val = metadata.get(key) or ""
+            if not val:
+                continue
+            metadata[key] = val[:int(len(val) * 0.9)] + "…"
+            shrunk = True
+        if not shrunk:
+            break   # garde-fou : plus rien à réduire (cas pathologique)
+    return metadata
+
 
 def question_to_chunk(q: dict, commune: str) -> dict:
     """Transforme une question écrite en chunk indexable. `decision` (réutilisé
@@ -75,6 +107,7 @@ Réponse : {reponse or "Pas encore de réponse publiée."}"""
         # dans les sources du chat, comme pour l'onglet Par élu·e.
         "reponse": reponse or "",
     }
+    metadata = _fit_metadata_to_pinecone_limit(metadata)
     return {"id": q["id"], "metadata": metadata}
 
 

@@ -79,6 +79,24 @@ def test_question_to_chunk_url_defaults_to_empty_string_not_none():
     assert chunk2["metadata"]["url"] == "https://1030.be/qe/015.pdf"
 
 
+def test_question_to_chunk_stays_under_pinecone_metadata_limit(tmp_path):
+    # Cas réel : un document dense (texte intégral, voir MAX_TOKENS du
+    # pipeline d'extraction) produisait des métadonnées de 58 384 octets,
+    # au-dessus de la limite Pinecone (40 960) — faisait échouer TOUT le
+    # batch d'indexation.
+    import json
+    q = _q(question="Q " * 8000, reponse="R " * 8000)
+    chunk = index_qe.question_to_chunk(q, "schaerbeek")
+    size = len(json.dumps(chunk["metadata"], ensure_ascii=False).encode("utf-8"))
+    assert size <= index_qe._PINECONE_METADATA_LIMIT_BYTES
+
+
+def test_question_to_chunk_leaves_small_metadata_untouched():
+    chunk = index_qe.question_to_chunk(_q(), "schaerbeek")
+    assert chunk["metadata"]["reponse"] == "Le tarif est fixé par le règlement communal."
+    assert "…" not in chunk["metadata"]["reponse"]
+
+
 def test_load_chunks_skips_entries_without_id(tmp_path):
     import json
     path = tmp_path / "qe.json"
