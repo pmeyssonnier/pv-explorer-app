@@ -99263,7 +99263,7 @@
           "resume": "",
           "intervenants": [],
           "repondant": null,
-          "decision": "",
+          "decision": "RETIRÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -99272,9 +99272,9 @@
           },
           "montant_eur": null,
           "thematiques": [
-            "conventions",
-            "partenariats",
-            "developpement_urbain"
+            "convention",
+            "collaboration",
+            "reamenagement_site"
           ],
           "source_file": "PV Conseil 2016.10.26.pdf"
         },
