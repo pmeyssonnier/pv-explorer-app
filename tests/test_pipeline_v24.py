@@ -8,7 +8,7 @@ from pv_extraction_pipeline import (
     _coerce_amount, normalize_point, _fix_point_pages,
     expected_sp_from_pages, verify_completeness, extract_seance_date_from_text,
     _synthesize_deferred_points, _extract_anchor_title, RE_RETIRE, RE_REPORTE,
-    _apply_deferred_status_to_extracted,
+    _recover_missing_decisions,
 )
 from reextract_targeted import targets_from_audit
 
@@ -144,7 +144,7 @@ def test_extract_anchor_title_stops_at_bilingual_separator():
     assert _extract_anchor_title(window, 22) == "Vivaqua-Hydrobru - Examen du projet de fusion"
 
 
-# ── _apply_deferred_status_to_extracted : corrige un point EXTRAIT sans statut ──
+# ── _recover_missing_decisions : corrige un point EXTRAIT sans statut ──
 # Cas réel SP 21 (2016-10-26) : le LLM garde le point (titre long) mais oublie
 # le statut RETIRÉ, contrairement au SP 22 voisin plus court.
 def test_apply_deferred_status_sets_retire_on_extracted_empty_decision():
@@ -152,7 +152,7 @@ def test_apply_deferred_status_sets_retire_on_extracted_empty_decision():
            "- Addendum -=- NL. Ce point est retiré de l'ordre du jour -=- Dit punt "
            "wordt aan de agenda onttrokken. SP 22.- Vivaqua")
     pts = [{"sp": 21, "page": 24, "titre": "Convention…", "decision": "", "vote": {"type": None}}]
-    n = _apply_deferred_status_to_extracted(pts, [{"page_num": 24, "text": raw}])
+    n = _recover_missing_decisions(pts, [{"page_num": 24, "text": raw}])
     assert n == 1
     assert pts[0]["decision"] == "RETIRÉ"
     assert pts[0]["vote"]["type"] is None
@@ -161,7 +161,7 @@ def test_apply_deferred_status_sets_retire_on_extracted_empty_decision():
 def test_apply_deferred_status_never_overwrites_a_real_decision():
     raw = "SP 30.- x Ce point est retiré de l'ordre du jour. SP 31.- y"
     pts = [{"sp": 30, "page": 1, "titre": "x", "decision": "APPROUVÉ", "vote": {"type": "unanimite"}}]
-    assert _apply_deferred_status_to_extracted(pts, [{"page_num": 1, "text": raw}]) == 0
+    assert _recover_missing_decisions(pts, [{"page_num": 1, "text": raw}]) == 0
     assert pts[0]["decision"] == "APPROUVÉ"
 
 
@@ -170,8 +170,62 @@ def test_apply_deferred_status_leaves_undecided_point_without_deferral_phrase():
     # (ex. point débattu sans vote formel) — pas de statut inventé.
     raw = "SP 40.- Un point normal sans phrase de statut. SP 41.- y"
     pts = [{"sp": 40, "page": 1, "titre": "x", "decision": "", "vote": {"type": None}}]
-    assert _apply_deferred_status_to_extracted(pts, [{"page_num": 1, "text": raw}]) == 0
+    assert _recover_missing_decisions(pts, [{"page_num": 1, "text": raw}]) == 0
     assert pts[0]["decision"] == ""
+
+
+def test_apply_deferred_status_spans_pages_and_long_titles():
+    # Régression réelle SP 21 (2016-10-26) : titre bilingue TRÈS long (la
+    # formule de retrait tombe au-delà des 600 premiers caractères de l'ancre)
+    # ET point suivant (SP 22) sur la PAGE d'après. L'ancien fenêtrage
+    # mono-page + plafond 600 ratait la formule ; le fenêtrage global la capte.
+    fr = ("Convention de collaboration entre la VRT, la RTBF, la Région de "
+          "Bruxelles-Capitale et la Commune de Schaerbeek, d'une part, et l'Agence "
+          "de Développement Territorial (ADT), d'autre part, concernant le projet "
+          "de réaménagement du site VRT/RTBF - Addendum")
+    nl = ("Samenwerkingsovereenkomst tussen de VRT, de RTBF, het Brussels "
+          "Hoofdstedelijk Gewest en de Gemeente Schaarbeek enerzijds, en het "
+          "Agentschap voor Territoriale Ontwikkeling anderzijds, betreffende het "
+          "herinrichtingsproject van de VRT/RTBF-site - Addendum")
+    pages = [
+        {"page_num": 24, "text": f"SP 20.- Autre point. DÉCIDE. SP 21.- {fr} -=- {nl}"},
+        {"page_num": 25, "text": ("Le point est retiré de l'ordre du jour -=- Dit punt "
+                                  "wordt aan de agenda onttrokken. SP 22.- Vivaqua")},
+    ]
+    pts = [{"sp": 21, "page": 24, "titre": "Convention…", "decision": "", "vote": {"type": None}}]
+    assert _recover_missing_decisions(pts, pages) == 1
+    assert pts[0]["decision"] == "RETIRÉ"
+
+
+def test_recover_decision_approved_unanime_on_extracted_empty_decision():
+    # Cas réel SP 19/37 (2010-03-31) : point voté (« DÉCISION DU CONSEIL …
+    # approuvé à l'unanimité ») dont le LLM a oublié la décision.
+    raw = ("SP 19.- Désignation de la zone de Police 5344 -=- NL. DECISION DU CONSEIL "
+           "-=- BESLISSING VAN DE RAAD Par appel nominal, approuvé à l'unanimité "
+           "goedgekeurd met eenparigheid van stemmen SP 20.- x")
+    pts = [{"sp": 19, "page": 3, "titre": "Désignation…", "decision": "", "vote": {"type": None}}]
+    assert _recover_missing_decisions(pts, [{"page_num": 3, "text": raw}]) == 1
+    assert pts[0]["decision"] == "APPROUVÉ"
+    assert pts[0]["vote"]["type"] == "unanimite"
+
+
+def test_recover_decision_approved_by_nominal_vote_captures_counts():
+    # Cas réel SP 7 (2010-03-31) : « approuvé par 26 voix contre 15 ».
+    raw = ("SP 7.- Taxe sur les immeubles subdivisés -=- NL. DECISION DU CONSEIL "
+           "-=- BESLISSING VAN DE RAAD Par appel nominal, approuvé par 26 voix contre 15 "
+           "SP 8.- x")
+    pts = [{"sp": 7, "page": 2, "titre": "Taxe…", "decision": "", "vote": {"type": None}}]
+    assert _recover_missing_decisions(pts, [{"page_num": 2, "text": raw}]) == 1
+    assert pts[0]["decision"] == "APPROUVÉ"
+    assert pts[0]["vote"] == {"type": "vote_nominal", "pour": 26, "contre": 15, "abstentions": 0}
+
+
+def test_recover_decision_nominal_vote_with_abstentions():
+    raw = ("SP 5.- Objet -=- NL. Par appel nominal, approuvé par 30 voix contre 8 "
+           "et 3 abstentions SP 6.- x")
+    pts = [{"sp": 5, "page": 1, "titre": "Objet", "decision": "", "vote": {"type": None}}]
+    assert _recover_missing_decisions(pts, [{"page_num": 1, "text": raw}]) == 1
+    assert pts[0]["vote"] == {"type": "vote_nominal", "pour": 30, "contre": 8, "abstentions": 3}
 
 
 # ── extract_seance_date_from_text : FR/NL + accents/espaces perdus ──────────

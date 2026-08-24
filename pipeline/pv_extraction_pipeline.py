@@ -621,6 +621,22 @@ RE_REPORTE = re.compile(
 # (détection dans le filet, et découpe du titre avant la phrase de statut).
 RE_DEFERRED = re.compile(f"{RE_RETIRE.pattern}|{RE_REPORTE.pattern}", re.IGNORECASE)
 
+# Décision du Conseil captée déterministiquement quand le LLM l'a ratée sur un
+# point pourtant clairement voté (marqueur « DÉCISION DU CONSEIL -=- BESLISSING
+# VAN DE RAAD … approuvé … / goedgekeurd … »). Deux formes réelles :
+#   • unanimité : « approuvé à l'unanimité » / « goedgekeurd met eenparigheid »
+#   • nominal   : « approuvé par 26 voix contre 15 [et 3 abstentions] »
+RE_APPROVED_UNANIME = re.compile(
+    r"approuv[ée]s?\s+à\s+l['’]unanimit[ée]"
+    r"|goedgekeurd\s+met\s+eenparigheid",
+    re.IGNORECASE,
+)
+RE_APPROVED_VOTE = re.compile(
+    r"approuv[ée]s?\s+par\s+(\d+)\s+voix\s+contre\s+(\d+)"
+    r"(?:\s+et\s+(\d+)\s+abstention)?",
+    re.IGNORECASE,
+)
+
 
 def _anchor_window(text: str, sp: int) -> str:
     """Texte brut compris entre l'ancre 'SP n.-' et l'ancre du point suivant
@@ -631,6 +647,25 @@ def _anchor_window(text: str, sp: int) -> str:
     rest = text[m.end():]
     nxt = RE_SP_ANCHOR.search(rest)
     return rest[:nxt.start()] if nxt else rest[:600]
+
+
+def _anchor_window_spanning(pages: list[dict], sp: int) -> str:
+    """Fenêtre d'un point sur le texte GLOBAL (toutes les pages concaténées dans
+    l'ordre) et SANS plafond de caractères : de l'ancre 'SP n.-' jusqu'à l'ancre
+    suivante, même si elle est sur la page d'après. Nécessaire quand le point a
+    un titre long (bilingue) ou déborde d'une page à l'autre — cas réel du
+    SP 21 (2016-10-26) : titre VRT/RTBF très long + formule de retrait au-delà
+    des 600 premiers caractères ET SP 22 sur la page suivante, que le fenêtrage
+    mono-page/plafonné (_anchor_window) rataient tous les deux."""
+    text = "\n".join(p["text"] for p in sorted(pages, key=lambda p: p.get("page_num") or 0))
+    m = re.search(rf"SP\s*{sp}\s*\.-", text, re.IGNORECASE)
+    if not m:
+        return ""
+    rest = text[m.end():]
+    nxt = RE_SP_ANCHOR.search(rest)
+    # Jusqu'à l'ancre suivante ; à défaut (dernier point du PV), une fenêtre
+    # généreuse (le statut d'un point tient largement dans 4000 caractères).
+    return rest[:nxt.start()] if nxt else rest[:4000]
 
 
 def _extract_anchor_title(window: str, sp: int) -> str:
@@ -656,11 +691,12 @@ def _synthesize_deferred_points(pages: list[dict], missing_sp: list[int]) -> lis
     preuve textuelle : un vrai point de fond manquant relève d'une ré-extraction,
     pas d'un stub inventé."""
     expected = expected_sp_from_pages(pages)
-    text_by_page = {p["page_num"]: p["text"] for p in pages}
     out = []
     for sp in missing_sp:
         pg = expected.get(sp)
-        window = _anchor_window(text_by_page.get(pg, ""), sp)
+        # Fenêtre globale (toutes pages, sans plafond) — même robustesse que
+        # _apply_deferred_status_to_extracted : titre long / débordement de page.
+        window = _anchor_window_spanning(pages, sp)
         decision, vote_type = _deferred_status_from_window(window)
         if not decision:
             continue
@@ -679,7 +715,9 @@ def _deferred_status_from_window(window: str):
     """(decision, vote_type) déduit du texte brut d'un point : RETIRÉ (vote_type
     None) si retrait de l'ordre du jour, REPORTÉ ("reporte") si report, sinon
     (None, None). RETIRÉ prioritaire si les deux formules coexistent (rare) : le
-    retrait est l'acte final, il prime sur un report antérieur."""
+    retrait est l'acte final, il prime sur un report antérieur. Utilisé pour la
+    reconstruction des SP OMIS (statut différé uniquement — un point de fond
+    manquant relève d'une ré-extraction, pas d'un stub)."""
     if RE_RETIRE.search(window or ""):
         return "RETIRÉ", None
     if RE_REPORTE.search(window or ""):
@@ -687,16 +725,41 @@ def _deferred_status_from_window(window: str):
     return None, None
 
 
-def _apply_deferred_status_to_extracted(points: list[dict], pages: list[dict]) -> int:
-    """Corrige les points DÉJÀ extraits mais laissés SANS décision alors que leur
-    texte brut (fenêtre autour de l'ancre 'SP n.-') porte une formule de retrait/
-    report : le LLM garde parfois le titre d'un point différé (surtout s'il est
-    long) sans lui attribuer le statut — cas réel du SP 21 (2016-10-26), gardé
-    avec une décision vide alors que le SP 22 voisin, plus court, était bien
-    marqué RETIRÉ. Complète _synthesize_deferred_points (qui, lui, ne traite que
-    les SP totalement OMIS). N'écrase JAMAIS une décision déjà présente — on ne
-    réécrit pas une vraie décision. Retourne le nombre de points corrigés."""
-    text_by_page = {p["page_num"]: p["text"] for p in pages}
+def _recover_decision_from_window(window: str):
+    """(decision, vote) complet déduit du texte brut d'un point EXTRAIT mais sans
+    décision. Couvre, par priorité : retrait (RETIRÉ) / report (REPORTÉ), puis
+    approbation par le Conseil — unanimité ou vote nominal chiffré — quand le
+    marqueur « DÉCISION DU CONSEIL … approuvé … / goedgekeurd … » est présent
+    (cas réel SP 7/19/37 du 2010-03-31 : points votés dont le LLM a raté la
+    décision). (None, None) si aucun marqueur fiable : on n'invente jamais."""
+    w = window or ""
+    if RE_RETIRE.search(w):
+        return "RETIRÉ", {"type": None, "pour": None, "contre": 0, "abstentions": 0}
+    if RE_REPORTE.search(w):
+        return "REPORTÉ", {"type": "reporte", "pour": None, "contre": 0, "abstentions": 0}
+    m = RE_APPROVED_VOTE.search(w)
+    if m:
+        return "APPROUVÉ", {
+            "type": "vote_nominal",
+            "pour": int(m.group(1)), "contre": int(m.group(2)),
+            "abstentions": int(m.group(3) or 0),
+        }
+    if RE_APPROVED_UNANIME.search(w):
+        return "APPROUVÉ", {"type": "unanimite", "pour": None, "contre": 0, "abstentions": 0}
+    return None, None
+
+
+def _recover_missing_decisions(points: list[dict], pages: list[dict]) -> int:
+    """Corrige les points DÉJÀ extraits mais laissés SANS décision, à partir du
+    texte brut (fenêtre autour de l'ancre 'SP n.-') : le LLM garde parfois le
+    titre d'un point mais oublie sa décision, surtout quand le titre est long ou
+    la décision est loin sur la page suivante. Deux cas réels du corpus :
+      • SP 21 (2016-10-26) : point RETIRÉ, gardé sans statut (titre bilingue
+        très long, formule au-delà des 600 premiers caractères, page suivante) ;
+      • SP 7/19/37 (2010-03-31) : points APPROUVÉS (unanimité / vote nominal)
+        dont le « DÉCISION DU CONSEIL … approuvé … » n'a pas été repris.
+    Complète _synthesize_deferred_points (qui ne traite que les SP OMIS).
+    N'écrase JAMAIS une décision déjà présente. Retourne le nombre corrigé."""
     n = 0
     for pt in points:
         if (pt.get("decision") or "").strip():
@@ -704,18 +767,14 @@ def _apply_deferred_status_to_extracted(points: list[dict], pages: list[dict]) -
         sp = pt.get("sp")
         if not isinstance(sp, int):
             continue
-        window = _anchor_window(text_by_page.get(pt.get("page"), ""), sp)
-        if not window:
-            # page absente/mal bornée : cherche l'ancre dans toutes les pages
-            for txt in text_by_page.values():
-                window = _anchor_window(txt, sp)
-                if window:
-                    break
-        decision, vote_type = _deferred_status_from_window(window)
+        # Fenêtre GLOBALE (toutes pages, sans plafond) : capte la décision même
+        # pour un point à titre long ou chevauchant une fin de page (voir
+        # _anchor_window_spanning, cas SP 21 2016-10-26).
+        decision, vote = _recover_decision_from_window(_anchor_window_spanning(pages, sp))
         if not decision:
             continue
         pt["decision"] = decision
-        pt["vote"] = {"type": vote_type, "pour": None, "contre": 0, "abstentions": 0}
+        pt["vote"] = vote
         n += 1
     return n
 
@@ -865,12 +924,13 @@ def process_pdf(pdf_path: Path, progress_cb: Optional[Callable[[dict], None]] = 
         log.info(f"  ✅ Complétude : {check['extracted']}/{check['expected']} points (regex = LLM)")
 
     # Filet déterministe (2/2) : un point EXTRAIT mais sans décision, dont le
-    # texte brut porte une formule de retrait/report, reçoit le bon statut
-    # (RETIRÉ/REPORTÉ). Complète la reconstruction des SP omis ci-dessus —
-    # ici le LLM a gardé le point mais oublié le statut (cas SP 21, 2016-10-26).
-    fixed = _apply_deferred_status_to_extracted(deduped, pages)
+    # texte brut porte une décision (retrait/report OU approbation votée),
+    # reçoit le bon statut. Complète la reconstruction des SP omis ci-dessus —
+    # ici le LLM a gardé le point mais oublié la décision (SP 21 retiré du
+    # 2016-10-26 ; SP 7/19/37 approuvés du 2010-03-31).
+    fixed = _recover_missing_decisions(deduped, pages)
     if fixed:
-        log.info(f"  ⊛ Statut retiré/reporté rétabli sur {fixed} point(s) déjà extrait(s)")
+        log.info(f"  ⊛ Décision (retiré/reporté/approuvé) rétablie sur {fixed} point(s) déjà extrait(s)")
 
     # GREFFE 1 : chaque point porte son fichier source (page déjà présente) →
     # lien vérifiable vers le PV d'origine.
