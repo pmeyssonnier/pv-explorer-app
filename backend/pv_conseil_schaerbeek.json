@@ -19,6 +19,7 @@
       "2011-02-23",
       "2011-03-30",
       "2011-05-25",
+      "2011-06-22",
       "2012-01-18",
       "2012-02-15",
       "2012-05-30",
@@ -164,7 +165,7 @@
       "2026-04-22",
       "2026-05-27"
     ],
-    "total_points": 9465,
+    "total_points": 9512,
     "schema_point": {
       "sp": "Numéro du point SP",
       "urgence": "Point inscrit en urgence (bool)",
@@ -20924,6 +20925,1296 @@
             "contrat_quartier"
           ],
           "source_file": "Pv%20CC%202011-05-25%20SP.pdf"
+        }
+      ]
+    },
+    {
+      "seance": {
+        "id": "PV-2011-06-22",
+        "date": "2011-06-22",
+        "source_file": "Pv%20CC%202011-06-22%20SP.pdf",
+        "extracted_at": "2026-08-24T09:15:03.218824",
+        "heure_ouverture": null,
+        "heure_cloture": null,
+        "president": null,
+        "bourgmestre": null,
+        "bourgmestre_ff": "Jodogne",
+        "secretaire_communal": "Bouvier",
+        "presents_count": null,
+        "excuses": [],
+        "absents": [],
+        "extraction_check": {
+          "expected": 47,
+          "extracted": 47,
+          "missing_sp": [],
+          "extra_sp": [],
+          "missing_pages": [],
+          "ok": true
+        },
+        "source_url": "https://www.1030.be/data/media/import/Pv%2520CC%25202011-06-22%2520SP.pdf"
+      },
+      "points": [
+        {
+          "sp": 1,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU SECRETAIRE COMMUNAL",
+          "sous_rubrique": "Assemblées",
+          "titre": "Démission de Madame Anne-Marie VANHAUWAERT, de ses fonctions de conseillère communale - Vérification des pouvoirs et installation de son remplaçant, Monsieur Paul VAN GOETHEM",
+          "resume": "Démission de Mme Vanhauwaert et installation de son remplaçant M. Paul Van Goethem.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 2,
+          "page": 2,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
+          "sous_rubrique": "Taxes",
+          "titre": "Règlement taxe sur les surfaces commerciales - Exercices 2011 à 2015 - Modification",
+          "resume": "Modification du règlement concernant la taxe annuelle sur les surfaces commerciales pour les exercices 2011 à 2015. Taux fixé à 6,00€/m² au 1er janvier 2011, avec indexation annuelle de 2,5%.",
+          "intervenants": [
+            "Guillaume",
+            "Özkara"
+          ],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 11,
+            "abstentions": 5
+          },
+          "montant_eur": 6,
+          "thematiques": [
+            "fiscalite",
+            "taxe_commerciale",
+            "surfaces_commerciales"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 3,
+          "page": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Budget",
+          "titre": "Budget 2011 - Services ordinaire et extraordinaire - Modifications budgétaires n°1 et 2 - Approbation",
+          "resume": "Approbation du budget 2011 avec modifications budgétaires n°1 et 2.",
+          "intervenants": [
+            "De Herde",
+            "Van Gorp",
+            "Grimberghs",
+            "Vriamont",
+            "Vanhalewyn",
+            "de Beauffort"
+          ],
+          "repondant": "Guillaume",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 15,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "budget",
+            "finances"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 4,
+          "page": 7,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Convention de collaboration entre la commune de Schaerbeek et la Fabrique d'église Saint Servais relative à l'entretien du jardin entourant l'Eglise - Approbation",
+          "resume": "Approbation de la convention de collaboration entre la Commune de Schaerbeek et la Fabrique d'Eglise Saint Servais pour l'entretien du jardin entourant l'Église.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention",
+            "entretien_espaces_verts",
+            "patrimoine_religieux"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 5,
+          "page": 8,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "EQUIPEMENT",
+          "sous_rubrique": "Contrôle",
+          "titre": "Avenant à la convention liant la commune de Schaerbeek à l'ASBL « Centre Culturel de Schaerbeek » - Approbation",
+          "resume": "Approbation de l'avenant n°1 à la convention liant la Commune à l'ASBL Centre Culturel de Schaerbeek et mandat au Collège pour signer la convention.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention",
+            "asbl",
+            "culture",
+            "subvention"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 6,
+          "page": 9,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Conventions",
+          "sous_rubrique": "Avenants à conventions",
+          "titre": "Avenant à la convention liant la commune de Schaerbeek à l'ASBL \"Espace P\" - Approbation",
+          "resume": "Approbation de l'avenant n°1 à la convention liant la Commune à l'ASBL « Espace P » et mandat au Collège pour signer la convention",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "conventions",
+            "subventions"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 7,
+          "page": 10,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Conventions",
+          "sous_rubrique": "Avenants à conventions",
+          "titre": "Avenant à la convention liant la commune de Schaerbeek à l'ASBL \"Le Club des Petits Débrouillards de la Région Bruxelloise\" - Approbation",
+          "resume": "Approbation de l'avenant n°1 à la convention liant la Commune à l'ASBL « Le Club des Petits Débrouillards de la Région Bruxelloise » et mandat au Collège pour signer la convention",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "conventions",
+            "subventions"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 8,
+          "page": 12,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Conventions",
+          "sous_rubrique": "Avenants à conventions",
+          "titre": "Avenant à la convention liant la commune de Schaerbeek à l'ASBL \"Sport Schaerbeekois\" - Approbation",
+          "resume": "Approbation de l'avenant n°1 à la convention liant la Commune à l'ASBL « Sport Schaerbeekois » et mandat au Collège pour signer la convention",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 41,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "conventions",
+            "subventions",
+            "sports"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 9,
+          "page": 13,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Conventions",
+          "sous_rubrique": "Avenants à conventions",
+          "titre": "Avenant à la convention liant la commune de Schaerbeek à l'ASBL \"Travail de Rue à Schaerbeek - TRS\" - Approbation",
+          "resume": "Approbation de l'avenant n°1 à la convention liant la Commune à l'ASBL « Travail de Rue à Schaerbeek » et mandat au Collège pour signer la convention",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "conventions",
+            "subventions"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 10,
+          "page": 14,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Conventions",
+          "sous_rubrique": "Avenants à conventions",
+          "titre": "Avenant à la convention liant la commune de Schaerbeek à la Zone de Police 5344 - Médiatrice locale",
+          "resume": "Approbation de l'avenant n°1 à la convention liant la Commune à la « Zone de Police 5344 » et mandat au Collège pour signer la convention",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 1500,
+          "thematiques": [
+            "conventions",
+            "subventions",
+            "securite"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 11,
+          "page": 15,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Comptes et finances",
+          "sous_rubrique": "Comptes annuels",
+          "titre": "ASBL \"Agence Schaerbeekoise Immobilière Sociale - ASIS\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL « Agence Schaerbeekoise Immobilière Sociale – ASIS » affichant un résultat positif de 3.142,30 € pour l'exercice 2010 et un résultat cumulé de 109.305,82 €",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 112500,
+          "thematiques": [
+            "comptes",
+            "finances",
+            "immobilier_social"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 12,
+          "page": 17,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "ASBL Maison Autrique",
+          "titre": "ASBL \"Maison Autrique\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL Maison Autrique affichant un déficit de -15.229,52 € pour l'exercice et un résultat cumulé de -44.199,44 €. Subside communal de 50.000 € inscrit au budget 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 50000,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "subvention"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 13,
+          "page": 18,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Subventions",
+          "sous_rubrique": "ASBL Schaerbeek Information",
+          "titre": "ASBL \"Schaerbeek Information\" - Comptes 2010 - Prendre acte",
+          "resume": "Prise d'acte des comptes 2010 de l'ASBL Schaerbeek Information affichant une perte de 2.364,54 € pour l'exercice et un résultat cumulé positif de 29.615,05 €. Subside communal de 210.000 € inscrit au budget 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND ACTE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 210000,
+          "thematiques": [
+            "asbl",
+            "comptes",
+            "subvention"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 14,
+          "page": 19,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Achats",
+          "sous_rubrique": "Schaerbeek Propreté et Espaces Verts",
+          "titre": "Schaerbeek Propreté et Espaces Verts - Parc Josaphat - Acquisition de matériel, d'équipement et de mobilier divers pour la Pergola - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Information du Conseil de la décision du Collège du 14 juin 2011 de passer un marché par procédure négociée sans publicité pour l'acquisition de matériel, équipement et mobilier pour la Pergola au Parc Josaphat. Dépense estimée à 35.000 € TVA comprise, imputée au budget extraordinaire 2011 et financée par fonds propres.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 35000,
+          "thematiques": [
+            "marche_public",
+            "equipement",
+            "parc",
+            "budget_extraordinaire"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 15,
+          "page": 20,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Instruction Publique",
+          "sous_rubrique": "Institut Frans Fischer",
+          "titre": "Instruction Publique - Institut Frans Fischer - Centre de Technologie Avancée - Acquisition de pilotes industries - Mode de passation et fixation des conditions du marché - Approbation",
+          "resume": "Approbation du cahier spécial des charges et du mode de passation par appel d'offres général pour l'acquisition de pilotes industriels au Centre de Technologie Avancée de l'Institut Frans Fischer. Montant estimé à 133.057,85 € hors TVA ou 161.000 € TTC. Financement par subsides (50% FEDER, 50% Communauté Française).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 161000,
+          "thematiques": [
+            "instruction_publique",
+            "marche_public",
+            "equipement",
+            "technologie",
+            "subvention"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 16,
+          "page": 22,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Conventions 2011 à conclure entre la commune de Schaerbeek et ASBL \"Sport Schaerbeekois\" - Approbation",
+          "resume": "Approbation de la convention 2011 entre la Commune et l'ASBL Sport Schaerbeekois dans le cadre du Programme de Prévention Urbaine.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 41,
+            "contre": 0,
+            "abstentions": 1
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention",
+            "asbl",
+            "prevention_urbaine",
+            "sport"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 17,
+          "page": 23,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Conventions 2011 à conclure entre la commune de Schaerbeek et ASBL \"Le Club des Petites Débrouillards\" relative à la coordination de l'Espace Vogler - Approbation",
+          "resume": "Approbation de la convention 2011 entre la Commune et l'ASBL Le Club des Petites Débrouillards pour la coordination de la gestion de l'Espace Vogler, situé rue Vogler 38 à Schaerbeek.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention",
+            "asbl",
+            "prevention_urbaine",
+            "espace_public"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 18,
+          "page": 24,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Développement Stratégique et Durable",
+          "sous_rubrique": "Programme de Prévention Urbaine",
+          "titre": "Conventions 2011 à conclure entre la commune de Schaerbeek et ASBL T.R.S. - Approbation",
+          "resume": "Approbation de la convention 2011 entre la Commune et l'ASBL T.R.S. dans le cadre du Programme de Prévention Urbaine.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "convention",
+            "asbl",
+            "prevention_urbaine"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 19,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Affaires générales",
+          "sous_rubrique": "",
+          "titre": "Gardiens de la paix - Prolongation pour une 2ème période de 6 mois du Contingent complémentaire et du Contingent complémentaire 90 ETP entre le service Public Fédéral Intérieur et la commune - Approbation",
+          "resume": "Approbation de deux conventions relatives aux gardiens de la paix entre la commune et l'État pour une prolongation de 6 mois du contingent complémentaire et du contingent complémentaire 90 ETP.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "gardiens_de_la_paix",
+            "ressources_humaines",
+            "convention"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 20,
+          "page": 25,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Affaires générales",
+          "sous_rubrique": "",
+          "titre": "Réglementation communale en matière de prostitution en vitrine composée d'un règlement de police et d'un règlement d'urbanisme - Adoption",
+          "resume": "Adoption d'une réglementation communale en matière de prostitution en vitrine composée d'un règlement de police et d'un règlement d'urbanisme, incluant une demande de certificat de conformité. La réglementation vise à améliorer la qualité de vie et la sécurité dans le quartier de la rue d'Aerschot en limitant les activités de prostitution en vitrine à certaines zones territoriales avec un nombre limité d'immeubles et de vitrines.",
+          "intervenants": [
+            "Mme la Bourgmestre ff.",
+            "Mmes Nyssens",
+            "Vriamont",
+            "Durant",
+            "MM. Clerfayt",
+            "Dönmez"
+          ],
+          "repondant": "Mme la Bourgmestre ff.",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 26,
+            "contre": 0,
+            "abstentions": 16
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "prostitution",
+            "police",
+            "urbanisme",
+            "qualite_de_vie",
+            "securite_publique"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 21,
+          "page": 28,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Ressources humaines",
+          "sous_rubrique": "Cabinet du Bourgmestre",
+          "titre": "Modification du cadre du personnel de cabinet du Bourgmestre et des Echevins - Cabinet du Bourgmestre",
+          "resume": "Modification du cadre du personnel de cabinet du Bourgmestre et des Échevins avec suppression d'1 emploi de niveau B/C au cabinet du Bourgmestre et création d'1 emploi de secrétaire d'administration avec rang de chef de cabinet.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 31,
+            "contre": 0,
+            "abstentions": 11
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "cadre_personnel",
+            "cabinet_bourgmestre"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 22,
+          "page": 29,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Ressources humaines",
+          "sous_rubrique": "",
+          "titre": "Modification du cadre du personnel",
+          "resume": "Modification du cadre du personnel et du personnel ACS avec plusieurs créations, suppressions et transformations d'emplois dans divers départements incluant les services généraux, ressources humaines, équipement, instruction publique, services spécifiques et infrastructure.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "ressources_humaines",
+            "cadre_personnel",
+            "reorganisation_administrative"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 23,
+          "page": 33,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Travaux et équipements",
+          "sous_rubrique": "Plaine Wahis",
+          "titre": "Plaine Wahis - Renforcement de compteur et remplacement de coffret électrique - Mode de passation et fixation des conditions du marché",
+          "resume": "Travaux de renforcement du compteur et remplacement du coffret électrique sur le site de la plaine Wahis pour fournir l'énergie nécessaire à l'éclairage des terrains de sport en gazon synthétique. Coût estimé à 3.865,95 EUR TVA incluse. Marché confié à l'intercommunale détenant le monopole, procédure négociée sur simple facture acceptée. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 3865.95,
+          "thematiques": [
+            "travaux_infrastructure",
+            "electricite",
+            "equipements_sportifs"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 24,
+          "page": 34,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments communaux",
+          "sous_rubrique": "CSA Haacht",
+          "titre": "CSA, chaussée de Haecht 226 - Placement de vannes thermostatiques - Mode de passation et fixation des conditions du marché",
+          "resume": "Équipement de 320 appareils de chauffage du CSA de vannes thermostatiques. Travaux confiés à une entreprise spécialisée. Cahier spécial des charges Scha/Infra/2011/024. Coût estimé à 30.000 EUR. Procédure négociée sans publicité après consultation de six entreprises. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 30000,
+          "thematiques": [
+            "chauffage",
+            "efficacite_energetique",
+            "batiments_communaux"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 25,
+          "page": 35,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Logements sociaux",
+          "sous_rubrique": "Sécurisation",
+          "titre": "Sécurisation des logements sociaux - Programme 2011 - Aménagement d'un sas d'entrée au 115 rue Josaphat - Mode de passation et fixation des conditions du marché",
+          "resume": "Aménagement d'un sas d'entrée non couvert, équipé d'un système de contrôle d'accès et d'ouverture automatique, ainsi que pose d'une signalétique pour les logements sociaux sis 115 rue Josaphat. Cahier spécial des charges 2011/028. Coût estimé à 25.000 EUR TVA comprise. Procédure négociée sans publicité. Travaux entièrement subsidiés par la Région de Bruxelles-Capitale (subvention 164.661 EUR pour le programme 2011).",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 25000,
+          "thematiques": [
+            "logements_sociaux",
+            "securisation",
+            "amenagements"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 26,
+          "page": 37,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Patrimoine et monuments",
+          "sous_rubrique": "Monuments historiques",
+          "titre": "Mât de Lalaing situé au croisement des avenues Voltaire et Azalées - Restauration - Mode de passation et fixation des conditions du marché",
+          "resume": "Restauration complète du mât de Lalaing, classé comme monument en totalité par arrêté du 4 juin 2009. Le mât a été replacé en 2006 et son socle reconstitué en 2008. Restauration intégrale avec restitution du système d'éclairage au sommet selon documents d'origine. Démontage de la structure et plaques décoratives en bronze, restauration et remontage tel qu'en 1926. Coût estimé à 500.000 EUR TVA incluse. Appel d'offres général. Financement : 80% subsides (Direction des Monuments et Sites), 20% par emprunt communal.",
+          "intervenants": [
+            "M. Dönmez"
+          ],
+          "repondant": "Mme la Bourgmestre ff",
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 500000,
+          "thematiques": [
+            "monuments_historiques",
+            "patrimoine",
+            "restauration"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 27,
+          "page": 40,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Équipements sportifs",
+          "sous_rubrique": "Stade Chazal",
+          "titre": "Stade Chazal - Remplacement du revêtement synthétique du terrain de football - Mode de passation et fixation des conditions du marché",
+          "resume": "Remplacement du revêtement synthétique du terrain de football du stade Chazal en état d'usure avancée. Cahier spécial des charges Scha/Infra/2011/031. Coût estimé à 300.000 EUR TVAC. Adjudication publique. Financement par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 300000,
+          "thematiques": [
+            "equipements_sportifs",
+            "terrains_sports",
+            "revêtement_synthetique"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 28,
+          "page": 41,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments communaux",
+          "sous_rubrique": "Installations techniques",
+          "titre": "Renouvellement des installations de régulation dans huit bâtiments communaux - Attribution du marché - Approbation des imputations budgétaires",
+          "resume": "Approbation de l'attribution du marché de renouvellement des installations de régulation dans huit bâtiments communaux pour un montant total de 756.750,24 € (travaux : 460.735,83 € ; maintenance 2012-2021 : 296.014,41 €). Approbation des modalités d'imputation budgétaire selon les articles spécifiés pour écoles primaires, secondaires, enseignement spécial et formation de la jeunesse.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 756750.24,
+          "thematiques": [
+            "batiments_communaux",
+            "installations_techniques",
+            "marches_publics",
+            "budget_extraordinaire",
+            "enseignement"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 29,
+          "page": 43,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments communaux",
+          "sous_rubrique": "Hôtel communal",
+          "titre": "Hôtel communal - Aménagement des combles - Travaux supplémentaires - Pour information",
+          "resume": "Prise en information de la décision du Collège du 7 juin 2011 approuvant l'exécution de travaux supplémentaires (traitement de charpente métallique et restauration de garde-corps) suite aux remarques de la CRMS, pour un montant de 53.178,03 € TVAC. Prolongation du délai d'exécution de 20 jours ouvrables. Financement : 80 % en subsides, 20 % par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 53178.03,
+          "thematiques": [
+            "batiments_communaux",
+            "hotel_communal",
+            "travaux_renovation",
+            "subsides"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 30,
+          "page": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Bâtiments communaux",
+          "sous_rubrique": "Immeubles communaux",
+          "titre": "Immeuble communal sis rue Stephenson 78-84 - Travaux de rénovation et transformation Travaux supplémentaires",
+          "resume": "Point retiré de l'ordre du jour.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "batiments_communaux",
+            "travaux_renovation"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 31,
+          "page": 45,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Itinéraires cyclables",
+          "titre": "Création d'itinéraires cyclables communaux - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise en information de la décision du Collège du 7 juin 2011 arrêtant le mode de passation du marché (procédure négociée sans publicité après consultation de trois firmes spécialisées), fixant les conditions du marché selon le cahier spécial des charges Scha/Infra/2011/026, et imputant la dépense estimée à 80.000 € au budget extraordinaire 2011, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 80000,
+          "thematiques": [
+            "voirie",
+            "itineraires_cyclables",
+            "marches_publics",
+            "mobilite"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 32,
+          "page": 47,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Voirie",
+          "sous_rubrique": "Marquages routiers",
+          "titre": "Marquages routiers aux produits thermoplastiques - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise en information de la décision du Collège du 7 juin 2011 arrêtant le mode de passation du marché (procédure négociée sans publicité après consultation de trois firmes spécialisées), fixant les conditions du marché selon le cahier spécial des charges Scha/Infra/2011/027, et imputant la dépense estimée à 80.000 € au budget extraordinaire 2011, financée par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 80000,
+          "thematiques": [
+            "voirie",
+            "marquages_routiers",
+            "marches_publics"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 33,
+          "page": 48,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Rénovation urbaine",
+          "sous_rubrique": "Rénovation d'immeubles",
+          "titre": "Rénovation d'un immeuble sis rue Josaphat 312 - Mission d'étude - Mode de passation et fixation des conditions du marché - Pour information",
+          "resume": "Prise en information de la décision du Collège concernant le marché d'études pour la rénovation d'un immeuble de logements rue Josaphat 312. Le marché estimé à 67.000 € HT ou 78.650 € TVAC sera passé par procédure négociée sans publicité. Inscription au budget extraordinaire 2011, financement par emprunt et subsides à concurrence de 65 %.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 78650,
+          "thematiques": [
+            "renovation_urbaine",
+            "renovation_immeubles",
+            "marches_publics",
+            "logement",
+            "subsides"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 34,
+          "page": 49,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Immobilier communal",
+          "titre": "Séniorie Victor Hugo - Résiliation du droit de superficie accordé au Crédit communal de Belgique (DEXIA)",
+          "resume": "Confirmation que toutes les opérations menées dans le dossier de résiliation du droit de superficie sur le terrain sis à l'angle des rues du Radium et Victor Hugo s'effectuent pour cause d'utilité publique. La dette envers DEXIA a été complètement apurée.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immobilier_communal",
+            "utilite_publique",
+            "droit_superficie"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 35,
+          "page": 51,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Locations immobilières",
+          "titre": "Bien communal sis rue des Palais 153 - Contrat de bail avec La Lustrerie",
+          "resume": "Approbation de la location de locaux sis rue des Palais, 153 à la scrl La Lustrerie pour l'exploitation du centre d'entreprises solidaires pour une période de 9 ans à compter du 01.02.2012. Adoption du contrat de bail.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immobilier_communal",
+            "location",
+            "economie_sociale"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 36,
+          "page": 52,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Gestion immobilière",
+          "sous_rubrique": "Conventions d'occupation",
+          "titre": "Bien communal sis avenue Princesse Elisabeth 48 - Convention d'occupation à titre précaire avec l'ASBL Hackerspace Brussels",
+          "resume": "Accord sur l'occupation à titre précaire et gracieux du bien communal situé avenue princesse Elisabeth, 48 (ancien garage) par l'asbl Hackerspace Brussels en attente des travaux du Contrat de Quartier Navez-Portaels pour y exercer une activité informatique et liée aux technologies. Approbation de la convention d'occupation.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "immobilier_communal",
+            "asbl",
+            "technologies"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 37,
+          "page": 52,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Helmet - Opération IM1",
+          "titre": "Contrat de quartier Helmet - Opération IM1 - Rénovation de deux demi-socles des immeubles du Square Apollo",
+          "resume": "Approbation du principe d'élaboration d'une étude pour la rénovation de deux demi-socles des immeubles du Square Apollo pour création de locaux communautaires et lieu collectif d'activités aux seniors. Marché d'étude par procédure négociée avec publicité. Coût de l'étude 108.228,50 € TVAC. Indemnisation candidats 4.846,00 € TVAC. Subsidiation Région 90%, financement solde par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 113074.5,
+          "thematiques": [
+            "contrat_quartier",
+            "renovation",
+            "seniors",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 38,
+          "page": 54,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Contrat de quartier",
+          "sous_rubrique": "Helmet - Opération EP2",
+          "titre": "Contrat de quartier Helmet - Opération EP2 - Aménagement du square Apollo en espace vert et récréatif",
+          "resume": "Approbation du principe d'élaboration d'une étude pour l'aménagement du square Apollo en espace vert et récréatif de près de 4500 m². Marché d'étude par procédure négociée avec publicité. Coût de l'étude 89.468,61 € TVAC. Indemnisation candidats 10.750,85 € TVAC. Subsidiation Région 71%, financement solde par emprunt.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 100219.46,
+          "thematiques": [
+            "contrat_quartier",
+            "espaces_verts",
+            "recreation",
+            "marche_public"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 39,
+          "page": 56,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Services communaux spécifiques",
+          "sous_rubrique": "Enfance",
+          "titre": "Octroi de subsides aux associations actives dans le domaine de l'Enfance - Exercice 2011",
+          "resume": "Approbation de l'octroi de subsides aux associations actives dans le domaine de l'enfance pour l'exercice 2011. Délibérations du 23 février 2011 (budget) et 22 juin 2011 (modification budgétaire) adoptées. Rapport du 14 juin 2011 du Collège des Bourgmestre et Echevins présenté.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "APPROUVÉ",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "subsides",
+            "associations",
+            "enfance"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 40,
+          "page": 57,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Enfance",
+          "sous_rubrique": "Subsides",
+          "titre": "Octroi de subsides aux associations actives dans le domaine de la Petite Enfance - Exercice 2011 - Approbation",
+          "resume": "Répartition de subsides aux associations actives dans le domaine de l'Enfance pour l'exercice 2011, pour un montant global de 18.000 € prévu à l'article 761/332-SS-02/AB du budget ordinaire 2011.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 18000,
+          "thematiques": [
+            "enfance",
+            "subsides",
+            "associations"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 41,
+          "page": 61,
+          "urgence": false,
+          "type": "point_normal",
+          "rubrique": "Economie - Emploi",
+          "sous_rubrique": "Conventions",
+          "titre": "Conventions Atrium-Brabant-Helmet - Exercice 2011 - Reconduction",
+          "resume": "Approbation de la reconduction pour une durée d'un an, s'achevant le 31 décembre 2011, des conventions de partenariats entre la Région de Bruxelles-Capitale, l'asbl Atrium, la Commune de Schaerbeek et les asbl Atrium Brabant et Atrium Helmet",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "economie",
+            "emploi",
+            "revitalisation_quartiers",
+            "conventions"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 42,
+          "page": 63,
+          "urgence": true,
+          "type": "point_urgent",
+          "rubrique": "Infrastructures - Bâtiments",
+          "sous_rubrique": "Rénovation",
+          "titre": "Maison de quartier sise rue Dupont 58 - Rénovation - Placement de compteur de gaz - Désignation de l'adjudicataire - Pour information",
+          "resume": "Prise pour information de la décision du Collège des Bourgmestre et Echevins du 24 mai 2011 désignant une firme agréée pour la fourniture des compteurs pour un montant de 2.572,46 EUR (TVAC)",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "PREND POUR INFORMATION",
+          "vote": {
+            "type": "unanimite",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": 2572.46,
+          "thematiques": [
+            "infrastructures",
+            "batiments",
+            "renovation",
+            "equipements"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 43,
+          "page": 69,
+          "urgence": false,
+          "type": "motion",
+          "rubrique": "Politique générale",
+          "sous_rubrique": "Valeurs démocratiques",
+          "titre": "L'ASBL Territoires de la Mémoire",
+          "resume": "Motion de Bernard Clerfayt affirmant l'opposition fermée de la commune à toute amnistie des collaborateurs belges des nazis durant la Seconde Guerre mondiale et défendant les principes démocratiques fondamentaux.",
+          "intervenants": [
+            "Clerfayt",
+            "Ayad",
+            "Durant",
+            "Charels",
+            "Onkelinx",
+            "Nyssens",
+            "Kaddour",
+            "De Beauffort"
+          ],
+          "repondant": null,
+          "decision": "DÉCIDE",
+          "vote": {
+            "type": "vote_nominal",
+            "pour": 34,
+            "contre": 0,
+            "abstentions": 2
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "democratie",
+            "memoire_historique",
+            "politique_generale"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 44,
+          "page": 69,
+          "urgence": false,
+          "type": "motion",
+          "rubrique": "Affaires sociales",
+          "sous_rubrique": "Volontariat",
+          "titre": "La valorisation du volontariat dans le cadre associatif à l'occasion de l'année européenne du volontariat",
+          "resume": "Motion de Denis Grimberghs pour la valorisation du volontariat dans le cadre associatif.",
+          "intervenants": [],
+          "repondant": null,
+          "decision": "REPORTÉ",
+          "vote": {
+            "type": "reporte",
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "volontariat",
+            "vie_associative"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 45,
+          "page": 70,
+          "urgence": false,
+          "type": "demande_habitant",
+          "rubrique": "Communication",
+          "sous_rubrique": "Schaerbeek-Info",
+          "titre": "Le bilinguisme du Schaerbeek-Info",
+          "resume": "Demande de Bernadette Vriamont concernant le bilinguisme du journal municipal Schaerbeek-Info.",
+          "intervenants": [
+            "Vriamont"
+          ],
+          "repondant": "Nimal",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "communication_municipale",
+            "bilinguisme"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 46,
+          "page": 70,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Sports et loisirs",
+          "sous_rubrique": "Sports",
+          "titre": "La situation du club de basket le RPC Schaerbeek",
+          "resume": "Question de Jean-Pierre Van Gorp sur la situation du club de basket RPC Schaerbeek.",
+          "intervenants": [
+            "Van Gorp"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "sports",
+            "basketball"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
+        },
+        {
+          "sp": 47,
+          "page": 70,
+          "urgence": false,
+          "type": "question_orale",
+          "rubrique": "Transports et mobilité",
+          "sous_rubrique": "Transports ferroviaires",
+          "titre": "La possible fermeture des guichets de la gare de Schaerbeek",
+          "resume": "Question de Vincent Vanhalewyn sur la possible fermeture des guichets de la gare de Schaerbeek.",
+          "intervenants": [
+            "Vanhalewyn"
+          ],
+          "repondant": "Bourgmestre ff",
+          "decision": "DÉBAT",
+          "vote": {
+            "type": null,
+            "pour": null,
+            "contre": 0,
+            "abstentions": 0
+          },
+          "montant_eur": null,
+          "thematiques": [
+            "transports",
+            "gare",
+            "mobilite"
+          ],
+          "source_file": "Pv%20CC%202011-06-22%20SP.pdf"
         }
       ]
     },
