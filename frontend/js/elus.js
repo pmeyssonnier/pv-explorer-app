@@ -210,14 +210,24 @@ function filterByType(items, typeLabel) {
   return items.filter(it => it.type_label === typeLabel);
 }
 
-// Puce cliquable par type présent — seul filtre de type de l'onglet (plus de
-// menu déroulant redondant, voir onEluChipClick). '' si aucune intervention
-// de ce type cette année (jamais de puce à 0).
+// Puce CLIQUABLE par type présent — dans la barre de filtres (#eluTypeFilterChips),
+// même emplacement/logique que les puces de type de l'onglet Séances. '' si
+// aucune intervention de ce type cette année (jamais de puce à 0).
 function eluTypeChip(typeLabel, count) {
   if (!count) return '';
   const active = eluTypeFilter === typeLabel ? ' elu-chip-active' : '';
   const text = TYPE_COUNT_LABEL[typeLabel](count);
   return `<button type="button" class="elu-chip${active}" data-click="onEluChipClick" data-arg="${escapeHtml(typeLabel)}">${escapeHtml(text)}</button>`;
+}
+
+// Pastille NON cliquable par type présent — sous le nom de l'élu·e, simple
+// rappel du profil d'activité (le filtre lui-même vit dans la barre de
+// filtres, voir eluTypeChip ci-dessus/#eluTypeFilterChips). Même décompte
+// (année en cours), juste un autre rendu : <span>, pas <button>.
+function eluTypeCountBadge(typeLabel, count) {
+  if (!count) return '';
+  const text = TYPE_COUNT_LABEL[typeLabel](count);
+  return `<span class="elu-chip-static">${escapeHtml(text)}</span>`;
 }
 
 // Reclique sur la puce déjà active → bascule vers "Tous les types" ; sinon
@@ -352,9 +362,17 @@ function renderElu(d) {
   const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
     : 'Conseiller·ère');
-  const chips = TYPE_FILTER_ORDER
-    .map(t => eluTypeChip(t, deposeForYear.filter(it => it.type_label === t).length))
-    .join('');
+  // Décompte par type pour l'année courante — une seule fois, réutilisé pour
+  // le filtre cliquable (barre de filtres) ET le rappel non cliquable
+  // (sous le nom) : même chiffre, deux rendus différents.
+  const typeCounts = TYPE_FILTER_ORDER.map(t => [t, deposeForYear.filter(it => it.type_label === t).length]);
+  const typeFilterChips = document.getElementById('eluTypeFilterChips');
+  if (typeFilterChips) {
+    const chipsHtml = typeCounts.map(([t, n]) => eluTypeChip(t, n)).join('');
+    typeFilterChips.innerHTML = chipsHtml;
+    typeFilterChips.hidden = !chipsHtml;
+  }
+  const badges = typeCounts.map(([t, n]) => eluTypeCountBadge(t, n)).join('');
 
   let html = `<div class="elu-head">
     <div class="elu-name">${escapeHtml(d.nom)}</div>
@@ -363,7 +381,7 @@ function renderElu(d) {
 
   if (deposeForYear.length) {
     html += `<div class="elu-summary"><strong>${depose.length}</strong> intervention${depose.length > 1 ? 's' : ''} déposée${depose.length > 1 ? 's' : ''}</div>`;
-    if (chips) html += `<div class="elu-chips">${chips}</div>`;
+    if (badges) html += `<div class="elu-chips">${badges}</div>`;
   }
   if (depose.length) {
     html += `<div class="elu-list">${groupByYear(depose, it => eluDeposeRow(it, d.nom))}</div>`;

@@ -538,8 +538,9 @@ body {
   font-size: 13.5px; color: var(--encre-soft); margin: 8px 0 4px;
 }
 .elu-summary strong { color: var(--bordeaux); font-size: 16px; }
-/* Puces cliquables du résumé (voir elus.js/eluTypeChip) : seul filtre par
-   type de l'onglet — profil d'activité visible et actionnable directement. */
+/* Puces cliquables (voir elus.js/eluTypeChip, seances.js) : filtre à un clic,
+   vit dans la barre de filtres (#eluTypeFilterChips, #eluRoleChips côté Par
+   élu·e ; #seanceRoleChips, #seanceTypeChips côté Séances). */
 .elu-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 4px; }
 .elu-chip {
   font: inherit; font-size: 12.5px; color: var(--encre-soft);
@@ -550,6 +551,14 @@ body {
 .elu-chip-active {
   background: color-mix(in srgb, var(--bordeaux) 15%, transparent);
   border-color: var(--bordeaux); color: var(--bordeaux); font-weight: 600;
+}
+/* Pastille NON cliquable (voir elus.js/eluTypeCountBadge) : simple rappel du
+   profil d'activité sous le nom de l'élu·e — même gabarit que .elu-chip,
+   sans curseur/interaction (le filtre lui-même vit dans la barre, ci-dessus). */
+.elu-chip-static {
+  font: inherit; font-size: 12.5px; color: var(--encre-soft);
+  background: var(--papier-dark); border: 1px solid var(--ligne); border-radius: 999px;
+  padding: 5px 12px; display: inline-block;
 }
 
 .elu-year {
