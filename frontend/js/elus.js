@@ -5,8 +5,10 @@ import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, TYPE_COUNT_LABEL, renderThemeTags,
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
+  hasDebateLink,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
+import { createCombobox } from './combobox.js';
 
 let elusData = null;        // liste complète [{key,nom,role,depose,repond}]
 let elusLoaded = false;
@@ -20,9 +22,7 @@ let eluTypeSel = new Set();   // types d'action cochés — dépôts uniquement
 let eluThemeFilter = 'all'; // thématique sélectionnée ("all" = toutes) — depose ET repond
 let eluRoleSel = new Set();   // rôles cochés ('conseiller', 'echevin', 'bourgmestre')
 let eluSelectedKey = null;  // clé actuellement chargée
-let eluQuery = '';          // texte tapé dans le champ de recherche ('' = liste complète)
-let eluActiveKey = null;    // option mise en avant au clavier (aria-activedescendant)
-let eluMatches = [];        // dernier résultat de recherche affiché (ordre de la liste)
+let eluCombo = null;        // instance du combobox partagé (voir combobox.js)
 
 // Présélection appliquée depuis un lien partagé (?tab=elus&elu=…), voir handleDeepLink.
 export function setPendingEluKey(key) { pendingEluKey = key; }
@@ -31,11 +31,15 @@ export async function loadElus() {
   if (elusLoaded) return;
   const input = document.getElementById('eluSearch');
   if (!input) return;
+  // Écran d'accueil TOUT DE SUITE, sans attendre la réponse de /elus : la
+  // construction de l'index côté serveur prend un instant au premier appel
+  // (base des PV + chapitrage + questions écrites), et le panneau restait
+  // vide pendant ce temps.
+  renderEluAccueil();
   try {
     const res = await fetch(API_URL + '/elus');
     if (!res.ok) throw new Error('Erreur ' + res.status);
     elusData = (await res.json()).elus || [];
-    elusData.forEach(decorateElu);
     elusLoaded = true;
     populateElus();
   } catch (err) {
@@ -115,109 +119,29 @@ export function onEluRoleChipClick(role) {
 
 const toggle = (set, v) => (set.has(v) ? set.delete(v) : set.add(v));
 
-// ── SÉLECTEUR D'ÉLU·E : COMBOBOX AVEC RECHERCHE ─────────────────────────────
-// Le <select> natif ne tenait plus à 105 élu·e·s : la frappe rapide du
-// navigateur ne matche que le DÉBUT du libellé affiché — donc le PRÉNOM
-// (« Georges Verzin ») — alors que la liste est triée par NOM DE FAMILLE (clé
-// backend, particules gérées : « Yvan de Beauffort » → clé « beauffort »).
-// Taper « verzin » ne trouvait rien, l'ordre paraissait aléatoire, et il
-// fallait choisir à l'aveugle (ni rôle ni volume d'activité visibles).
-// Ici : recherche libre sur le prénom ET le nom, insensible aux accents et à
-// la casse, avec rôle et compteurs affichés avant de choisir.
-
-// Sans accents ni casse : « Amrani » / « amrani » / « Ammi » ↔ « ammi ».
-// (NFD décompose « é » en « e » + diacritique combinant, qu'on retire.)
-const _deburr = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-// Mots d'un nom : « Mohamed el Arnouki » → ['mohamed','el','arnouki'] ; les
-// apostrophes et traits d'union séparent aussi (« Ben-Addi », « d'Hondt »).
-const _wordsOf = s => _deburr(s).split(/[^a-z0-9]+/).filter(Boolean);
-
-// Champs de recherche pré-calculés une fois pour toutes (105 entrées × chaque
-// frappe, autant ne pas re-normaliser à chaque fois).
-function decorateElu(e) {
-  e._key = _deburr(e.key);
-  e._flat = _deburr(e.nom);
-  e._words = [..._wordsOf(e.nom), e._key];
-}
-
-// Pertinence d'un mot de la requête (le plus petit gagne) : nom de famille
-// d'abord — c'est ce qu'on tape le plus souvent — puis n'importe quel mot du
-// nom, puis une correspondance au milieu d'un mot. null = ne matche pas.
-const R_KEY = 0, R_WORD = 1, R_INSIDE = 2;
-function tokenRank(tok, e) {
-  if (e._key.startsWith(tok)) return R_KEY;
-  if (e._words.some(w => w.startsWith(tok))) return R_WORD;
-  if (e._flat.includes(tok)) return R_INSIDE;
-  return null;
-}
+// ── SÉLECTEUR D'ÉLU·E ───────────────────────────────────────────────────────
+// Combobox partagé (voir combobox.js, aussi utilisé par le filtre
+// « intervenant·e » de l'onglet Séances) : recherche libre sur le prénom ET le
+// nom, insensible aux accents et à la casse. Ne reste ici que ce qui est
+// propre aux élu·e·s — ce qu'on lit sur une option avant de choisir.
+const ROLE_LABEL = { college: 'Collège', conseiller: 'Conseiller·ère' };
 
 // Élu·e·s cherchables : tout le monde, trié par nom de famille (la clé
 // backend), pas par nombre d'interventions — liste stable et parcourable.
-// Aucun pré-filtre : le rôle se lit sur chaque option, et les puces de rôle
-// portent désormais sur la fiche affichée, pas sur la recherche.
 function eluCandidates() {
   return (elusData || []).slice().sort((a, b) => a.key.localeCompare(b.key, 'fr'));
 }
 
-// Recherche : TOUS les mots de la requête doivent matcher (« verzin georges »
-// comme « georges verzin »), le classement retenant le pire rang de chacun.
-function searchElus(query, pool = eluCandidates()) {
-  const tokens = _wordsOf(query);
-  if (!tokens.length) return pool;
-  const scored = [];
-  for (const e of pool) {
-    let worst = R_KEY;
-    let ok = true;
-    for (const tok of tokens) {
-      const r = tokenRank(tok, e);
-      if (r === null) { ok = false; break; }
-      if (r > worst) worst = r;
-    }
-    if (ok) scored.push([worst, e]);
-  }
-  return scored
-    .sort((a, b) => a[0] - b[0] || a[1].key.localeCompare(b[1].key, 'fr'))
-    .map(x => x[1]);
-}
-
-// Surligne la partie trouvée, mot par mot. Découpe en conservant les
-// séparateurs pour réécrire le nom à l'identique ; normalisation NFC d'abord,
-// pour que les index de `_deburr` (é→e, ç→c : 1 caractère → 1 caractère)
-// restent alignés sur la source qu'on découpe.
-function highlightName(nom, tokens) {
-  const parts = String(nom).normalize('NFC').split(/([^\p{L}\p{N}]+)/u);
-  if (!tokens.length) return parts.map(escapeHtml).join('');
-  return parts.map(src => {
-    const norm = _deburr(src);
-    if (!norm) return escapeHtml(src);
-    // Début de mot : on surligne le plus long préfixe trouvé.
-    let pref = 0;
-    tokens.forEach(t => { if (norm.startsWith(t) && t.length > pref) pref = t.length; });
-    if (pref) return `<mark>${escapeHtml(src.slice(0, pref))}</mark>${escapeHtml(src.slice(pref))}`;
-    for (const t of tokens) {
-      const i = norm.indexOf(t);
-      if (i >= 0) {
-        return escapeHtml(src.slice(0, i)) + `<mark>${escapeHtml(src.slice(i, i + t.length))}</mark>`
-          + escapeHtml(src.slice(i + t.length));
-      }
-    }
-    return escapeHtml(src);
-  }).join('');
-}
-
-const ROLE_LABEL = { college: 'Collège', conseiller: 'Conseiller·ère' };
-
 // Une option : nom (partie trouvée surlignée) + rôle + volume d'activité —
 // de quoi reconnaître la bonne personne SANS ouvrir sa fiche (homonymes,
 // élu·e·s d'une seule législature…).
-function eluOptionHtml(e, tokens, i) {
+function eluOptionHtml(e, { id, active, selected, label }) {
   const counts = [];
   if (e.depose) counts.push(`${e.depose} déposée${e.depose > 1 ? 's' : ''}`);
   if (e.repond) counts.push(`${e.repond} réponse${e.repond > 1 ? 's' : ''}`);
-  const cls = 'elu-opt' + (e.key === eluActiveKey ? ' elu-opt-active' : '');
-  return `<li class="${cls}" role="option" id="elu-opt-${i}" data-key="${escapeHtml(e.key)}"
-      aria-selected="${e.key === eluSelectedKey}">
-    <span class="elu-opt-name">${highlightName(e.nom, tokens)}</span>
+  return `<li class="elu-opt${active ? ' elu-opt-active' : ''}" role="option" id="${id}"
+      data-key="${escapeHtml(e.key)}" aria-selected="${selected}">
+    <span class="elu-opt-name">${label}</span>
     <span class="elu-opt-meta">
       <span class="elu-opt-role elu-opt-role-${e.role}">${ROLE_LABEL[e.role] || e.role}</span>
       ${counts.length ? `<span class="elu-opt-count">${counts.join(' · ')}</span>` : ''}
@@ -225,107 +149,33 @@ function eluOptionHtml(e, tokens, i) {
   </li>`;
 }
 
-// (Re)dessine la liste déroulante pour la requête courante. `resetActive` :
-// la frappe repositionne la mise en avant sur le 1er résultat (Entrée le
-// choisit directement) ; la navigation au clavier la conserve.
-function renderEluOptions(resetActive = false) {
-  const list = document.getElementById('eluOptions');
-  if (!list || !elusData) return;
-  const tokens = _wordsOf(eluQuery);
-  eluMatches = searchElus(eluQuery);
-  if (resetActive || !eluMatches.some(e => e.key === eluActiveKey)) {
-    eluActiveKey = eluMatches.length
-      ? (eluMatches.some(e => e.key === eluSelectedKey) && !tokens.length ? eluSelectedKey : eluMatches[0].key)
-      : null;
-  }
-  if (eluMatches.length) {
-    list.innerHTML = eluMatches.map((e, i) => eluOptionHtml(e, tokens, i)).join('');
-  } else {
-    list.innerHTML = `<li class="elu-opt-empty" role="presentation">
-      Aucun·e élu·e ne correspond à « ${escapeHtml(eluQuery)} ».
-    </li>`;
-  }
-  syncEluActiveDescendant();
-  const status = document.getElementById('eluComboStatus');
-  if (status) {
-    status.textContent = eluMatches.length
-      ? `${eluMatches.length} élu·e${eluMatches.length > 1 ? 's' : ''} — utilisez les flèches puis Entrée`
-      : 'Aucun résultat';
-  }
-}
-
-// Reflète l'option mise en avant : attribut ARIA sur le champ + défilement
-// pour la garder visible (liste de 105 entrées, 8 visibles à la fois).
-function syncEluActiveDescendant() {
-  const input = document.getElementById('eluSearch');
-  const list = document.getElementById('eluOptions');
-  if (!input || !list) return;
-  const i = eluMatches.findIndex(e => e.key === eluActiveKey);
-  input.setAttribute('aria-activedescendant', i >= 0 ? `elu-opt-${i}` : '');
-  const el = i >= 0 ? list.children[i] : null;
-  if (el && !list.hidden) scrollOptionIntoView(list, el);
-}
-
-// Défilement calculé À LA MAIN dans la liste, jamais scrollIntoView : celui-ci
-// remonte la chaîne des ancêtres et fait sauter la PAGE quand la liste est
-// près du bas de l'écran (la liste est `position:absolute`, donc l'offsetParent
-// de ses options — offsetTop est bien relatif à elle).
-function scrollOptionIntoView(list, el) {
-  const haut = el.offsetTop;
-  const bas = haut + el.offsetHeight;
-  if (haut < list.scrollTop) list.scrollTop = haut;
-  else if (bas > list.scrollTop + list.clientHeight) list.scrollTop = bas - list.clientHeight;
-}
-
-function openEluList() {
-  const input = document.getElementById('eluSearch');
-  const list = document.getElementById('eluOptions');
-  // `elusData` absent = /elus pas encore répondu : rien à dérouler (sinon une
-  // boîte vide s'ouvre le temps du chargement).
-  if (!input || !list || input.disabled || !elusData) return;
-  list.hidden = false;
-  input.setAttribute('aria-expanded', 'true');
-}
-
-// Referme et remet le nom sélectionné dans le champ : jamais de recherche
-// partielle laissée à l'écran alors qu'une autre fiche est affichée.
-function closeEluList() {
-  const input = document.getElementById('eluSearch');
-  const list = document.getElementById('eluOptions');
-  if (!input || !list) return;
-  list.hidden = true;
-  input.setAttribute('aria-expanded', 'false');
-  input.setAttribute('aria-activedescendant', '');
-  eluQuery = '';
-  syncEluInput();
-}
-
-// Le champ affiche, au repos, l'élu·e dont la fiche est ouverte.
-function syncEluInput() {
-  const input = document.getElementById('eluSearch');
-  if (!input) return;
-  const entry = (elusData || []).find(e => e.key === eluSelectedKey);
-  input.value = entry ? entry.nom : '';
-  const clear = document.getElementById('eluClear');
-  if (clear) clear.hidden = !input.value;
-}
-
-// Placeholder parlant : le nombre d'élu·e·s cherchables — l'utilisateur sait
-// ce qu'il interroge (« Rechercher parmi 105 élu·e·s… »).
-function syncEluPlaceholder() {
-  const input = document.getElementById('eluSearch');
-  if (!input || input.disabled) return;
-  const n = eluCandidates().length;
-  input.placeholder = n ? `Rechercher parmi ${n} élu·e·s…` : 'Rechercher un·e élu·e…';
+export function initEluCombo() {
+  eluCombo = createCombobox({
+    input: document.getElementById('eluSearch'),
+    list: document.getElementById('eluOptions'),
+    clear: document.getElementById('eluClear'),
+    status: document.getElementById('eluComboStatus'),
+    idPrefix: 'elu-opt',
+    itemKey: e => e.key,
+    itemLabel: e => e.nom,
+    renderItem: eluOptionHtml,
+    emptyText: q => `Aucun·e élu·e ne correspond à « ${q} ».`,
+    statusText: n => (n ? `${n} élu·e${n > 1 ? 's' : ''} — utilisez les flèches puis Entrée`
+      : 'Aucun résultat'),
+    // Placeholder parlant : le nombre d'élu·e·s cherchables — on sait ce qu'on
+    // interroge (« Rechercher parmi 105 élu·e·s… »).
+    placeholder: n => (n ? `Rechercher parmi ${n} élu·e·s…` : 'Rechercher un·e élu·e…'),
+    onSelect: key => selectElu(key),
+  });
 }
 
 // (Re)construit la liste des candidat·e·s selon le filtre de rôle courant et
 // garantit une sélection valide.
 export function populateElus() {
-  if (!elusData) return;
+  if (!elusData || !eluCombo) return;
   const prevKey = eluSelectedKey;
   const list = eluCandidates();
-  syncEluPlaceholder();
+  eluCombo.setItems(list);
   // Présélection : uniquement un lien partagé (?elu=), ou la sélection déjà
   // faite. Aucun repli sur la 1re entrée — ouvrir l'onglet sur la fiche d'une
   // personne prise dans l'ordre alphabétique donnerait à lire une activité que
@@ -345,7 +195,7 @@ export function populateElus() {
 function selectElu(key) {
   eluSelectedKey = key;
   const entry = key ? (elusData || []).find(e => e.key === key) : null;
-  syncEluInput();
+  if (eluCombo) eluCombo.setSelected(entry ? key : null);
   if (entry) loadElu(key);
   else renderEluAccueil();
 }
@@ -366,102 +216,6 @@ function renderEluAccueil() {
     <p class="elu-accueil-titre">Cherchez un·e élu·e</p>
     <p>Par nom ou par prénom — trois lettres suffisent.</p>
   </div>`;
-}
-
-// ── Câblage du combobox (écouteurs directs : éléments statiques, et une CSP
-// sans 'unsafe-inline' interdit les attributs onXXX — voir delegate.js). ──
-export function initEluCombo() {
-  const input = document.getElementById('eluSearch');
-  const list = document.getElementById('eluOptions');
-  const clear = document.getElementById('eluClear');
-  if (!input || !list) return;
-
-  input.addEventListener('input', () => {
-    eluQuery = input.value;
-    if (clear) clear.hidden = !input.value;
-    openEluList();
-    renderEluOptions(true);
-  });
-
-  // Prise de focus : on montre TOUTE la liste (le champ affiche un nom, ce
-  // n'est pas une recherche) et on sélectionne le texte — la 1re frappe le
-  // remplace, sans avoir à effacer.
-  input.addEventListener('focus', () => {
-    eluQuery = '';
-    input.select();
-    openEluList();
-    renderEluOptions(true);
-  });
-
-  input.addEventListener('keydown', onEluSearchKeydown);
-
-  // mousedown : on garde le focus dans le champ (sinon le blur ferme la liste
-  // avant que le click n'atteigne l'option).
-  list.addEventListener('mousedown', ev => ev.preventDefault());
-  list.addEventListener('click', ev => {
-    const li = ev.target.closest('.elu-opt');
-    if (!li) return;
-    selectElu(li.dataset.key);
-    closeEluList();
-    input.blur();
-  });
-
-  if (clear) {
-    clear.addEventListener('mousedown', ev => ev.preventDefault());
-    clear.addEventListener('click', () => {
-      input.value = '';
-      eluQuery = '';
-      clear.hidden = true;
-      input.focus();
-      openEluList();
-      renderEluOptions(true);
-    });
-  }
-
-  // Clic à l'extérieur / passage à un autre champ : on referme proprement.
-  input.addEventListener('blur', () => closeEluList());
-}
-
-function onEluSearchKeydown(ev) {
-  const list = document.getElementById('eluOptions');
-  if (!list) return;
-  const open = !list.hidden;
-  switch (ev.key) {
-    case 'ArrowDown':
-    case 'ArrowUp':
-      ev.preventDefault();
-      if (!open) { openEluList(); renderEluOptions(true); return; }
-      moveEluActive(ev.key === 'ArrowDown' ? 1 : -1);
-      return;
-    case 'Home':
-    case 'End':
-      if (!open || !eluMatches.length) return;
-      ev.preventDefault();
-      eluActiveKey = (ev.key === 'Home' ? eluMatches[0] : eluMatches[eluMatches.length - 1]).key;
-      renderEluOptions();
-      return;
-    case 'Enter':
-      if (!open || !eluActiveKey) return;
-      ev.preventDefault();
-      selectElu(eluActiveKey);
-      closeEluList();
-      return;
-    case 'Escape':
-      if (!open) return;
-      ev.preventDefault();
-      closeEluList();
-      return;
-    default:
-  }
-}
-
-function moveEluActive(delta) {
-  if (!eluMatches.length) return;
-  const i = eluMatches.findIndex(e => e.key === eluActiveKey);
-  const next = i < 0 ? (delta > 0 ? 0 : eluMatches.length - 1)
-    : (i + delta + eluMatches.length) % eluMatches.length;   // boucle haut ↔ bas
-  eluActiveKey = eluMatches[next].key;
-  renderEluOptions();
 }
 
 // Partage : lien profond vers l'onglet Par élu·e, sur la fiche sélectionnée.
@@ -562,6 +316,19 @@ function filterByTheme(items, theme) {
 // ordre que TYPE_BADGE côté utils.js, pour une liste toujours dans le même
 // sens quel que soit l'élu·e sélectionné·e.
 const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
+const TYPE_DEBAT = 'Débat filmé';
+
+// « Débat filmé » est une FACETTE, pas un type exclusif — même définition que
+// l'onglet Séances (voir hasDebateLink). La plupart des débats filmés sont
+// appariés à leur point PV : le point garde alors son type (question orale,
+// demande…) et porte le lien « ▶ Voir le débat ». Ne compter que le type
+// `video` — les chapitres qu'on n'a PAS su apparier — donnait un chiffre à
+// contresens du libellé : 2 pour Georges Verzin, là où 14 de ses interventions
+// sont filmées. Conséquence assumée : les puces ne forment plus une partition,
+// leur somme peut dépasser le total.
+const countOfType = (items, typeLabel) => (typeLabel === TYPE_DEBAT
+  ? items.filter(hasDebateLink).length
+  : items.filter(it => it.type_label === typeLabel).length);
 
 // Les deux listes de valeurs (année, thématique) vivent dans un <details>
 // replié. On le masque s'il n'a rien à offrir, on le déplie d'office quand un
@@ -583,7 +350,8 @@ function syncEluMoreFilters() {
 
 function filterByType(items, types) {
   if (!types.size) return items;
-  return items.filter(it => types.has(it.type_label));
+  return items.filter(it => types.has(it.type_label)
+    || (types.has(TYPE_DEBAT) && hasDebateLink(it)));
 }
 
 // Puce-interrupteur par type présent, dans la barre de filtres
@@ -717,7 +485,7 @@ function renderElu(d) {
   // Une sélection devenue vide de sens en changeant d'élu·e/d'année (sa puce
   // n'est alors plus affichée) laisserait un filtre actif sans interrupteur
   // pour le défaire : on la nettoie.
-  eluTypeSel.forEach(t => { if (!deposeForYear.some(it => it.type_label === t)) eluTypeSel.delete(t); });
+  eluTypeSel.forEach(t => { if (!countOfType(deposeForYear, t)) eluTypeSel.delete(t); });
 
   // Comptages CROISÉS : chaque groupe de puces compte dans le périmètre défini
   // par l'AUTRE groupe (et non par lui-même), sinon cocher une puce ferait
@@ -736,7 +504,7 @@ function renderElu(d) {
   const typeFilterChips = document.getElementById('eluTypeFilterChips');
   if (typeFilterChips) {
     const chipsHtml = TYPE_FILTER_ORDER
-      .map(t => eluTypeChip(t, deposeForRole.filter(it => it.type_label === t).length)).join('');
+      .map(t => eluTypeChip(t, countOfType(deposeForRole, t))).join('');
     typeFilterChips.innerHTML = chipsHtml;
     typeFilterChips.hidden = !chipsHtml;
   }

@@ -104,6 +104,9 @@ test('pas de débordement horizontal en 390px de large', async ({ page }) => {
 async function openEluCombo(page) {
   await page.locator('#tab-elus').click();
   await expect(page.locator('#eluResult .elu-accueil')).toBeVisible();
+  // Le placeholder annonce le nombre d'élu·e·s : il ne le fait qu'une fois
+  // /elus arrivé. On attend ce signal plutôt que de cliquer dans le vide.
+  await expect(page.locator('#eluSearch')).toHaveAttribute('placeholder', /parmi/);
   await page.locator('#eluSearch').click();
   await expect(page.locator('#eluOptions .elu-opt').first()).toBeVisible();
 }
@@ -261,5 +264,234 @@ test('l\'onglet s\'ouvre sur un écran d\'accueil, sans élu·e présélectionn�
   await page.locator('#eluOptions .elu-opt').first().click();
   await expect(page.locator('#eluResult .elu-name')).toBeVisible();
   await expect(page.locator('#eluResult .elu-accueil')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+// « Débat filmé » n'est pas un type exclusif mais une FACETTE : la plupart des
+// débats filmés sont appariés à leur point PV et gardent leur type (question
+// orale, demande…) tout en portant le lien « ▶ Voir le débat ». La puce doit
+// compter TOUS ces points — pas seulement les chapitres vidéo orphelins.
+async function ficheAvecDebatFilme(page) {
+  await openEluCombo(page);
+  const cles = await page.$$eval('#eluOptions .elu-opt', els => els.map(e => e.dataset.key));
+  for (const key of cles.slice(0, 12)) {
+    await page.locator('#eluSearch').click();
+    await page.locator(`#eluOptions .elu-opt[data-key="${key}"]`).click();
+    await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+    if (await page.locator('#eluTypeFilterChips .elu-chip', { hasText: 'filmé' }).count()) return true;
+  }
+  return false;
+}
+
+test('la puce « débat filmé » compte tous les points menant au débat', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  test.skip(!await ficheAvecDebatFilme(page), 'aucune fiche avec débat filmé dans les 12 premières');
+
+  const chip = page.locator('#eluTypeFilterChips .elu-chip', { hasText: 'filmé' });
+  const annonce = Number((await chip.textContent()).match(/(\d+)/)[1]);
+  await chip.click();
+
+  // Chaque action retenue mène bien au débat, et le compte annoncé est tenu.
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(annonce);
+  await expect(page.locator('#eluResult .elu-links a:has-text("Voir le débat")')).toHaveCount(annonce);
+  expect(errors).toEqual([]);
+});
+
+// ── Onglet Séances : filtre par intervenant·e sur un point à PLUSIEURS
+// répondant·e·s ──
+// Un point répondu à deux (« Audrey Henry et Justine Harzé ») doit se
+// retrouver en cherchant l'un OU l'autre nom, tout en continuant d'afficher
+// les deux sur sa ligne.
+
+// Ouvre une séance donnée. La sélection d'une ANNÉE charge elle-même une
+// séance : on laisse ce chargement retomber avant de choisir la nôtre, sinon
+// sa réponse tardive écrase la sélection.
+async function ouvrirSeance(page, annee, date, libelle) {
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption(annee);
+  await expect(page.locator('#seanceResult .elu-name')).toContainText(annee);
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  await page.locator('#seanceList').selectOption(date);
+  await expect(page.locator('#seanceResult .elu-name')).toHaveText(libelle);
+}
+
+test('un point à plusieurs répondant·e·s se retrouve par chacun de leurs noms', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await ouvrirSeance(page, '2010', '2010-09-29', '29/09/2010');
+  await page.locator('#seanceFilterToggle').click();
+
+  // Plus aucune « personne » composée dans la liste des intervenant·e·s.
+  await page.locator('#seancePersonFilter').click();
+  await expect(page.locator('#seancePersonOptions .elu-opt').first()).toBeVisible();
+  const options = await page.$$eval('#seancePersonOptions .elu-opt', els => els.map(e => e.textContent));
+  expect(options.filter(o => / et /.test(o))).toEqual([]);
+  await page.keyboard.press('Escape');
+
+  // Un point de cette séance a plusieurs répondant·e·s : sa ligne les montre tous.
+  const ligne = page.locator('#seancePointsList .elu-item', { has: page.locator('.elu-rep') })
+    .filter({ hasText: ' et ' }).first();
+  const rep = (await ligne.locator('.elu-rep').textContent()).trim();
+  const noms = rep.replace(/^[^:]+:\s*/, '').split(' et ');
+  expect(noms.length).toBeGreaterThan(1);
+
+  // Filtré sur le PREMIER nom, puis sur le DERNIER : le point reste trouvable
+  // dans les deux cas, et garde l'affichage de tous ses répondant·e·s.
+  for (const nom of [noms[0], noms[noms.length - 1]]) {
+    await choisirIntervenant(page, nom);
+    const retrouve = page.locator('#seancePointsList .elu-item').filter({ hasText: rep });
+    await expect(retrouve).toHaveCount(1);
+    await expect(retrouve.locator('.elu-rep')).toHaveText(rep);
+  }
+  expect(errors).toEqual([]);
+});
+
+// Choisit un·e intervenant·e dans le combobox du filtre, en tapant son NOM DE
+// FAMILLE — ce que le menu natif qu'il remplace ne savait pas chercher.
+async function choisirIntervenant(page, nom) {
+  const famille = nom.split(/\s+/).pop();
+  await page.locator('#seancePersonFilter').click();
+  await page.locator('#seancePersonFilter').fill(famille);
+  const option = page.locator(`#seancePersonOptions .elu-opt[data-key="${nom}"]`);
+  await expect(option).toBeVisible();
+  await option.click();
+  await expect(page.locator('#seancePersonFilter')).toHaveValue(nom);
+}
+
+test('le filtre par intervenant·e cherche sur le nom de famille, et se défait', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await ouvrirSeance(page, '2010', '2010-09-29', '29/09/2010');
+  await page.locator('#seanceFilterToggle').click();
+
+  const tousLesPoints = await page.locator('#seancePointsList .elu-item').count();
+  // Un nom pris dans la liste elle-même (aucun nom en dur).
+  await page.locator('#seancePersonFilter').click();
+  const nom = await page.locator('#seancePersonOptions .elu-opt').nth(1).getAttribute('data-key');
+  await page.keyboard.press('Escape');
+
+  await choisirIntervenant(page, nom);
+  const filtres = await page.locator('#seancePointsList .elu-item').count();
+  expect(filtres).toBeGreaterThan(0);
+  expect(filtres).toBeLessThan(tousLesPoints);
+
+  // La 1re entrée de la liste ramène tout le monde.
+  await page.locator('#seancePersonFilter').click();
+  await page.locator('#seancePersonOptions .elu-opt').first().click();
+  await expect(page.locator('#seancePersonFilter')).toHaveValue('');
+  await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(tousLesPoints);
+  expect(errors).toEqual([]);
+});
+
+// Les puces de TYPE partitionnent les points : leur somme doit égaler le
+// nombre annoncé en tête. Elle tombait à 659 pour 676 points en 2025 — les
+// chapitres vidéo sans point de PV n'avaient aucune puce. Les FACETTES
+// (« Avec débat filmé », statuts) se superposent aux types et ne s'y ajoutent
+// pas : elles vivent dans une rangée à part.
+test('la somme des puces de type égale le nombre de points annoncé', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption('2025');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('2025');
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  // Vue agrégée de l'année : le plus grand nombre de points, tous types mêlés.
+  await page.locator('#seanceList').selectOption('__all__');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('Toutes les séances');
+  await page.locator('#seanceFilterToggle').click();
+
+  const annonce = Number((await page.locator('#seanceResult .elu-role').textContent()).match(/(\d+)\s+points/)[1]);
+  const compte = async sel => (await page.$$eval(sel, els => els.map(e => +e.textContent.match(/\((\d+)\)/)[1])));
+  const types = await compte('#seanceTypeChips .elu-chip');
+  expect(types.reduce((a, b) => a + b, 0)).toBe(annonce);
+
+  // Les facettes existent, et aucune ne dépasse le total.
+  const facettes = await compte('#seanceFacetChips .elu-chip');
+  expect(facettes.length).toBeGreaterThan(0);
+  facettes.forEach(n => expect(n).toBeLessThanOrEqual(annonce));
+
+  // Chaque puce de type ramène exactement le nombre de points qu'elle annonce.
+  const premiere = page.locator('#seanceTypeChips .elu-chip').last();   // le type le plus rare
+  const n = Number((await premiere.textContent()).match(/\((\d+)\)/)[1]);
+  await premiere.click();
+  await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
+  expect(errors).toEqual([]);
+});
+
+// ── Onglet Statistiques : KPI par série et tableaux par année ──
+// Le tout premier /stats parcourt les 171 séances pour construire la synthèse
+// par année (~8 s à froid, davantage quand plusieurs workers l'attaquent en
+// même temps). Les 15 s par défaut suffisaient tant qu'un seul test ouvrait
+// l'onglet ; à deux, elles ne suffisent plus.
+const STATS_FROID = { timeout: 45_000 };
+
+test('les KPI d\'activité et les tableaux par année sont cohérents', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#anneesTables .annees-table').first()).toBeVisible(STATS_FROID);
+
+  // 1. Un KPI par série, dans le même ordre que la légende du graphe.
+  const kpis = await page.$$eval('#activityKPIs .act-kpi', els => els.map(e => e.getAttribute('title')));
+  const legende = await page.$$eval('#activityLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
+  expect(kpis).toEqual(legende);
+  expect(kpis).toContain('Débat filmé hors PV');
+
+  // 2. Tableau des types : la somme des colonnes de type fait la colonne Points.
+  const lignes = await page.$$eval('#anneesTables .annees-table', ts => {
+    const cells = tr => [...tr.children].map(c => +c.textContent.replace(/[^\d]/g, '') || 0);
+    return [...ts[0].querySelectorAll('tbody tr'), ...ts[0].querySelectorAll('tfoot tr')].map(cells);
+  });
+  expect(lignes.length).toBeGreaterThan(3);
+  // [année|Total, séances, points, puis les 5 types]
+  lignes.forEach(c => expect(c.slice(3).reduce((a, b) => a + b, 0)).toBe(c[2]));
+
+  // 3. Tableau des personnes : les deux identités du rapprochement.
+  const pers = await page.$$eval('#anneesTables .annees-table', ts => {
+    const cells = tr => [...tr.children].map(c => +c.textContent.replace(/[^\d]/g, '') || 0);
+    return [...ts[1].querySelectorAll('tbody tr')].map(cells);
+  });
+  // [année, points, avec, sans, intervenants, somme, surplus]
+  pers.forEach(c => {
+    expect(c[1]).toBe(c[2] + c[3]);
+    expect(c[5]).toBe(c[2] + c[6]);
+  });
+  expect(errors).toEqual([]);
+});
+
+test('le graphe des statuts descend année → mois, sans jamais dépasser les points', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#statutLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
+
+  // 1. Les quatre issues demandées, plus le reliquat neutre en dernier.
+  const legende = await page.$$eval('#statutLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
+  expect(legende).toEqual(['Approuvé', 'Décidé', 'Reporté', 'Retiré', 'Autres issues']);
+  // Le reliquat nomme ce qu'il replie, sinon il devient un fourre-tout opaque.
+  expect(await page.locator('#statutLegend .yc-legend-chip').last().getAttribute('title'))
+    .toContain('Pris pour information');
+
+  // 2. Un point a au plus une issue : chaque année reste sous son total de
+  //    points, lu dans le tableau par année.
+  const parAnnee = await page.$$eval('#anneesTables .annees-table', ts => Object.fromEntries(
+    [...ts[0].querySelectorAll('tbody tr')]
+      .filter(tr => /^\d{4}$/.test(tr.children[0].textContent.trim()))
+      .map(tr => [tr.children[0].textContent.trim(), +tr.children[2].textContent.replace(/[^\d]/g, '')])));
+  const colonnes = await page.$$eval('#statutPlot .yc-col', els => els.map(e => [
+    e.querySelector('.yc-yr').textContent.trim(),
+    +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),
+  ]));
+  expect(colonnes.length).toBeGreaterThan(3);
+  colonnes.forEach(([annee, n]) => { if (parAnnee[annee]) expect(n).toBeLessThanOrEqual(parAnnee[annee]); });
+
+  // 3. Le clic sur une année ouvre les mois, dont le total la reconstitue.
+  const [annee, total] = colonnes[colonnes.length - 2];
+  await page.locator('#statutPlot .yc-col').nth(colonnes.length - 2).click();
+  await expect(page.locator('#statutTitle')).toContainText(annee);
+  const mois = await page.$$eval('#statutPlot .yc-col', els => els.map(
+    e => +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, '')));
+  expect(mois.reduce((a, b) => a + b, 0)).toBe(total);
   expect(errors).toEqual([]);
 });

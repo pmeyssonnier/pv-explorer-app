@@ -65,8 +65,12 @@ def test_activite_types_includes_written_questions_by_their_own_year(monkeypatch
 
 
 def test_activite_type_order_is_fixed_and_returned():
+    # Ordre FIXE, jamais réordonné : le frontend assigne une couleur par
+    # position (--chart-s0..s4). La 5e série a été AJOUTÉE EN FIN pour cette
+    # raison — l'insérer ailleurs aurait repeint les quatre premières.
     assert statistics.ACTIVITY_TYPE_ORDER == [
         "Question orale", "Demande", "Motion", "Question écrite",
+        "Débat filmé hors PV",
     ]
 
 
@@ -133,3 +137,38 @@ def test_qe_thematiques_merge_into_themes_par_annee(monkeypatch):
     s = statistics.compute_stats(db)
     assert dict(s["themes_par_annee"]["2025"])["voirie"] == 2
     assert dict(s["themes_par_annee"]["toutes"])["voirie"] == 2
+
+
+def test_hors_pv_series_is_injected_per_date(monkeypatch):
+    # Les chapitres vidéo sans point de PV ne sont PAS dans la base des PV :
+    # ils viennent du chapitrage et sont injectés par date (voir
+    # services.seances.hors_pv_par_date). Ils comptent dans l'année de leur
+    # séance, même quand celle-ci n'a aucun PV extrait — d'où une map par
+    # date et non un champ ajouté aux points.
+    monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": []})
+    db = _db(("2025-01-10", [{"type": "question_orale", "sp": 1}]))
+    s = statistics.compute_stats(db, {"2025-01-10": 2, "2025-09-30": 3})
+    row = next(r for r in s["activite_types_par_annee"] if r["annee"] == "2025")
+    assert row["Question orale"] == 1
+    assert row["Débat filmé hors PV"] == 5      # dont 3 d'une séance sans PV
+    # La map est réexposée telle quelle : le niveau MOIS du graphe agrège par
+    # date côté client, et ces séances n'ont pas de ligne dans seances_resume.
+    assert s["hors_pv_par_date"] == {"2025-01-10": 2, "2025-09-30": 3}
+
+
+def test_hors_pv_never_double_counted_in_seance_resume(monkeypatch):
+    # Régression : la série était ajoutée À LA FOIS au résumé de la séance et
+    # à la map par date, si bien que le niveau mois affichait le double
+    # (34 au lieu de 17 sur 2025). Le résumé par séance ne doit pas la porter.
+    monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": []})
+    db = _db(("2025-01-10", [{"type": "motion", "sp": 1}]))
+    s = statistics.compute_stats(db, {"2025-01-10": 4})
+    resume = next(r for r in s["seances_resume"] if r["date"] == "2025-01-10")
+    assert "Débat filmé hors PV" not in resume["activite"]
+
+
+def test_activite_type_order_ends_with_hors_pv():
+    # L'ordre est FIXE : le frontend assigne une couleur par position (voir
+    # --chart-s0..s4). Une insertion ailleurs qu'en fin repeindrait les séries.
+    assert statistics.ACTIVITY_TYPE_ORDER[-1] == "Débat filmé hors PV"
+    assert len(statistics.ACTIVITY_TYPE_ORDER) == 5

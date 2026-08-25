@@ -6,6 +6,8 @@ demandeur/répondant résolus via le même registre de noms canoniques (voir
 services.people.registry) pour un affichage homogène — et pour chaque point,
 un résumé lisible de sa décision/vote et de ses thématiques.
 """
+import threading
+
 import lexique_store
 from services.statistics import load_db
 from utils.text import _DECISION_LABELS, _thematique_label
@@ -17,7 +19,7 @@ from services.people.names import (
     _clean, _is_non_person_video_author, _key, _resolve_display_name,
     _split_person_names, _strip_accents, _titlecase,
 )
-from services.people.registry import _index, _load_video, _nom_by_key, _pairs
+from services.people.registry import _index, _load_video, _nom_by_key, _pairs, _sig
 from services.video_merge import _match_pv_point
 
 
@@ -44,6 +46,35 @@ def _combined_role(keys, date, idx):
     return None
 
 
+def _people_list(names, pairs, date, idx, resolve, fallback=None):
+    """Personnes d'une mention, UNE PAR ENTRÉE : [{"nom", "role"}], dédupliqué
+    en conservant l'ordre du PV.
+
+    Le champ source est souvent composé (« Mme Henry et Mme Harzé », « De
+    Herde, Smeysters, Bourgmestre ff ») : l'extraction le découpe déjà (voir
+    _respondents/_split_person_names), mais seule la forme RECOLLÉE
+    (« Audrey Henry et Justine Harzé ») était exposée. Le filtre par
+    intervenant·e de l'onglet Séances en faisait alors une « personne »
+    unique, introuvable en cherchant l'un des deux noms. Chaque personne porte
+    ici SON rôle à la date du point — plus précis que le rôle combiné du
+    point (voir _combined_role), qui écrase un·e conseiller·ère répondant aux
+    côtés d'un·e échevin·e.
+
+    `fallback` : mention non résolue en personne (ex. « Le Collège ») —
+    conservée comme entrée unique pour ne pas disparaître du filtre.
+    """
+    out, seen = [], set()
+    for n in names:
+        nom = resolve(n)
+        if not nom or nom in seen:
+            continue
+        seen.add(nom)
+        out.append({"nom": nom, "role": _role_for_key(_key(n, pairs), date, idx)})
+    if not out and fallback:
+        out.append({"nom": fallback, "role": None})
+    return out
+
+
 def _is_reportee(decision) -> bool:
     """Point renvoyé à une séance ultérieure (« REPORTÉ ») : jamais débattu
     ce jour-là, donc jamais de répondant·e ni de débat filmé à en attendre."""
@@ -57,21 +88,34 @@ def _is_retire(decision) -> bool:
     return _strip_accents(decision or "").strip().lower().startswith("retir")
 
 
+def _decision_label(decision):
+    """Statut canonique d'un point, SANS le détail du vote : « Approuvé »,
+    « Décidé », « Pris pour information », « Reporté », « Retiré »… None si
+    aucune décision (ex. chapitre vidéo sans point de PV). Ce que
+    `_decision_summary` complète ensuite du décompte des voix — mais un
+    libellé stable est ce qu'il faut pour regrouper/filtrer les points par
+    issue (voir les puces de statut de l'onglet Séances), là où « Approuvé à
+    l'unanimité » et « Approuvé (33 pour, 9 contre) » sont un même statut."""
+    d = (decision or "").strip()
+    if not d:
+        return None
+    norm = _strip_accents(d).lower()
+    # Lexique éditable en priorité, puis libellés en dur, puis repli casse
+    # (variantes rares/coquilles non répertoriées, ex. « PREND ACTE +
+    # DÉROGATION ART.12 »).
+    return (lexique_store.decisions().get(norm) or _DECISION_LABELS.get(norm)
+            or (d[:1].upper() + d[1:].lower()))
+
+
 def _decision_summary(decision, vote):
     """Résumé lisible de l'issue d'un point (décision + vote quand il y en a
     un), pour indiquer explicitement, selon chaque cas, pourquoi il n'y a
     par exemple ni répondant·e ni débat filmé à trouver (point voté sans
     discussion, reporté, pris pour information...) plutôt que de laisser
     croire à une recherche infructueuse. None si la décision est vide."""
-    d = (decision or "").strip()
-    if not d:
-        return None
-    norm = _strip_accents(d).lower()
-    label = lexique_store.decisions().get(norm) or _DECISION_LABELS.get(norm)
+    label = _decision_label(decision)
     if not label:
-        # Repli pour les variantes rares/coquilles non répertoriées
-        # (ex. « PREND ACTE + DÉROGATION ART.12 ») : casse homogène.
-        label = d[:1].upper() + d[1:].lower()
+        return None
     vote = vote if isinstance(vote, dict) else {}
     vtype = vote.get("type")
     if vtype == "unanimite":
@@ -154,31 +198,68 @@ def seance_detail(date: str):
     for p in (seance or {}).get("points", []):
         author, author_key = _point_author(p, pairs, date)
         author_names = _split_person_names(author) if author_key else []
-        author_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in author_names))))
-        demandeur = " et ".join(author_resolved) if author_resolved else None
+        # Point délibératif (approbation, règlement, convention…) : personne
+        # ne l'a « demandé », mais le PV liste souvent qui est INTERVENU au
+        # débat. Ce champ était ignoré — seules 9 attributions manuelles
+        # faisaient surface, laissant 1 633 points débattus sans aucun nom et
+        # introuvables par le filtre « intervenant·e ». On l'affiche donc tel
+        # quel, sous le libellé « Intervenant·e·s » (voir TYPE_ACTOR_LABEL).
+        #
+        # AFFICHAGE SEULEMENT : l'attribution par personne (onglet Par élu·e,
+        # registry._build_all) reste inchangée — intervenir dans un débat
+        # n'est pas déposer un point, et l'y compter gonflerait les
+        # « interventions déposées » de tout le monde. C'est aussi pourquoi
+        # ce champ reste inutilisable pour désigner un·e AUTEUR·E : il mêle
+        # sans distinction qui soulève la discussion et qui y répond (voir
+        # attribution._MANUAL_AUTHOR_OVERRIDES) — la mention du/de la
+        # répondant·e est retirée plus bas.
+        if not author_names and _TYPE_LABEL.get(p.get("type"), "Point") == "Point":
+            author_names = [n for mention in (p.get("intervenants") or [])
+                            for n in _split_person_names(mention)]
         resp_names = _respondents(p.get("repondant"), meta)
         resp_keys = [_key(n, pairs) for n in resp_names]
-        resp_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in resp_names))))
-        repondant = " et ".join(resp_resolved) if resp_resolved else (
-            _titlecase(_clean(p.get("repondant") or "")) or None
-        )
+        repondants = _people_list(resp_names, pairs, date, idx, resolve,
+                                  fallback=_titlecase(_clean(p.get("repondant") or "")) or None)
+        repondant = " et ".join(x["nom"] for x in repondants) or None
+        demandeurs = _people_list(author_names, pairs, date, idx, resolve)
+        # Un point délibératif n'a pas d'auteur·e : ce que l'attribution y
+        # inscrit, ce sont les INTERVENANT·E·S du débat (voir attribution.py,
+        # _MANUAL_AUTHOR_OVERRIDES), répondant·e comprise — le champ
+        # « intervenants » du PV ne distingue pas qui a soulevé la discussion
+        # de qui y a répondu. Ce/cette dernier·ère a déjà sa propre ligne : on
+        # ne le/la répète pas parmi les intervenant·e·s. Le point reste
+        # trouvable par son nom, via `repondants`.
+        if _TYPE_LABEL.get(p.get("type"), "Point") == "Point":
+            noms_rep = {x["nom"] for x in repondants}
+            demandeurs = [x for x in demandeurs if x["nom"] not in noms_rep]
+        demandeur = " et ".join(x["nom"] for x in demandeurs) or None
         points.append({
             "sp": p.get("sp") or 0,
             "type": p.get("type"),
             "type_label": _TYPE_LABEL.get(p.get("type"), "Point"),
             "titre": p.get("titre") or "",
             "demandeur": demandeur,
+            # Liste INDIVIDUELLE (voir _people_list) : ce que consomme le
+            # filtre par intervenant·e de l'onglet Séances, pour qu'un point
+            # à plusieurs répondant·e·s se retrouve en cherchant n'importe
+            # lequel de leurs noms. L'affichage, lui, reste la forme recollée
+            # ci-dessus : un point montre TOUS ses répondant·e·s.
+            "demandeurs": demandeurs,
+            "repondants": repondants,
             # Rôle de chacun·e À LA DATE DE CETTE SÉANCE (voir _role_for_key/
             # _combined_role ci-dessus) : un·e même élu·e peut être conseiller·ère
             # sur un point ancien et échevin·e sur un point récent — jamais un
             # rôle unique figé pour toute sa carrière (voir seances.js, filtre
             # de rôle à facettes, qui consomme ces deux champs).
-            "demandeur_role": _role_for_key(author_key, date, idx),
+            "demandeur_role": _combined_role([_key(x["nom"], pairs) for x in demandeurs], date, idx),
             "repondant": repondant,
             "repondant_role": _combined_role(resp_keys, date, idx),
             "reporte": _is_reportee(p.get("decision")),
             "retire": _is_retire(p.get("decision")),
             "decision": _decision_summary(p.get("decision"), p.get("vote")),
+            # Statut canonique, sans le décompte des voix : c'est lui qui
+            # regroupe les points par issue dans les puces de l'onglet Séances.
+            "statut": _decision_label(p.get("decision")),
             "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
             "montant_eur": p.get("montant_eur"),
             "url": meta.get("source_url"),
@@ -233,11 +314,14 @@ def seance_detail(date: str):
                     "titre": titre,
                     "demandeur": resolve(vauthor),
                     "demandeur_role": _role_for_key(_key(vauthor, pairs) if vauthor else None, date, idx),
+                    "demandeurs": _people_list([vauthor] if vauthor else [], pairs, date, idx, resolve),
                     "repondant": None,
+                    "repondants": [],
                     "repondant_role": None,
                     "reporte": False,
                     "retire": False,
                     "decision": None,
+                    "statut": None,
                     "thematiques": [],
                     "montant_eur": None,
                     "url": deeplink,
@@ -259,3 +343,128 @@ def seance_detail(date: str):
         "n_points": len(points),
         "points": points,
     }
+
+
+# ── SYNTHÈSE PAR ANNÉE (onglet Statistiques) ────────────────────────────────
+# Une SEULE passe sur toutes les séances, mise en cache : elle sert à la fois
+# au graphe « Activité citoyenne » (qui a besoin du décompte des chapitres
+# vidéo sans point de PV, absents de la base des PV) et aux tableaux de
+# contrôle par année. Passer par `seance_detail` plutôt que de recompter la
+# base brute est délibéré : c'est CE que l'application affiche — types,
+# personnes et appariements vidéo compris. Recompter autrement rouvrirait
+# l'écart que ces tableaux servent justement à fermer.
+_annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date": None}
+# La passe coûte ~8 s à froid. Les endpoints FastAPI synchrones tournent dans
+# un pool de threads : sans verrou, N requêtes arrivant sur un cache froid la
+# refaisaient toutes en parallèle — trois appels simultanés mettaient 34 s
+# chacun au lieu de 8 s. Le verrou fait attendre les suivantes le temps que la
+# première remplisse le cache, qu'elles trouvent alors chaud.
+_annees_lock = threading.Lock()
+
+# Types affichés, dans l'ordre des puces de l'onglet Séances. La somme de ces
+# cinq compteurs égale le nombre de points de l'année (partition vérifiée par
+# test) — c'est l'invariant que les tableaux donnent à lire.
+ANNEE_TYPE_ORDER = ["Point", "Motion", "Question orale", "Demande", "Débat filmé"]
+
+
+def annees_stats() -> list:
+    """Une ligne par année : nombre de séances et de points, répartition par
+    type, et rapprochement des personnes.
+
+    Le rapprochement répond à une question simple — « puis-je retrouver le
+    total en agrégeant par intervenant·e ? » — dont la réponse est non, pour
+    deux raisons de sens contraire, que ces colonnes rendent explicites :
+
+        points          = points_avec_personne + points_sans_personne
+        somme_par_personne = points_avec_personne + surplus
+
+    En moins, les points qui ne nomment personne (points administratifs ou
+    collectifs, ~70 % du corpus) ; en plus, le surplus des points à plusieurs
+    personnes, comptés une fois par chacune. Seule une UNION dédoublonnée des
+    points couverts retombe sur le total."""
+    _ensure_annees()
+    return _annees_cache["rows"]
+
+
+def hors_pv_par_date() -> dict:
+    """Nombre de chapitres vidéo sans point de PV, PAR DATE de séance — pour
+    le niveau MOIS du graphe d'activité, qui agrège par date côté client.
+    Certaines de ces séances n'ont aucun PV extrait : elles n'existent que
+    dans le chapitrage, d'où une map par date plutôt qu'un champ ajouté au
+    résumé des séances du PV."""
+    _ensure_annees()
+    return _annees_cache["par_date"]
+
+
+def statuts_par_date() -> dict:
+    """{date de séance: {statut: nb de points}} — l'issue des points, par
+    séance. Par DATE et non par année : le graphe des statuts descend
+    année → mois → séance, et agrège donc à trois niveaux depuis la même
+    source. Les points sans décision (chapitres vidéo, débats non tranchés)
+    n'y figurent pas."""
+    _ensure_annees()
+    return _annees_cache["statuts_par_date"]
+
+
+def _ensure_annees():
+    sig = _sig()
+    if _annees_cache["sig"] == sig:
+        return
+    with _annees_lock:
+        # Re-test sous verrou : la requête qui attendait vient peut-être de se
+        # faire remplir le cache par celle qui la précédait.
+        if _annees_cache["sig"] != sig:
+            _build_annees(sig)
+
+
+def _build_annees(sig):
+    """Passe unique sur toutes les séances. Toujours appelée sous _annees_lock."""
+    # Toutes les dates connues : celles des PV, plus les séances filmées dont
+    # le PV n'est pas (encore) extrait — elles figurent dans la liste des
+    # séances, leurs chapitres sont donc des points de l'année.
+    dates = {(s.get("seance") or {}).get("date") for s in load_db().get("seances", [])}
+    dates |= {s.get("date") for s in _load_video()}
+    dates = sorted(d for d in dates if d)
+
+    par_annee = {}
+    par_date = {}
+    statuts = {}
+    for date in dates:
+        detail = seance_detail(date)
+        if not detail:
+            continue
+        row = par_annee.setdefault(date[:4], {
+            "annee": date[:4], "seances": 0, "points": 0,
+            "types": {t: 0 for t in ANNEE_TYPE_ORDER},
+            "points_avec_personne": 0, "somme_par_personne": 0, "_noms": set(),
+        })
+        row["seances"] += 1
+        for p in detail["points"]:
+            row["points"] += 1
+            if p["type_label"] in row["types"]:
+                row["types"][p["type_label"]] += 1
+            if p["type_label"] == "Débat filmé":
+                par_date[date] = par_date.get(date, 0) + 1
+            if p.get("statut"):
+                st = statuts.setdefault(date, {})
+                st[p["statut"]] = st.get(p["statut"], 0) + 1
+            # Dédoublonné PAR POINT : quelqu'un présent des deux côtés d'un
+            # même point ne le compte qu'une fois.
+            noms = {x["nom"] for x in (p.get("demandeurs") or []) + (p.get("repondants") or [])}
+            if noms:
+                row["points_avec_personne"] += 1
+                row["somme_par_personne"] += len(noms)
+                row["_noms"] |= noms
+
+    rows = []
+    for annee in sorted(par_annee):
+        row = par_annee[annee]
+        row["intervenants"] = len(row.pop("_noms"))
+        row["points_sans_personne"] = row["points"] - row["points_avec_personne"]
+        row["surplus"] = row["somme_par_personne"] - row["points_avec_personne"]
+        rows.append(row)
+
+    _annees_cache["sig"] = sig
+    _annees_cache["rows"] = rows
+    _annees_cache["par_date"] = par_date
+    _annees_cache["statuts_par_date"] = statuts

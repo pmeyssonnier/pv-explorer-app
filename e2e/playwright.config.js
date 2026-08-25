@@ -6,6 +6,12 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: '.',
   timeout: 30_000,
+  // Le tout premier appel à /elus ou /seances construit l'index côté serveur
+  // (base des PV + chapitrage vidéo + questions écrites). Sur un runner CI
+  // froid, avec plusieurs workers qui l'attaquent en même temps, cela dépasse
+  // les 5 s par défaut — d'où des échecs qui ne reproduisaient jamais en local,
+  // où le serveur était déjà chaud.
+  expect: { timeout: 15_000 },
   fullyParallel: true,
   reporter: 'list',
   use: {

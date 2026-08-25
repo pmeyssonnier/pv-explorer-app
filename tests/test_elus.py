@@ -11,7 +11,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 import app
-from services import elus
+from services import elus, seances
 from services.people.attribution import audit_authors, audit_respondents
 
 client = TestClient(app.app)
@@ -652,6 +652,37 @@ def test_seance_detail_lists_every_point_including_unattributed():
     assert unattributed  # ex. « Hommage à M. Jacques Bouvier »
 
 
+def test_video_chapter_without_author_still_gives_precise_link_in_elu_view():
+    # Cas réel (29/05/2024, SP 58 — recours Boulevard Lambermont, demande de
+    # Georges Verzin) : le chapitre vidéo correspondant n'a PAS de champ
+    # `auteur` dans la source. L'index par personne sautait purement et
+    # simplement ces chapitres — la fiche affichait donc le lien GÉNÉRIQUE de
+    # séance là où l'onglet Séances, qui apparie déjà les chapitres sans
+    # auteur·e (seuil 0.6), donnait le lien PRÉCIS pour le même point.
+    d = elus.elu_detail("verzin")
+    it = next(x for x in d["depose"] if x["date"] == "2024-05-29")
+    assert it["video_precise"] is True
+    assert "&t=" in it["video_url"]
+    # Les deux vues doivent pointer exactement le même instant.
+    p = next(x for x in elus.seance_detail("2024-05-29")["points"] if x["sp"] == 58)
+    assert it["video_url"] == p["video_url"]
+
+
+def test_video_chapter_without_author_never_attributes_authorship():
+    # La 2e passe n'apporte qu'un LIEN : un chapitre sans auteur·e ne doit
+    # créer aucune intervention ni attribuer quoi que ce soit à quelqu'un
+    # (contrairement aux chapitres attribués, qui peuvent devenir un « Débat
+    # filmé » autonome faute de point PV apparié).
+    avant = {k: len(e["depose"]) for k, e in elus._index().items()}
+    video = [s for s in elus._load_video() if s.get("date") == "2024-05-29"]
+    sans_auteur = [p for s in video for p in s.get("points", []) if not (p.get("auteur") or "").strip()]
+    assert sans_auteur          # le cas testé existe bien dans le corpus
+    # Aucun « Débat filmé » autonome n'est né de ces chapitres à cette date.
+    for k, e in elus._index().items():
+        assert len(e["depose"]) == avant[k]
+        assert not [it for it in e["depose"] if it["type"] == "video" and it["date"] == "2024-05-29"]
+
+
 def test_seance_detail_demandeur_repondant_and_video_precise_match_elu_view():
     # Même cas réel que la vue par élu·e (Yousra Douhri, 22/04/2026) : les
     # deux vues doivent s'accorder — même registre de noms canoniques, même
@@ -668,6 +699,95 @@ def test_seance_detail_demandeur_repondant_and_video_precise_match_elu_view():
     # exacts pour le 22/04/2026.
     assert it["demandeur_role"] == "conseiller"
     assert it["repondant_role"] == "college"
+
+
+def test_seance_point_lists_each_respondent_individually():
+    # Cas réel (29/09/2010, SP 96) : le PV donne « Mme la Bourgmestre ff, Mme
+    # Essaidi ». L'AFFICHAGE recolle les deux noms — un point montre tous ses
+    # répondant·e·s — mais le filtre par intervenant·e de l'onglet Séances a
+    # besoin de la liste INDIVIDUELLE, sans quoi « Cécile Jodogne et Tamimount
+    # Essaidi » devenait une « personne » unique, introuvable en cherchant
+    # l'un des deux noms.
+    p = next(x for x in elus.seance_detail("2010-09-29")["points"] if x["sp"] == 96)
+    assert p["repondant"] == "Cécile Jodogne et Tamimount Essaidi"
+    assert [x["nom"] for x in p["repondants"]] == ["Cécile Jodogne", "Tamimount Essaidi"]
+
+
+def test_suite_runs_against_the_real_written_questions_base():
+    # Garde-fou : QE_JSON_PATH a un défaut RELATIF, qui ne se résout que
+    # depuis backend/ (le rootDir de production). Sans le réglage de conftest,
+    # la suite tournait donc sur une base amputée de toutes les questions
+    # écrites — silencieusement, puisque le chargeur tolère le fichier absent.
+    # Ce test échoue si ce réglage disparaît, plutôt que de laisser des
+    # centaines d'assertions porter sur des données incomplètes.
+    from services.questions_ecrites import load_qe_db
+    assert len(load_qe_db().get("questions", [])) > 100
+    d = elus.elu_detail("verzin")
+    assert [it for it in d["depose"] if it["type"] == "question_ecrite"]
+
+
+def test_deliberative_point_shows_pv_intervenants():
+    # 24/09/2025 SP 6 et SP 7 (primes Be Home / accompagnement social) ont été
+    # débattus ensemble : le PV leur donne les MÊMES cinq intervenant·e·s et le
+    # même répondant. SP 6 les affichait (attribution manuelle), SP 7 non — le
+    # champ « intervenants » d'un point délibératif était ignoré, ne laissant
+    # surface qu'aux 9 attributions manuelles. Les deux doivent s'accorder.
+    pts = elus.seance_detail("2025-09-24")["points"]
+    sp6, sp7 = (next(p for p in pts if p["sp"] == n) for n in (6, 7))
+    attendu = ["Cécile Jodogne", "Naïma Belkhatir", "Georges Verzin",
+               "Matthieu Degrez", "Elias Ammi"]
+    assert [x["nom"] for x in sp6["demandeurs"]] == attendu
+    assert [x["nom"] for x in sp7["demandeurs"]] == attendu
+    assert sp6["repondant"] == sp7["repondant"] == "Cédric Mahieu"
+
+
+def test_deliberative_point_intervenants_never_repeat_the_respondent():
+    # 03/02/2010 SP 3 : le PV liste Michel de Herde EN TÊTE des intervenant·e·s
+    # ET comme répondant (il préside le débat autant qu'il y répond) — le champ
+    # « intervenants » ne fait pas la différence. Sa ligne de répondant suffit.
+    p = next(x for x in elus.seance_detail("2010-02-03")["points"] if x["sp"] == 3)
+    noms = [x["nom"] for x in p["demandeurs"]]
+    assert p["repondant"] == "Michel de Herde"
+    assert p["repondant"] not in noms
+    # Les 8 autres restent, dans l'ordre du PV (de Herde y était en tête).
+    assert len(noms) == 8
+    assert noms[0].endswith("Courtheoux")
+
+
+def test_deliberative_point_intervenants_do_not_become_depositions():
+    # Garde-fou : afficher les intervenant·e·s d'un point délibératif est un
+    # choix D'AFFICHAGE (onglet Séances). Intervenir dans un débat n'est pas
+    # déposer un point — l'agrégation par personne ne doit rien y gagner,
+    # sinon les « interventions déposées » de chacun·e enflent d'un coup.
+    sp7 = next(p for p in elus.seance_detail("2025-09-24")["points"] if p["sp"] == 7)
+    assert sp7["demandeurs"]                       # affichés côté séance…
+    for nom in [x["nom"] for x in sp7["demandeurs"]]:
+        d = elus.elu_detail(elus._key(nom))
+        assert d is not None
+        assert not [it for it in d["depose"]       # …mais jamais comptés ici
+                    if it["date"] == "2025-09-24" and it["sp"] == 7]
+
+
+def test_seance_point_respondents_keep_their_own_role():
+    # 03/03/2010 SP 12 : Frédéric Nimal (conseiller à cette date) répond aux
+    # côtés de Cécile Jodogne (Collège). Le rôle COMBINÉ du point vaut
+    # "college" (voir _combined_role) — c'est ce qui masquait Nimal au filtre
+    # « Conseiller·ère ». Chaque personne porte donc désormais SON rôle.
+    p = next(x for x in elus.seance_detail("2010-03-03")["points"] if x["sp"] == 12)
+    assert p["repondant_role"] == "college"          # résumé du point, inchangé
+    assert p["repondants"] == [
+        {"nom": "Frédéric Nimal", "role": "conseiller"},
+        {"nom": "Cécile Jodogne", "role": "college"},
+    ]
+
+
+def test_seance_point_respondent_not_resolved_as_person_kept_as_single_entry():
+    # « Secrétaire Communal » ne se résout en aucune personne du registre :
+    # la mention est conservée telle quelle, en UNE entrée sans rôle — sinon
+    # elle disparaîtrait du filtre par intervenant·e, où elle figurait avant.
+    p = next(x for x in elus.seance_detail("2012-12-05")["points"] if x["sp"] == 1)
+    assert p["repondant"] == "Secrétaire Communal"
+    assert p["repondants"] == [{"nom": "Secrétaire Communal", "role": None}]
 
 
 def test_seance_detail_role_reflects_mandate_at_seance_date_not_a_fixed_label():
@@ -793,14 +913,21 @@ def test_manual_author_override_joint_debate_repondant_also_intervenant():
     # les intervenant·e·s et le répondant au PV, SP60 avait
     # "intervenants": [] avant correction manuelle à l'identique. Cas
     # particulier : l'échevin répondant (Bouhjar) figure aussi parmi les
-    # intervenant·e·s (il participe au débat en plus d'y répondre).
+    # intervenant·e·s du PV (il participe au débat en plus d'y répondre) — il
+    # est donc RETIRÉ de la ligne des intervenant·e·s, où il faisait doublon
+    # avec sa propre ligne de répondant (un point délibératif n'a pas
+    # d'auteur·e : cette ligne liste qui est intervenu, voir TYPE_ACTOR_LABEL
+    # « Intervenant·e·s »).
     d = elus.seance_detail("2025-06-25")
     it = next(p for p in d["points"] if p["sp"] == 60)
     assert it["demandeur"] == (
-        "Saït Köse et Ibrahim Dönmez et Elias Ammi et "
-        "Yvan de Beauffort et Abobakre Bouhjar"
+        "Saït Köse et Ibrahim Dönmez et Elias Ammi et Yvan de Beauffort"
     )
     assert it["repondant"] == "Abobakre Bouhjar"
+    # Retiré de l'affichage, mais toujours atteignable par le filtre : il
+    # reste dans `repondants`, d'où le point se retrouve par son nom.
+    assert [x["nom"] for x in it["repondants"]] == ["Abobakre Bouhjar"]
+    assert "Abobakre Bouhjar" not in [x["nom"] for x in it["demandeurs"]]
 
 
 def test_manual_author_override_joint_debate_three_sibling_points():
@@ -1036,3 +1163,63 @@ def test_video_chapters_file_valid():
     pts = [p for s in seances for p in s.get("points", [])]
     assert any(p.get("auteur") for p in pts)
     assert any((p.get("deeplink") or "").startswith("http") for p in pts)
+
+
+# ── Synthèse par année (onglet Statistiques : graphe + tableaux) ──
+def test_annees_stats_types_partition_the_points():
+    # L'invariant que les tableaux donnent à lire, et que les puces de
+    # l'onglet Séances doivent respecter : chaque point porte un type et un
+    # seul, donc la somme des cinq compteurs égale le nombre de points. Il
+    # tombait en défaut avant que « Débat filmé » soit un type à part entière
+    # (659 affichés pour 676 points en 2025).
+    rows = seances.annees_stats()
+    assert rows
+    for r in rows:
+        assert sum(r["types"].values()) == r["points"], r["annee"]
+
+
+def test_annees_stats_person_reconciliation_holds():
+    # Agréger par intervenant·e ne redonne pas le total : deux écarts de sens
+    # contraire, que ces colonnes rendent vérifiables.
+    for r in seances.annees_stats():
+        assert r["points"] == r["points_avec_personne"] + r["points_sans_personne"]
+        assert r["somme_par_personne"] == r["points_avec_personne"] + r["surplus"]
+        # Une personne peut porter plusieurs points : jamais plus de personnes
+        # distinctes que d'occurrences comptées.
+        assert r["intervenants"] <= r["somme_par_personne"]
+
+
+def test_annees_stats_hors_pv_matches_the_seance_view():
+    # Le décompte « hors PV » d'une année doit être exactement ce que l'onglet
+    # Séances montre : même source (seance_detail), jamais un recomptage
+    # parallèle qui rouvrirait l'écart.
+    par_date = seances.hors_pv_par_date()
+    for r in seances.annees_stats():
+        attendu = sum(n for d, n in par_date.items() if d[:4] == r["annee"])
+        assert r["types"]["Débat filmé"] == attendu, r["annee"]
+
+
+def test_statuts_par_date_never_exceeds_the_points_of_the_year():
+    # Le graphe des statuts descend année → mois → PV depuis cette seule
+    # source. Un point a au plus une issue, et les points sans décision
+    # (chapitres vidéo, débats non tranchés) n'en ont aucune : le total d'une
+    # année ne peut donc jamais dépasser son nombre de points, sinon
+    # l'empilement mentirait sur la hauteur des barres.
+    statuts = seances.statuts_par_date()
+    assert statuts
+    par_annee = {}
+    for date, par_statut in statuts.items():
+        assert all(n > 0 for n in par_statut.values()), date
+        assert all(s and s.strip() == s for s in par_statut), date
+        par_annee[date[:4]] = par_annee.get(date[:4], 0) + sum(par_statut.values())
+    for r in seances.annees_stats():
+        assert par_annee.get(r["annee"], 0) <= r["points"], r["annee"]
+
+
+def test_statuts_par_date_dates_are_known_seances():
+    # Toute date porteuse de statuts doit être une date de séance connue : le
+    # graphe regroupe par année via ces clés, une date orpheline créerait une
+    # colonne fantôme.
+    connues = {s["date"] for s in seances.seances_list()}
+    assert connues
+    assert set(seances.statuts_par_date()) <= connues

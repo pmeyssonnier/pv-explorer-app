@@ -88,6 +88,11 @@ export const TYPE_BADGE = {
 // au-dessus du/de la répondant·e pour que chaque ligne se comprenne seule
 // (ex. sur une capture d'écran, sans le contexte de la page).
 export const TYPE_ACTOR_LABEL = {
+  // Un point délibératif (approbation, règlement, convention…) est déposé par
+  // le Collège : personne ne l'a « demandé ». Les noms qui y figurent sont
+  // celles et ceux qui SONT INTERVENU·E·S au débat (voir attribution.py,
+  // _MANUAL_AUTHOR_OVERRIDES) — les appeler « Auteur·e » était faux.
+  'Point': 'Intervenant·e·s',
   'Question orale': 'Auteur·e de la question',
   'Demande': 'Demandeur·se',
   'Motion': 'Auteur·e de la motion',
@@ -105,6 +110,18 @@ export const TYPE_COUNT_LABEL = {
   'Débat filmé': n => `${n} débat${n > 1 ? 's' : ''} filmé${n > 1 ? 's' : ''}`,
   'Question écrite': n => `${n} question${n > 1 ? 's' : ''} écrite${n > 1 ? 's' : ''}`,
 };
+
+// Un point donne accès au DÉBAT FILMÉ quand c'est un chapitre vidéo autonome
+// (type "video", aucun point PV apparié), ou quand un chapitre vidéo a été
+// apparié précisément à ce point (video_precise) — dans ce dernier cas le
+// point garde son type (question orale, demande…) et le lien pointe l'instant
+// du débat. Un point reporté OU retiré n'a rien été débattu ce jour-là.
+// Définition partagée par l'onglet Séances (ligne + puce de filtre) et la vue
+// Par élu·e (puce « Débat filmé ») : une seule définition, partout la même.
+export function hasDebateLink(it) {
+  return (it.type === 'video' && !!it.url)
+    || !!(it.video_url && it.video_precise && !it.reporte && !it.retire);
+}
 
 // Bloc de tags « thématiques » — même rendu partout où un point est affiché
 // (Séances, Par élu·e, sources des réponses) : avant ce correctif, seule la

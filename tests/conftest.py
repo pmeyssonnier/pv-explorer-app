@@ -18,6 +18,14 @@ ROOT = Path(__file__).resolve().parent.parent
 os.environ.setdefault(
     "PV_JSON_PATH", str(ROOT / "backend" / "pv_conseil_schaerbeek.json")
 )
+# Idem pour les questions écrites, qui manquaient ici : leur chemin par défaut
+# est relatif lui aussi, donc introuvable depuis la racine — la suite tournait
+# sur une base AMPUTÉE de tout ce volet (aucune question écrite dans les fiches
+# ni dans les séances), sans que rien ne le signale. Les tests qui veulent une
+# base de questions écrites contrôlée continuent de monkeypatcher QE_JSON_PATH.
+os.environ.setdefault(
+    "QE_JSON_PATH", str(ROOT / "backend" / "questions_ecrites_schaerbeek.json")
+)
 
 # 1. Rendre backend/ et pipeline/ importables (modules à plat, pas de package).
 for sub in ("backend", "pipeline"):
