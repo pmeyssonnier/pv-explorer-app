@@ -111,6 +111,14 @@ export const TYPE_COUNT_LABEL = {
   'Question écrite': n => `${n} question${n > 1 ? 's' : ''} écrite${n > 1 ? 's' : ''}`,
 };
 
+// Les quatre issues qui TRANCHENT le sort d'un point. Le corpus en compte une
+// quinzaine, dont une longue traîne de variantes rares : ces quatre-là sont
+// nommées partout (les séries du graphe des issues, les puces de l'onglet
+// Séances), le reste est regroupé sous « Autres issues ». Source unique, pour
+// que les deux vues ne divergent jamais sur ce qu'est une « autre » issue.
+export const STATUT_PRINCIPAUX = ['Approuvé', 'Décidé', 'Reporté', 'Retiré'];
+export const STATUT_AUTRES = 'Autres issues';
+
 // Un point donne accès au DÉBAT FILMÉ quand c'est un chapitre vidéo autonome
 // (type "video", aucun point PV apparié), ou quand un chapitre vidéo a été
 // apparié précisément à ce point (video_precise) — dans ce dernier cas le

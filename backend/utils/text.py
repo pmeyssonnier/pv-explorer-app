@@ -57,7 +57,13 @@ _DECISION_LABELS = {
     "retire": "Retiré",
     "prend acte": "Pris acte",
     "prendre acte": "Pris acte",
+    # Une prise d'acte assortie d'une dérogation reste une prise d'acte : c'est
+    # la même issue pour le point, la dérogation en est le motif. Sans cette
+    # entrée, ce seul point du 22/04/2026 formait sa propre puce de statut.
+    "prend acte + derogation art.12": "Pris acte",
     "prend pour information": "Pris pour information",
+    # Variante isolée (22/12/2010) de la formule ci-dessus.
+    "prend information": "Pris pour information",
     "prendre pour information": "Pris pour information",
     "prends pour information": "Pris pour information",
     "prises pour information": "Pris pour information",

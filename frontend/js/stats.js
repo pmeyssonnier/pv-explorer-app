@@ -1,7 +1,8 @@
 // ── STATISTIQUES — drill-down Année → Mois → Séance, thématiques, évolution
 // d'un thème (budget) ──
 import { API_URL } from './config.js';
-import { escapeHtml, formatDate, fmtInt, fmtMontant, fmtMontantCompact, fmtEUR, TYPE_COUNT_LABEL } from './utils.js';
+import { escapeHtml, formatDate, fmtInt, fmtMontant, fmtMontantCompact, fmtEUR, TYPE_COUNT_LABEL,
+  STATUT_PRINCIPAUX, STATUT_AUTRES } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
 // KPI et thématiques se recalculent pour le périmètre courant, à partir d'un
@@ -19,6 +20,7 @@ let activiteTypesParAnnee = [];   // [{annee, "Question orale":n, "Demande":n, .
 let activiteTypeOrder = [];       // ordre fixe des séries (voir ACTIVITY_TYPE_ORDER, backend)
 let horsPvParDate = {};           // date -> nb de chapitres vidéo sans point de PV
 let statutsParDate = {};          // date -> {statut: nb de points} (voir seances.statuts_par_date)
+let sansDecisionParDate = {};     // date -> nb de points de PV sans décision relevée
 let statutFilter = 'all';         // série isolée dans le graphe des issues
 let statsVue = 'activite';        // sous-onglet affiché (voir showStatsVue)
 let qeResume = [];                // {date, thematiques} par question écrite (voir /stats qe_resume)
@@ -280,14 +282,35 @@ function renderActivityKPIs(rows) {
 // « Autres issues », en gris neutre, avec le détail en infobulle. Ce n'est pas
 // une identité de plus dans la palette catégorielle : c'est un reliquat, d'où
 // une couleur volontairement hors palette (voir --chart-autres).
-const STATUT_SERIES = ['Approuvé', 'Décidé', 'Reporté', 'Retiré'];
-const STATUT_AUTRES = 'Autres issues';
+// « Retiré » compte 6 points sur 10 062 : en série propre, c'est un trait
+// invisible qui occupe une couleur de la palette. Regroupé avec « Reporté »,
+// dont il est le proche voisin de sens — le point n'a pas été tranché ce
+// soir-là —, il redevient lisible, et le détail reste dans l'infobulle.
+const STATUT_REPORTE = 'Reporté ou retiré';
+const STATUT_REPORTE_MEMBRES = ['Reporté', 'Retiré'];
+const STATUT_SERIES = ['Approuvé', 'Décidé', STATUT_REPORTE];
+
+// Série d'affichage d'un statut du corpus. Les quatre issues nommées viennent
+// d'utils (source partagée avec les puces de l'onglet Séances) ; ce qui reste
+// est un vrai choix du conseil, simplement pas l'un des quatre — d'où « Autres
+// issues » plutôt qu'un fourre-tout muet.
+const serieDuStatut = st => STATUT_REPORTE_MEMBRES.includes(st) ? STATUT_REPORTE
+  : STATUT_PRINCIPAUX.includes(st) ? st : STATUT_AUTRES;
+// Sixième et dernière série : les points de PV dont AUCUNE décision n'a été
+// relevée. Sans elle, ce graphe restait 67 points sous « Activité par année »
+// (663 contre 658 en 2024) sans dire pourquoi — les deux graphes se lisent
+// maintenant l'un sous l'autre et totalisent le même nombre de points. Rendue
+// hachurée plutôt que pleine : c'est une ABSENCE de donnée, pas une issue de
+// plus, et la trame la distingue du gris d'« Autres issues » (qui, lui, groupe
+// de vraies décisions) autrement que par la seule couleur.
+const STATUT_SANS = 'Sans décision';
 
 // Statuts du périmètre courant, repliés sur les 5 séries. Retourne aussi le
 // détail de ce qui a été regroupé, pour l'infobulle de la légende.
 function statutRows() {
   const parCle = {};
   const detailAutres = {};
+  const detailReporte = {};
   Object.entries(statutsParDate).forEach(([date, counts]) => {
     let cle = null;
     if (drill.level === 'year') cle = date.slice(0, 4);
@@ -295,17 +318,35 @@ function statutRows() {
     if (!cle) return;
     const e = parCle[cle] || (parCle[cle] = {});
     Object.entries(counts).forEach(([st, n]) => {
-      const serie = STATUT_SERIES.includes(st) ? st : STATUT_AUTRES;
+      const serie = serieDuStatut(st);
       e[serie] = (e[serie] || 0) + n;
       if (serie === STATUT_AUTRES) detailAutres[st] = (detailAutres[st] || 0) + n;
+      if (serie === STATUT_REPORTE) detailReporte[st] = (detailReporte[st] || 0) + n;
     });
+  });
+  Object.entries(sansDecisionParDate).forEach(([date, n]) => {
+    let cle = null;
+    if (drill.level === 'year') cle = date.slice(0, 4);
+    else if (date.slice(0, 4) === drill.year) cle = date.slice(5, 7);
+    if (!cle) return;
+    const e = parCle[cle] || (parCle[cle] = {});
+    e[STATUT_SANS] = (e[STATUT_SANS] || 0) + n;
   });
   const rows = Object.keys(parCle).sort().map(k => ({
     key: k,
     label: drill.level === 'year' ? k : MOIS_FR[+k].slice(0, 4) + '.',
     counts: parCle[k],
   }));
-  return { rows, detailAutres };
+  return { rows, detailAutres, detailReporte };
+}
+
+// Les deux reliquats sortent de la palette catégorielle : « Autres issues » en
+// gris plein (de vraies décisions, simplement pas l'une des quatre nommées),
+// « Sans décision » en trame (une donnée absente).
+function statutSegClass(t, si) {
+  if (t === STATUT_AUTRES) return 'yc-seg-autres';
+  if (t === STATUT_SANS) return 'yc-seg-sans';
+  return `yc-seg-s${si}`;
 }
 
 export function onStatutChipClick(statut) {
@@ -317,8 +358,8 @@ function renderStatuts() {
   const plot = document.getElementById('statutPlot');
   const legend = document.getElementById('statutLegend');
   if (!plot || !legend) return;
-  const series = [...STATUT_SERIES, STATUT_AUTRES];
-  const { rows, detailAutres } = statutRows();
+  const series = [...STATUT_SERIES, STATUT_AUTRES, STATUT_SANS];
+  const { rows, detailAutres, detailReporte } = statutRows();
   if (!rows.length) {
     plot.innerHTML = '<p class="yc-note">Aucune donnée disponible.</p>';
     legend.innerHTML = '';
@@ -341,7 +382,7 @@ function renderStatuts() {
       const segH = isolate ? stackH : Math.max(2, Math.round(n / value * stackH));
       const topCls = firstNonZero ? ' yc-seg-top' : '';
       firstNonZero = false;
-      const cls = t === STATUT_AUTRES ? 'yc-seg-autres' : `yc-seg-s${si}`;
+      const cls = statutSegClass(t, si);
       return `<div class="yc-seg ${cls}${topCls}" style="height:${segH}px" title="${escapeHtml(t)} : ${fmtInt(n)}"></div>`;
     }).join('');
     return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(row.label)} : ${fmtInt(value)} point${value > 1 ? 's' : ''}">
@@ -351,12 +392,19 @@ function renderStatuts() {
     </div>`;
   }).join('');
 
-  const detail = Object.entries(detailAutres).sort((a, b) => b[1] - a[1])
+  const detailDe = m => Object.entries(m).sort((a, b) => b[1] - a[1])
     .map(([st, n]) => `${st} : ${fmtInt(n)}`).join(' · ');
+  const detail = detailDe(detailAutres);
   legend.innerHTML = series.map((t, si) => {
     const active = statutFilter === t ? ' yc-legend-chip-active' : '';
-    const cls = t === STATUT_AUTRES ? 'yc-seg-autres' : `yc-seg-s${si}`;
-    const aide = t === STATUT_AUTRES ? ` title="${escapeHtml(detail || 'Aucune')}"` : '';
+    const cls = statutSegClass(t, si);
+    let aide = '';
+    if (t === STATUT_AUTRES) aide = ` title="${escapeHtml(detail || 'Aucune')}"`;
+    else if (t === STATUT_REPORTE) aide = ` title="${escapeHtml(detailDe(detailReporte) || 'Aucun')}"`;
+    else if (t === STATUT_SANS) {
+      aide = ' title="Points du procès-verbal dont aucune décision n\'a été relevée '
+        + '— c\'est l\'écart avec le graphe d\'activité ci-dessus."';
+    }
     return `<button type="button" class="yc-legend-chip${active}"${aide} data-click="onStatutChipClick" data-arg="${escapeHtml(t)}">`
       + `<span class="yc-legend-swatch ${cls}"></span>${escapeHtml(t)}</button>`;
   }).join('');
@@ -588,6 +636,7 @@ export async function loadStats() {
     activiteTypeOrder = s.activite_type_order || [];
     horsPvParDate = s.hors_pv_par_date || {};
     statutsParDate = s.statuts_par_date || {};
+    sansDecisionParDate = s.sans_decision_par_date || {};
     qeResume = s.qe_resume || [];
     latestYear = seancesResume.reduce((mx, x) => x.date.slice(0, 4) > mx ? x.date.slice(0, 4) : mx, '');
     expandedYears = new Set([latestYear]);   // année la plus récente dépliée par défaut
@@ -615,6 +664,23 @@ export async function loadStats() {
         <div class="yc-scroll"><div class="yc-plot" id="drillPlot"></div></div>
         <p class="yc-note" id="drillHint"></p>
       </div>
+      <div class="stat-section" id="statutSection">
+        <div class="yc-head">
+          <h3><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg><span id="statutTitle">Issue des points par année</span></h3>
+        </div>
+        <div class="drill-crumb" id="statutCrumb"></div>
+        <div class="yc-scroll"><div class="yc-plot" id="statutPlot"></div></div>
+        <div class="yc-legend" id="statutLegend"></div>
+        <p class="yc-note" id="statutHint"></p>
+        <p class="yc-note">Ce que devient chaque point du graphe ci-dessus : approuvé, décidé,
+          reporté ou retiré (deux façons de ne pas trancher ce soir-là, détaillées au survol —
+          « retiré » ne compte que 6 points sur tout le corpus) — le reste (prises d'acte, prises pour information, débats sans vote…)
+          est regroupé sous « Autres issues », dont le détail s'affiche au survol de la légende.
+          « Sans décision » est le solde : des points du PV dont aucune décision n'a été relevée
+          (67 sur 10 062, concentrés sur quelques séances). Les deux graphes comptent donc
+          exactement les mêmes points ; les chapitres vidéo sans PV, eux, ne figurent dans ni
+          l'un ni l'autre.</p>
+      </div>
       <div class="stat-section" id="activitySection">
         <div class="yc-head">
           <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span id="activityTitle">Activité citoyenne par année</span></h3>
@@ -627,19 +693,6 @@ export async function loadStats() {
         <p class="yc-note">Questions orales, demandes, motions, questions écrites et débats filmés
           hors PV — les points administratifs/collectifs (approbations, conventions…) ne sont pas
           comptés ici, ils domineraient sans rien dire de l'activité citoyenne.</p>
-      </div>
-      <div class="stat-section" id="statutSection">
-        <div class="yc-head">
-          <h3><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg><span id="statutTitle">Issue des points par année</span></h3>
-        </div>
-        <div class="drill-crumb" id="statutCrumb"></div>
-        <div class="yc-scroll"><div class="yc-plot" id="statutPlot"></div></div>
-        <div class="yc-legend" id="statutLegend"></div>
-        <p class="yc-note" id="statutHint"></p>
-        <p class="yc-note">Ce que devient chaque point : approuvé, décidé, reporté, retiré — le reste
-          (prises d'acte, prises pour information, débats sans vote…) est regroupé sous « Autres
-          issues », dont le détail s'affiche au survol de la légende. Les points sans décision
-          (chapitres vidéo sans PV) n'y figurent pas.</p>
       </div>
       <div class="stat-section" id="themesSection">
         <div class="yc-head">
