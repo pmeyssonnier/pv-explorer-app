@@ -12,7 +12,7 @@ from fastapi.testclient import TestClient
 
 import app
 from services import elus
-from services.people.attribution import audit_authors
+from services.people.attribution import audit_authors, audit_respondents
 
 client = TestClient(app.app)
 ROOT = Path(__file__).resolve().parent.parent
@@ -273,6 +273,31 @@ def test_audit_authors_separates_anomalies_from_collective_motions():
     assert [(a["sp"], a["type"]) for a in anos] == [(63, "question_orale")]
     # SP66 (intervenant·e unique) est maintenant attribuée → seule SP65 reste.
     assert [m["sp"] for m in motions] == [65]
+
+
+def test_audit_respondents_considers_type_and_status():
+    db = {"seances": [{
+        "seance": {"date": "2018-01-31", "bourgmestre": "Bernard Clerfayt"},
+        "points": [
+            # Question répondue → OK.
+            {"sp": 1, "type": "question_orale", "repondant": "De Herde", "decision": ""},
+            # Question sans répondant, non retirée → anomalie.
+            {"sp": 2, "type": "question_orale", "repondant": None, "decision": ""},
+            # Demande sans répondant, non retirée → anomalie.
+            {"sp": 3, "type": "demande_habitant", "repondant": "", "decision": ""},
+            # Question sans répondant MAIS reportée → statut exclut l'anomalie.
+            {"sp": 4, "type": "question_orale", "repondant": None, "decision": "REPORTÉ"},
+            # Question sans répondant mais retirée → exclue par statut.
+            {"sp": 5, "type": "question_orale", "repondant": None, "decision": "RETIRÉ"},
+            # Délibération sans répondant → type sans réponse attendue → ignorée.
+            {"sp": 6, "type": "point_normal", "repondant": None, "decision": "APPROUVÉ"},
+        ],
+    }]}
+    report = audit_respondents(db)
+    assert len(report) == 1
+    r = report[0]
+    assert r["sans_repondant"] == 2      # SP2 et SP3 seulement
+    assert r["sp"] == [2, 3]
 
 
 def test_author_from_text_prefers_full_name_over_particle_truncation():

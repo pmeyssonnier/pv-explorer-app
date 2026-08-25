@@ -7,6 +7,9 @@ lisent que le JSON déjà versionné.
                        (questions/demandes/interpellations exclues — vide normal).
   • audit_authors    : « sans demandeur » — anomalies (question/demande sans
                        auteur) + motions non attribuées.
+  • audit_respondents : « sans répondant » — questions/demandes non retirées
+                       auxquelles aucun·e membre du Collège ne répond (type +
+                       statut du point pris en compte).
 
 Le 3ᵉ audit, audit_completeness (SP totalement ABSENTS), relit les PDF : il
 n'est PAS lancé ici (il tourne en Colab, cf. Phase 1 du notebook).
@@ -43,10 +46,14 @@ def main() -> None:
     # Imports après ajustement du sys.path (et sans dépendance PDF : audit_decisions
     # n'importe plus pv_extraction_pipeline au chargement — voir audit_completeness).
     from audit_completeness import audit_decisions, print_decision_audit
-    from services.people.attribution import audit_authors, print_author_audit
+    from services.people.attribution import (
+        audit_authors, print_author_audit,
+        audit_respondents, print_respondent_audit,
+    )
 
     print_decision_audit(audit_decisions(db))
     print_author_audit(audit_authors(db))
+    print_respondent_audit(audit_respondents(db))
 
 
 if __name__ == "__main__":
