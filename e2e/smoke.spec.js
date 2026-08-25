@@ -420,11 +420,17 @@ test('la somme des puces de type égale le nombre de points annoncé', async ({ 
 });
 
 // ── Onglet Statistiques : KPI par série et tableaux par année ──
+// Le tout premier /stats parcourt les 171 séances pour construire la synthèse
+// par année (~8 s à froid, davantage quand plusieurs workers l'attaquent en
+// même temps). Les 15 s par défaut suffisaient tant qu'un seul test ouvrait
+// l'onglet ; à deux, elles ne suffisent plus.
+const STATS_FROID = { timeout: 45_000 };
+
 test('les KPI d\'activité et les tableaux par année sont cohérents', async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto('/');
   await page.locator('#tab-stats').click();
-  await expect(page.locator('#anneesTables .annees-table').first()).toBeVisible();
+  await expect(page.locator('#anneesTables .annees-table').first()).toBeVisible(STATS_FROID);
 
   // 1. Un KPI par série, dans le même ordre que la légende du graphe.
   const kpis = await page.$$eval('#activityKPIs .act-kpi', els => els.map(e => e.getAttribute('title')));
@@ -458,7 +464,7 @@ test('le graphe des statuts descend année → mois, sans jamais dépasser les p
   const errors = trackErrors(page);
   await page.goto('/');
   await page.locator('#tab-stats').click();
-  await expect(page.locator('#statutLegend .yc-legend-chip').first()).toBeVisible();
+  await expect(page.locator('#statutLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
 
   // 1. Les quatre issues demandées, plus le reliquat neutre en dernier.
   const legende = await page.$$eval('#statutLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));

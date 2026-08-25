@@ -6,6 +6,8 @@ demandeur/répondant résolus via le même registre de noms canoniques (voir
 services.people.registry) pour un affichage homogène — et pour chaque point,
 un résumé lisible de sa décision/vote et de ses thématiques.
 """
+import threading
+
 import lexique_store
 from services.statistics import load_db
 from utils.text import _DECISION_LABELS, _thematique_label
@@ -352,6 +354,12 @@ def seance_detail(date: str):
 # personnes et appariements vidéo compris. Recompter autrement rouvrirait
 # l'écart que ces tableaux servent justement à fermer.
 _annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date": None}
+# La passe coûte ~8 s à froid. Les endpoints FastAPI synchrones tournent dans
+# un pool de threads : sans verrou, N requêtes arrivant sur un cache froid la
+# refaisaient toutes en parallèle — trois appels simultanés mettaient 34 s
+# chacun au lieu de 8 s. Le verrou fait attendre les suivantes le temps que la
+# première remplisse le cache, qu'elles trouvent alors chaud.
+_annees_lock = threading.Lock()
 
 # Types affichés, dans l'ordre des puces de l'onglet Séances. La somme de ces
 # cinq compteurs égale le nombre de points de l'année (partition vérifiée par
@@ -402,7 +410,15 @@ def _ensure_annees():
     sig = _sig()
     if _annees_cache["sig"] == sig:
         return
+    with _annees_lock:
+        # Re-test sous verrou : la requête qui attendait vient peut-être de se
+        # faire remplir le cache par celle qui la précédait.
+        if _annees_cache["sig"] != sig:
+            _build_annees(sig)
 
+
+def _build_annees(sig):
+    """Passe unique sur toutes les séances. Toujours appelée sous _annees_lock."""
     # Toutes les dates connues : celles des PV, plus les séances filmées dont
     # le PV n'est pas (encore) extrait — elles figurent dans la liste des
     # séances, leurs chapitres sont donc des points de l'année.
