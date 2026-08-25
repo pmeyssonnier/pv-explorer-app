@@ -106,6 +106,7 @@ def test_l_inventaire_compte_sur_la_base_pas_sur_les_extraits(monkeypatch):
     monkeypatch.setattr(rag, "points_par_issue",
                         lambda mot, limite: ([
                             {"date": "2024-05-29", "sp": 62, "titre": "Tronçon sud",
+                             "type": "motion",
                              "vote": {"pour": 15, "contre": 19, "abstentions": 2}},
                         ], 10))
     bloc = rag._inventaire_block("REJETÉ")
@@ -114,11 +115,28 @@ def test_l_inventaire_compte_sur_la_base_pas_sur_les_extraits(monkeypatch):
     assert "(15 pour, 19 contre, 2 abstentions)" in bloc
 
 
+def test_l_inventaire_nomme_le_type_de_chaque_point(monkeypatch):
+    """Sans le type, une motion dont l'intitulé ne porte pas le mot passait pour
+    une délibération : la réponse listait 5 motions sur 10 rejets, en s'excusant
+    de ne pas pouvoir trancher. Le type est dans la base, rien à deviner."""
+    monkeypatch.setattr(rag, "points_par_issue",
+                        lambda mot, limite: ([
+                            {"date": "2022-03-30", "sp": 35, "type": "motion",
+                             "titre": "Le projet de réaménagement de l'avenue Princesse Elisabeth",
+                             "vote": {"pour": 16, "contre": 22, "abstentions": 1}},
+                            {"date": "2020-06-24", "sp": 12, "type": "point_normal",
+                             "titre": "Marché de fournitures", "vote": {}},
+                        ], 2))
+    bloc = rag._inventaire_block("REJETÉ")
+    assert "SP 35 [Motion] —" in bloc
+    assert "SP 12 [Point délibératif] —" in bloc
+
+
 def test_l_inventaire_dit_quand_il_est_tronque(monkeypatch):
     """645 reports ne tiennent pas dans un prompt : la liste est coupée, et le
     total réel est donné pour qu'une réponse ne la présente pas comme complète."""
     monkeypatch.setattr(rag, "points_par_issue",
-                        lambda mot, limite: ([{"date": "2026-05-27", "sp": 53,
+                        lambda mot, limite: ([{"date": "2026-05-27", "sp": 53, "type": "motion",
                                                "titre": "Moratoire", "vote": {}}], 645))
     bloc = rag._inventaire_block("REPORTÉ")
     assert "645 point(s)" in bloc and "plus récents" in bloc
@@ -127,6 +145,7 @@ def test_l_inventaire_dit_quand_il_est_tronque(monkeypatch):
 def test_une_abstention_au_singulier(monkeypatch):
     monkeypatch.setattr(rag, "points_par_issue",
                         lambda mot, limite: ([{"date": "2014-09-24", "sp": 88, "titre": "Reyers",
+                                               "type": "motion",
                                                "vote": {"pour": 7, "contre": 34,
                                                         "abstentions": 1}}], 1))
     assert "1 abstention)" in rag._inventaire_block("REJETÉ")

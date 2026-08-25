@@ -19,6 +19,7 @@ import lexique_store
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
+from services.people.attribution import _TYPE_LABEL
 from services.seances import points_par_issue
 from utils.statut import decision_recherchee
 from utils.text import _decision_status, _strip_accents, _thematique_label
@@ -112,6 +113,11 @@ def _inventaire_block(decision: Optional[str]) -> str:
         return ""
     label = _decision_status(decision) or decision
     corps = []
+    # Le TYPE de chaque point, en toutes lettres. Sans lui, l'inventaire laissait
+    # deviner la nature d'un point à son titre — et une motion dont l'intitulé ne
+    # porte pas le mot (« Réaménagement de l'avenue X ») passait pour une
+    # délibération : la réponse a listé 5 motions sur 10 rejets en s'excusant de
+    # ne pas pouvoir trancher. Le type est dans la base, il n'y a rien à deviner.
     for p in lignes:
         d = p["date"]
         jma = f"{d[8:10]}/{d[5:7]}/{d[:4]}" if len(d or "") == 10 else d
@@ -121,7 +127,8 @@ def _inventaire_block(decision: Optional[str]) -> str:
             abst = v.get("abstentions") or 0
             chiffres = (f" ({v['pour']} pour, {v['contre']} contre, "
                         f"{abst} abstention{'s' if abst != 1 else ''})")
-        corps.append(f"- {jma} SP {p['sp']} — {p['titre'][:110]}{chiffres}")
+        type_label = _TYPE_LABEL.get(p.get("type"), "Point délibératif")
+        corps.append(f"- {jma} SP {p['sp']} [{type_label}] — {p['titre'][:110]}{chiffres}")
     tronque = ("" if total <= len(lignes) else
                f" Seuls les {len(lignes)} plus récents sont listés ci-dessous : "
                f"dis-le si tu t'appuies sur cette liste.")

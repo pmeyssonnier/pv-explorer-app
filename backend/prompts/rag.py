@@ -31,6 +31,10 @@ RÈGLES :
   nombre de lignes qu'il montre, dis que la liste affichée est partielle.
   Les points qu'il cite sont de vrais points du Conseil : tu peux les mentionner
   avec leur date et leur SP ; le détail, lui, ne vient que des <extraits>.
+  Chaque ligne porte le TYPE du point entre crochets — [Motion], [Question orale],
+  [Point délibératif]… : c'est lui qui fait foi sur la nature du point, jamais son
+  intitulé, qui ne contient pas toujours le mot. Quand tu listes ce qu'il contient,
+  n'en omets AUCUNE ligne : si tu en écartes une, dis laquelle et pourquoi.
 - Cite toujours tes sources : mentionne la date de séance et le numéro de point (SP).
 - Quand tu listes plusieurs éléments datés (ou que tu regroupes par année), classe-les
   du PLUS RÉCENT au PLUS ANCIEN (ex. 2026 avant 2013).
