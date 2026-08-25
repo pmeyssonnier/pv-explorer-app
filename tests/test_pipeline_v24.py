@@ -14,6 +14,7 @@ from pv_extraction_pipeline import (
 )
 from reextract_targeted import targets_from_audit
 from audit_completeness import audit_decisions, TYPES_SANS_DECISION
+from backfill_decisions import backfill_decisions
 
 
 # ── targets_from_audit : sélection des séances à re-extraire ────────────────
@@ -172,6 +173,38 @@ def test_audit_decisions_ignores_seance_fully_decided():
         ],
     }]}
     assert audit_decisions(db) == []      # aucune séance à signaler
+
+
+# ── Backfill déterministe des décisions (sans PDF ni LLM) ───────────────────
+def test_backfill_fills_only_recoverable_deliberatif_points():
+    db = {"seances": [{
+        "seance": {"date": "2016-10-26"},
+        "points": [
+            # Déductible du resume → RETIRÉ.
+            {"sp": 45, "type": "point_normal", "decision": "", "vote": None,
+             "resume": "Point retiré de l'ordre du jour", "titre": "Règlement X"},
+            # Déductible du titre (« - Approbation ») → APPROUVÉ.
+            {"sp": 8, "type": "point_normal", "decision": None,
+             "resume": "", "titre": "Convention de partenariat - Approbation"},
+            # Décision déjà présente → jamais écrasée.
+            {"sp": 1, "type": "point_normal", "decision": "PREND ACTE",
+             "resume": "", "titre": "Point acté"},
+            # Type sans décision attendue → ignoré même si le texte matche.
+            {"sp": 72, "type": "question_orale", "decision": "",
+             "resume": "Point retiré de l'ordre du jour", "titre": "Question X"},
+            # Rien de déductible → laissé tel quel.
+            {"sp": 90, "type": "point_normal", "decision": "",
+             "resume": "Débat sans issue", "titre": "Sujet divers"},
+        ],
+    }]}
+    changes = backfill_decisions(db)
+    assert {c["sp"]: c["decision"] for c in changes} == {45: "RETIRÉ", 8: "APPROUVÉ"}
+    pts = {p["sp"]: p for p in db["seances"][0]["points"]}
+    assert pts[45]["decision"] == "RETIRÉ" and pts[45]["vote"]["type"] is None
+    assert pts[8]["decision"] == "APPROUVÉ"
+    assert pts[1]["decision"] == "PREND ACTE"   # non touché
+    assert pts[72]["decision"] == ""            # question exclue
+    assert pts[90]["decision"] == ""            # rien de sûr → intact
 
 
 # ── Lexique éditable → formules d'extraction ajoutées aux regex ─────────────
