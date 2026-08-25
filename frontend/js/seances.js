@@ -6,6 +6,7 @@ import {
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, hasDebateLink,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
+import { createCombobox } from './combobox.js';
 
 let seancesData = null;       // liste complète [{date,n_points,url,video_url}]
 let seancesLoaded = false;
@@ -27,6 +28,9 @@ let seanceThemeFilter = 'all';
 // filtre couvre les deux rôles, pour retrouver tout ce qui concerne une
 // personne dans la séance, peu importe son rôle sur chaque point.
 let seancePersonFilter = 'all';
+// Le combobox est recréé à chaque séance affichée : la barre de filtres est
+// réécrite avec le reste du panneau (voir renderSeance), ses écouteurs avec.
+let seancePersonCombo = null;
 // Rôle (conseiller·ère / collège) de la personne demandeuse OU répondante —
 // même principe que le filtre "Tous les rôles" de l'onglet Par élu·e (voir
 // elus.js), mais ici en puces cliquables plutôt qu'un menu déroulant, et
@@ -287,7 +291,20 @@ function seancePersonFilterOptions(points) {
   });
   if (seancePersonFilter !== 'all' && !counts.has(seancePersonFilter)) counts.set(seancePersonFilter, 0);
   const names = [...counts.keys()].sort((a, b) => a.localeCompare(b, 'fr'));
-  return names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)} (${counts.get(n)})</option>`).join('');
+  // 1re entrée : revenir à tout le monde. La croix du champ fait la même
+  // chose, mais un menu doit pouvoir se défaire sans connaître ce raccourci.
+  return [{ nom: '', n: names.length, tous: true },
+    ...names.map(n => ({ nom: n, n: counts.get(n) }))];
+}
+
+// Une option : le nom (partie trouvée surlignée) et son nombre de points.
+function seancePersonOptionHtml(p, { id, active, selected, label }) {
+  const texte = p.tous ? `Tou·te·s les intervenant·e·s` : label;
+  return `<li class="elu-opt${active ? ' elu-opt-active' : ''}" role="option" id="${id}"
+      data-key="${escapeHtml(p.nom)}" aria-selected="${selected}">
+    <span class="elu-opt-name">${texte}</span>
+    <span class="elu-opt-meta"><span class="elu-opt-count">${p.n} ${p.tous ? 'personnes' : `point${p.n > 1 ? 's' : ''}`}</span></span>
+  </li>`;
 }
 
 // Puces de rôle (Conseiller·ère / Collège) — même widget que eluTypeChip côté
@@ -335,7 +352,6 @@ function renderSeanceFilterOptions() {
   const all = currentSeanceDetail.points;
   const typeBox = document.getElementById('seanceTypeChips');
   const themeSel = document.getElementById('seanceThemeFilter');
-  const personSel = document.getElementById('seancePersonFilter');
   const roleBox = document.getElementById('seanceRoleChips');
   if (typeBox) {
     typeBox.innerHTML = seanceTypeChips(all.filter(p => matchesTheme(p) && matchesPerson(p) && matchesRole(p)));
@@ -345,10 +361,11 @@ function renderSeanceFilterOptions() {
       + seanceThemeFilterOptions(all.filter(p => matchesType(p) && matchesPerson(p) && matchesRole(p)));
     themeSel.value = seanceThemeFilter;
   }
-  if (personSel) {
-    personSel.innerHTML = '<option value="all">Tou·te·s les intervenant·e·s</option>'
-      + seancePersonFilterOptions(all.filter(p => matchesType(p) && matchesTheme(p) && matchesRole(p)));
-    personSel.value = seancePersonFilter;
+  if (seancePersonCombo) {
+    seancePersonCombo.setItems(
+      seancePersonFilterOptions(all.filter(p => matchesType(p) && matchesTheme(p) && matchesRole(p))));
+    // '' est la clé de l'entrée « tou·te·s » — le filtre, lui, dit 'all'.
+    seancePersonCombo.setSelected(seancePersonFilter === 'all' ? '' : seancePersonFilter);
   }
   if (roleBox) {
     const { conseiller, college } = seanceRoleCounts(all.filter(p => matchesType(p) && matchesTheme(p) && matchesPerson(p)));
@@ -379,7 +396,7 @@ function renderSeancePoints() {
 // filtres (facettes) et la liste de points affichée.
 function refreshSeanceFilteredView() { renderSeanceFilterOptions(); renderSeancePoints(); }
 function onSeanceThemeFilterChange(sel) { seanceThemeFilter = sel.value; refreshSeanceFilteredView(); }
-function onSeancePersonFilterChange(sel) { seancePersonFilter = sel.value; refreshSeanceFilteredView(); }
+function onSeancePersonSelect(key) { seancePersonFilter = key || 'all'; refreshSeanceFilteredView(); }
 // Reclique sur la puce déjà active → "Tous les types" ; sinon sélectionne ce
 // type (même geste que les puces de rôle).
 export function onSeanceTypeChipClick(type) {
@@ -446,9 +463,21 @@ function renderSeance(d, scroll) {
   </div>
   <div class="elus-bar seance-filter-bar" id="seanceFilterBar" hidden>
     <div class="elu-chips" id="seanceRoleChips" aria-label="Filtrer par rôle"></div>
-    <select id="seancePersonFilter" class="elu-select" aria-label="Filtrer par intervenant·e"></select>
     <div class="elu-chips" id="seanceTypeChips" aria-label="Filtrer par type de sujet"></div>
     <select id="seanceThemeFilter" class="elu-select" aria-label="Filtrer par thématique"></select>
+    <div class="elu-combo" id="seancePersonCombo">
+      <svg class="icon elu-combo-icon" aria-hidden="true"><use href="#ico-search"/></svg>
+      <input type="text" id="seancePersonFilter" class="elu-select elu-combo-input"
+             role="combobox" aria-expanded="false" aria-controls="seancePersonOptions"
+             aria-autocomplete="list" aria-label="Filtrer par intervenant·e"
+             placeholder="Filtrer par intervenant·e…" autocomplete="off"
+             autocapitalize="off" spellcheck="false" enterkeyhint="search"
+             data-form-type="other" data-lpignore="true" data-1p-ignore>
+      <button type="button" class="elu-combo-clear" id="seancePersonClear"
+              aria-label="Effacer la recherche" title="Effacer la recherche" hidden>✕</button>
+      <ul class="elu-combo-list" id="seancePersonOptions" role="listbox" aria-label="Intervenant·e·s" hidden></ul>
+    </div>
+    <p class="sr-only" id="seancePersonStatus" role="status" aria-live="polite"></p>
   </div>
   <p class="yc-note" id="seanceFilterCount"></p>
   <div class="elu-head">
@@ -464,12 +493,28 @@ function renderSeance(d, scroll) {
 
   box.innerHTML = html;
   const themeSel = document.getElementById('seanceThemeFilter');
-  const personSel = document.getElementById('seancePersonFilter');
   const resetBtn = document.getElementById('seanceFilterReset');
   const filterToggle = document.getElementById('seanceFilterToggle');
   const filterBar = document.getElementById('seanceFilterBar');
   if (themeSel) themeSel.addEventListener('change', () => onSeanceThemeFilterChange(themeSel));
-  if (personSel) personSel.addEventListener('change', () => onSeancePersonFilterChange(personSel));
+  // Même composant que le sélecteur d'élu·e (voir combobox.js) : un menu natif
+  // ne tenait pas ici non plus — jusqu'à 115 personnes sur une séance, et sa
+  // frappe rapide ne cherche que dans le prénom.
+  seancePersonCombo = createCombobox({
+    input: document.getElementById('seancePersonFilter'),
+    list: document.getElementById('seancePersonOptions'),
+    clear: document.getElementById('seancePersonClear'),
+    status: document.getElementById('seancePersonStatus'),
+    idPrefix: 'seance-personne',
+    itemKey: x => x.nom,
+    itemLabel: x => x.nom,
+    renderItem: seancePersonOptionHtml,
+    emptyText: q => `Aucun·e intervenant·e ne correspond à « ${q} ».`,
+    statusText: n => (n ? `${n} intervenant·e${n > 1 ? 's' : ''} — utilisez les flèches puis Entrée`
+      : 'Aucun résultat'),
+    placeholder: n => (n > 1 ? `Filtrer parmi ${n - 1} intervenant·e·s…` : 'Filtrer par intervenant·e…'),
+    onSelect: onSeancePersonSelect,
+  });
   if (resetBtn) resetBtn.addEventListener('click', onSeanceFilterReset);
   if (filterToggle && filterBar) {
     filterToggle.addEventListener('click', () => {

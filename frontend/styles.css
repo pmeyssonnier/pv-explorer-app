@@ -539,9 +539,14 @@ body {
    champ garde l'habillage .elu-select (même hauteur/bordure que les filtres
    voisins) ; ne s'ajoutent ici que la loupe, la croix d'effacement et la
    liste déroulante. */
-/* Le champ de recherche occupe toute sa ligne (action principale de l'onglet). */
+/* Le champ de recherche occupe toute sa ligne (action principale de l'onglet).
+   Dans la barre de filtres d'une séance, il vient EN DERNIER : sa liste s'ouvre
+   vers le bas et ne recouvre ainsi aucune puce ni aucun menu (même précaution
+   que côté Par élu·e, où les puces de rôle passent au-dessus du champ). */
 .elus-bar-search { margin-bottom: 4px; }
-.elus-bar-search .elu-combo { flex: 1 1 100%; }
+.elus-bar-search .elu-combo,
+.seance-filter-bar .elu-combo { flex: 1 1 100%; }
+.seance-filter-bar .elu-combo { margin-top: 4px; }
 /* Puces de filtrage de la fiche : rôle(s) sur une ligne, types sur la suivante
    — deux critères distincts, jamais mêlés sur la même rangée. */
 .elus-bar-filters { gap: 0; }

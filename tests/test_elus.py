@@ -713,6 +713,19 @@ def test_seance_point_lists_each_respondent_individually():
     assert [x["nom"] for x in p["repondants"]] == ["Cécile Jodogne", "Tamimount Essaidi"]
 
 
+def test_suite_runs_against_the_real_written_questions_base():
+    # Garde-fou : QE_JSON_PATH a un défaut RELATIF, qui ne se résout que
+    # depuis backend/ (le rootDir de production). Sans le réglage de conftest,
+    # la suite tournait donc sur une base amputée de toutes les questions
+    # écrites — silencieusement, puisque le chargeur tolère le fichier absent.
+    # Ce test échoue si ce réglage disparaît, plutôt que de laisser des
+    # centaines d'assertions porter sur des données incomplètes.
+    from services.questions_ecrites import load_qe_db
+    assert len(load_qe_db().get("questions", [])) > 100
+    d = elus.elu_detail("verzin")
+    assert [it for it in d["depose"] if it["type"] == "question_ecrite"]
+
+
 def test_deliberative_point_shows_pv_intervenants():
     # 24/09/2025 SP 6 et SP 7 (primes Be Home / accompagnement social) ont été
     # débattus ensemble : le PV leur donne les MÊMES cinq intervenant·e·s et le

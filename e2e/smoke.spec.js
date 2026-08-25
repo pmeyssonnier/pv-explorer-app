@@ -320,8 +320,11 @@ test('un point à plusieurs répondant·e·s se retrouve par chacun de leurs nom
   await page.locator('#seanceFilterToggle').click();
 
   // Plus aucune « personne » composée dans la liste des intervenant·e·s.
-  const options = await page.$$eval('#seancePersonFilter option', els => els.map(e => e.textContent));
+  await page.locator('#seancePersonFilter').click();
+  await expect(page.locator('#seancePersonOptions .elu-opt').first()).toBeVisible();
+  const options = await page.$$eval('#seancePersonOptions .elu-opt', els => els.map(e => e.textContent));
   expect(options.filter(o => / et /.test(o))).toEqual([]);
+  await page.keyboard.press('Escape');
 
   // Un point de cette séance a plusieurs répondant·e·s : sa ligne les montre tous.
   const ligne = page.locator('#seancePointsList .elu-item', { has: page.locator('.elu-rep') })
@@ -333,10 +336,47 @@ test('un point à plusieurs répondant·e·s se retrouve par chacun de leurs nom
   // Filtré sur le PREMIER nom, puis sur le DERNIER : le point reste trouvable
   // dans les deux cas, et garde l'affichage de tous ses répondant·e·s.
   for (const nom of [noms[0], noms[noms.length - 1]]) {
-    await page.locator('#seancePersonFilter').selectOption(nom);
+    await choisirIntervenant(page, nom);
     const retrouve = page.locator('#seancePointsList .elu-item').filter({ hasText: rep });
     await expect(retrouve).toHaveCount(1);
     await expect(retrouve.locator('.elu-rep')).toHaveText(rep);
   }
+  expect(errors).toEqual([]);
+});
+
+// Choisit un·e intervenant·e dans le combobox du filtre, en tapant son NOM DE
+// FAMILLE — ce que le menu natif qu'il remplace ne savait pas chercher.
+async function choisirIntervenant(page, nom) {
+  const famille = nom.split(/\s+/).pop();
+  await page.locator('#seancePersonFilter').click();
+  await page.locator('#seancePersonFilter').fill(famille);
+  const option = page.locator(`#seancePersonOptions .elu-opt[data-key="${nom}"]`);
+  await expect(option).toBeVisible();
+  await option.click();
+  await expect(page.locator('#seancePersonFilter')).toHaveValue(nom);
+}
+
+test('le filtre par intervenant·e cherche sur le nom de famille, et se défait', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await ouvrirSeance(page, '2010', '2010-09-29', '29/09/2010');
+  await page.locator('#seanceFilterToggle').click();
+
+  const tousLesPoints = await page.locator('#seancePointsList .elu-item').count();
+  // Un nom pris dans la liste elle-même (aucun nom en dur).
+  await page.locator('#seancePersonFilter').click();
+  const nom = await page.locator('#seancePersonOptions .elu-opt').nth(1).getAttribute('data-key');
+  await page.keyboard.press('Escape');
+
+  await choisirIntervenant(page, nom);
+  const filtres = await page.locator('#seancePointsList .elu-item').count();
+  expect(filtres).toBeGreaterThan(0);
+  expect(filtres).toBeLessThan(tousLesPoints);
+
+  // La 1re entrée de la liste ramène tout le monde.
+  await page.locator('#seancePersonFilter').click();
+  await page.locator('#seancePersonOptions .elu-opt').first().click();
+  await expect(page.locator('#seancePersonFilter')).toHaveValue('');
+  await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(tousLesPoints);
   expect(errors).toEqual([]);
 });
