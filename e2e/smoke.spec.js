@@ -92,3 +92,98 @@ test('pas de débordement horizontal en 390px de large', async ({ page }) => {
   }
   expect(errors).toEqual([]);
 });
+
+// ── Recherche d'élu·e (combobox, voir frontend/js/elus.js) ──
+// Ces tests interrogent la vraie base (le backend local sert /elus) mais ne
+// codent en dur AUCUN nom : les cas sont dérivés de la liste affichée, pour
+// rester valables quand la base évolue.
+
+// Ouvre l'onglet « Par élu·e » et déplie la liste des élu·e·s.
+async function openEluCombo(page) {
+  await page.locator('#tab-elus').click();
+  await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+  await page.locator('#eluSearch').click();
+  await expect(page.locator('#eluOptions')).toBeVisible();
+}
+const optionNames = page => page.$$eval('#eluOptions .elu-opt .elu-opt-name', els => els.map(e => e.textContent.trim()));
+
+// Le cas que le <select> natif ne savait PAS traiter : sa frappe rapide ne
+// cherche que dans le début du libellé affiché, donc le prénom.
+test('recherche d\'un·e élu·e par son nom de famille', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+  const noms = await optionNames(page);
+  const cible = noms.find(n => n.split(/\s+/).length > 1);
+  expect(cible, 'aucun nom en deux mots dans la liste').toBeTruthy();
+  const famille = cible.split(/\s+/).pop();
+
+  await page.locator('#eluSearch').fill(famille);
+  await expect(page.locator('#eluOptions .elu-opt').first()).toBeVisible();
+  expect(await optionNames(page)).toContain(cible);
+  expect(errors).toEqual([]);
+});
+
+test('recherche insensible aux accents', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+  const noms = await optionNames(page);
+  // Un nom accentué, cherché sans son accent (« cecile » → « Cécile »).
+  const accentue = noms.find(n => n.normalize('NFD') !== n.normalize('NFC'));
+  expect(accentue, 'aucun nom accentué dans la liste').toBeTruthy();
+  const mot = accentue.split(/\s+/).find(w => w.normalize('NFD') !== w.normalize('NFC'));
+  const sansAccent = mot.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  await page.locator('#eluSearch').fill(sansAccent);
+  await expect(page.locator('#eluOptions .elu-opt').first()).toBeVisible();
+  expect(await optionNames(page)).toContain(accentue);
+  expect(errors).toEqual([]);
+});
+
+test('sélection au clavier (flèches + Entrée) puis fermeture', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+
+  await page.keyboard.press('ArrowDown');
+  // L'option mise en avant est celle qu'Entrée doit charger (on la lit plutôt
+  // que de supposer son rang : la liste s'ouvre sur la sélection courante).
+  const attendu = await page.locator('#eluOptions .elu-opt-active .elu-opt-name').textContent();
+  await page.keyboard.press('Enter');
+
+  await expect(page.locator('#eluResult .elu-name')).toHaveText(attendu);
+  await expect(page.locator('#eluOptions')).toBeHidden();
+  await expect(page.locator('#eluSearch')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#eluSearch')).toHaveValue(attendu);
+  expect(errors).toEqual([]);
+});
+
+test('aucun résultat : le filtre de rôle propose de s\'élargir', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+  // Une personne du Collège, cherchée alors que le filtre est sur les
+  // conseiller·ère·s : le message doit proposer d'élargir plutôt que de
+  // laisser l'utilisateur devant une liste vide inexpliquée.
+  const parRole = await page.$$eval('#eluOptions .elu-opt', els => els.map(e => ({
+    nom: e.querySelector('.elu-opt-name').textContent.trim(),
+    college: !!e.querySelector('.elu-opt-role-college'),
+  })));
+  const deburr = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const conseillers = parRole.filter(e => !e.college).map(e => deburr(e.nom));
+  // Un nom de famille du Collège qu'aucun·e conseiller·ère ne porte non plus
+  // (sinon la recherche filtrée ne serait pas vide, et le cas testé disparaît).
+  const cible = parRole.find(e => e.college
+    && !conseillers.some(n => n.includes(deburr(e.nom.split(/\s+/).pop()))));
+  expect(cible, 'aucun membre du Collège au nom distinctif').toBeTruthy();
+
+  await page.locator('#eluRoleChips .elu-chip', { hasText: 'Conseiller' }).click();
+  await page.locator('#eluSearch').click();
+  await page.locator('#eluSearch').fill(cible.nom.split(/\s+/).pop());
+  await expect(page.locator('#eluOptions .elu-opt-empty')).toBeVisible();
+
+  await page.locator('.elu-opt-allroles').click();
+  expect(await optionNames(page)).toContain(cible.nom);
+  expect(errors).toEqual([]);
+});
