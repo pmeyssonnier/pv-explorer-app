@@ -509,6 +509,35 @@ def sans_decision_par_date() -> dict:
     return _annees_cache["sans_decision_par_date"]
 
 
+def points_par_issue(mot: str, limite: int = 40):
+    """Relevé EXHAUSTIF des points dont l'ISSUE est `mot` (« REJETÉ », « RETIRÉ »,
+    « REPORTÉ »…), lu DIRECTEMENT dans la base — sans recherche vectorielle.
+
+    Retourne `(lignes, total)` : les `limite` plus récentes, et le nombre RÉEL de
+    points concernés. Le total est rendu séparément pour qu'une réponse tronquée
+    puisse le dire (« 645 points au total, voici les 40 plus récents ») plutôt
+    que de laisser croire que la liste est complète.
+
+    Pourquoi ce relevé existe : la recherche vectorielle rend ce qui RESSEMBLE à
+    la question, jamais la garantie d'avoir tout vu. Sur une issue rare, elle a
+    ramené 4 des 10 motions rejetées — et la réponse annonçait « voici la liste ».
+    Une question qui appelle un DÉNOMBREMENT ou une LISTE se répond sur la base,
+    pas sur un échantillon de similarité.
+    """
+    out = []
+    for s in load_db().get("seances", []):
+        date = (s.get("seance") or {}).get("date")
+        for p in s.get("points", []):
+            if mot_issue(p) != mot:
+                continue
+            out.append({
+                "date": date, "sp": p.get("sp"), "titre": (p.get("titre") or "").strip(),
+                "type": p.get("type"), "vote": p.get("vote") or {},
+            })
+    out.sort(key=lambda x: (x["date"] or "", str(x["sp"])), reverse=True)
+    return out[:limite], len(out)
+
+
 def _ensure_annees():
     sig = _sig()
     if _annees_cache["sig"] == sig:

@@ -62,17 +62,18 @@ def _hit(id_, score):
     return {"_id": id_, "score": score}
 
 
-def test_le_repechage_ajoute_les_points_manquants_et_garde_l_ordre_des_scores():
+def test_les_points_repeches_passent_en_tete():
+    """Porter l'issue demandée est une correspondance EXACTE ; le score n'est
+    qu'une ressemblance. Laissés au score, quatre des dix motions rejetées
+    seulement atteignaient les sources affichées (constaté en production)."""
     principaux = [_hit("PV-2020-06-24_SP52", 0.90), _hit("PV-2019-02-27_SP33", 0.80)]
-    index = _IndexFactice([_hit("PV-2020-10-28_SP139", 0.85)])
+    index = _IndexFactice([_hit("PV-2020-10-28_SP139", 0.55)])
 
     res = rag._renfort_issue(index, "motions rejetées", {}, "REJETÉ", principaux)
 
     assert [h["_id"] for h in res] == [
-        "PV-2020-06-24_SP52", "PV-2020-10-28_SP139", "PV-2019-02-27_SP33",
+        "PV-2020-10-28_SP139", "PV-2020-06-24_SP52", "PV-2019-02-27_SP33",
     ]
-    # Le classement reste celui des scores : on ne truque pas la pertinence.
-    assert [h["score"] for h in res] == [0.90, 0.85, 0.80]
 
 
 def test_le_repechage_filtre_sur_la_decision_sans_perdre_les_filtres_existants():
@@ -96,3 +97,40 @@ def test_un_repechage_en_echec_ne_casse_jamais_la_reponse():
     principaux = [_hit("PV-2020-06-24_SP52", 0.90)]
     index = _IndexFactice([], erreur=RuntimeError("RESOURCE_EXHAUSTED"))
     assert rag._renfort_issue(index, "q", {}, "REJETÉ", principaux) == principaux
+
+
+# ── Le relevé exhaustif, tiré de la base et non de la recherche ────────────
+def test_l_inventaire_compte_sur_la_base_pas_sur_les_extraits(monkeypatch):
+    """Ce qui manquait pour que la réponse soit COMPLÈTE : la recherche avait
+    ramené 4 des 10 motions rejetées, et la réponse annonçait « voici la liste »."""
+    monkeypatch.setattr(rag, "points_par_issue",
+                        lambda mot, limite: ([
+                            {"date": "2024-05-29", "sp": 62, "titre": "Tronçon sud",
+                             "vote": {"pour": 15, "contre": 19, "abstentions": 2}},
+                        ], 10))
+    bloc = rag._inventaire_block("REJETÉ")
+    assert "10 point(s)" in bloc and "« Rejeté »" in bloc
+    assert "29/05/2024 SP 62" in bloc                      # date à la française
+    assert "(15 pour, 19 contre, 2 abstentions)" in bloc
+
+
+def test_l_inventaire_dit_quand_il_est_tronque(monkeypatch):
+    """645 reports ne tiennent pas dans un prompt : la liste est coupée, et le
+    total réel est donné pour qu'une réponse ne la présente pas comme complète."""
+    monkeypatch.setattr(rag, "points_par_issue",
+                        lambda mot, limite: ([{"date": "2026-05-27", "sp": 53,
+                                               "titre": "Moratoire", "vote": {}}], 645))
+    bloc = rag._inventaire_block("REPORTÉ")
+    assert "645 point(s)" in bloc and "plus récents" in bloc
+
+
+def test_une_abstention_au_singulier(monkeypatch):
+    monkeypatch.setattr(rag, "points_par_issue",
+                        lambda mot, limite: ([{"date": "2014-09-24", "sp": 88, "titre": "Reyers",
+                                               "vote": {"pour": 7, "contre": 34,
+                                                        "abstentions": 1}}], 1))
+    assert "1 abstention)" in rag._inventaire_block("REJETÉ")
+
+
+def test_pas_d_inventaire_sans_issue_detectee():
+    assert rag._inventaire_block(None) == ""
