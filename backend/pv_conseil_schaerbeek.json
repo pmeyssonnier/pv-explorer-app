@@ -454,7 +454,7 @@
           "resume": "Point de convention de partenariat avec l'ASBL \"Pater Baudry\".",
           "intervenants": [],
           "repondant": null,
-          "decision": "",
+          "decision": "APPROUVÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -2765,7 +2765,7 @@
             "M. Guillaume"
           ],
           "repondant": null,
-          "decision": "",
+          "decision": "APPROUVÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -7602,7 +7602,7 @@
           "resume": "Prolongation de la concession du mini-golf signée avec Assistante Partner.",
           "intervenants": [],
           "repondant": null,
-          "decision": "",
+          "decision": "APPROUVÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -99956,7 +99956,7 @@
           "resume": "Point retiré de l'ordre du jour",
           "intervenants": [],
           "repondant": null,
-          "decision": "",
+          "decision": "RETIRÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -115582,7 +115582,7 @@
           "resume": "POINT RETIRÉ DE L'ORDRE DU JOUR",
           "intervenants": [],
           "repondant": null,
-          "decision": "",
+          "decision": "RETIRÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -115604,7 +115604,7 @@
           "resume": "POINT RETIRÉ DE L'ORDRE DU JOUR",
           "intervenants": [],
           "repondant": null,
-          "decision": "",
+          "decision": "RETIRÉ",
           "vote": {
             "type": null,
             "pour": null,
@@ -182226,12 +182226,12 @@
             "Monsieur Bernard"
           ],
           "repondant": "Monsieur De Herde",
-          "decision": null,
+          "decision": "APPROUVÉ",
           "vote": {
             "type": null,
             "pour": null,
-            "contre": null,
-            "abstentions": null
+            "contre": 0,
+            "abstentions": 0
           },
           "montant_eur": null,
           "thematiques": [
@@ -202171,7 +202171,7 @@
           "resume": "Approbation de subsides pour la promotion de l'image de Schaerbeek à l'occasion du centenaire du CHU Brugmann",
           "intervenants": [],
           "repondant": null,
-          "decision": null,
+          "decision": "APPROUVÉ",
           "vote": {
             "type": null,
             "pour": null,
