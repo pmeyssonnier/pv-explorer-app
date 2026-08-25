@@ -713,6 +713,48 @@ def test_seance_point_lists_each_respondent_individually():
     assert [x["nom"] for x in p["repondants"]] == ["Cécile Jodogne", "Tamimount Essaidi"]
 
 
+def test_deliberative_point_shows_pv_intervenants():
+    # 24/09/2025 SP 6 et SP 7 (primes Be Home / accompagnement social) ont été
+    # débattus ensemble : le PV leur donne les MÊMES cinq intervenant·e·s et le
+    # même répondant. SP 6 les affichait (attribution manuelle), SP 7 non — le
+    # champ « intervenants » d'un point délibératif était ignoré, ne laissant
+    # surface qu'aux 9 attributions manuelles. Les deux doivent s'accorder.
+    pts = elus.seance_detail("2025-09-24")["points"]
+    sp6, sp7 = (next(p for p in pts if p["sp"] == n) for n in (6, 7))
+    attendu = ["Cécile Jodogne", "Naïma Belkhatir", "Georges Verzin",
+               "Matthieu Degrez", "Elias Ammi"]
+    assert [x["nom"] for x in sp6["demandeurs"]] == attendu
+    assert [x["nom"] for x in sp7["demandeurs"]] == attendu
+    assert sp6["repondant"] == sp7["repondant"] == "Cédric Mahieu"
+
+
+def test_deliberative_point_intervenants_never_repeat_the_respondent():
+    # 03/02/2010 SP 3 : le PV liste Michel de Herde EN TÊTE des intervenant·e·s
+    # ET comme répondant (il préside le débat autant qu'il y répond) — le champ
+    # « intervenants » ne fait pas la différence. Sa ligne de répondant suffit.
+    p = next(x for x in elus.seance_detail("2010-02-03")["points"] if x["sp"] == 3)
+    noms = [x["nom"] for x in p["demandeurs"]]
+    assert p["repondant"] == "Michel de Herde"
+    assert p["repondant"] not in noms
+    # Les 8 autres restent, dans l'ordre du PV (de Herde y était en tête).
+    assert len(noms) == 8
+    assert noms[0].endswith("Courtheoux")
+
+
+def test_deliberative_point_intervenants_do_not_become_depositions():
+    # Garde-fou : afficher les intervenant·e·s d'un point délibératif est un
+    # choix D'AFFICHAGE (onglet Séances). Intervenir dans un débat n'est pas
+    # déposer un point — l'agrégation par personne ne doit rien y gagner,
+    # sinon les « interventions déposées » de chacun·e enflent d'un coup.
+    sp7 = next(p for p in elus.seance_detail("2025-09-24")["points"] if p["sp"] == 7)
+    assert sp7["demandeurs"]                       # affichés côté séance…
+    for nom in [x["nom"] for x in sp7["demandeurs"]]:
+        d = elus.elu_detail(elus._key(nom))
+        assert d is not None
+        assert not [it for it in d["depose"]       # …mais jamais comptés ici
+                    if it["date"] == "2025-09-24" and it["sp"] == 7]
+
+
 def test_seance_point_respondents_keep_their_own_role():
     # 03/03/2010 SP 12 : Frédéric Nimal (conseiller à cette date) répond aux
     # côtés de Cécile Jodogne (Collège). Le rôle COMBINÉ du point vaut

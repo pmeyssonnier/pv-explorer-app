@@ -183,6 +183,24 @@ def seance_detail(date: str):
     for p in (seance or {}).get("points", []):
         author, author_key = _point_author(p, pairs, date)
         author_names = _split_person_names(author) if author_key else []
+        # Point délibératif (approbation, règlement, convention…) : personne
+        # ne l'a « demandé », mais le PV liste souvent qui est INTERVENU au
+        # débat. Ce champ était ignoré — seules 9 attributions manuelles
+        # faisaient surface, laissant 1 633 points débattus sans aucun nom et
+        # introuvables par le filtre « intervenant·e ». On l'affiche donc tel
+        # quel, sous le libellé « Intervenant·e·s » (voir TYPE_ACTOR_LABEL).
+        #
+        # AFFICHAGE SEULEMENT : l'attribution par personne (onglet Par élu·e,
+        # registry._build_all) reste inchangée — intervenir dans un débat
+        # n'est pas déposer un point, et l'y compter gonflerait les
+        # « interventions déposées » de tout le monde. C'est aussi pourquoi
+        # ce champ reste inutilisable pour désigner un·e AUTEUR·E : il mêle
+        # sans distinction qui soulève la discussion et qui y répond (voir
+        # attribution._MANUAL_AUTHOR_OVERRIDES) — la mention du/de la
+        # répondant·e est retirée plus bas.
+        if not author_names and _TYPE_LABEL.get(p.get("type"), "Point") == "Point":
+            author_names = [n for mention in (p.get("intervenants") or [])
+                            for n in _split_person_names(mention)]
         resp_names = _respondents(p.get("repondant"), meta)
         resp_keys = [_key(n, pairs) for n in resp_names]
         repondants = _people_list(resp_names, pairs, date, idx, resolve,
@@ -218,7 +236,7 @@ def seance_detail(date: str):
             # sur un point ancien et échevin·e sur un point récent — jamais un
             # rôle unique figé pour toute sa carrière (voir seances.js, filtre
             # de rôle à facettes, qui consomme ces deux champs).
-            "demandeur_role": _role_for_key(author_key, date, idx),
+            "demandeur_role": _combined_role([_key(x["nom"], pairs) for x in demandeurs], date, idx),
             "repondant": repondant,
             "repondant_role": _combined_role(resp_keys, date, idx),
             "reporte": _is_reportee(p.get("decision")),
