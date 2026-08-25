@@ -216,18 +216,28 @@ function matchesType(p) {
 function matchesTheme(p) {
   return seanceThemeFilter === 'all' || (p.thematiques || []).includes(seanceThemeFilter);
 }
+// Intervenant·e·s d'un point, UNE PAR ENTRÉE (voir backend/services/seances.py,
+// _people_list) : les deux côtés confondus, chacun·e avec SON rôle à la date du
+// point. Un point à plusieurs répondant·e·s (« Audrey Henry et Justine Harzé »)
+// donne donc deux entrées — c'est ce qui permet de le retrouver en cherchant
+// l'un OU l'autre nom, alors que la forme recollée n'en faisait qu'une seule
+// « personne » introuvable. L'affichage de la ligne, lui, garde cette forme
+// recollée : un point montre toujours TOUS ses répondant·e·s.
+const personnesDuPoint = p => [...(p.demandeurs || []), ...(p.repondants || [])];
+
 function matchesPerson(p) {
-  return seancePersonFilter === 'all' || p.demandeur === seancePersonFilter || p.repondant === seancePersonFilter;
+  return seancePersonFilter === 'all'
+    || personnesDuPoint(p).some(x => x.nom === seancePersonFilter);
 }
 // Rôle ("conseiller"/"college") DE CE POINT PRÉCIS, déjà résolu côté serveur
-// à la date de la séance (voir backend/services/seances.py, demandeur_role/
-// repondant_role — mandats déclaratifs par date, services.people.mandats) :
-// jamais un rôle unique figé par personne, un même nom peut être conseiller·ère
-// sur un point ancien et échevin·e sur un point récent.
+// à la date de la séance (mandats déclaratifs par date, voir
+// services.people.mandats) : jamais un rôle unique figé par personne, un même
+// nom peut être conseiller·ère sur un point ancien et échevin·e sur un point
+// récent. Le rôle est lu par PERSONNE et non par point : un point où un·e
+// conseiller·ère répond aux côtés d'un·e échevin·e compte pour les deux.
 function matchesRole(p) {
   return seanceRoleFilter === 'all'
-    || p.demandeur_role === seanceRoleFilter
-    || p.repondant_role === seanceRoleFilter;
+    || personnesDuPoint(p).some(x => x.role === seanceRoleFilter);
 }
 function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && matchesPerson(p) && matchesRole(p); }
 
@@ -264,10 +274,15 @@ function seanceThemeFilterOptions(points) {
 function seancePersonFilterOptions(points) {
   const counts = new Map();
   points.forEach(p => {
-    [[p.demandeur, p.demandeur_role], [p.repondant, p.repondant_role]].forEach(([name, role]) => {
-      if (!name) return;
+    // Dédoublonné PAR POINT : une personne qui y figure des deux côtés (ou
+    // deux fois du même) ne le compte qu'une fois — le nombre affiché est
+    // bien un nombre de points.
+    const vus = new Set();
+    personnesDuPoint(p).forEach(({ nom, role }) => {
+      if (!nom || vus.has(nom)) return;
       if (seanceRoleFilter !== 'all' && role !== seanceRoleFilter) return;
-      counts.set(name, (counts.get(name) || 0) + 1);
+      vus.add(nom);
+      counts.set(nom, (counts.get(nom) || 0) + 1);
     });
   });
   if (seancePersonFilter !== 'all' && !counts.has(seancePersonFilter)) counts.set(seancePersonFilter, 0);
@@ -305,7 +320,7 @@ function seanceTypeChips(points) {
 function seanceRoleCounts(points) {
   let conseiller = 0, college = 0;
   points.forEach(p => {
-    const roles = new Set([p.demandeur_role, p.repondant_role]);
+    const roles = new Set(personnesDuPoint(p).map(x => x.role));
     if (roles.has('conseiller')) conseiller++;
     if (roles.has('college')) college++;
   });
@@ -380,8 +395,7 @@ export function onSeanceTypeChipClick(type) {
 function personHasRole(name, role) {
   if (!currentSeanceDetail) return false;
   return currentSeanceDetail.points.some(p =>
-    (p.demandeur === name && p.demandeur_role === role) ||
-    (p.repondant === name && p.repondant_role === role));
+    personnesDuPoint(p).some(x => x.nom === name && x.role === role));
 }
 export function onSeanceRoleChipClick(role) {
   seanceRoleFilter = seanceRoleFilter === role ? 'all' : role;

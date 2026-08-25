@@ -44,6 +44,35 @@ def _combined_role(keys, date, idx):
     return None
 
 
+def _people_list(names, pairs, date, idx, resolve, fallback=None):
+    """Personnes d'une mention, UNE PAR ENTRÉE : [{"nom", "role"}], dédupliqué
+    en conservant l'ordre du PV.
+
+    Le champ source est souvent composé (« Mme Henry et Mme Harzé », « De
+    Herde, Smeysters, Bourgmestre ff ») : l'extraction le découpe déjà (voir
+    _respondents/_split_person_names), mais seule la forme RECOLLÉE
+    (« Audrey Henry et Justine Harzé ») était exposée. Le filtre par
+    intervenant·e de l'onglet Séances en faisait alors une « personne »
+    unique, introuvable en cherchant l'un des deux noms. Chaque personne porte
+    ici SON rôle à la date du point — plus précis que le rôle combiné du
+    point (voir _combined_role), qui écrase un·e conseiller·ère répondant aux
+    côtés d'un·e échevin·e.
+
+    `fallback` : mention non résolue en personne (ex. « Le Collège ») —
+    conservée comme entrée unique pour ne pas disparaître du filtre.
+    """
+    out, seen = [], set()
+    for n in names:
+        nom = resolve(n)
+        if not nom or nom in seen:
+            continue
+        seen.add(nom)
+        out.append({"nom": nom, "role": _role_for_key(_key(n, pairs), date, idx)})
+    if not out and fallback:
+        out.append({"nom": fallback, "role": None})
+    return out
+
+
 def _is_reportee(decision) -> bool:
     """Point renvoyé à une séance ultérieure (« REPORTÉ ») : jamais débattu
     ce jour-là, donc jamais de répondant·e ni de débat filmé à en attendre."""
@@ -154,20 +183,26 @@ def seance_detail(date: str):
     for p in (seance or {}).get("points", []):
         author, author_key = _point_author(p, pairs, date)
         author_names = _split_person_names(author) if author_key else []
-        author_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in author_names))))
-        demandeur = " et ".join(author_resolved) if author_resolved else None
+        demandeurs = _people_list(author_names, pairs, date, idx, resolve)
+        demandeur = " et ".join(x["nom"] for x in demandeurs) or None
         resp_names = _respondents(p.get("repondant"), meta)
         resp_keys = [_key(n, pairs) for n in resp_names]
-        resp_resolved = list(dict.fromkeys(filter(None, (resolve(n) for n in resp_names))))
-        repondant = " et ".join(resp_resolved) if resp_resolved else (
-            _titlecase(_clean(p.get("repondant") or "")) or None
-        )
+        repondants = _people_list(resp_names, pairs, date, idx, resolve,
+                                  fallback=_titlecase(_clean(p.get("repondant") or "")) or None)
+        repondant = " et ".join(x["nom"] for x in repondants) or None
         points.append({
             "sp": p.get("sp") or 0,
             "type": p.get("type"),
             "type_label": _TYPE_LABEL.get(p.get("type"), "Point"),
             "titre": p.get("titre") or "",
             "demandeur": demandeur,
+            # Liste INDIVIDUELLE (voir _people_list) : ce que consomme le
+            # filtre par intervenant·e de l'onglet Séances, pour qu'un point
+            # à plusieurs répondant·e·s se retrouve en cherchant n'importe
+            # lequel de leurs noms. L'affichage, lui, reste la forme recollée
+            # ci-dessus : un point montre TOUS ses répondant·e·s.
+            "demandeurs": demandeurs,
+            "repondants": repondants,
             # Rôle de chacun·e À LA DATE DE CETTE SÉANCE (voir _role_for_key/
             # _combined_role ci-dessus) : un·e même élu·e peut être conseiller·ère
             # sur un point ancien et échevin·e sur un point récent — jamais un
@@ -233,7 +268,9 @@ def seance_detail(date: str):
                     "titre": titre,
                     "demandeur": resolve(vauthor),
                     "demandeur_role": _role_for_key(_key(vauthor, pairs) if vauthor else None, date, idx),
+                    "demandeurs": _people_list([vauthor] if vauthor else [], pairs, date, idx, resolve),
                     "repondant": None,
+                    "repondants": [],
                     "repondant_role": None,
                     "reporte": False,
                     "retire": False,

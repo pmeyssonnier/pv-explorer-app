@@ -701,6 +701,40 @@ def test_seance_detail_demandeur_repondant_and_video_precise_match_elu_view():
     assert it["repondant_role"] == "college"
 
 
+def test_seance_point_lists_each_respondent_individually():
+    # Cas réel (29/09/2010, SP 96) : le PV donne « Mme la Bourgmestre ff, Mme
+    # Essaidi ». L'AFFICHAGE recolle les deux noms — un point montre tous ses
+    # répondant·e·s — mais le filtre par intervenant·e de l'onglet Séances a
+    # besoin de la liste INDIVIDUELLE, sans quoi « Cécile Jodogne et Tamimount
+    # Essaidi » devenait une « personne » unique, introuvable en cherchant
+    # l'un des deux noms.
+    p = next(x for x in elus.seance_detail("2010-09-29")["points"] if x["sp"] == 96)
+    assert p["repondant"] == "Cécile Jodogne et Tamimount Essaidi"
+    assert [x["nom"] for x in p["repondants"]] == ["Cécile Jodogne", "Tamimount Essaidi"]
+
+
+def test_seance_point_respondents_keep_their_own_role():
+    # 03/03/2010 SP 12 : Frédéric Nimal (conseiller à cette date) répond aux
+    # côtés de Cécile Jodogne (Collège). Le rôle COMBINÉ du point vaut
+    # "college" (voir _combined_role) — c'est ce qui masquait Nimal au filtre
+    # « Conseiller·ère ». Chaque personne porte donc désormais SON rôle.
+    p = next(x for x in elus.seance_detail("2010-03-03")["points"] if x["sp"] == 12)
+    assert p["repondant_role"] == "college"          # résumé du point, inchangé
+    assert p["repondants"] == [
+        {"nom": "Frédéric Nimal", "role": "conseiller"},
+        {"nom": "Cécile Jodogne", "role": "college"},
+    ]
+
+
+def test_seance_point_respondent_not_resolved_as_person_kept_as_single_entry():
+    # « Secrétaire Communal » ne se résout en aucune personne du registre :
+    # la mention est conservée telle quelle, en UNE entrée sans rôle — sinon
+    # elle disparaîtrait du filtre par intervenant·e, où elle figurait avant.
+    p = next(x for x in elus.seance_detail("2012-12-05")["points"] if x["sp"] == 1)
+    assert p["repondant"] == "Secrétaire Communal"
+    assert p["repondants"] == [{"nom": "Secrétaire Communal", "role": None}]
+
+
 def test_seance_detail_role_reflects_mandate_at_seance_date_not_a_fixed_label():
     # Frédéric Nimal (clé "nimal") n'est devenu échevin qu'en 2012 (mandats
     # déclaratifs, voir elus_mandats.json) : un point de 2010 où il répond

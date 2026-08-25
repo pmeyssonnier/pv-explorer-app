@@ -294,3 +294,49 @@ test('la puce « débat filmé » compte tous les points menant au débat', asyn
   await expect(page.locator('#eluResult .elu-links a:has-text("Voir le débat")')).toHaveCount(annonce);
   expect(errors).toEqual([]);
 });
+
+// ── Onglet Séances : filtre par intervenant·e sur un point à PLUSIEURS
+// répondant·e·s ──
+// Un point répondu à deux (« Audrey Henry et Justine Harzé ») doit se
+// retrouver en cherchant l'un OU l'autre nom, tout en continuant d'afficher
+// les deux sur sa ligne.
+
+// Ouvre une séance donnée. La sélection d'une ANNÉE charge elle-même une
+// séance : on laisse ce chargement retomber avant de choisir la nôtre, sinon
+// sa réponse tardive écrase la sélection.
+async function ouvrirSeance(page, annee, date, libelle) {
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption(annee);
+  await expect(page.locator('#seanceResult .elu-name')).toContainText(annee);
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  await page.locator('#seanceList').selectOption(date);
+  await expect(page.locator('#seanceResult .elu-name')).toHaveText(libelle);
+}
+
+test('un point à plusieurs répondant·e·s se retrouve par chacun de leurs noms', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await ouvrirSeance(page, '2010', '2010-09-29', '29/09/2010');
+  await page.locator('#seanceFilterToggle').click();
+
+  // Plus aucune « personne » composée dans la liste des intervenant·e·s.
+  const options = await page.$$eval('#seancePersonFilter option', els => els.map(e => e.textContent));
+  expect(options.filter(o => / et /.test(o))).toEqual([]);
+
+  // Un point de cette séance a plusieurs répondant·e·s : sa ligne les montre tous.
+  const ligne = page.locator('#seancePointsList .elu-item', { has: page.locator('.elu-rep') })
+    .filter({ hasText: ' et ' }).first();
+  const rep = (await ligne.locator('.elu-rep').textContent()).trim();
+  const noms = rep.replace(/^[^:]+:\s*/, '').split(' et ');
+  expect(noms.length).toBeGreaterThan(1);
+
+  // Filtré sur le PREMIER nom, puis sur le DERNIER : le point reste trouvable
+  // dans les deux cas, et garde l'affichage de tous ses répondant·e·s.
+  for (const nom of [noms[0], noms[noms.length - 1]]) {
+    await page.locator('#seancePersonFilter').selectOption(nom);
+    const retrouve = page.locator('#seancePointsList .elu-item').filter({ hasText: rep });
+    await expect(retrouve).toHaveCount(1);
+    await expect(retrouve.locator('.elu-rep')).toHaveText(rep);
+  }
+  expect(errors).toEqual([]);
+});
