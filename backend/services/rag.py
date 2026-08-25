@@ -19,6 +19,7 @@ import lexique_store
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
+from services.seances import points_par_issue
 from utils.statut import decision_recherchee
 from utils.text import _decision_status, _strip_accents, _thematique_label
 from utils.video import video_session_map, video_chunk_counts
@@ -82,6 +83,54 @@ def _glossaire_block(question: str, context: str) -> str:
         "les extraits. Ce ne sont PAS des extraits de PV : ne les cite pas comme source.\n"
         f"{lignes}\n"
         "</glossaire>\n\n"
+    )
+
+
+# Nombre de points listés dans <inventaire> quand l'issue est fréquente (645
+# reports) : assez pour répondre, assez court pour ne pas noyer le contexte. Le
+# TOTAL réel est donné à part, pour qu'une liste tronquée le dise.
+INVENTAIRE_MAX = 40
+
+
+def _inventaire_block(decision: Optional[str]) -> str:
+    """Relevé EXHAUSTIF des points portant l'issue sur laquelle porte la question.
+
+    La recherche vectorielle rend ce qui RESSEMBLE à la question — jamais la
+    garantie d'avoir tout vu. Constaté en production : sur « le conseil a-t-il
+    rejeté des motions ? », elle a ramené 4 des 10, et la réponse annonçait
+    « en voici la liste ». Une question qui appelle un dénombrement se répond
+    sur la BASE, pas sur un échantillon de similarité.
+
+    Ce bloc n'est ni un extrait ni un raccourci : c'est la même donnée que
+    l'onglet Séances, comptée par le même chemin (utils.statut.mot_issue).
+    Vide quand la question ne porte sur aucune issue.
+    """
+    if not decision:
+        return ""
+    lignes, total = points_par_issue(decision, INVENTAIRE_MAX)
+    if not lignes:
+        return ""
+    label = _decision_status(decision) or decision
+    corps = []
+    for p in lignes:
+        d = p["date"]
+        jma = f"{d[8:10]}/{d[5:7]}/{d[:4]}" if len(d or "") == 10 else d
+        v = p["vote"] or {}
+        chiffres = ""
+        if v.get("pour") is not None and v.get("contre") is not None:
+            abst = v.get("abstentions") or 0
+            chiffres = (f" ({v['pour']} pour, {v['contre']} contre, "
+                        f"{abst} abstention{'s' if abst != 1 else ''})")
+        corps.append(f"- {jma} SP {p['sp']} — {p['titre'][:110]}{chiffres}")
+    tronque = ("" if total <= len(lignes) else
+               f" Seuls les {len(lignes)} plus récents sont listés ci-dessous : "
+               f"dis-le si tu t'appuies sur cette liste.")
+    return (
+        "<inventaire>\n"
+        f"Relevé établi sur la base de données de l'app, et non sur les extraits : "
+        f"{total} point(s) du Conseil portent l'issue « {label} ».{tronque}\n"
+        + "\n".join(corps) + "\n"
+        "</inventaire>\n\n"
     )
 
 
@@ -194,8 +243,11 @@ def _renfort_issue(index, question: str, filters: dict, decision: str, matches: 
     détourne pas — un déclenchement à tort ne coûte alors que quelques passages
     de plus, jamais une réponse à côté.
 
-    Le classement final reste celui des scores : on ne truque pas la
-    pertinence, on donne à ces points l'occasion d'être vus.
+    Ces points passent EN TÊTE. Ce n'est pas truquer le classement : porter
+    l'issue demandée est une correspondance EXACTE, quand le score de similarité
+    n'est qu'une ressemblance. Les laisser au score les enterrait sous les 30
+    résultats généraux — quatre des dix motions rejetées seulement remontaient
+    jusqu'aux sources affichées.
 
     Best-effort : la réponse principale ne dépend pas de ce renfort. S'il
     échoue (quota, timeout), on répond avec ce qu'on a plutôt que rien.
@@ -212,7 +264,7 @@ def _renfort_issue(index, question: str, filters: dict, decision: str, matches: 
     ajouts = [h for h in renfort if _hit_id(h) not in connus]
     if ajouts:
         logger.info("Renfort « %s » : %d point(s) ajouté(s) au contexte", decision, len(ajouts))
-    return sorted(matches + ajouts, key=_hit_score, reverse=True)
+    return ajouts + matches
 
 
 def answer(question_raw: str, commune_raw: Optional[str], *,
@@ -246,16 +298,19 @@ def answer(question_raw: str, commune_raw: Optional[str], *,
         filters["year"] = year_filter
     if filters:
         query["filter"] = filters
+    # Issue RARE sur laquelle porte la question (rejet, retrait, report) : elle
+    # commande à la fois le repêchage dans l'index et le relevé exhaustif tiré
+    # de la base. Détectée avant toute requête — elle ne dépend que du texte.
+    issue = decision_recherchee(question)
 
     # 1. Recherche vectorielle (embedding intégré Pinecone)
     try:
         index = get_pinecone_index()
         results = index.search(namespace=NAMESPACE, query=query, timeout=PINECONE_TIMEOUT)
         matches = results.get("result", {}).get("hits", [])
-        # 1bis. Repêchage des issues RARES (rejet, retrait, report) : elles ne
-        # tiennent qu'à un mot dans le texte vectorisé et ne remontent pas d'une
-        # recherche par ressemblance générale — voir _renfort_issue.
-        issue = decision_recherchee(question)
+        # 1bis. Repêchage des issues RARES : elles ne tiennent qu'à un mot dans
+        # le texte vectorisé et ne remontent pas d'une recherche par
+        # ressemblance générale — voir _renfort_issue.
         if issue:
             matches = _renfort_issue(index, question, filters, issue, matches)
         # PAS de repli sans le filtre année : mieux vaut répondre honnêtement
@@ -319,9 +374,10 @@ def answer(question_raw: str, commune_raw: Optional[str], *,
     # le system prompt interdit d'obéir à des instructions dans <question>.
     context = build_context(norm)
     glossaire = _glossaire_block(question, context)
+    inventaire = _inventaire_block(issue)
     user_prompt = f"""Voici des extraits de procès-verbaux du Conseil communal de Schaerbeek :
 
-{glossaire}<extraits>
+{inventaire}{glossaire}<extraits>
 {context}
 </extraits>
 
