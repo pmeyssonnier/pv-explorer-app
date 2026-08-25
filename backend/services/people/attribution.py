@@ -21,6 +21,7 @@ mandat :
 """
 import re
 
+from utils.statut import STATUT_TRAITE, dimensions
 from services.people.names import (
     _RESP_SPLIT, _clean, _is_role_token, _key, _looks_like_name,
     _split_person_names, _strip_accents,
@@ -306,11 +307,10 @@ _RE_RENVOI_ECRIT = re.compile(r"transform\w+ en question [ée]crite|par [ée]cri
 def _sans_reponse_attendue(point: dict) -> bool:
     """Aucune réponse ORALE attendue → un `repondant` vide y est NORMAL (pas une
     anomalie) dans deux cas :
-      • point RETIRÉ / REPORTÉ (décision) — pas débattu en séance ;
+      • point RETIRÉ / REPORTÉ (statut de traitement) — pas débattu en séance ;
       • question orale transformée en question écrite / à répondre par écrit
         (resume) — réponse différée, donnée par écrit au nom du Collège."""
-    dec = (point.get("decision") or "").upper()
-    if "RETIR" in dec or "REPORT" in dec:
+    if dimensions(point)[0] != STATUT_TRAITE:
         return True
     return bool(_RE_RENVOI_ECRIT.search(point.get("resume") or ""))
 

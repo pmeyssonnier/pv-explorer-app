@@ -70,6 +70,10 @@ import pdfplumber
 import anthropic
 from tqdm import tqdm
 
+from utils_statut import (
+    classer_decision, decision_manquante, dimensions, mot_issue, poser_decision,
+)
+
 # ══════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ══════════════════════════════════════════════════════════════════════════
@@ -364,6 +368,7 @@ def normalize_point(point: dict) -> Optional[dict]:
     _coerce_sp(point)
     if point.get("sp") is None:
         return None
+    statut_traitement, decision, debat = classer_decision(_clean_str(point.get("decision")))
     return {
         "sp": point.get("sp"),
         # GREFFE 1 : passe-plat BRUT — la coercition/bornage se fait dans
@@ -384,7 +389,16 @@ def normalize_point(point: dict) -> Optional[dict]:
         "auteurs": _clean_str_list(point.get("auteurs")),
         "intervenants": _clean_str_list(point.get("intervenants")),
         "repondants": _clean_str_list(point.get("repondants")),
-        "decision": _clean_str(point.get("decision")),
+        # Les trois dimensions, séparées dès l'entrée (voir utils_statut) :
+        # ce que Claude écrit dans `decision` mêle ce que le point est DEVENU
+        # (« APPROUVÉ ») à la façon dont il a été TRAITÉ (« REPORTÉ », renvoyé
+        # à une séance ultérieure) et à son déroulement (« DÉBAT », discuté
+        # sans rien trancher). Les ranger ici, et non à la lecture, garde la
+        # base homogène : un PV intégré par le panneau admin arrive sous la
+        # même forme que celle qu'a produite split_statut_decision.
+        "decision": decision,
+        "statut_traitement": statut_traitement,
+        "debat": debat,
         "vote": _normalize_vote(point.get("vote")),
         "montant_eur": _coerce_amount(point.get("montant_eur")),
         "thematiques": _clean_str_list(point.get("thematiques")),
@@ -873,8 +887,13 @@ def _recover_missing_decisions(points: list[dict], pages: list[dict]) -> int:
     N'écrase JAMAIS une décision déjà présente. Retourne le nombre corrigé."""
     n = 0
     for pt in points:
-        if (pt.get("decision") or "").strip():
-            continue  # décision réelle déjà présente — ne pas toucher
+        # Ne pas toucher : décision réelle déjà présente — ou point REPORTÉ /
+        # RETIRÉ / DÉBATTU, dont le champ `decision` est vide À BON DROIT une
+        # fois les dimensions séparées (voir utils_statut). Sans ce test, la
+        # récupération réécrirait « REPORTÉ » dans la décision d'un point dont
+        # le report est déjà rangé dans son statut de traitement.
+        if not decision_manquante(pt):
+            continue
         sp = pt.get("sp")
         if not isinstance(sp, int):
             continue
@@ -886,7 +905,10 @@ def _recover_missing_decisions(points: list[dict], pages: list[dict]) -> int:
         decision, vote = _recover_decision_from_window(combined)
         if not decision:
             continue
-        pt["decision"] = decision
+        # Ces points sont DÉJÀ normalisés : ils portent les trois dimensions,
+        # et un « RETIRÉ » récupéré ici doit rejoindre le statut de traitement
+        # plutôt que la décision (voir utils_statut.poser_decision).
+        poser_decision(pt, decision)
         pt["vote"] = vote
         n += 1
     return n
@@ -1359,7 +1381,11 @@ def export_csv(db: dict, output_path: str):
                 "type": p.get("type"),
                 "rubrique": p.get("rubrique"), "sous_rubrique": p.get("sous_rubrique"),
                 "titre": (p.get("titre") or "")[:200], "resume": (p.get("resume") or "")[:300],
-                "decision": p.get("decision"), "vote_type": vote.get("type"),
+                # L'issue du point — décision, ou report/retrait/débat quand
+                # il n'y en a pas eu : cette colonne servait à lire les deux,
+                # elle continue de le faire sur une base séparée.
+                "decision": mot_issue(p), "vote_type": vote.get("type"),
+                "statut_traitement": dimensions(p)[0], "debat": dimensions(p)[2],
                 "vote_pour": vote.get("pour"), "vote_contre": vote.get("contre"),
                 "vote_abstentions": vote.get("abstentions"), "montant_eur": p.get("montant_eur"),
                 "urgence": p.get("urgence"),

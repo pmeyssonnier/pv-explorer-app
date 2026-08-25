@@ -46,18 +46,18 @@ import os
 
 from pv_extraction_pipeline import _recover_decision_from_window
 from audit_completeness import TYPES_SANS_DECISION
+from utils_statut import decision_manquante, poser_decision
 
 # Chemin par défaut : la base versionnée du dépôt (pipeline/ ↔ backend/).
 _DEFAULT_PATH = os.path.join(
     os.path.dirname(__file__), "..", "backend", "pv_conseil_schaerbeek.json",
 )
 
-_DECISION_VIDE = {"", "-", "—", "None"}
-
-
-def _decision_manquante(point: dict) -> bool:
-    d = point.get("decision")
-    return d is None or (isinstance(d, str) and d.strip() in _DECISION_VIDE)
+# Manque une décision = le point en attendait une et ne l'a pas. Un point
+# REPORTÉ ou DÉBATTU n'en attendait aucune : sur la base séparée son champ
+# `decision` est vide À BON DROIT, et le remplir depuis son résumé lui
+# réinventerait l'issue que la séparation vient d'en retirer.
+_decision_manquante = decision_manquante
 
 
 def backfill_decisions(db: dict, types_sans_decision=TYPES_SANS_DECISION) -> list[dict]:
@@ -77,7 +77,10 @@ def backfill_decisions(db: dict, types_sans_decision=TYPES_SANS_DECISION) -> lis
             decision, vote = _recover_decision_from_window(text)
             if not decision:
                 continue
-            p["decision"] = decision
+            # Écrit dans la forme de la base (voir utils_statut.poser_decision) :
+            # sur une base séparée, un « RETIRÉ » récupéré du résumé va dans le
+            # statut de traitement, pas dans la décision.
+            poser_decision(p, decision)
             p["vote"] = vote
             changes.append({
                 "date": date, "sp": p.get("sp"), "type": p.get("type"),

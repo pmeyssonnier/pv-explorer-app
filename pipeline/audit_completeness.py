@@ -28,6 +28,8 @@ Deux audits COMPLÉMENTAIRES, tous deux hors-ligne :
 from pathlib import Path
 from typing import Optional
 
+from utils_statut import decision_manquante
+
 # NB : l'import de pv_extraction_pipeline (→ pdfplumber, anthropic) est fait
 # PARESSEUSEMENT dans _index_pdfs/audit_completeness (les seules fonctions qui
 # lisent des PDF). Ainsi audit_decisions — qui ne lit AUCUN PDF — reste utilisable
@@ -46,13 +48,12 @@ TYPES_SANS_DECISION = frozenset({
 })
 
 # Une décision est considérée MANQUANTE si le champ est absent ou réduit à un
-# marqueur vide (mêmes variantes que la récupération déterministe du pipeline).
-_DECISION_VIDE = {"", "-", "—", "None"}
-
-
-def _decision_manquante(point: dict) -> bool:
-    d = point.get("decision")
-    return d is None or (isinstance(d, str) and d.strip() in _DECISION_VIDE)
+# marqueur vide — ET si le point en attendait une : un point REPORTÉ, RETIRÉ ou
+# DÉBATTU n'a pas de décision parce qu'il n'y en a pas eu, pas parce que
+# l'extraction l'aurait ratée (voir utils_statut.decision_manquante, la table
+# partagée avec le backfill). Sur la base séparée, ces 1 480 points auraient
+# sinon rempli le compteur de trous.
+_decision_manquante = decision_manquante
 
 
 def audit_decisions(db: dict, types_sans_decision=TYPES_SANS_DECISION) -> list[dict]:

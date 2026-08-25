@@ -40,6 +40,8 @@ from pathlib import Path
 
 from pinecone import Pinecone
 
+from utils.statut import mot_issue
+
 # ── CONFIG ──────────────────────────────────────────────────────────────────
 INDEX_NAME = "pv-explorer"
 EMBED_MODEL = "multilingual-e5-large"   # embeddings intégrés Pinecone, multilingue
@@ -163,7 +165,7 @@ def point_to_chunk(point: dict, seance: dict, commune: str) -> dict:
 Séance du Conseil communal de {commune_nom} du {date} — Point SP {point.get('sp','?')}.
 Résumé : {point.get('resume','')}
 Rubrique : {point.get('rubrique','')} / {point.get('sous_rubrique','')}
-Décision : {point.get('decision','')}
+Décision : {mot_issue(point) or ''}
 Vote : {format_vote(point.get('vote'))}{montant_str}{aut_str}{interv_str}{rep_str}
 Thématiques : {', '.join(point.get('thematiques') or [])}"""
 
@@ -184,7 +186,11 @@ Thématiques : {', '.join(point.get('thematiques') or [])}"""
         "sp": int(point.get("sp", 0)) if str(point.get("sp", "")).isdigit() else 0,
         "rubrique": point.get("rubrique", "") or "",
         "titre": (point.get("titre", "") or "")[:500],
-        "decision": point.get("decision", "") or "",
+        # L'ISSUE du point (décision, ou report/retrait/débat quand il n'y a
+        # pas eu de décision — voir utils.statut). Sur la base d'origine comme
+        # sur la base séparée, c'est le même mot : le texte vectorisé ne bouge
+        # pas d'un octet quand la base est séparée, donc rien à ré-embedder.
+        "decision": mot_issue(point) or "",
         "type": point.get("type", "") or "",
         "montant_eur": float(montant) if montant else 0.0,
         "thematiques": point.get("thematiques") or [],

@@ -11,6 +11,7 @@ import json
 from collections import Counter, defaultdict
 
 from config import PV_JSON_PATH
+from utils.statut import mot_issue
 from utils.text import _strip_accents, _canon_theme
 from utils.video import video_session_map
 from services.questions_ecrites import load_qe_db
@@ -128,7 +129,12 @@ def _is_excluded_amount(p: dict) -> bool:
     titre = _strip_accents((p.get("titre") or "").lower()).replace(".", "")
     if _TREND_EXCLUDE.search(titre):
         return True
-    decision = _strip_accents((p.get("decision") or "").lower()).replace(".", "")
+    # `mot_issue` et non `p["decision"]` : sur une base séparée, le report et
+    # le débat ont quitté ce champ (voir utils.statut). Aucun des deux n'est
+    # une formule non dépensière, la sélection est donc la même — mais elle se
+    # lit à un seul endroit, et le jour où un statut devra exclure un montant,
+    # il n'y aura qu'une ligne à changer.
+    decision = _strip_accents((mot_issue(p) or "").lower()).replace(".", "")
     return bool(_TREND_NONSPEND_DECISION.search(decision))
 
 
@@ -171,7 +177,10 @@ def compute_stats(db: dict, hors_pv_par_date: dict = None) -> dict:
         for t in (p.get("thematiques") or []):
             themes[t] += 1
         rubriques[p.get("rubrique", "?")] += 1
-        decisions[p.get("decision", "?")] += 1
+        # L'issue telle que l'onglet Séances la lit — pour que ce décompte ne
+        # bouge pas quand la base passe au format séparé (les 645 reports et
+        # 829 débats resteraient sinon comptés comme « sans décision »).
+        decisions[mot_issue(p)] += 1
         if p.get("montant_eur") and not _is_excluded_amount(p):
             montant_total += p["montant_eur"]
         if (p.get("vote") or {}).get("type") == "vote_nominal":
@@ -361,7 +370,7 @@ def compute_trend(db: dict, theme: str) -> dict:
                     "sp": int(float(p.get("sp") or 0)),
                     "montant_eur": round(float(m), 2),
                     "titre": (p.get("titre") or "")[:120],
-                    "decision": p.get("decision") or "",
+                    "decision": mot_issue(p) or "",
                     "url": (s.get("seance", {}) or {}).get("source_url"),
                 })
 
