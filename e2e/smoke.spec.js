@@ -439,7 +439,7 @@ test('un KPI d\'activité par série, dans l\'ordre de la légende', async ({ pa
   expect(errors).toEqual([]);
 });
 
-test('le graphe des statuts descend année → mois, sans jamais dépasser les points', async ({ page }) => {
+test('le graphe des statuts totalise les mêmes points que celui d\'activité, et descend au mois', async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto('/');
   await page.locator('#tab-stats').click();
@@ -447,25 +447,32 @@ test('le graphe des statuts descend année → mois, sans jamais dépasser les p
 
   // 1. Les quatre issues demandées, plus le reliquat neutre en dernier.
   const legende = await page.$$eval('#statutLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
-  expect(legende).toEqual(['Approuvé', 'Décidé', 'Reporté', 'Retiré', 'Autres issues']);
-  // Le reliquat nomme ce qu'il replie, sinon il devient un fourre-tout opaque.
-  expect(await page.locator('#statutLegend .yc-legend-chip').last().getAttribute('title'))
-    .toContain('Pris pour information');
+  expect(legende).toEqual(['Approuvé', 'Décidé', 'Reporté ou retiré', 'Autres issues', 'Sans décision']);
+  // Chaque regroupement nomme ce qu'il replie, sinon il devient un fourre-tout
+  // opaque — « Autres issues » ses statuts, « Reporté ou retiré » ses deux.
+  const infobulle = nom => page.locator('#statutLegend .yc-legend-chip', { hasText: nom })
+    .first().getAttribute('title');
+  expect(await infobulle('Autres issues')).toContain('Pris pour information');
+  expect(await infobulle('Reporté ou retiré')).toContain('Reporté');
 
-  // 2. Un point a au plus une issue : chaque année reste sous son total de
-  //    points, lu dans le graphe d'activité (métrique « Points »).
-  const parAnnee = await page.$$eval('#drillPlot .yc-col', els => Object.fromEntries(els.map(e => [
-    e.querySelector('.yc-yr').textContent.trim(),
-    +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),
-  ])));
+  // 2. Un point porte au plus une issue, et chacun en porte une ligne.
   const colonnes = await page.$$eval('#statutPlot .yc-col', els => els.map(e => [
     e.querySelector('.yc-yr').textContent.trim(),
     +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),
   ]));
   expect(colonnes.length).toBeGreaterThan(3);
-  colonnes.forEach(([annee, n]) => { if (parAnnee[annee]) expect(n).toBeLessThanOrEqual(parAnnee[annee]); });
 
-  // 3. Le clic sur une année ouvre les mois, dont le total la reconstitue.
+  // 3. Les deux graphes comptent les mêmes points et se lisent l'un sous
+  //    l'autre : leurs totaux doivent coïncider année par année. C'est ce qui
+  //    manquait — 663 contre 658 en 2024, l'écart étant les points de PV sans
+  //    décision relevée, désormais empilés sous « Sans décision ».
+  const activite = await page.$$eval('#drillPlot .yc-col', els => Object.fromEntries(els.map(e => [
+    e.querySelector('.yc-yr').textContent.trim(),
+    +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),
+  ])));
+  colonnes.forEach(([an, n]) => expect([an, n]).toEqual([an, activite[an]]));
+
+  // 4. Le clic sur une année ouvre les mois, dont le total la reconstitue.
   const [annee, total] = colonnes[colonnes.length - 2];
   await page.locator('#statutPlot .yc-col').nth(colonnes.length - 2).click();
   await expect(page.locator('#statutTitle')).toContainText(annee);
@@ -508,5 +515,93 @@ test('le périmètre survit au changement de vue, et un lien rouvre la bonne', a
   await page.goto('/?tab=stats&vue=pv');
   await expect(page.locator('#statsvue-pv')).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('#statsvue-panel-pv')).toHaveClass(/active/);
+  expect(errors).toEqual([]);
+});
+
+test('les KPI d\'activité suivent le périmètre, jusqu\'au mois', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#activityKPIs .act-kpi').first()).toBeVisible(STATS_FROID);
+
+  const sommeKPI = () => page.$$eval('#activityKPIs .act-kpi .act-kpi-num',
+    els => els.reduce((a, e) => a + (+e.textContent.replace(/[^\d]/g, '') || 0), 0));
+  const barres = () => page.$$eval('#activityPlot .yc-col .yc-val',
+    els => els.map(e => +e.textContent.replace(/[^\d]/g, '') || 0));
+
+  // 1. Toutes les années : les KPI totalisent toutes les barres.
+  const annees = await barres();
+  expect(annees.length).toBeGreaterThan(3);
+  expect(await sommeKPI()).toBe(annees.reduce((a, b) => a + b, 0));
+
+  // 2. Une année : ses mois, dont la somme est la même que celle des KPI.
+  await page.locator('#activityPlot .yc-col').nth(annees.length - 2).click();
+  const mois = await barres();
+  expect(mois.length).toBeGreaterThan(1);
+  expect(await sommeKPI()).toBe(mois.reduce((a, b) => a + b, 0));
+
+  // 3. Un mois : le graphe montre toujours TOUS les mois, un seul mis en
+  //    évidence — les KPI, eux, doivent tomber sur ce seul mois.
+  await page.locator('#activityPlot .yc-col').nth(2).click();
+  await expect(page.locator('#scopeLabel')).not.toHaveText(/^\d{4}$/);
+  expect(await sommeKPI()).toBe(mois[2]);
+  expect(errors).toEqual([]);
+});
+
+test('le fil d\'Ariane est répété au-dessus des trois graphes', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#statutLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
+
+  const fils = () => page.$$eval('.drill-crumb', els => els.map(e => e.textContent.replace(/\s+/g, ' ').trim()));
+  await expect(page.locator('.drill-crumb')).toHaveCount(3);
+
+  // Forer depuis le graphe des issues : les trois fils suivent, identiques.
+  const n = await page.$$eval('#statutPlot .yc-col', els => els.length);
+  await page.locator('#statutPlot .yc-col').nth(n - 2).click();
+  await page.locator('#statutPlot .yc-col').nth(2).click();
+  const apres = await fils();
+  expect(new Set(apres).size).toBe(1);
+  expect(apres[0]).toMatch(/^Toutes les années›\d{4}›\w+$/);
+
+  // Et il remonte depuis là, sans avoir à retourner en haut de page.
+  await page.locator('#statutCrumb a').first().click();
+  await expect(page.locator('#scopeLabel')).toHaveText('Toutes les années');
+  expect(errors).toEqual([]);
+});
+
+test('la puce « Autres issues » regroupe les issues non nommées, et les ramène', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption('2025');
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  await page.locator('#seanceList').selectOption('__all__');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('Toutes les séances');
+  await page.locator('#seanceFilterToggle').click();
+
+  const puce = nom => page.locator('#seanceFacetChips .elu-chip', { hasText: nom }).first();
+  const nombre = async loc => Number((await loc.textContent()).match(/\((\d+)\)/)[1]);
+
+  // 1. Le regroupement égale la somme des statuts qu'il replie — ni les quatre
+  //    issues nommées, ni les points sans statut n'y entrent.
+  const autres = puce('Autres issues');
+  await expect(autres).toBeVisible();
+  const n = await nombre(autres);
+  const nommes = ['Approuvé', 'Décidé', 'Reporté', 'Retiré'];
+  const facettes = await page.$$eval('#seanceFacetChips .elu-chip', els => els.map(e => e.textContent.trim()));
+  const replies = facettes
+    .filter(t => !/^Autres issues|^Avec débat filmé/.test(t) && !nommes.some(s => t.startsWith(s)))
+    .map(t => +t.match(/\((\d+)\)/)[1]);
+  expect(replies.length).toBeGreaterThan(0);
+  expect(n).toBe(replies.reduce((a, b) => a + b, 0));
+
+  // 2. L'infobulle nomme ce qu'elle replie, comme la légende du graphe.
+  expect(await autres.getAttribute('title')).toMatch(/Pris pour information|Pris acte|Débat/);
+
+  // 3. Et elle ramène exactement les points annoncés.
+  await autres.click();
+  await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
   expect(errors).toEqual([]);
 });

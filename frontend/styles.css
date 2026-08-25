@@ -1153,6 +1153,15 @@ body {
 .yc-seg-s3 { background: var(--chart-s3); }
 .yc-seg-s4 { background: var(--chart-s4); }
 .yc-seg-autres { background: var(--chart-autres); }
+/* « Sans décision » : une donnée ABSENTE, pas une issue de plus. Trame plutôt
+   qu'aplat — elle la distingue du gris d'« Autres issues » autrement que par la
+   seule couleur (utile aussi en vision des couleurs déficiente et à l'impression),
+   et se lit comme un vide. */
+.yc-seg-sans {
+  background: repeating-linear-gradient(135deg,
+    var(--chart-autres) 0 2px, transparent 2px 5px), var(--papier-dark);
+  box-shadow: inset 0 0 0 1px var(--chart-autres);
+}
 .yc-legend {
   display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0 2px;
   font-size: 12.5px; color: var(--encre-soft);

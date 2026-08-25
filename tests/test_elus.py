@@ -1043,7 +1043,18 @@ def test_decision_summary_normalizes_rare_spelling_variants():
 
 
 def test_decision_summary_falls_back_to_homogeneous_case_for_unknown_text():
-    assert elus._decision_summary("PREND ACTE + DÉROGATION ART.12", None) == "Prend acte + dérogation art.12"
+    # Variante non répertoriée : à défaut de la reconnaître, on la rend lisible
+    # plutôt que de la laisser en capitales.
+    assert elus._decision_summary("RENVOYÉ EN COMMISSION", None) == "Renvoyé en commission"
+
+
+def test_decision_variants_fold_into_their_canonical_label():
+    # Deux formules isolées du corpus qui formaient chacune leur propre statut,
+    # donc leur propre puce dans l'onglet Séances, pour UN point : une prise
+    # d'acte assortie d'une dérogation reste une prise d'acte, et « prend
+    # information » est la même formule que « prend pour information ».
+    assert elus._decision_summary("PREND ACTE + DÉROGATION ART.12", None) == "Pris acte"
+    assert elus._decision_summary("PREND INFORMATION", None) == "Pris pour information"
 
 
 def test_decision_summary_none_when_no_decision():
@@ -1222,3 +1233,42 @@ def test_statuts_par_date_dates_are_known_seances():
     connues = {s["date"] for s in seances.seances_list()}
     assert connues
     assert set(seances.statuts_par_date()) <= connues
+
+
+def test_points_egalent_les_statuts_plus_les_sans_decision():
+    # Les deux graphes de l'onglet Statistiques comptent les MÊMES points et se
+    # lisent l'un sous l'autre : « Activité par année » les totalise, « Issue
+    # des points » les répartit. L'empilement restait 67 points en dessous
+    # (663 contre 658 en 2024), parce que les points de PV sans décision
+    # relevée n'y figuraient pas. Ils y sont désormais, et cette identité est
+    # ce qui garantit que les deux graphes ne peuvent plus diverger.
+    statuts = seances.statuts_par_date()
+    sans = seances.sans_decision_par_date()
+    for r in seances.annees_stats():
+        annee = r["annee"]
+        somme = sum(n for d, m in statuts.items() if d[:4] == annee for n in m.values())
+        somme += sum(n for d, n in sans.items() if d[:4] == annee)
+        # Les chapitres vidéo sans PV n'ont pas de décision et ne comptent dans
+        # aucun des deux graphes : on les retire du total des points.
+        points_pv = r["points"] - r["types"]["Débat filmé"]
+        assert somme == points_pv, annee
+
+
+def test_sans_decision_exclut_les_chapitres_video():
+    # Un chapitre vidéo sans point de PV n'a pas de décision par construction :
+    # le compter ici ferait dépasser le graphe des issues au-dessus du graphe
+    # d'activité, exactement l'erreur inverse de celle qu'on corrige.
+    sans = seances.sans_decision_par_date()
+    hors_pv = seances.hors_pv_par_date()
+    assert sans
+    for date, n in sans.items():
+        detail = seances.seance_detail(date)
+        attendu = [p for p in detail["points"]
+                   if not p.get("statut") and p["type_label"] != "Débat filmé"]
+        assert n == len(attendu), date
+    # Une séance qui n'existe que dans le chapitrage n'a aucun point sans
+    # décision à déclarer.
+    for date, n in hors_pv.items():
+        detail = seances.seance_detail(date)
+        if all(p["type_label"] == "Débat filmé" for p in detail["points"]):
+            assert date not in sans, date

@@ -353,7 +353,8 @@ def seance_detail(date: str):
 # délibéré : c'est CE que l'application affiche — types, personnes et
 # appariements vidéo compris. Recompter autrement rouvrirait l'écart entre les
 # deux vues que ces compteurs servent justement à fermer.
-_annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date": None}
+_annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date": None,
+                 "sans_decision_par_date": None}
 # La passe coûte ~8 s à froid. Les endpoints FastAPI synchrones tournent dans
 # un pool de threads : sans verrou, N requêtes arrivant sur un cache froid la
 # refaisaient toutes en parallèle — trois appels simultanés mettaient 34 s
@@ -414,6 +415,23 @@ def statuts_par_date() -> dict:
     return _annees_cache["statuts_par_date"]
 
 
+def sans_decision_par_date() -> dict:
+    """Points de PV dont AUCUNE décision n'a été relevée, PAR DATE de séance.
+
+    Le compte exclut les chapitres vidéo sans point de PV (type « Débat filmé »),
+    qui n'ont pas de décision par construction et ne figurent pas non plus dans
+    le décompte de points du graphe d'activité. Ce qui reste — 67 points sur
+    10 062, concentrés sur quelques séances — est l'écart exact entre les deux
+    graphes, que le graphe des issues affiche plutôt que de le laisser
+    inexpliqué :
+
+        points de l'année = Σ des statuts + sans décision
+
+    (invariant vérifié par test, sur les 17 années)."""
+    _ensure_annees()
+    return _annees_cache["sans_decision_par_date"]
+
+
 def _ensure_annees():
     sig = _sig()
     if _annees_cache["sig"] == sig:
@@ -437,6 +455,7 @@ def _build_annees(sig):
     par_annee = {}
     par_date = {}
     statuts = {}
+    sans_decision = {}
     for date in dates:
         detail = seance_detail(date)
         if not detail:
@@ -456,6 +475,9 @@ def _build_annees(sig):
             if p.get("statut"):
                 st = statuts.setdefault(date, {})
                 st[p["statut"]] = st.get(p["statut"], 0) + 1
+            elif p["type_label"] != "Débat filmé":
+                # Point de PV sans décision relevée — voir sans_decision_par_date.
+                sans_decision[date] = sans_decision.get(date, 0) + 1
             # Dédoublonné PAR POINT : quelqu'un présent des deux côtés d'un
             # même point ne le compte qu'une fois.
             noms = {x["nom"] for x in (p.get("demandeurs") or []) + (p.get("repondants") or [])}
@@ -476,3 +498,4 @@ def _build_annees(sig):
     _annees_cache["rows"] = rows
     _annees_cache["par_date"] = par_date
     _annees_cache["statuts_par_date"] = statuts
+    _annees_cache["sans_decision_par_date"] = sans_decision
