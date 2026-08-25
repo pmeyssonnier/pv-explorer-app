@@ -351,7 +351,7 @@ def seance_detail(date: str):
 # base brute est délibéré : c'est CE que l'application affiche — types,
 # personnes et appariements vidéo compris. Recompter autrement rouvrirait
 # l'écart que ces tableaux servent justement à fermer.
-_annees_cache = {"sig": None, "rows": None}
+_annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date": None}
 
 # Types affichés, dans l'ordre des puces de l'onglet Séances. La somme de ces
 # cinq compteurs égale le nombre de points de l'année (partition vérifiée par
@@ -388,6 +388,16 @@ def hors_pv_par_date() -> dict:
     return _annees_cache["par_date"]
 
 
+def statuts_par_date() -> dict:
+    """{date de séance: {statut: nb de points}} — l'issue des points, par
+    séance. Par DATE et non par année : le graphe des statuts descend
+    année → mois → séance, et agrège donc à trois niveaux depuis la même
+    source. Les points sans décision (chapitres vidéo, débats non tranchés)
+    n'y figurent pas."""
+    _ensure_annees()
+    return _annees_cache["statuts_par_date"]
+
+
 def _ensure_annees():
     sig = _sig()
     if _annees_cache["sig"] == sig:
@@ -402,6 +412,7 @@ def _ensure_annees():
 
     par_annee = {}
     par_date = {}
+    statuts = {}
     for date in dates:
         detail = seance_detail(date)
         if not detail:
@@ -418,6 +429,9 @@ def _ensure_annees():
                 row["types"][p["type_label"]] += 1
             if p["type_label"] == "Débat filmé":
                 par_date[date] = par_date.get(date, 0) + 1
+            if p.get("statut"):
+                st = statuts.setdefault(date, {})
+                st[p["statut"]] = st.get(p["statut"], 0) + 1
             # Dédoublonné PAR POINT : quelqu'un présent des deux côtés d'un
             # même point ne le compte qu'une fois.
             noms = {x["nom"] for x in (p.get("demandeurs") or []) + (p.get("repondants") or [])}
@@ -437,3 +451,4 @@ def _ensure_annees():
     _annees_cache["sig"] = sig
     _annees_cache["rows"] = rows
     _annees_cache["par_date"] = par_date
+    _annees_cache["statuts_par_date"] = statuts

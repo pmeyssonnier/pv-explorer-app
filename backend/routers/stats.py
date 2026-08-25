@@ -25,6 +25,9 @@ def stats(request: Request):
     # la seule base des PV que compute_stats parcourt.
     out = statistics.compute_stats(db, seances.hors_pv_par_date())
     out["annees"] = seances.annees_stats()
+    # Issue des points par séance : alimente le graphe des statuts, qui
+    # descend année → mois → séance depuis cette seule source.
+    out["statuts_par_date"] = seances.statuts_par_date()
     return out
 
 

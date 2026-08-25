@@ -453,3 +453,39 @@ test('les KPI d\'activité et les tableaux par année sont cohérents', async ({
   });
   expect(errors).toEqual([]);
 });
+
+test('le graphe des statuts descend année → mois, sans jamais dépasser les points', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#statutLegend .yc-legend-chip').first()).toBeVisible();
+
+  // 1. Les quatre issues demandées, plus le reliquat neutre en dernier.
+  const legende = await page.$$eval('#statutLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
+  expect(legende).toEqual(['Approuvé', 'Décidé', 'Reporté', 'Retiré', 'Autres issues']);
+  // Le reliquat nomme ce qu'il replie, sinon il devient un fourre-tout opaque.
+  expect(await page.locator('#statutLegend .yc-legend-chip').last().getAttribute('title'))
+    .toContain('Pris pour information');
+
+  // 2. Un point a au plus une issue : chaque année reste sous son total de
+  //    points, lu dans le tableau par année.
+  const parAnnee = await page.$$eval('#anneesTables .annees-table', ts => Object.fromEntries(
+    [...ts[0].querySelectorAll('tbody tr')]
+      .filter(tr => /^\d{4}$/.test(tr.children[0].textContent.trim()))
+      .map(tr => [tr.children[0].textContent.trim(), +tr.children[2].textContent.replace(/[^\d]/g, '')])));
+  const colonnes = await page.$$eval('#statutPlot .yc-col', els => els.map(e => [
+    e.querySelector('.yc-yr').textContent.trim(),
+    +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),
+  ]));
+  expect(colonnes.length).toBeGreaterThan(3);
+  colonnes.forEach(([annee, n]) => { if (parAnnee[annee]) expect(n).toBeLessThanOrEqual(parAnnee[annee]); });
+
+  // 3. Le clic sur une année ouvre les mois, dont le total la reconstitue.
+  const [annee, total] = colonnes[colonnes.length - 2];
+  await page.locator('#statutPlot .yc-col').nth(colonnes.length - 2).click();
+  await expect(page.locator('#statutTitle')).toContainText(annee);
+  const mois = await page.$$eval('#statutPlot .yc-col', els => els.map(
+    e => +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, '')));
+  expect(mois.reduce((a, b) => a + b, 0)).toBe(total);
+  expect(errors).toEqual([]);
+});

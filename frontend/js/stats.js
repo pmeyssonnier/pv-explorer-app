@@ -18,6 +18,8 @@ let expandedYears = new Set();  // années dépliées dans la vue « tous les PV
 let activiteTypesParAnnee = [];   // [{annee, "Question orale":n, "Demande":n, ...}] — voir /stats
 let activiteTypeOrder = [];       // ordre fixe des séries (voir ACTIVITY_TYPE_ORDER, backend)
 let horsPvParDate = {};           // date -> nb de chapitres vidéo sans point de PV
+let statutsParDate = {};          // date -> {statut: nb de points} (voir seances.statuts_par_date)
+let statutFilter = 'all';         // série isolée dans le graphe des issues
 let anneesStats = [];             // synthèse par année (voir seances.annees_stats)
 let qeResume = [];                // {date, thematiques} par question écrite (voir /stats qe_resume)
 // Type isolé dans le graphe « Activité citoyenne » via un clic sur sa puce de
@@ -263,6 +265,106 @@ function renderActivityKPIs(rows) {
   }).join('');
 }
 
+// ── GRAPHE DES ISSUES (statuts) ─────────────────────────────────────────────
+// Même forme, même geste et même enchaînement (année → mois → PV) que le
+// graphe d'activité, mais l'autre question : que DEVIENNENT les points ?
+//
+// Le corpus compte une quinzaine de statuts, dont une longue traîne de
+// variantes rares. Empiler quinze séries ne se lit pas : quatre sont nommées
+// — celles qui tranchent le sort d'un point — et le reste est REGROUPÉ dans
+// « Autres issues », en gris neutre, avec le détail en infobulle. Ce n'est pas
+// une identité de plus dans la palette catégorielle : c'est un reliquat, d'où
+// une couleur volontairement hors palette (voir --chart-autres).
+const STATUT_SERIES = ['Approuvé', 'Décidé', 'Reporté', 'Retiré'];
+const STATUT_AUTRES = 'Autres issues';
+
+// Statuts du périmètre courant, repliés sur les 5 séries. Retourne aussi le
+// détail de ce qui a été regroupé, pour l'infobulle de la légende.
+function statutRows() {
+  const parCle = {};
+  const detailAutres = {};
+  Object.entries(statutsParDate).forEach(([date, counts]) => {
+    let cle = null;
+    if (drill.level === 'year') cle = date.slice(0, 4);
+    else if (date.slice(0, 4) === drill.year) cle = date.slice(5, 7);
+    if (!cle) return;
+    const e = parCle[cle] || (parCle[cle] = {});
+    Object.entries(counts).forEach(([st, n]) => {
+      const serie = STATUT_SERIES.includes(st) ? st : STATUT_AUTRES;
+      e[serie] = (e[serie] || 0) + n;
+      if (serie === STATUT_AUTRES) detailAutres[st] = (detailAutres[st] || 0) + n;
+    });
+  });
+  const rows = Object.keys(parCle).sort().map(k => ({
+    key: k,
+    label: drill.level === 'year' ? k : MOIS_FR[+k].slice(0, 4) + '.',
+    counts: parCle[k],
+  }));
+  return { rows, detailAutres };
+}
+
+export function onStatutChipClick(statut) {
+  statutFilter = statutFilter === statut ? 'all' : statut;
+  renderStatuts();
+}
+
+function renderStatuts() {
+  const plot = document.getElementById('statutPlot');
+  const legend = document.getElementById('statutLegend');
+  if (!plot || !legend) return;
+  const series = [...STATUT_SERIES, STATUT_AUTRES];
+  const { rows, detailAutres } = statutRows();
+  if (!rows.length) {
+    plot.innerHTML = '<p class="yc-note">Aucune donnée disponible.</p>';
+    legend.innerHTML = '';
+    return;
+  }
+  const isolate = statutFilter !== 'all' && series.includes(statutFilter);
+  const totals = rows.map(row => series.reduce((sum, t) => sum + (row.counts[t] || 0), 0));
+  const values = isolate ? rows.map(row => row.counts[statutFilter] || 0) : totals;
+  const max = Math.max(...values, 1);
+
+  plot.innerHTML = rows.map((row, i) => {
+    const value = values[i];
+    const stackH = Math.max(4, Math.round(value / max * 130));
+    const sel = (drill.level === 'month' && row.key === drill.month);
+    let firstNonZero = true;
+    const segs = (isolate ? [statutFilter] : series).map(t => {
+      const si = series.indexOf(t);
+      const n = row.counts[t] || 0;
+      if (!n) return '';
+      const segH = isolate ? stackH : Math.max(2, Math.round(n / value * stackH));
+      const topCls = firstNonZero ? ' yc-seg-top' : '';
+      firstNonZero = false;
+      const cls = t === STATUT_AUTRES ? 'yc-seg-autres' : `yc-seg-s${si}`;
+      return `<div class="yc-seg ${cls}${topCls}" style="height:${segH}px" title="${escapeHtml(t)} : ${fmtInt(n)}"></div>`;
+    }).join('');
+    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(row.label)} : ${fmtInt(value)} point${value > 1 ? 's' : ''}">
+      <span class="yc-val">${fmtInt(value)}</span>
+      <div class="yc-stack" style="height:${stackH}px">${segs}</div>
+      <span class="yc-yr">${escapeHtml(row.label)}</span>
+    </div>`;
+  }).join('');
+
+  const detail = Object.entries(detailAutres).sort((a, b) => b[1] - a[1])
+    .map(([st, n]) => `${st} : ${fmtInt(n)}`).join(' · ');
+  legend.innerHTML = series.map((t, si) => {
+    const active = statutFilter === t ? ' yc-legend-chip-active' : '';
+    const cls = t === STATUT_AUTRES ? 'yc-seg-autres' : `yc-seg-s${si}`;
+    const aide = t === STATUT_AUTRES ? ` title="${escapeHtml(detail || 'Aucune')}"` : '';
+    return `<button type="button" class="yc-legend-chip${active}"${aide} data-click="onStatutChipClick" data-arg="${escapeHtml(t)}">`
+      + `<span class="yc-legend-swatch ${cls}"></span>${escapeHtml(t)}</button>`;
+  }).join('');
+
+  const title = document.getElementById('statutTitle');
+  if (title) title.textContent = drill.level === 'year'
+    ? 'Issue des points par année' : 'Issue des points par mois — ' + drill.year;
+  const hint = document.getElementById('statutHint');
+  if (hint) hint.textContent = drill.level === 'year'
+    ? 'Cliquez une année pour voir la répartition par mois.'
+    : 'Cliquez un mois pour affiner les indicateurs, thématiques et la liste des PV ci-dessous.';
+}
+
 // ── TABLEAUX DE CONTRÔLE PAR ANNÉE (voir seances.annees_stats côté backend) ──
 // Deux tableaux qui donnent à lire ce que les graphes résument, et surtout
 // leurs invariants — c'est ce qui permet de vérifier un total à la main.
@@ -477,7 +579,8 @@ export function toggleYear(y) {
 }
 
 function refreshStats() {
-  renderKPIs(); renderDrill(); renderActivityTypes(); renderAnneesTables(); renderThemes(); renderPvList();
+  renderKPIs(); renderDrill(); renderActivityTypes(); renderStatuts(); renderAnneesTables();
+  renderThemes(); renderPvList();
 }
 
 // Navigation graphe : Année → mois ; mois → focalise ce mois. Toute navigation
@@ -525,6 +628,7 @@ export async function loadStats() {
     activiteTypesParAnnee = s.activite_types_par_annee || [];
     activiteTypeOrder = s.activite_type_order || [];
     horsPvParDate = s.hors_pv_par_date || {};
+    statutsParDate = s.statuts_par_date || {};
     anneesStats = s.annees || [];
     qeResume = s.qe_resume || [];
     latestYear = seancesResume.reduce((mx, x) => x.date.slice(0, 4) > mx ? x.date.slice(0, 4) : mx, '');
@@ -563,6 +667,19 @@ export async function loadStats() {
         <p class="yc-note">Questions orales, demandes, motions, questions écrites et débats filmés
           hors PV — les points administratifs/collectifs (approbations, conventions…) ne sont pas
           comptés ici, ils domineraient sans rien dire de l'activité citoyenne.</p>
+      </div>
+      <div class="stat-section" id="statutSection">
+        <div class="yc-head">
+          <h3><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg><span id="statutTitle">Issue des points par année</span></h3>
+        </div>
+        <div class="drill-crumb" id="statutCrumb"></div>
+        <div class="yc-scroll"><div class="yc-plot" id="statutPlot"></div></div>
+        <div class="yc-legend" id="statutLegend"></div>
+        <p class="yc-note" id="statutHint"></p>
+        <p class="yc-note">Ce que devient chaque point : approuvé, décidé, reporté, retiré — le reste
+          (prises d'acte, prises pour information, débats sans vote…) est regroupé sous « Autres
+          issues », dont le détail s'affiche au survol de la légende. Les points sans décision
+          (chapitres vidéo sans PV) n'y figurent pas.</p>
       </div>
       <div class="stat-section" id="anneesSection">
         <div class="yc-head">

@@ -1197,3 +1197,29 @@ def test_annees_stats_hors_pv_matches_the_seance_view():
     for r in seances.annees_stats():
         attendu = sum(n for d, n in par_date.items() if d[:4] == r["annee"])
         assert r["types"]["Débat filmé"] == attendu, r["annee"]
+
+
+def test_statuts_par_date_never_exceeds_the_points_of_the_year():
+    # Le graphe des statuts descend année → mois → PV depuis cette seule
+    # source. Un point a au plus une issue, et les points sans décision
+    # (chapitres vidéo, débats non tranchés) n'en ont aucune : le total d'une
+    # année ne peut donc jamais dépasser son nombre de points, sinon
+    # l'empilement mentirait sur la hauteur des barres.
+    statuts = seances.statuts_par_date()
+    assert statuts
+    par_annee = {}
+    for date, par_statut in statuts.items():
+        assert all(n > 0 for n in par_statut.values()), date
+        assert all(s and s.strip() == s for s in par_statut), date
+        par_annee[date[:4]] = par_annee.get(date[:4], 0) + sum(par_statut.values())
+    for r in seances.annees_stats():
+        assert par_annee.get(r["annee"], 0) <= r["points"], r["annee"]
+
+
+def test_statuts_par_date_dates_are_known_seances():
+    # Toute date porteuse de statuts doit être une date de séance connue : le
+    # graphe regroupe par année via ces clés, une date orpheline créerait une
+    # colonne fantôme.
+    connues = {s["date"] for s in seances.seances_list()}
+    assert connues
+    assert set(seances.statuts_par_date()) <= connues

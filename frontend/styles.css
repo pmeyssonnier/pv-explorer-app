@@ -41,6 +41,10 @@
      empilement (`--pairs all` vise les nuages de points et les cartes : même
      le référentiel à 8 teintes n'y passe pas au-delà de 3 séries). */
   --chart-s4: #e87ba4;   /* Débat filmé hors PV */
+  /* « Autres issues » du graphe des statuts : un RELIQUAT (prises d'acte,
+     débats…), pas une identité de plus — d'où un gris neutre, délibérément
+     hors palette catégorielle, qui ne concurrence aucune série nommée. */
+  --chart-autres: #857f78;
   /* Traits du logo header (petites lignes de la « page ») : égal à --ligne en
      clair (contraste déjà suffisant), mais redéfini en sombre ci-dessous —
      --ligne y est trop proche de --papier-dark pour rester lisible à cette
@@ -80,8 +84,8 @@
     --chart-s1: #199e70;
     --chart-s2: #c98500;
     --chart-s3: #9085e9;
-  --chart-s4: #d55181;
     --chart-s4: #d55181;
+    --chart-autres: #9b938a;
   }
 }
 :root[data-theme="dark"] {
@@ -101,6 +105,8 @@
   --chart-s1: #199e70;
   --chart-s2: #c98500;
   --chart-s3: #9085e9;
+  --chart-s4: #d55181;
+  --chart-autres: #9b938a;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1120,6 +1126,7 @@ body {
 .yc-seg-s2 { background: var(--chart-s2); }
 .yc-seg-s3 { background: var(--chart-s3); }
 .yc-seg-s4 { background: var(--chart-s4); }
+.yc-seg-autres { background: var(--chart-autres); }
 .yc-legend {
   display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0 2px;
   font-size: 12.5px; color: var(--encre-soft);
