@@ -547,6 +547,18 @@ body {
 .elus-bar-filters { gap: 0; }
 .elus-bar-filters .elu-chips { flex: 1 1 100%; margin: 6px 0 0; }
 
+/* Écran d'accueil de l'onglet : aucune fiche ouverte (voir renderEluAccueil).
+   Volontairement sobre — il invite à chercher sans mettre personne en avant. */
+.elu-accueil {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center; padding: 46px 20px 40px; color: var(--encre-soft);
+}
+.elu-accueil-icon { width: 26px; height: 26px; color: var(--ligne); }
+.elu-accueil-titre {
+  font-family: var(--display); font-weight: 600; font-size: 19px; color: var(--encre);
+}
+.elu-accueil p { max-width: 48ch; font-size: 14px; margin: 0; }
+
 /* ── Filtres secondaires repliés (année, thématique) ── */
 .elu-more { margin: 10px 0 4px; }
 .elu-more[hidden] { display: none; }
@@ -626,6 +638,10 @@ body {
   font-size: 13.5px; color: var(--encre-soft); margin: 8px 0 4px;
 }
 .elu-summary strong { color: var(--bordeaux); font-size: 16px; }
+/* Décomposition du total (« 21 déposées · 3 réponses ») — secondaire au
+   chiffre lui-même, qui est ce que les puces font varier. */
+.elu-summary-detail { color: var(--encre-soft); }
+.elu-summary-detail::before { content: '— '; }
 /* Puces cliquables (voir elus.js/eluTypeChip, seances.js) : filtre à un clic,
    vit dans la barre de filtres (#eluTypeFilterChips, #eluRoleChips côté Par
    élu·e ; #seanceRoleChips, #seanceTypeChips côté Séances). */

@@ -13,11 +13,12 @@ let elusLoaded = false;
 let pendingEluKey = null;   // élu·e à présélectionner depuis un lien partagé (?elu=)
 let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltrer sans refetch)
 let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
-let eluTypeFilter = 'all';  // type d'intervention sélectionné ("all" = tous) — depose uniquement
+// Puces = interrupteurs indépendants et cumulables. Ensemble VIDE = aucun
+// filtre (tout est montré) ; sinon on garde les actions correspondant à l'un
+// des éléments cochés (OU dans un groupe, ET entre les deux groupes).
+let eluTypeSel = new Set();   // types d'action cochés — dépôts uniquement
 let eluThemeFilter = 'all'; // thématique sélectionnée ("all" = toutes) — depose ET repond
-// Rôle sélectionné dans la fiche : 'all' | 'conseiller' (ce que la personne a
-// DÉPOSÉ) | 'college' (ce à quoi elle a RÉPONDU en séance).
-let eluRoleFilter = 'all';
+let eluRoleSel = new Set();   // rôles cochés ('conseiller', 'echevin', 'bourgmestre')
 let eluSelectedKey = null;  // clé actuellement chargée
 let eluQuery = '';          // texte tapé dans le champ de recherche ('' = liste complète)
 let eluActiveKey = null;    // option mise en avant au clavier (aria-activedescendant)
@@ -75,9 +76,9 @@ function roleAt(mandats, date) {
   return null;
 }
 
-function filterByRole(items, mandats, role) {
-  if (role === 'all') return items;
-  return items.filter(it => roleAt(mandats, it.date) === role);
+function filterByRole(items, mandats, roles) {
+  if (!roles.size) return items;
+  return items.filter(it => roles.has(roleAt(mandats, it.date)));
 }
 
 // Nombre d'actions (dépôts + réponses) par rôle, sur la période affichée.
@@ -92,8 +93,9 @@ function eluRoleCounts(mandats, actions) {
 
 function eluRoleChip(role, count) {
   if (!count) return '';
-  const active = eluRoleFilter === role ? ' elu-chip-active' : '';
-  return `<button type="button" class="elu-chip${active}" data-click="onEluRoleChipClick" data-arg="${role}">`
+  const on = eluRoleSel.has(role);
+  return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"`
+    + ` data-click="onEluRoleChipClick" data-arg="${role}">`
     + `<strong>${escapeHtml(ROLE_CHIP_LABEL[role])}</strong> · ${count} action${count > 1 ? 's' : ''}</button>`;
 }
 
@@ -105,11 +107,13 @@ function renderEluRoleChips(counts) {
   box.hidden = !html;
 }
 
-// Reclique sur la puce déjà active → toutes les actions, tous rôles confondus.
+// Interrupteur : coche/décoche ce rôle. Plus aucun coché = tous les rôles.
 export function onEluRoleChipClick(role) {
-  eluRoleFilter = eluRoleFilter === role ? 'all' : role;
+  toggle(eluRoleSel, role);
   if (currentEluData) renderElu(currentEluData);
 }
+
+const toggle = (set, v) => (set.has(v) ? set.delete(v) : set.add(v));
 
 // ── SÉLECTEUR D'ÉLU·E : COMBOBOX AVEC RECHERCHE ─────────────────────────────
 // Le <select> natif ne tenait plus à 105 élu·e·s : la frappe rapide du
@@ -322,31 +326,46 @@ export function populateElus() {
   const prevKey = eluSelectedKey;
   const list = eluCandidates();
   syncEluPlaceholder();
-  // Présélection : lien partagé (?elu=) prioritaire, sinon on conserve la
-  // sélection courante si elle reste visible, sinon la 1re entrée.
+  // Présélection : uniquement un lien partagé (?elu=), ou la sélection déjà
+  // faite. Aucun repli sur la 1re entrée — ouvrir l'onglet sur la fiche d'une
+  // personne prise dans l'ordre alphabétique donnerait à lire une activité que
+  // personne n'a demandé à voir. Sans sélection : écran d'accueil.
   let nextKey = null;
   if (pendingEluKey && list.some(e => e.key === pendingEluKey)) {
     nextKey = pendingEluKey;
     pendingEluKey = null;
   } else if (list.some(e => e.key === prevKey)) {
     nextKey = prevKey;
-  } else if (list.length) {
-    nextKey = list[0].key;
   }
   selectElu(nextKey);
 }
 
-// Applique une sélection par clé et charge la fiche.
+// Applique une sélection par clé et charge la fiche ; sans clé, l'onglet
+// revient à son écran d'accueil.
 function selectElu(key) {
   eluSelectedKey = key;
   const entry = key ? (elusData || []).find(e => e.key === key) : null;
   syncEluInput();
-  if (entry) {
-    loadElu(key);
-  } else {
-    document.getElementById('eluResult').innerHTML = '';
-    document.getElementById('eluYear').hidden = true;
-  }
+  if (entry) loadElu(key);
+  else renderEluAccueil();
+}
+
+// Écran d'accueil : aucune fiche ouverte, donc aucun filtre à proposer — on
+// masque toute la barre de filtres, sinon des puces d'une fiche précédente y
+// resteraient affichées sans rien à filtrer.
+function renderEluAccueil() {
+  currentEluData = null;
+  ['eluRoleChips', 'eluTypeFilterChips', 'eluMoreFilters'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.hidden = true;
+  });
+  const box = document.getElementById('eluResult');
+  if (!box) return;
+  box.innerHTML = `<div class="elu-accueil">
+    <svg class="icon elu-accueil-icon" aria-hidden="true"><use href="#ico-search"/></svg>
+    <p class="elu-accueil-titre">Cherchez un·e élu·e</p>
+    <p>Par nom ou par prénom — trois lettres suffisent.</p>
+  </div>`;
 }
 
 // ── Câblage du combobox (écouteurs directs : éléments statiques, et une CSP
@@ -562,25 +581,25 @@ function syncEluMoreFilters() {
   if (actifs.length) box.open = true;
 }
 
-function filterByType(items, typeLabel) {
-  if (typeLabel === 'all') return items;
-  return items.filter(it => it.type_label === typeLabel);
+function filterByType(items, types) {
+  if (!types.size) return items;
+  return items.filter(it => types.has(it.type_label));
 }
 
-// Puce CLIQUABLE par type présent — dans la barre de filtres (#eluTypeFilterChips),
-// même emplacement/logique que les puces de type de l'onglet Séances. '' si
-// aucune intervention de ce type cette année (jamais de puce à 0).
+// Puce-interrupteur par type présent, dans la barre de filtres
+// (#eluTypeFilterChips). '' si aucune action de ce type dans le périmètre
+// courant (jamais de puce à 0).
 function eluTypeChip(typeLabel, count) {
   if (!count) return '';
-  const active = eluTypeFilter === typeLabel ? ' elu-chip-active' : '';
+  const on = eluTypeSel.has(typeLabel);
   const text = TYPE_COUNT_LABEL[typeLabel](count);
-  return `<button type="button" class="elu-chip${active}" data-click="onEluChipClick" data-arg="${escapeHtml(typeLabel)}">${escapeHtml(text)}</button>`;
+  return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"`
+    + ` data-click="onEluChipClick" data-arg="${escapeHtml(typeLabel)}">${escapeHtml(text)}</button>`;
 }
 
-// Reclique sur la puce déjà active → bascule vers "Tous les types" ; sinon
-// sélectionne ce type.
+// Interrupteur : coche/décoche ce type. Plus aucun coché = tous les types.
 export function onEluChipClick(typeLabel) {
-  eluTypeFilter = eluTypeFilter === typeLabel ? 'all' : typeLabel;
+  toggle(eluTypeSel, typeLabel);
   if (currentEluData) renderElu(currentEluData);
 }
 
@@ -695,33 +714,25 @@ function renderElu(d) {
   // types (chacune doit rester visible/cliquable pour changer de filtre).
   const deposeForYear = filterByYear(d.depose || [], eluYearFilter);
   const repondForYear = filterByYear(d.repond || [], eluYearFilter);
-  // Un type resté sélectionné en changeant d'élu·e/d'année/de rôle peut ne plus
-  // être présent (sa puce ne s'affiche alors plus, voir eluTypeChip) : retombe
-  // sur « tous les types » plutôt que de filtrer sans puce active pour le voir.
-  if (eluTypeFilter !== 'all' && !deposeForYear.some(it => it.type_label === eluTypeFilter)) {
-    eluTypeFilter = 'all';
-  }
-  // Puces de RÔLE : comptées sur l'année courante mais AVANT le filtre de rôle
-  // lui-même — chacune doit rester visible et cliquable pour en changer.
-  const roleCounts = eluRoleCounts(d.mandats, [...deposeForYear, ...repondForYear]);
+  // Une sélection devenue vide de sens en changeant d'élu·e/d'année (sa puce
+  // n'est alors plus affichée) laisserait un filtre actif sans interrupteur
+  // pour le défaire : on la nettoie.
+  eluTypeSel.forEach(t => { if (!deposeForYear.some(it => it.type_label === t)) eluTypeSel.delete(t); });
+
+  // Comptages CROISÉS : chaque groupe de puces compte dans le périmètre défini
+  // par l'AUTRE groupe (et non par lui-même), sinon cocher une puce ferait
+  // tomber à 0 toutes les autres de sa rangée et le filtre deviendrait un
+  // cul-de-sac. Chaque puce annonce donc ce qu'elle ajoute réellement.
+  const deposeParType = filterByType(deposeForYear, eluTypeSel);
+  const roleCounts = eluRoleCounts(d.mandats,
+    // Une réponse en séance n'a pas de type : dès qu'un type est coché, elle
+    // sort du périmètre.
+    eluTypeSel.size ? deposeParType : [...deposeForYear, ...repondForYear]);
   renderEluRoleChips(roleCounts);
-  // Un rôle resté sélectionné en changeant d'élu·e/d'année peut n'avoir plus
-  // aucune action ici (sa puce disparaît alors) : retour à « tous les rôles »
-  // plutôt qu'un filtre actif sans puce pour le défaire.
-  if (eluRoleFilter !== 'all' && !roleCounts[eluRoleFilter]) eluRoleFilter = 'all';
-  const deposeForRole = filterByRole(deposeForYear, d.mandats, eluRoleFilter);
-  const repondForRole = filterByRole(repondForYear, d.mandats, eluRoleFilter);
-  // Thématiques disponibles pour la période affichée — indépendantes du type et
-  // de la thématique déjà choisis, sinon le menu se viderait au filtrage.
-  populateEluThemeSelect(eluThemes(deposeForRole, repondForRole));
-  syncEluMoreFilters();
-  const depose = filterByType(filterByTheme(deposeForRole, eluThemeFilter), eluTypeFilter);
-  const repond = filterByTheme(repondForRole, eluThemeFilter);
-  const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
-    ? 'Collège (échevin·e / bourgmestre)'
-    : 'Conseiller·ère');
-  // Puces de TYPE : elles décrivent ce qui est DÉPOSÉ (une réponse en séance
-  // n'a pas de type), comptées dans le rôle sélectionné.
+  eluRoleSel.forEach(r => { if (!roleCounts[r]) eluRoleSel.delete(r); });
+
+  const deposeForRole = filterByRole(deposeForYear, d.mandats, eluRoleSel);
+  const repondForRole = filterByRole(repondForYear, d.mandats, eluRoleSel);
   const typeFilterChips = document.getElementById('eluTypeFilterChips');
   if (typeFilterChips) {
     const chipsHtml = TYPE_FILTER_ORDER
@@ -730,13 +741,32 @@ function renderElu(d) {
     typeFilterChips.hidden = !chipsHtml;
   }
 
+  // Thématiques disponibles pour la période affichée — indépendantes du type et
+  // de la thématique déjà choisis, sinon le menu se viderait au filtrage.
+  populateEluThemeSelect(eluThemes(deposeForRole, repondForRole));
+  syncEluMoreFilters();
+  const depose = filterByType(filterByTheme(deposeForRole, eluThemeFilter), eluTypeSel);
+  // Une réponse en séance n'a aucun type : cocher un type l'exclut.
+  const repond = eluTypeSel.size ? [] : filterByTheme(repondForRole, eluThemeFilter);
+  const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
+    ? 'Collège (échevin·e / bourgmestre)'
+    : 'Conseiller·ère');
+
   let html = `<div class="elu-head">
     <div class="elu-name">${escapeHtml(d.nom)}</div>
     <span class="elu-role elu-role-${d.role}">${roleLabel}</span>
   </div>`;
 
-  if (deposeForRole.length) {
-    html += `<div class="elu-summary"><strong>${depose.length}</strong> intervention${depose.length > 1 ? 's' : ''} déposée${depose.length > 1 ? 's' : ''}</div>`;
+  // Total RECALCULÉ à chaque bascule d'interrupteur, avec sa décomposition —
+  // c'est le chiffre que l'on vient chercher, il doit suivre les puces.
+  const total = depose.length + repond.length;
+  if (total) {
+    const detail = [];
+    if (depose.length) detail.push(`${depose.length} déposée${depose.length > 1 ? 's' : ''}`);
+    if (repond.length) detail.push(`${repond.length} réponse${repond.length > 1 ? 's' : ''} en séance`);
+    html += `<div class="elu-summary"><strong>${total}</strong> action${total > 1 ? 's' : ''}`
+      + (detail.length > 1 ? ` <span class="elu-summary-detail">${detail.join(' · ')}</span>` : '')
+      + '</div>';
   }
   if (depose.length) {
     html += `<div class="elu-list">${groupByYear(depose, it => eluDeposeRow(it, d.nom))}</div>`;
@@ -753,8 +783,9 @@ function renderElu(d) {
 
   if (!depose.length && !repond.length) {
     const filters = [];
-    if (eluRoleFilter !== 'all') filters.push(`en tant que ${ROLE_CHIP_LABEL[eluRoleFilter]}`);
-    if (eluTypeFilter !== 'all') filters.push(`de type « ${eluTypeFilter} »`);
+    const listeFr = xs => xs.length > 1 ? `${xs.slice(0, -1).join(', ')} ou ${xs[xs.length - 1]}` : xs[0];
+    if (eluRoleSel.size) filters.push(`en tant que ${listeFr([...eluRoleSel].map(r => ROLE_CHIP_LABEL[r]))}`);
+    if (eluTypeSel.size) filters.push(`de type ${listeFr([...eluTypeSel].map(t => `« ${t} »`))}`);
     if (eluThemeFilter !== 'all') filters.push(`sur la thématique « ${eluThemeFilter} »`);
     if (eluYearFilter !== 'all') filters.push(`en ${eluYearFilter}`);
     html += filters.length

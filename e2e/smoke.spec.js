@@ -98,12 +98,14 @@ test('pas de débordement horizontal en 390px de large', async ({ page }) => {
 // codent en dur AUCUN nom : les cas sont dérivés de la liste affichée, pour
 // rester valables quand la base évolue.
 
-// Ouvre l'onglet « Par élu·e » et déplie la liste des élu·e·s.
+// Ouvre l'onglet « Par élu·e » et déplie la liste des élu·e·s. L'onglet
+// s'ouvre sur son écran d'accueil : aucune fiche n'est chargée tant qu'on n'a
+// pas choisi quelqu'un.
 async function openEluCombo(page) {
   await page.locator('#tab-elus').click();
-  await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+  await expect(page.locator('#eluResult .elu-accueil')).toBeVisible();
   await page.locator('#eluSearch').click();
-  await expect(page.locator('#eluOptions')).toBeVisible();
+  await expect(page.locator('#eluOptions .elu-opt').first()).toBeVisible();
 }
 const optionNames = page => page.$$eval('#eluOptions .elu-opt .elu-opt-name', els => els.map(e => e.textContent.trim()));
 
@@ -186,30 +188,45 @@ async function ficheMultiRoles(page) {
   return false;
 }
 
+const compte = async loc => Number((await loc.textContent()).match(/(\d+)\s+action/)[1]);
+const totalAffiche = page => compte(page.locator('#eluResult .elu-summary'));
+
 // Chaque action est rattachée au rôle exercé À SA DATE (mandats déclarés) :
-// isoler un rôle doit donc afficher exactement le nombre d'actions annoncé
-// par sa puce.
-test('les puces de rôle filtrent les actions du mandat correspondant', async ({ page }) => {
+// isoler un rôle doit afficher exactement le nombre d'actions annoncé par sa
+// puce, et cocher les deux doit rendre leur somme — les puces sont des
+// interrupteurs indépendants, pas un choix unique.
+test('les puces de rôle sont des interrupteurs cumulables, et le total suit', async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto('/');
   test.skip(!await ficheMultiRoles(page), 'aucun·e élu·e à plusieurs rôles dans la base');
 
-  const chip = page.locator('#eluRoleChips .elu-chip').nth(1);
-  const annonce = Number((await chip.textContent()).match(/(\d+)\s+action/)[1]);
-  await chip.click();
+  const [chip1, chip2] = [0, 1].map(i => page.locator('#eluRoleChips .elu-chip').nth(i));
+  const [n1, n2] = [await compte(chip1), await compte(chip2)];
+  const totalInitial = await totalAffiche(page);
 
-  await expect(chip).toHaveClass(/elu-chip-active/);
-  await expect(page.locator('#eluResult .elu-item')).toHaveCount(annonce);
+  await chip1.click();
+  await expect(chip1).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(n1);
+  expect(await totalAffiche(page)).toBe(n1);
 
-  await chip.click();   // reclic → tous les rôles
-  await expect(chip).not.toHaveClass(/elu-chip-active/);
+  await chip2.click();   // les DEUX cochés → somme, pas remplacement
+  await expect(chip1).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(n1 + n2);
+
+  await chip1.click();   // décoché → il ne reste que le second
+  await expect(chip1).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(n2);
+
+  await chip2.click();   // plus rien de coché → tout revient
+  expect(await totalAffiche(page)).toBe(totalInitial);
   expect(errors).toEqual([]);
 });
 
 test('les filtres année et thématique sont repliés au départ', async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto('/');
-  await page.locator('#tab-elus').click();
+  await openEluCombo(page);
+  await page.locator('#eluOptions .elu-opt').first().click();
   await expect(page.locator('#eluResult .elu-name')).toBeVisible();
 
   const more = page.locator('#eluMoreFilters');
@@ -222,5 +239,27 @@ test('les filtres année et thématique sont repliés au départ', async ({ page
   const annee = (await page.$$eval('#eluYear option', els => els.map(e => e.value)))[1];
   await page.locator('#eluYear').selectOption(annee);
   await expect(page.locator('#eluMoreActive')).toHaveText(` · ${annee}`);
+  expect(errors).toEqual([]);
+});
+
+// L'onglet n'ouvre plus la fiche d'une personne prise dans l'ordre
+// alphabétique : il invite à chercher, et ne charge que ce qu'on lui demande.
+test('l\'onglet s\'ouvre sur un écran d\'accueil, sans élu·e présélectionné·e', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-elus').click();
+
+  await expect(page.locator('#eluResult .elu-accueil')).toBeVisible();
+  await expect(page.locator('#eluResult .elu-name')).toHaveCount(0);
+  await expect(page.locator('#eluSearch')).toHaveValue('');
+  await expect(page.locator('#eluRoleChips')).toBeHidden();
+  await expect(page.locator('#eluTypeFilterChips')).toBeHidden();
+  await expect(page.locator('#eluMoreFilters')).toBeHidden();
+
+  // Un choix explicite ouvre bien une fiche, et l'accueil s'efface.
+  await page.locator('#eluSearch').click();
+  await page.locator('#eluOptions .elu-opt').first().click();
+  await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+  await expect(page.locator('#eluResult .elu-accueil')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
