@@ -59,7 +59,7 @@ DEFAULT_JSON = "pv_conseil_schaerbeek.json"
 # migration futur de cibler `metadata["schema_version"] < N` : ne ré-embedder
 # QUE les vecteurs obsolètes, pas tout l'index (le quota d'embedding Pinecone
 # est limité — voir RESOURCE_EXHAUSTED dans rag.py/eval_rag.py).
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 # Plan Pinecone Starter (gratuit) : le modèle d'embedding multilingual-e5-large
 # est plafonné à 250 000 tokens/min (input_type "passage"). On cadence l'envoi
@@ -136,10 +136,17 @@ def point_to_chunk(point: dict, seance: dict, commune: str) -> dict:
     date = seance.get("date", "date inconnue")
     montant = point.get("montant_eur")
     montant_str = f"\nMontant : {montant:,.0f} €".replace(",", " ") if montant else ""
+    # Trois listes de personnes, telles que la pipeline les produit — jamais
+    # dérivées l'une de l'autre, et JAMAIS repliées sur l'ancien champ
+    # singulier `repondant` : un repli masquerait une extraction restée à
+    # l'ancien schéma au lieu de la rendre visible (voir pipeline/
+    # pv_extraction_pipeline.py, _normalize_point).
+    auteurs = point.get("auteurs") or []
     intervenants = point.get("intervenants") or []
+    repondants = point.get("repondants") or []
+    aut_str = f"\nAuteur·e·s : {', '.join(auteurs)}" if auteurs else ""
     interv_str = f"\nIntervenants : {', '.join(intervenants)}" if intervenants else ""
-    repondant = point.get("repondant")
-    rep_str = f"\nRépondant : {repondant}" if repondant else ""
+    rep_str = f"\nRépondants : {', '.join(repondants)}" if repondants else ""
 
     # Le texte qui sera vectorisé et recherché. Le titre (élément le plus
     # distinctif — souvent le seul endroit qui nomme précisément le sujet du
@@ -157,7 +164,7 @@ Séance du Conseil communal de {commune_nom} du {date} — Point SP {point.get('
 Résumé : {point.get('resume','')}
 Rubrique : {point.get('rubrique','')} / {point.get('sous_rubrique','')}
 Décision : {point.get('decision','')}
-Vote : {format_vote(point.get('vote'))}{montant_str}{interv_str}{rep_str}
+Vote : {format_vote(point.get('vote'))}{montant_str}{aut_str}{interv_str}{rep_str}
 Thématiques : {', '.join(point.get('thematiques') or [])}"""
 
     # ID unique et stable pour ce point. Inchangé (pas de préfixe commune) pour
@@ -182,6 +189,13 @@ Thématiques : {', '.join(point.get('thematiques') or [])}"""
         "montant_eur": float(montant) if montant else 0.0,
         "thematiques": point.get("thematiques") or [],
         "vote_type": (point.get("vote") or {}).get("type", "") or "",
+        # Qui dépose, qui débat, qui répond — trois rôles distincts, exposés
+        # tels quels par l'API des sources (voir models/api.Source). Pinecone
+        # n'accepte pas de valeur nulle dans une liste : on borne à 20 noms,
+        # au-delà l'affichage ne se lit plus de toute façon.
+        "auteurs": auteurs[:20],
+        "intervenants": intervenants[:20],
+        "repondants": repondants[:20],
     }
     return {"id": chunk_id, "metadata": metadata}
 

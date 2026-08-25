@@ -2,7 +2,7 @@
 // rendu des échanges, dictée vocale, envoi de la question ──
 import { API_URL } from './config.js';
 import { settings } from './settings.js';
-import { escapeHtml, renderMarkdown, formatDate, renderThemeTags, renderReponseDetails } from './utils.js';
+import { escapeHtml, renderMarkdown, formatDate, renderThemeTags, renderReponseDetails, listeFr } from './utils.js';
 import { copyShare, shareBaseUrl } from './share.js';
 import { isLexCommand, runLexCommand } from './lexique.js';
 
@@ -222,6 +222,21 @@ export function buildSourcesHtml(srcs) {
       ${renderThemeTags(s.thematiques)}
     </div>`;
   };
+  // Les trois rôles que le PV nomme autour d'un point, chacun sur sa ligne et
+  // seulement s'il y a quelqu'un : une source muette sur ces rôles ne doit pas
+  // afficher trois libellés vides. Les listes viennent telles quelles de l'API
+  // (voir models/api.Source), séparées et ponctuées à la française.
+  const ROLES_SOURCE = [
+    ['auteurs', 'Déposé par'],
+    ['intervenants', 'Intervenant·e·s'],
+    ['repondants', 'Répondant·e·s'],
+  ];
+  const personnesSource = s => ROLES_SOURCE
+    .filter(([k]) => (s[k] || []).length)
+    .map(([k, label]) =>
+      `<div class="source-personnes"><span class="source-role">${label}</span> ${escapeHtml(listeFr(s[k]))}</div>`)
+    .join('');
+
   const pvItem = s => {
     const seance = s.url
       ? `<a class="pv-pdf-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séance ${formatDate(s.date)}</a>`
@@ -229,7 +244,10 @@ export function buildSourcesHtml(srcs) {
     return `
     <div class="source-item">
       <div class="source-ref">${seance}<br>Point SP ${s.sp}</div>
-      <div class="source-titre">${escapeHtml(s.titre)}</div>
+      <div class="source-corps">
+        <div class="source-titre">${escapeHtml(s.titre)}</div>
+        ${personnesSource(s)}
+      </div>
       <div class="source-decision"><svg class="icon" aria-hidden="true"><use href="#ico-decision"/></svg>${escapeHtml(s.decision)}</div>
       ${renderThemeTags(s.thematiques)}
     </div>`;

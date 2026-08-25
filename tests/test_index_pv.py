@@ -83,3 +83,51 @@ def test_chunk_porte_la_version_de_schema():
     obsolètes (metadata["schema_version"] < N), sans épuiser le quota."""
     c = point_to_chunk(_point(), _seance(), "schaerbeek")
     assert c["metadata"]["schema_version"] == SCHEMA_VERSION
+
+
+# ── Trois rôles distincts (auteurs / intervenants / repondants) ──
+def _point_nouveau():
+    return {
+        "sp": 60, "titre": "Tarification des infrastructures sportives",
+        "auteurs": ["Saït Köse"],
+        "intervenants": ["Ibrahim Dönmez", "Elias Ammi"],
+        "repondants": ["Abobakre Bouhjar"],
+        "decision": "APPROUVÉ", "vote": {"type": "unanimite"}, "thematiques": ["sport"],
+    }
+
+
+_SEANCE = {"id": "PV-TEST", "date": "2025-06-25"}
+
+
+def test_les_trois_roles_sont_indexes_separement():
+    # Déposer un point, prendre la parole et répondre au nom du Collège sont
+    # trois rôles que le PV distingue : ils sont indexés comme tels, chacun
+    # dans sa métadonnée, et lisibles par l'API des sources.
+    meta = point_to_chunk(_point_nouveau(), _SEANCE, "schaerbeek")["metadata"]
+    assert meta["auteurs"] == ["Saït Köse"]
+    assert meta["intervenants"] == ["Ibrahim Dönmez", "Elias Ammi"]
+    assert meta["repondants"] == ["Abobakre Bouhjar"]
+    for role in ("Auteur·e·s : Saït Köse", "Intervenants : Ibrahim Dönmez, Elias Ammi",
+                 "Répondants : Abobakre Bouhjar"):
+        assert role in meta["chunk_text"]
+
+
+def test_le_champ_singulier_repondant_nest_plus_stocke():
+    # `repondant` n'est ni une métadonnée, ni une source de repli : un point
+    # resté à l'ancien schéma produit des listes VIDES — ce qui se voit — au
+    # lieu d'une donnée dont on ne saurait plus d'où elle vient.
+    ancien = {k: v for k, v in _point_nouveau().items() if k not in ("auteurs", "repondants")}
+    ancien["repondant"] = "Abobakre Bouhjar"
+    meta = point_to_chunk(ancien, _SEANCE, "schaerbeek")["metadata"]
+    assert "repondant" not in meta
+    assert meta["auteurs"] == [] and meta["repondants"] == []
+    assert "Répondant" not in meta["chunk_text"]
+
+
+def test_le_schema_est_versionne_pour_cibler_la_reindexation():
+    # Les vecteurs indexés avant ce changement n'ont pas les trois champs :
+    # la version permet de ne ré-embedder QUE ceux-là (voir le commentaire en
+    # tête d'index_pv), au lieu de tout l'index.
+    assert SCHEMA_VERSION >= 2
+    meta = point_to_chunk(_point_nouveau(), _SEANCE, "schaerbeek")["metadata"]
+    assert meta["schema_version"] == SCHEMA_VERSION

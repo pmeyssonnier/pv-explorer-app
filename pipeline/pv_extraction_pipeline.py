@@ -375,8 +375,15 @@ def normalize_point(point: dict) -> Optional[dict]:
         "sous_rubrique": _clean_str(point.get("sous_rubrique")),
         "titre": _clean_str(point.get("titre")),
         "resume": _clean_str(point.get("resume")),
+        # Trois listes DISTINCTES, chacune lue du texte du PV. Aucune n'est
+        # dérivée d'une autre : un répondant recopié depuis les intervenants
+        # (ou l'inverse) inventerait un rôle que le PV n'attribue pas. En
+        # particulier, `repondants` ne vient JAMAIS de l'ancien champ
+        # `repondant` — un extracteur qui ne renseigne que celui-ci produit une
+        # liste vide, ce qui se voit, plutôt qu'une donnée d'origine ambiguë.
+        "auteurs": _clean_str_list(point.get("auteurs")),
         "intervenants": _clean_str_list(point.get("intervenants")),
-        "repondant": _clean_str(point.get("repondant")) or None,
+        "repondants": _clean_str_list(point.get("repondants")),
         "decision": _clean_str(point.get("decision")),
         "vote": _normalize_vote(point.get("vote")),
         "montant_eur": _coerce_amount(point.get("montant_eur")),
@@ -433,7 +440,7 @@ SCHÉMA JSON D'UN POINT :
   "type": <"point_normal"|"point_urgent"|"motion"|"demande_habitant"|"question_orale">,
   "rubrique": <string>, "sous_rubrique": <string>,
   "titre": <string>, "resume": <string>,
-  "intervenants": <array>, "repondant": <string|null>,
+  "auteurs": <array>, "intervenants": <array>, "repondants": <array>,
   "decision": <"DÉCIDE"|"PREND ACTE"|"APPROUVÉ"|"PREND POUR INFORMATION"|"REPORTÉ"|"RETIRÉ"|"DÉBAT"|"MINUTE DE SILENCE">,
   "vote": {"type": <"unanimite"|"vote_nominal"|"reporte"|null>, "pour": <int|null>, "contre": <int>, "abstentions": <int>},
   "montant_eur": <float|null>, "thematiques": <array snake_case>
@@ -458,6 +465,18 @@ RÈGLES :
   retiré de l'ordre du jour.") : il garde son numéro SP et doit apparaître dans
   la liste. Un point retiré/reporté a un titre mais souvent ni intervenants, ni
   montant, ni vote chiffré — mets `null`/0, jamais l'omission du point entier.
+- TROIS LISTES DE PERSONNES, jamais confondues, jamais déduites l'une de l'autre :
+  * "auteurs" = qui DÉPOSE le point ("Motion de Monsieur X", "Demande de Madame Y",
+    "Question orale de..."). Vide pour un point délibératif, porté par le Collège.
+  * "intervenants" = qui PREND LA PAROLE dans le débat.
+  * "repondants" = qui RÉPOND au nom du Collège ("Réponse de Madame Z",
+    "Monsieur l'Échevin W répond").
+  Un nom cité sous plusieurs de ces rôles figure dans plusieurs listes — c'est
+  voulu. Chaque liste ne contient QUE des noms lus dans le texte : jamais un
+  répondant recopié depuis les intervenants, ni l'inverse. Liste vide si le PV
+  ne dit rien, jamais `null`.
+- "X et Y" désigne DEUX personnes : sépare-les en deux entrées de la liste, ne
+  recolle jamais deux noms dans une seule chaîne.
 - SP > 67 souvent urgences ; motions = "Motion de..." ; habitants = "Demande de..."
 - Extrais montants même dans considérants (ex: "65.000 € TVAC")
 - IGNORE le texte néerlandais (version NL) pour éviter doublons
@@ -1344,8 +1363,9 @@ def export_csv(db: dict, output_path: str):
                 "vote_pour": vote.get("pour"), "vote_contre": vote.get("contre"),
                 "vote_abstentions": vote.get("abstentions"), "montant_eur": p.get("montant_eur"),
                 "urgence": p.get("urgence"),
+                "auteurs": "; ".join(p.get("auteurs") or []),
                 "intervenants": "; ".join(p.get("intervenants") or []),
-                "repondant": p.get("repondant"),
+                "repondants": "; ".join(p.get("repondants") or []),
                 "thematiques": ", ".join(p.get("thematiques") or []),
             })
     if not rows:
