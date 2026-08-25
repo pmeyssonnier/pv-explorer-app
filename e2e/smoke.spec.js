@@ -104,6 +104,9 @@ test('pas de débordement horizontal en 390px de large', async ({ page }) => {
 async function openEluCombo(page) {
   await page.locator('#tab-elus').click();
   await expect(page.locator('#eluResult .elu-accueil')).toBeVisible();
+  // Le placeholder annonce le nombre d'élu·e·s : il ne le fait qu'une fois
+  // /elus arrivé. On attend ce signal plutôt que de cliquer dans le vide.
+  await expect(page.locator('#eluSearch')).toHaveAttribute('placeholder', /parmi/);
   await page.locator('#eluSearch').click();
   await expect(page.locator('#eluOptions .elu-opt').first()).toBeVisible();
 }

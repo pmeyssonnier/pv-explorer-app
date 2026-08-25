@@ -31,6 +31,11 @@ export async function loadElus() {
   if (elusLoaded) return;
   const input = document.getElementById('eluSearch');
   if (!input) return;
+  // Écran d'accueil TOUT DE SUITE, sans attendre la réponse de /elus : la
+  // construction de l'index côté serveur prend un instant au premier appel
+  // (base des PV + chapitrage + questions écrites), et le panneau restait
+  // vide pendant ce temps.
+  renderEluAccueil();
   try {
     const res = await fetch(API_URL + '/elus');
     if (!res.ok) throw new Error('Erreur ' + res.status);
