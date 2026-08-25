@@ -26,14 +26,12 @@ def stats(request: Request):
     out = statistics.compute_stats(db, seances.hors_pv_par_date())
     # Issue des points par séance : alimente le graphe des statuts, qui
     # descend année → mois → séance depuis cette seule source.
-    out["statuts_par_date"] = seances.statuts_par_date()
-    # Reste du même graphe : les points de PV sans décision relevée. Sans eux,
-    # l'empilement des issues resterait 67 points sous le graphe d'activité,
-    # sans dire pourquoi.
-    out["sans_decision_par_date"] = seances.sans_decision_par_date()
-    # Répartition par type des mêmes points : l'empilement du graphe d'activité,
-    # dont le total reste le nombre de points du PV qu'il affiche déjà.
-    out["types_par_date"] = seances.types_par_date()
+    # Croisement type × issue par séance : UNE structure d'où le client dérive
+    # ses trois lectures — répartition par type, par issue, et ce que devient
+    # chaque type quand on isole une puce. Les deux cartes plates qu'elle
+    # remplaçait en étaient des sommes, il n'y a plus à les transporter deux
+    # fois (voir seances.issues_par_date).
+    out["issues_par_date"] = seances.issues_par_date()
     return out
 
 

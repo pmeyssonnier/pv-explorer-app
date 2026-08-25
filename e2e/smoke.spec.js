@@ -764,11 +764,19 @@ test('le graphe d\'activité s\'empile par type et s\'isole à la puce', async (
   apres.forEach((n, i) => expect(n).toBeLessThanOrEqual(avant[i]));
   expect(apres.reduce((a, b) => a + b, 0)).toBeLessThan(totalActivite);
 
-  // 3. Re-cliquer revient à l'empilement complet.
+  // 3. Le graphe des issues suit : « que devient une demande ? » — son titre
+  //    le dit, et son total tombe sur celui de la série isolée.
+  await expect(page.locator('#statutTitle')).toHaveText('Issue des demandes par année');
+  const issuesIsolees = await page.$$eval('#statutPlot .yc-col .yc-val',
+    els => els.reduce((a, e) => a + (+e.textContent.replace(/[^\d]/g, '') || 0), 0));
+  expect(issuesIsolees).toBe(apres.reduce((a, b) => a + b, 0));
+
+  // 4. Re-cliquer revient à l'empilement complet, des deux côtés.
   await page.locator('#drillLegend .yc-legend-chip', { hasText: 'Demande' }).click();
   await expect(page.locator('#drillTitle')).toHaveText('Activité par année');
+  await expect(page.locator('#statutTitle')).toHaveText('Issue des points par année');
 
-  // 4. Métrique « PV » : on compte des séances, il n'y a rien à répartir.
+  // 5. Métrique « PV » : on compte des séances, il n'y a rien à répartir.
   await page.locator('[data-metric="pv"]').click();
   await expect(page.locator('#drillLegend .yc-legend-chip')).toHaveCount(0);
   expect(errors).toEqual([]);

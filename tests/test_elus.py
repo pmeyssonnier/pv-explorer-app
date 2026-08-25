@@ -1332,3 +1332,25 @@ def test_les_trois_vues_comptent_les_memes_points():
     for date, par_type in types.items():
         par_issue = sum((statuts.get(date) or {}).values()) + sans.get(date, 0)
         assert sum(par_type.values()) == par_issue, date
+
+
+def test_le_croisement_type_issue_retombe_sur_les_deux_lectures():
+    # Une seule structure sert les deux graphes de l'onglet : sommée sur les
+    # issues elle donne la répartition par type, sommée sur les types elle donne
+    # la répartition par issue. C'est ce qui rend leur contradiction impossible
+    # — et ce qui permet, en isolant un type, de voir ce qu'il devient.
+    croise = seances.issues_par_date()
+    types = seances.types_par_date()
+    statuts = seances.statuts_par_date()
+    sans = seances.sans_decision_par_date()
+    assert croise
+    for date, par_type in croise.items():
+        assert "Débat filmé" not in par_type, date
+        for t, issues in par_type.items():
+            assert sum(issues.values()) == types[date][t], (date, t)
+        plat = {}
+        for issues in par_type.values():
+            for st, n in issues.items():
+                plat[st] = plat.get(st, 0) + n
+        assert plat.pop("", 0) == sans.get(date, 0), date
+        assert plat == (statuts.get(date) or {}), date

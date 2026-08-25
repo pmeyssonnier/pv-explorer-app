@@ -20,9 +20,10 @@ let expandedYears = new Set();  // années dépliées dans la vue « tous les PV
 let activiteTypesParAnnee = [];   // [{annee, "Question orale":n, "Demande":n, ...}] — voir /stats
 let activiteTypeOrder = [];       // ordre fixe des séries (voir ACTIVITY_TYPE_ORDER, backend)
 let horsPvParDate = {};           // date -> nb de chapitres vidéo sans point de PV
-let statutsParDate = {};          // date -> {statut: nb de points} (voir seances.statuts_par_date)
-let sansDecisionParDate = {};     // date -> nb de points de PV sans décision relevée
-let typesParDate = {};            // date -> {type: nb} (voir seances.types_par_date)
+// date -> {type: {issue: nb}} — le croisement dont dérivent les trois lectures
+// de l'onglet (voir seances.issues_par_date). L'issue vaut '' quand le PV n'en
+// relève aucune.
+let issuesParDate = {};
 let statutFilter = 'all';         // série isolée dans le graphe des issues
 let statsVue = 'activite';        // sous-onglet affiché (voir showStatsVue)
 let qeResume = [];                // {date, thematiques} par question écrite (voir /stats qe_resume)
@@ -131,17 +132,21 @@ const bucketVal = b => {
 // administratif. La couleur de la marque, elle, ne pouvait pas servir — en
 // thème sombre elle passe sous la barre de séparation d'avec l'ambre des
 // motions (ΔE 9,2, vérifié avec validate_palette).
+// [type backend, libellé de la puce, classe de couleur, pluriel pour un titre]
 const DRILL_TYPES = [
-  ['Point', 'Point délibératif', 'yc-seg-point'],
-  ['Motion', 'Motion', 'yc-seg-s2'],
-  ['Question orale', 'Question orale', 'yc-seg-s0'],
-  ['Demande', 'Demande', 'yc-seg-s1'],
+  ['Point', 'Point délibératif', 'yc-seg-point', 'des points délibératifs'],
+  ['Motion', 'Motion', 'yc-seg-s2', 'des motions'],
+  ['Question orale', 'Question orale', 'yc-seg-s0', 'des questions orales'],
+  ['Demande', 'Demande', 'yc-seg-s1', 'des demandes'],
 ];
+const drillType = t => DRILL_TYPES.find(([x]) => x === t) || [];
 
 function bucketTypes(b) {
   const out = {};
   b.list.forEach(s => {
-    Object.entries(typesParDate[s.date] || {}).forEach(([t, n]) => { out[t] = (out[t] || 0) + n; });
+    Object.entries(issuesParDate[s.date] || {}).forEach(([t, issues]) => {
+      out[t] = (out[t] || 0) + Object.values(issues).reduce((a, n) => a + n, 0);
+    });
   });
   return out;
 }
@@ -156,7 +161,7 @@ function renderDrill() {
   // segments EST le total affiché — les trois graphes de l'onglet montrent
   // alors les mêmes points, par type ici, par issue plus bas. Métrique « PV » :
   // on compte des séances, il n'y a rien à répartir, la barre reste unie.
-  const empile = drillMetric === 'points' && Object.keys(typesParDate).length > 0;
+  const empile = drillMetric === 'points' && Object.keys(issuesParDate).length > 0;
   const isole = empile && drillTypeFilter !== 'all';
   plot.innerHTML = bs.map(b => {
     const v = bucketVal(b), h = Math.max(4, Math.round(v / max * 130)), a = aggregate(b.list);
@@ -180,7 +185,7 @@ function renderDrill() {
       }).reverse().join('');
       barre = `<div class="yc-stack" style="height:${h}px">${segs}</div>`;
     } else {
-      const cls = isole ? (DRILL_TYPES.find(([t]) => t === drillTypeFilter) || [])[2] : '';
+      const cls = isole ? drillType(drillTypeFilter)[2] : '';
       barre = isole
         ? `<div class="yc-stack" style="height:${h}px"><div class="yc-seg ${cls} yc-seg-top" style="height:${h}px"></div></div>`
         : `<div class="yc-bar" style="height:${h}px"></div>`;
@@ -201,8 +206,7 @@ function renderDrill() {
   }
 
   const t = document.getElementById('drillTitle');
-  const quoi = drillTypeFilter === 'all' ? 'Activité'
-    : (DRILL_TYPES.find(([x]) => x === drillTypeFilter) || [])[1];
+  const quoi = drillTypeFilter === 'all' ? 'Activité' : drillType(drillTypeFilter)[1];
   if (t) t.textContent = drill.level === 'year' ? `${quoi} par année` : `${quoi} par mois — ${drill.year}`;
   const hint = drill.level === 'year'
     ? 'Cliquez une année pour voir ses mois.'
@@ -380,32 +384,34 @@ const serieDuStatut = st => STATUT_REPORTE_MEMBRES.includes(st) ? STATUT_REPORTE
 // de vraies décisions) autrement que par la seule couleur.
 const STATUT_SANS = 'Sans issue relevée';
 
-// Statuts du périmètre courant, repliés sur les 5 séries. Retourne aussi le
+// Issues du périmètre courant, repliées sur les 6 séries. Retourne aussi le
 // détail de ce qui a été regroupé, pour l'infobulle de la légende.
+//
+// Le TYPE isolé dans le graphe du dessus restreint aussi celui-ci : c'est ce
+// qui répond à « que devient une demande ? » — les demandes finissent en débat,
+// les motions se votent ou se reportent, les points délibératifs s'approuvent.
+// Les deux graphes lisent la même structure croisée, ils ne peuvent donc pas
+// se contredire.
 function statutRows() {
   const parCle = {};
   const detailAutres = {};
   const detailReporte = {};
-  Object.entries(statutsParDate).forEach(([date, counts]) => {
+  Object.entries(issuesParDate).forEach(([date, parType]) => {
     let cle = null;
     if (drill.level === 'year') cle = date.slice(0, 4);
     else if (date.slice(0, 4) === drill.year) cle = date.slice(5, 7);
     if (!cle) return;
     const e = parCle[cle] || (parCle[cle] = {});
-    Object.entries(counts).forEach(([st, n]) => {
-      const serie = serieDuStatut(st);
-      e[serie] = (e[serie] || 0) + n;
-      if (serie === STATUT_AUTRES) detailAutres[st] = (detailAutres[st] || 0) + n;
-      if (serie === STATUT_REPORTE) detailReporte[st] = (detailReporte[st] || 0) + n;
+    Object.entries(parType).forEach(([type, issues]) => {
+      if (drillTypeFilter !== 'all' && type !== drillTypeFilter) return;
+      Object.entries(issues).forEach(([st, n]) => {
+        if (!st) { e[STATUT_SANS] = (e[STATUT_SANS] || 0) + n; return; }
+        const serie = serieDuStatut(st);
+        e[serie] = (e[serie] || 0) + n;
+        if (serie === STATUT_AUTRES) detailAutres[st] = (detailAutres[st] || 0) + n;
+        if (serie === STATUT_REPORTE) detailReporte[st] = (detailReporte[st] || 0) + n;
+      });
     });
-  });
-  Object.entries(sansDecisionParDate).forEach(([date, n]) => {
-    let cle = null;
-    if (drill.level === 'year') cle = date.slice(0, 4);
-    else if (date.slice(0, 4) === drill.year) cle = date.slice(5, 7);
-    if (!cle) return;
-    const e = parCle[cle] || (parCle[cle] = {});
-    e[STATUT_SANS] = (e[STATUT_SANS] || 0) + n;
   });
   const rows = Object.keys(parCle).sort().map(k => ({
     key: k,
@@ -485,8 +491,11 @@ function renderStatuts() {
   }).join('');
 
   const title = document.getElementById('statutTitle');
+  // Le titre dit sur QUOI porte la répartition : isoler « Demande » dans le
+  // graphe du dessus fait de celui-ci « Issue des demandes ».
+  const deQuoi = drillTypeFilter === 'all' ? 'des points' : (drillType(drillTypeFilter)[3] || 'des points');
   if (title) title.textContent = drill.level === 'year'
-    ? 'Issue des points par année' : 'Issue des points par mois — ' + drill.year;
+    ? `Issue ${deQuoi} par année` : `Issue ${deQuoi} par mois — ${drill.year}`;
   const hint = document.getElementById('statutHint');
   if (hint) hint.textContent = drill.level === 'year'
     ? 'Cliquez une année pour voir la répartition par mois.'
@@ -499,6 +508,7 @@ function renderStatuts() {
 export function onDrillTypeChipClick(type) {
   drillTypeFilter = drillTypeFilter === type ? 'all' : type;
   renderDrill();
+  renderStatuts();   // le graphe des issues suit : « que devient ce type ? »
 }
 
 // Reclique sur la puce déjà active → retour à la vue empilée (toutes les
@@ -718,9 +728,7 @@ export async function loadStats() {
     activiteTypesParAnnee = s.activite_types_par_annee || [];
     activiteTypeOrder = s.activite_type_order || [];
     horsPvParDate = s.hors_pv_par_date || {};
-    statutsParDate = s.statuts_par_date || {};
-    sansDecisionParDate = s.sans_decision_par_date || {};
-    typesParDate = s.types_par_date || {};
+    issuesParDate = s.issues_par_date || {};
     qeResume = s.qe_resume || [];
     latestYear = seancesResume.reduce((mx, x) => x.date.slice(0, 4) > mx ? x.date.slice(0, 4) : mx, '');
     expandedYears = new Set([latestYear]);   // année la plus récente dépliée par défaut
@@ -765,7 +773,8 @@ export async function loadStats() {
           « Sans issue relevée » est le solde : des points dont le PV ne dit pas ce qu'ils sont
           devenus (67 sur 10 062, concentrés sur quelques séances). Les deux graphes comptent donc
           exactement les mêmes points ; les chapitres vidéo sans PV, eux, ne figurent dans ni
-          l'un ni l'autre.</p>
+          l'un ni l'autre. Isolez un type dans le graphe du dessus et celui-ci ne montre plus que
+          ses issues — ce que deviennent les demandes, les motions, les points délibératifs.</p>
       </div>
       <div class="stat-section" id="activitySection">
         <div class="yc-head">
