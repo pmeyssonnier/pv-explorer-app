@@ -73113,7 +73113,7 @@
             "Denis Grimberghs"
           ],
           "repondant": "Denis Grimberghs",
-          "decision": "DÉCIDE",
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 7,
@@ -121134,7 +121134,7 @@
             "Bernadette Vriamont"
           ],
           "repondant": "Bourgmestre",
-          "decision": null,
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 7,
@@ -160709,7 +160709,7 @@
             "Myriam BOXUS"
           ],
           "repondant": "Adelheid BYTTEBIER",
-          "decision": null,
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 13,
@@ -169138,7 +169138,7 @@
             "Bourgmestre ff"
           ],
           "repondant": "Byttebier",
-          "decision": null,
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 14,
@@ -172243,7 +172243,7 @@
             "BOUHJAR Abobakre"
           ],
           "repondant": "Bourgmestre ff",
-          "decision": "DÉCIDE",
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 19,
@@ -186735,7 +186735,7 @@
             "Bourgmestre ff"
           ],
           "repondant": "Bourgmestre ff",
-          "decision": null,
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 16,
@@ -193025,7 +193025,7 @@
             "Byttebier"
           ],
           "repondant": "Byttebier",
-          "decision": null,
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 16,
@@ -206687,7 +206687,7 @@
             "Monsieur Yildiz"
           ],
           "repondant": "Madame la Bourgmestre ff",
-          "decision": null,
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 16,
@@ -216802,7 +216802,7 @@
             "Bernard Clerfayt"
           ],
           "repondant": "Frederic Nimal",
-          "decision": null,
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 14,
@@ -246641,7 +246641,7 @@
             "BOUHJAR ABOBAKRE"
           ],
           "repondant": "VANHALEWYN VINCENT",
-          "decision": null,
+          "decision": "REJETÉ",
           "vote": {
             "type": "vote_nominal",
             "pour": 15,
