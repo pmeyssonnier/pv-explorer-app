@@ -16,7 +16,7 @@ import {
 import {
   loadStats, toggleYear, drillInto, drillTo, selectSeance, clearSeance,
   selectTheme, setMetric, shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick,
-  onStatutChipClick,
+  onStatutChipClick, showStatsVue, setPendingStatsVue,
 } from './stats.js';
 import {
   loadElus, initEluCombo, onEluYearChange, onEluThemeChange,
@@ -48,7 +48,10 @@ function switchTab(tab) {
 // question et la relance automatiquement (au chargement).
 function handleDeepLink() {
   const params = new URLSearchParams(location.search);
-  if (params.get('tab') === 'stats') switchTab('stats');
+  if (params.get('tab') === 'stats') {
+    setPendingStatsVue(params.get('vue'));   // ?vue=pv / theme — voir showStatsVue
+    switchTab('stats');
+  }
   if (params.get('tab') === 'elus') {
     setPendingEluKey(params.get('elu') || null);   // appliqué quand la liste est chargée
     switchTab('elus');
@@ -75,6 +78,7 @@ registerActions({
   newSearch, toggleDictation, submitQuestion, copyAnswer, downloadAnswer, shareAnswer,
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick, onStatutChipClick,
+  showStatsVue,
   shareElu, onEluChipClick, onEluRoleChipClick,
   shareSeance, jumpToSeance, onSeanceRoleChipClick, onSeanceTypeChipClick,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,

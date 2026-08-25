@@ -405,6 +405,43 @@ body {
 .suggestion-remove:hover { opacity: 1; background: rgba(0, 0, 0, 0.12); }
 
 /* ── DRILL-DOWN STATS (Année → Mois → Séance) ── */
+/* ── SOUS-ONGLETS DES STATISTIQUES ────────────────────────────────────────
+   Trois vues (activité / procès-verbaux / évolution d'un thème) sous l'onglet
+   Statistiques. Volontairement plus discrets que les onglets principaux, qui
+   restent le seul repère de navigation de premier niveau : même grammaire
+   (soulignement --or sur l'actif), corps plus petit et sans occuper toute la
+   largeur. Le périmètre (.scope-line) leur est commun et se place AU-DESSUS —
+   changer de vue ne le remet pas à zéro. */
+.subtabs {
+  display: flex; gap: 4px; margin-bottom: 4px;
+  overflow-x: auto; scrollbar-width: none;
+  border-bottom: 1px solid var(--ligne);
+}
+.subtabs::-webkit-scrollbar { display: none; }
+.subtab {
+  display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--corps); font-size: 14px; font-weight: 600;
+  color: var(--encre-soft); padding: 10px 14px;
+  border-bottom: 3px solid transparent; margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.subtab .icon { width: 15px; height: 15px; vertical-align: 0; }
+.subtab:hover { color: var(--bordeaux); }
+.subtab[aria-selected="true"] { color: var(--bordeaux); border-bottom-color: var(--or); }
+@media (max-width: 480px) { .subtab { padding: 9px 9px; font-size: 13px; gap: 5px; } }
+/* Combien de PV le périmètre courant contient, sans avoir à ouvrir la vue. */
+.subtab-count {
+  font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums;
+  color: var(--encre-soft); background: var(--papier-dark);
+  border: 1px solid var(--ligne); border-radius: 999px; padding: 1px 7px;
+}
+.subtab-count[hidden] { display: none; }
+.subtab[aria-selected="true"] .subtab-count { color: var(--bordeaux); border-color: var(--bordeaux-clair); }
+.subpanel { display: none; padding-top: 18px; }
+.subpanel.active { display: block; animation: fade 0.3s ease; }
+@media (prefers-reduced-motion: reduce) { .subpanel.active { animation: none; } }
+
 .scope-line {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; flex-wrap: wrap; margin-bottom: 14px;

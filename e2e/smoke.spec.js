@@ -474,3 +474,39 @@ test('le graphe des statuts descend année → mois, sans jamais dépasser les p
   expect(mois.reduce((a, b) => a + b, 0)).toBe(total);
   expect(errors).toEqual([]);
 });
+
+test('le périmètre survit au changement de vue, et un lien rouvre la bonne', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#statsPvCount')).toBeVisible(STATS_FROID);
+
+  // 1. Trois vues, l'activité par défaut.
+  await expect(page.locator('.subtab')).toHaveCount(3);
+  await expect(page.locator('#statsvue-activite')).toHaveAttribute('aria-selected', 'true');
+
+  // 2. Forer une année dans « Activité »… (l'avant-dernière : l'année en cours
+  //    est incomplète, mais celle d'avant a ses douze mois).
+  const colonnes = await page.$$eval('#drillPlot .yc-col', els => els.length);
+  await page.locator('#drillPlot .yc-col').nth(colonnes - 2).click();
+  const annee = (await page.textContent('#scopeLabel')).trim();
+  expect(annee).toMatch(/^\d{4}$/);
+  const attendu = +(await page.textContent('#statsPvCount')).replace(/[^\d]/g, '');
+  expect(attendu).toBeGreaterThan(0);
+
+  // 3. …le retrouver dans « Procès-verbaux » : c'est tout l'intérêt de garder
+  //    le périmètre au-dessus des sous-onglets.
+  await page.locator('#statsvue-pv').click();
+  await expect(page.locator('#statsvue-panel-pv')).toHaveClass(/active/);
+  await expect(page.locator('#pvScope')).toHaveText(annee);
+  expect(await page.$$eval('#pvList .pv-row', els => els.length)).toBe(attendu);
+  // Et il survit au retour.
+  await page.locator('#statsvue-activite').click();
+  await expect(page.locator('#scopeLabel')).toHaveText(annee);
+
+  // 4. Le lien partagé rouvre la vue, pas seulement l'onglet.
+  await page.goto('/?tab=stats&vue=pv');
+  await expect(page.locator('#statsvue-pv')).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('#statsvue-panel-pv')).toHaveClass(/active/);
+  expect(errors).toEqual([]);
+});

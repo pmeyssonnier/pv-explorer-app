@@ -20,6 +20,7 @@ let activiteTypeOrder = [];       // ordre fixe des séries (voir ACTIVITY_TYPE_
 let horsPvParDate = {};           // date -> nb de chapitres vidéo sans point de PV
 let statutsParDate = {};          // date -> {statut: nb de points} (voir seances.statuts_par_date)
 let statutFilter = 'all';         // série isolée dans le graphe des issues
+let statsVue = 'activite';        // sous-onglet affiché (voir showStatsVue)
 let qeResume = [];                // {date, thematiques} par question écrite (voir /stats qe_resume)
 // Type isolé dans le graphe « Activité citoyenne » via un clic sur sa puce de
 // légende ('all' = vue empilée normale) — voir onActivityTypeChipClick.
@@ -491,6 +492,14 @@ function renderPvList() {
       : base;
   }
   const all = listSeances();
+  // Pastille du sous-onglet : combien de PV le périmètre courant contient, sans
+  // avoir à l'ouvrir. Lue de la même source que la liste, jamais du DOM — les
+  // années repliées ne rendent aucune ligne, un comptage du DOM mentirait.
+  const pastille = document.getElementById('statsPvCount');
+  if (pastille) {
+    pastille.textContent = fmtInt(all.length);
+    pastille.hidden = false;
+  }
   if (!all.length) { box.innerHTML = '<p class="yc-note">Aucune séance.</p>'; return; }
 
   if (drill.level === 'year') {
@@ -581,11 +590,13 @@ export async function loadStats() {
     drillMetric = 'points';
     activiteTypeFilter = 'all';
 
-    container.innerHTML = `
+    document.getElementById('statsScope').innerHTML = `
       <div class="scope-line">
         <div class="scope-title">Vue&nbsp;: <b id="scopeLabel">Toutes les années</b></div>
         <button class="drill-reset" id="drillReset" hidden data-click="drillTo" data-arg="year">↩ Toutes les années</button>
-      </div>
+      </div>`;
+
+    container.innerHTML = `
       <div class="stats-grid" id="statsKPIs"></div>
       <div class="stat-section">
         <div class="yc-head">
@@ -630,7 +641,12 @@ export async function loadStats() {
           <h3><svg class="icon" aria-hidden="true"><use href="#ico-thematique"/></svg>Thématiques — <span id="themesScope">toutes les années</span></h3>
         </div>
         <div id="themesBars"></div>
-      </div>
+      </div>`;
+
+    // La liste des PV est une destination à part entière, pas le bas d'une
+    // longue page : elle a son propre sous-onglet, et suit le périmètre choisi
+    // dans « Activité ».
+    document.getElementById('statsPvContent').innerHTML = `
       <div class="stat-section" id="pvSection">
         <div class="yc-head">
           <h3><svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg>Procès-verbaux — <span id="pvScope"></span></h3>
@@ -644,10 +660,33 @@ export async function loadStats() {
   }
 }
 
+// ── SOUS-ONGLETS ────────────────────────────────────────────────────────────
+// Trois vues qui répondent à trois questions différentes : ce que le conseil
+// traite (activité), quels PV existent, et combien un thème a coûté. Le
+// périmètre (drill) leur est COMMUN et vit au-dessus d'elles — changer de vue
+// ne le remet jamais à zéro.
+const STATS_VUES = ['activite', 'pv', 'theme'];
+
+export function showStatsVue(vue) {
+  if (!STATS_VUES.includes(vue)) vue = 'activite';
+  statsVue = vue;
+  STATS_VUES.forEach(v => {
+    document.getElementById('statsvue-panel-' + v).classList.toggle('active', v === vue);
+    document.getElementById('statsvue-' + v).setAttribute('aria-selected', String(v === vue));
+  });
+}
+
+// Vue demandée par un lien partagé (?tab=stats&vue=pv), appliquée à
+// l'ouverture de l'onglet — le panneau existe déjà en statique, donc sans
+// attendre /stats.
+export function setPendingStatsVue(vue) {
+  if (vue) showStatsVue(vue);
+}
+
 export function shareStats(btn) {
   doShare('PV Explorer — Statistiques du Conseil communal de Schaerbeek',
           'Statistiques des décisions du Conseil communal de Schaerbeek',
-          `${shareBaseUrl()}?tab=stats`, btn);
+          `${shareBaseUrl()}?tab=stats${statsVue === 'activite' ? '' : '&vue=' + statsVue}`, btn);
 }
 
 // ── ÉVOLUTION D'UN THÈME (agrégation exhaustive via /trend) ──
