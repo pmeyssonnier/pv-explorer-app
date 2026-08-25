@@ -1157,6 +1157,11 @@ body {
 .yc-seg-s3 { background: var(--chart-s3); }
 .yc-seg-s4 { background: var(--chart-s4); }
 .yc-seg-autres { background: var(--chart-autres); }
+/* Points délibératifs du graphe d'activité : 84 % du corpus. Gris neutre, hors
+   palette catégorielle — c'est le socle administratif sur lequel se détache ce
+   que les élu·e·s déposent, pas une 4e identité à distinguer des trois autres. */
+.yc-seg-point { background: var(--chart-autres); }
+
 /* « Sans décision » : une donnée ABSENTE, pas une issue de plus. Trame plutôt
    qu'aplat — elle la distingue du gris d'« Autres issues » autrement que par la
    seule couleur (utile aussi en vision des couleurs déficiente et à l'impression),

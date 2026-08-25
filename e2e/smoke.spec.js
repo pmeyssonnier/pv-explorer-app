@@ -737,3 +737,39 @@ test('une liste de plusieurs personnes se lit « A, B et C »', async ({ page })
   expect(multiples.some(t => t.includes(', '))).toBe(true);
   expect(errors).toEqual([]);
 });
+
+test('le graphe d\'activité s\'empile par type et s\'isole à la puce', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#drillLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
+
+  // 1. Quatre types, et la somme des segments EST le total affiché : c'est ce
+  //    qui permet de lire 45 ici et 45 dans le graphe des issues plus bas.
+  const puces = await page.$$eval('#drillLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
+  expect(puces).toEqual(['Point délibératif', 'Motion', 'Question orale', 'Demande']);
+  const totalActivite = await page.$$eval('#drillPlot .yc-col .yc-val',
+    els => els.reduce((a, e) => a + (+e.textContent.replace(/[^\d]/g, '') || 0), 0));
+  const totalIssues = await page.$$eval('#statutPlot .yc-col .yc-val',
+    els => els.reduce((a, e) => a + (+e.textContent.replace(/[^\d]/g, '') || 0), 0));
+  expect(totalActivite).toBe(totalIssues);
+
+  // 2. Isoler une série : la barre ne mesure plus que ce type, et le titre le dit.
+  const avant = await page.$$eval('#drillPlot .yc-col .yc-val',
+    els => els.map(e => +e.textContent.replace(/[^\d]/g, '') || 0));
+  await page.locator('#drillLegend .yc-legend-chip', { hasText: 'Demande' }).click();
+  await expect(page.locator('#drillTitle')).toHaveText('Demande par année');
+  const apres = await page.$$eval('#drillPlot .yc-col .yc-val',
+    els => els.map(e => +e.textContent.replace(/[^\d]/g, '') || 0));
+  apres.forEach((n, i) => expect(n).toBeLessThanOrEqual(avant[i]));
+  expect(apres.reduce((a, b) => a + b, 0)).toBeLessThan(totalActivite);
+
+  // 3. Re-cliquer revient à l'empilement complet.
+  await page.locator('#drillLegend .yc-legend-chip', { hasText: 'Demande' }).click();
+  await expect(page.locator('#drillTitle')).toHaveText('Activité par année');
+
+  // 4. Métrique « PV » : on compte des séances, il n'y a rien à répartir.
+  await page.locator('[data-metric="pv"]').click();
+  await expect(page.locator('#drillLegend .yc-legend-chip')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

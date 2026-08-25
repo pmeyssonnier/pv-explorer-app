@@ -1306,3 +1306,29 @@ def test_les_statuts_dune_seance_partitionnent_ses_points_decides():
     autres = sum(n for st, n in compte.items() if st and st not in nommes)
     assert autres == compte.get("Pris acte", 0) + compte.get("Pris pour information", 0) \
         + compte.get("Débat", 0)
+
+
+def test_les_types_par_date_totalisent_les_points_du_pv():
+    # Le graphe « Activité par année » (métrique Points) empile désormais ces
+    # quatre types, et sa hauteur doit rester CE QU'IL AFFICHAIT DÉJÀ : le
+    # nombre de points du procès-verbal. Les chapitres vidéo sans point de PV
+    # n'en font pas partie — ils ne sont pas des points du PV.
+    types = seances.types_par_date()
+    assert types
+    assert all("Débat filmé" not in m for m in types.values())
+    for r in seances.annees_stats():
+        annee = r["annee"]
+        somme = sum(n for d, m in types.items() if d[:4] == annee for n in m.values())
+        assert somme == r["points"] - r["types"]["Débat filmé"], annee
+
+
+def test_les_trois_vues_comptent_les_memes_points():
+    # Trois angles, un seul ensemble : par type (types_par_date), par issue
+    # (statuts_par_date + sans_decision_par_date). Lire 45 dans l'un et 40 dans
+    # l'autre pour la même séance a coûté assez de doutes pour être verrouillé.
+    types = seances.types_par_date()
+    statuts = seances.statuts_par_date()
+    sans = seances.sans_decision_par_date()
+    for date, par_type in types.items():
+        par_issue = sum((statuts.get(date) or {}).values()) + sans.get(date, 0)
+        assert sum(par_type.values()) == par_issue, date

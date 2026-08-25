@@ -31,6 +31,9 @@ def stats(request: Request):
     # l'empilement des issues resterait 67 points sous le graphe d'activité,
     # sans dire pourquoi.
     out["sans_decision_par_date"] = seances.sans_decision_par_date()
+    # Répartition par type des mêmes points : l'empilement du graphe d'activité,
+    # dont le total reste le nombre de points du PV qu'il affiche déjà.
+    out["types_par_date"] = seances.types_par_date()
     return out
 
 

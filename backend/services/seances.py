@@ -383,7 +383,7 @@ def seance_detail(date: str):
 # appariements vidéo compris. Recompter autrement rouvrirait l'écart entre les
 # deux vues que ces compteurs servent justement à fermer.
 _annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date": None,
-                 "sans_decision_par_date": None}
+                 "sans_decision_par_date": None, "types_par_date": None}
 # La passe coûte ~8 s à froid. Les endpoints FastAPI synchrones tournent dans
 # un pool de threads : sans verrou, N requêtes arrivant sur un cache froid la
 # refaisaient toutes en parallèle — trois appels simultanés mettaient 34 s
@@ -444,6 +444,22 @@ def statuts_par_date() -> dict:
     return _annees_cache["statuts_par_date"]
 
 
+def types_par_date() -> dict:
+    """{date de séance: {type: nb de points}} pour les quatre types du PV.
+
+    Alimente l'empilement du graphe « Activité par année » (métrique Points),
+    dont le total doit rester CELUI QU'IL AFFICHE DÉJÀ : le nombre de points du
+    procès-verbal. Les chapitres vidéo sans point de PV en sont donc exclus —
+    ils ne sont pas des points du PV et ne comptent pas dans cette métrique
+    (ils ont leur propre série dans le graphe d'activité citoyenne).
+
+    Trois vues montrent ainsi les mêmes points sous trois angles : par type
+    (ici), par issue (statuts_par_date), et le sous-ensemble citoyen.
+    """
+    _ensure_annees()
+    return _annees_cache["types_par_date"]
+
+
 def sans_decision_par_date() -> dict:
     """Points de PV dont AUCUNE décision n'a été relevée, PAR DATE de séance.
 
@@ -485,6 +501,7 @@ def _build_annees(sig):
     par_date = {}
     statuts = {}
     sans_decision = {}
+    types = {}
     for date in dates:
         detail = seance_detail(date)
         if not detail:
@@ -501,6 +518,9 @@ def _build_annees(sig):
                 row["types"][p["type_label"]] += 1
             if p["type_label"] == "Débat filmé":
                 par_date[date] = par_date.get(date, 0) + 1
+            else:
+                t = types.setdefault(date, {})
+                t[p["type_label"]] = t.get(p["type_label"], 0) + 1
             if p.get("statut"):
                 st = statuts.setdefault(date, {})
                 st[p["statut"]] = st.get(p["statut"], 0) + 1
@@ -528,3 +548,4 @@ def _build_annees(sig):
     _annees_cache["par_date"] = par_date
     _annees_cache["statuts_par_date"] = statuts
     _annees_cache["sans_decision_par_date"] = sans_decision
+    _annees_cache["types_par_date"] = types
