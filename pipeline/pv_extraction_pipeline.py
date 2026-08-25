@@ -455,7 +455,7 @@ SCHÉMA JSON D'UN POINT :
   "rubrique": <string>, "sous_rubrique": <string>,
   "titre": <string>, "resume": <string>,
   "auteurs": <array>, "intervenants": <array>, "repondants": <array>,
-  "decision": <"DÉCIDE"|"PREND ACTE"|"APPROUVÉ"|"PREND POUR INFORMATION"|"REPORTÉ"|"RETIRÉ"|"DÉBAT"|"MINUTE DE SILENCE">,
+  "decision": <"DÉCIDE"|"PREND ACTE"|"APPROUVÉ"|"REJETÉ"|"PREND POUR INFORMATION"|"REPORTÉ"|"RETIRÉ"|"DÉBAT"|"MINUTE DE SILENCE">,
   "vote": {"type": <"unanimite"|"vote_nominal"|"reporte"|null>, "pour": <int|null>, "contre": <int>, "abstentions": <int>},
   "montant_eur": <float|null>, "thematiques": <array snake_case>
 }
@@ -469,6 +469,12 @@ RÈGLES :
   Reporte l'entier N tel quel ; en cas de doute, la page du titre du point.
 - "Approuvé à l'unanimité" → vote.type="unanimite"
 - "Décidé par X voix contre Y et Z abstentions" → vote.type="vote_nominal"
+- "La motion est rejetée" / "n'est pas adoptée" / "verworpen" (NL) →
+  decision="REJETÉ". Un rejet EST une décision : le conseil s'est prononcé, il
+  a dit non. Ne le note jamais "DÉBAT" — le débat est ce qui a précédé le vote,
+  pas son résultat. Si le vote chiffré donne PLUS DE CONTRE QUE DE POUR (ou
+  autant : à égalité, la proposition n'est pas adoptée), la décision est
+  "REJETÉ", quelle que soit la formule employée par le PV.
 - "Ce point est reporté" / "wordt uitgesteld" (NL) → decision="REPORTÉ",
   vote.type="reporte". Un point REPORTÉ est renvoyé à une séance ultérieure.
 - "Ce point est retiré de l'ordre du jour" / "Dit punt wordt aan de agenda
@@ -737,6 +743,18 @@ RE_APPROVED_VOTE = re.compile(
 RE_APPROVED_INTENT = re.compile(
     _with_lex(r"\bapprobation\b|\bgoedkeuring\b", "approbation"), re.IGNORECASE,
 )
+# Rejet EXPLICITE du point, tel que le PV l'écrit (« La motion est rejetée »,
+# « verworpen »). Volontairement plus étroit que RE_APPROVAL_BLOCK ci-dessous :
+# celui-ci sert à BLOQUER une approbation douteuse, où le doute suffit ; ici on
+# ÉCRIT une décision, et le participe passé est requis — le substantif « rejet »
+# parle presque toujours du contenu du point (« Rejet de la demande de réétude
+# du tunnel », qui est ce que la motion DEMANDE), pas de son sort.
+RE_REJETE = re.compile(
+    r"rejet[ée]{1,2}s?\b|\bnon\s+approuv|\bverworpen\b|\bniet\s+goedgekeurd"
+    r"|n['’]a\s+pas\s+[ée]t[ée]\s+adopt|n['’]est\s+pas\s+adopt",
+    re.IGNORECASE,
+)
+
 # Bloque le repli « Approbation → APPROUVÉ » : rejet explicite OU tournure
 # négative où « approbation » n'affirme pas l'approbation du point (« sans/ni
 # approbation », « refus/défavorable »). On ne présume alors rien.
@@ -841,6 +859,8 @@ def _recover_decision_from_window(window: str):
     """(decision, vote) complet déduit du texte brut d'un point EXTRAIT mais sans
     décision. Couvre, par PRIORITÉ DÉCROISSANTE :
       1. retrait (RETIRÉ) / report (REPORTÉ) — l'acte prime sur tout le reste ;
+      1bis. rejet explicite (REJETÉ) — le conseil a dit non ; une formule
+         d'approbation restée dans la fenêtre ne doit pas le recouvrir ;
       2. approbation chiffrée : vote nominal (« approuvé par X voix contre Y »)
          ou unanimité (« approuvé à l'unanimité / goedgekeurd met eenparigheid »)
          — cas SP 7/19/37 du 2010-03-31 ;
@@ -853,6 +873,12 @@ def _recover_decision_from_window(window: str):
         return "RETIRÉ", {"type": None, "pour": None, "contre": 0, "abstentions": 0}
     if RE_REPORTE.search(w):
         return "REPORTÉ", {"type": "reporte", "pour": None, "contre": 0, "abstentions": 0}
+    # Avant les repêchages d'approbation : un rejet écrit noir sur blanc prime
+    # sur toute formule d'agenda (« … - Approbation ») restée dans la fenêtre.
+    # Le décompte des voix n'est pas inventé — le PV l'écrit rarement dans la
+    # même phrase, et le champ `vote` a ses propres règles.
+    if RE_REJETE.search(w):
+        return "REJETÉ", {"type": None, "pour": None, "contre": 0, "abstentions": 0}
     m = RE_APPROVED_VOTE.search(w)
     if m:
         return "APPROUVÉ", {
