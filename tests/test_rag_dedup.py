@@ -84,3 +84,27 @@ def test_point_video_url_none_for_pv_id():
 def test_point_video_url_none_for_empty():
     assert _point_video_url("") is None
     assert _point_video_url(None) is None
+
+
+# ── Noms d'une métadonnée : lus tels quels, jamais déduits ──
+def test_noms_tolere_les_formes_dune_metadonnee():
+    from services.rag import _noms
+    assert _noms(["Saït Köse", "Elias Ammi"]) == ["Saït Köse", "Elias Ammi"]
+    # Vecteur indexé avant SCHEMA_VERSION 2 : le champ n'existe pas. Personne
+    # de nommé pour ce rôle — surtout pas un repli sur un autre champ.
+    assert _noms(None) == []
+    assert _noms([]) == []
+    # Métadonnée réécrite à la main, ou source non-PV : une chaîne unique reste
+    # un nom, pas une suite de lettres.
+    assert _noms("Abobakre Bouhjar") == ["Abobakre Bouhjar"]
+    assert _noms(["", None, "Elias Ammi"]) == ["Elias Ammi"]
+
+
+def test_le_modele_source_expose_les_trois_roles():
+    from models.api import Source
+    s = Source(date="2025-06-25", sp=60, titre="T", decision="Approuvé", score=0.9)
+    # Vides par défaut : une source qui ne nomme personne n'invente rien.
+    assert s.auteurs == [] and s.intervenants == [] and s.repondants == []
+    s2 = Source(date="2025-06-25", sp=60, titre="T", decision="Approuvé", score=0.9,
+                auteurs=["Saït Köse"], repondants=["Abobakre Bouhjar"])
+    assert s2.auteurs == ["Saït Köse"] and s2.repondants == ["Abobakre Bouhjar"]

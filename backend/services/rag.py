@@ -129,6 +129,21 @@ def _hit_id(h) -> str:
 _TRANSCRIPT_SUFFIX = re.compile(r"-t\d+$")
 
 
+def _noms(v) -> list:
+    """Liste de noms d'une métadonnée Pinecone, robuste à ce qu'elle contient.
+
+    Pinecone renvoie une liste de chaînes, mais un vecteur indexé avant
+    SCHEMA_VERSION 2 n'a pas le champ du tout (None), et une métadonnée
+    ré-écrite à la main pourrait porter une chaîne unique. On ne dérive jamais
+    ces noms d'un autre champ : absent = personne de nommé pour ce rôle.
+    """
+    if not v:
+        return []
+    if isinstance(v, str):
+        return [v]
+    return [str(x) for x in v if x]
+
+
 def _point_key(chunk_id: str) -> str:
     return _TRANSCRIPT_SUFFIX.sub("", chunk_id) if chunk_id else chunk_id
 
@@ -374,6 +389,13 @@ Réponds en te basant uniquement sur les <extraits>, et cite les séances et num
             n_extraits=n_extraits,
             thematiques=[_thematique_label(t) for t in (meta.get("thematiques") or [])],
             reponse=meta.get("reponse") or None if source_type == "question_ecrite" else None,
+            # Lus tels quels de la métadonnée, sans repli ni déduction : une
+            # liste vide dit que le PV ne nomme personne pour ce rôle (ou que
+            # le vecteur date d'avant SCHEMA_VERSION 2), pas qu'il faudrait
+            # aller chercher ailleurs.
+            auteurs=_noms(meta.get("auteurs")),
+            intervenants=_noms(meta.get("intervenants")),
+            repondants=_noms(meta.get("repondants")),
         ))
         if len(sources) >= max_sources:   # UI lisible ; Claude a reçu tous les TOP_K
             break

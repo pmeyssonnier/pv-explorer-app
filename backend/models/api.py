@@ -94,6 +94,17 @@ class Source(BaseModel):
         default=None,
         description="Texte intégral de la réponse du Collège (question écrite uniquement).",
     )
+    # Trois rôles DISTINCTS autour d'un point, tels que le procès-verbal les
+    # nomme : qui l'a déposé, qui a pris la parole, qui a répondu au nom du
+    # Collège. Jamais déduits l'un de l'autre (voir index_pv.pv_point_to_chunk
+    # et pipeline/pv_extraction_pipeline._normalize_point). Un même nom peut
+    # figurer dans plusieurs listes — intervenir dans un débat auquel on répond
+    # est courant. Vides pour un point délibératif que personne n'a déposé, et
+    # pour les sources vidéo/question écrite, qui portent leur propre contexte
+    # dans `decision`.
+    auteurs: list[str] = Field(default_factory=list, description="Qui a déposé le point (motion, demande, question orale).")
+    intervenants: list[str] = Field(default_factory=list, description="Qui a pris la parole dans le débat.")
+    repondants: list[str] = Field(default_factory=list, description="Qui a répondu au nom du Collège.")
 
 
 class AnswerResponse(BaseModel):

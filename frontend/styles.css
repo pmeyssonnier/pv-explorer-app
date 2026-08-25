@@ -1317,6 +1317,14 @@ body {
 .sources-title .icon { width: 14px; height: 14px; color: var(--bordeaux); vertical-align: 0; }
 .source-ref .icon { width: 12px; height: 12px; color: var(--or); margin-right: 4px; }
 .source-decision { display: inline-flex; align-items: center; gap: 4px; }
+/* Les rôles nommés par le PV sous une source du chat : une ligne par rôle
+   renseigné, SOUS le titre et non à côté — la carte est une rangée flex, les
+   y laisser en frères du titre en faisait autant de colonnes étroites. Le
+   libellé est en retrait pour que les noms restent l'information. */
+.source-corps { flex: 1; min-width: 0; }
+.source-personnes { font-size: 12.5px; color: var(--encre-soft); margin-top: 3px; line-height: 1.45; }
+.source-role { color: var(--encre-soft); opacity: 0.8; }
+.source-role::after { content: ' :'; }
 .source-decision .icon { width: 12px; height: 12px; color: var(--vert); vertical-align: 0; }
 .stat-ico { width: 20px; height: 20px; color: var(--or); display: block; margin-bottom: 10px; }
 .stat-section h3 { display: flex; align-items: center; gap: 8px; }
