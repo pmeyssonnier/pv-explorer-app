@@ -35,8 +35,17 @@ export default defineConfig({
     {
       command: 'python3 -m uvicorn app:app --host 0.0.0.0 --port 8000',
       cwd: '../backend',
-      url: 'http://localhost:8000/health',
-      timeout: 20_000,
+      // Sonde /elus et NON /health : /health répond avant que le moindre index
+      // soit construit, si bien que le premier test à ouvrir l'onglet Par élu·e
+      // payait la construction complète (base des PV + chapitrage vidéo +
+      // questions écrites) sur son propre budget de 30 s, en concurrence avec
+      // les autres workers. Une action Playwright — un `click` — n'est pas
+      // couverte par `expect.timeout` : elle hérite du temps restant du test,
+      // d'où un échec par timeout sans rapport avec ce qui était testé.
+      // En sondant l'endpoint le plus lourd, la construction a lieu AVANT le
+      // premier test, une seule fois, hors de tout budget de test.
+      url: 'http://localhost:8000/elus',
+      timeout: 120_000,
       reuseExistingServer: !process.env.CI,
     },
   ],
