@@ -43,6 +43,20 @@ def _thematique_label(t: str) -> str:
     return s[:1].upper() + s[1:] if s else s
 
 
+def liste_fr(noms) -> str:
+    """Énumération à la française : « A », « A et B », « A, B et C ».
+
+    Les listes de personnes d'un point étaient recollées avec « et » entre
+    chaque nom — « Axel Bernard et Georges Verzin et Hasan Koyuncu et Matthieu
+    Degrez et Abobakre Bouhjar » —, ce qui se lit mal dès trois noms et laisse
+    croire à un libellé brut du PV plutôt qu'à une liste que l'app a séparée.
+    """
+    noms = [n for n in (noms or []) if n]
+    if len(noms) <= 1:
+        return noms[0] if noms else ""
+    return f"{', '.join(noms[:-1])} et {noms[-1]}"
+
+
 # Libellés d'affichage homogènes pour le champ « decision » du PV, dont la
 # graphie brute varie (casse, accents, coquilles ponctuelles — ex. « PRENDS
 # POUR INFORMATION », « PRENDRE ACTE »). Clé = texte sans accents/minuscule.

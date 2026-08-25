@@ -174,6 +174,15 @@ export function renderVideoLink(url, label, title) {
 
 // Ligne « Auteur·e de la question : X » / « Répondant·e : X » — le libellé
 // varie selon l'appelant/le rôle, la classe CSS et le gabarit non.
+// Énumération à la française : « A », « A et B », « A, B et C ». Pendant de
+// utils.text.liste_fr côté backend — les listes qui arrivent déjà ponctuées en
+// viennent, celle-ci sert quand le front recompose la liste (cosignataires
+// d'une question écrite, où la fiche consultée s'ajoute en tête).
+export const listeFr = noms => {
+  const l = (noms || []).filter(Boolean);
+  return l.length <= 1 ? (l[0] || '') : `${l.slice(0, -1).join(', ')} et ${l[l.length - 1]}`;
+};
+
 export function renderPersonLine(cssClass, label, name) {
   return name ? `<div class="${cssClass}">${escapeHtml(label)} : ${escapeHtml(name)}</div>` : '';
 }

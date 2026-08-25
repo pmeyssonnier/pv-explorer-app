@@ -11,7 +11,7 @@ import threading
 
 import lexique_store
 from services.statistics import load_db
-from utils.text import _DECISION_LABELS, _thematique_label
+from utils.text import _DECISION_LABELS, _thematique_label, liste_fr
 from utils.video import video_session_map
 
 from services.people.attribution import _TYPE_LABEL, _point_author, _respondents
@@ -249,7 +249,7 @@ def seance_detail(date: str):
         resp_keys = [_key(n, pairs) for n in resp_names]
         repondants = _people_list(resp_names, pairs, date, idx, resolve,
                                   fallback=_titlecase(_clean(p.get("repondant") or "")) or None)
-        repondant = " et ".join(x["nom"] for x in repondants) or None
+        repondant = liste_fr([x["nom"] for x in repondants]) or None
         demandeurs = _people_list(author_names, pairs, date, idx, resolve)
         # Un point délibératif n'a pas d'auteur·e : ce que l'attribution y
         # inscrit, ce sont les INTERVENANT·E·S du débat (voir attribution.py,
@@ -261,7 +261,7 @@ def seance_detail(date: str):
         if _TYPE_LABEL.get(p.get("type"), "Point") == "Point":
             noms_rep = {x["nom"] for x in repondants}
             demandeurs = [x for x in demandeurs if x["nom"] not in noms_rep]
-        demandeur = " et ".join(x["nom"] for x in demandeurs) or None
+        demandeur = liste_fr([x["nom"] for x in demandeurs]) or None
         points.append({
             "sp": p.get("sp") or 0,
             "type": p.get("type"),

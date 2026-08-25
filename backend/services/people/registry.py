@@ -15,7 +15,7 @@ from collections import defaultdict
 import lexique_store
 from services.statistics import load_db
 from services.questions_ecrites import QE_JSON_PATH, load_qe_db
-from utils.text import _thematique_label
+from utils.text import _thematique_label, liste_fr
 from utils.video import video_session_map
 
 from services.people.attribution import _author_of, _point_author, _respondents
@@ -421,15 +421,18 @@ def _build_all():
             fallback = entry.pop("repondant_fallback", None)
             if keys is not None:
                 names = list(dict.fromkeys(nom_by_key[kk] for kk in keys if kk in nom_by_key))
-                entry["repondant"] = " et ".join(names) if names else fallback
+                entry["repondant"] = liste_fr(names) or fallback
             co_keys = entry.pop("co_auteurs_keys", None)
             if co_keys:
                 names = list(dict.fromkeys(nom_by_key[kk] for kk in co_keys if kk in nom_by_key))
-                entry["co_auteurs"] = " et ".join(names) if names else None
+                # LISTE, pas une chaîne : la fiche consultée s'ajoute en tête
+                # avant l'affichage, et seule la liste complète permet de la
+                # ponctuer correctement (voir utils.js, listeFr).
+                entry["co_auteurs"] = names or None
         for entry in d["repond"]:
             dks = entry.pop("demandeur_keys", None) or []
             names = list(dict.fromkeys(nom_by_key[dk] for dk in dks if dk in nom_by_key))
-            entry["demandeur"] = " et ".join(names) if names else None
+            entry["demandeur"] = liste_fr(names) or None
         d["depose"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         d["repond"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         index[k] = {

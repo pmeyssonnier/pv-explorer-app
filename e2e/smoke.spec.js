@@ -333,7 +333,9 @@ test('un point à plusieurs répondant·e·s se retrouve par chacun de leurs nom
   const ligne = page.locator('#seancePointsList .elu-item', { has: page.locator('.elu-rep') })
     .filter({ hasText: ' et ' }).first();
   const rep = (await ligne.locator('.elu-rep').textContent()).trim();
-  const noms = rep.replace(/^[^:]+:\s*/, '').split(' et ');
+  // « A, B et C » (voir utils.text.liste_fr) : la virgule sépare autant que
+  // le « et » final.
+  const noms = rep.replace(/^[^:]+:\s*/, '').split(/,\s*|\s+et\s+/);
   expect(noms.length).toBeGreaterThan(1);
 
   // Filtré sur le PREMIER nom, puis sur le DERNIER : le point reste trouvable
@@ -712,5 +714,26 @@ test('les puces d\'issue et de manque partitionnent les points de la séance', a
   await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
   const badges = await page.$$eval('#seancePointsList .elu-badge', els => [...new Set(els.map(e => e.textContent.trim()))]);
   expect(badges).not.toContain('POINT');
+  expect(errors).toEqual([]);
+});
+
+test('une liste de plusieurs personnes se lit « A, B et C »', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption('2025');
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  await page.locator('#seanceList').selectOption('2025-09-24');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('24/09/2025');
+
+  // Les noms sont bien séparés côté données depuis longtemps ; c'est
+  // l'AFFICHAGE qui les recollait avec « et » entre chacun — « A et B et C et
+  // D et E » se lit comme un libellé brut du PV, pas comme une liste.
+  const lignes = await page.$$eval('#seancePointsList .elu-demandeur, #seancePointsList .elu-rep',
+    els => els.map(e => e.textContent.replace(/\s+/g, ' ').trim()));
+  const multiples = lignes.filter(t => / et /.test(t));
+  expect(multiples.length).toBeGreaterThan(0);
+  multiples.forEach(t => expect(t.match(/ et /g)).toHaveLength(1));
+  expect(multiples.some(t => t.includes(', '))).toBe(true);
   expect(errors).toEqual([]);
 });

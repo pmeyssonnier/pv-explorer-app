@@ -897,8 +897,11 @@ def test_manual_author_override_joint_debate_five_names():
     # que l'override à N noms (N > 2) résout et joint chaque personne.
     d = elus.seance_detail("2025-09-24")
     it = next(p for p in d["points"] if p["sp"] == 6)
+    # Ponctuation à la française (voir utils.text.liste_fr) : « A, B et C »,
+    # pas « A et B et C » — cinq noms recollés par « et » se lisaient comme un
+    # libellé brut du PV, alors que l'app les a bel et bien séparés.
     assert it["demandeur"] == (
-        "Cécile Jodogne et Naïma Belkhatir et Georges Verzin et "
+        "Cécile Jodogne, Naïma Belkhatir, Georges Verzin, "
         "Matthieu Degrez et Elias Ammi"
     )
     assert it["repondant"] == "Cédric Mahieu"
@@ -921,7 +924,7 @@ def test_manual_author_override_joint_debate_repondant_also_intervenant():
     d = elus.seance_detail("2025-06-25")
     it = next(p for p in d["points"] if p["sp"] == 60)
     assert it["demandeur"] == (
-        "Saït Köse et Ibrahim Dönmez et Elias Ammi et Yvan de Beauffort"
+        "Saït Köse, Ibrahim Dönmez, Elias Ammi et Yvan de Beauffort"
     )
     assert it["repondant"] == "Abobakre Bouhjar"
     # Retiré de l'affichage, mais toujours atteignable par le filtre : il
@@ -941,7 +944,7 @@ def test_manual_author_override_joint_debate_three_sibling_points():
     # appliqué à plusieurs points d'une même séance.
     d = elus.seance_detail("2025-04-23")
     expected = (
-        "Sadik Köksal et Leila Lahssaini et Matthieu Degrez et "
+        "Sadik Köksal, Leila Lahssaini, Matthieu Degrez, "
         "Cécile Jodogne et Isabelle Durant"
     )
     for sp in (21, 23, 24):

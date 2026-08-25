@@ -45,7 +45,10 @@ def test_written_question_cosigned_credits_each_named_author(monkeypatch):
     # Chaque fiche voit L'AUTRE cosignataire (jamais soi-même) dans son
     # entrée "depose" — affichage côte à côte quelle que soit la fiche
     # consultée (voir services/elus.py::_fmt_depose, frontend/js/elus.js).
-    expected_co_auteurs = {"verzin": "Cédric Mahieu", "mahieu": "Georges Verzin"}
+    # LISTE de noms, pas une chaîne recollée : la fiche consultée s'ajoute en
+    # tête côté affichage, et seule la liste complète permet de la ponctuer
+    # correctement (« A, B et C » plutôt que « A et B et C »).
+    expected_co_auteurs = {"verzin": ["Cédric Mahieu"], "mahieu": ["Georges Verzin"]}
     for key, co_auteur in expected_co_auteurs.items():
         fiche = index[key]
         qe_entries = [it for it in fiche["depose"]
