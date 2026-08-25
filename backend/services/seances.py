@@ -346,13 +346,13 @@ def seance_detail(date: str):
 
 
 # ── SYNTHÈSE PAR ANNÉE (onglet Statistiques) ────────────────────────────────
-# Une SEULE passe sur toutes les séances, mise en cache : elle sert à la fois
-# au graphe « Activité citoyenne » (qui a besoin du décompte des chapitres
-# vidéo sans point de PV, absents de la base des PV) et aux tableaux de
-# contrôle par année. Passer par `seance_detail` plutôt que de recompter la
-# base brute est délibéré : c'est CE que l'application affiche — types,
-# personnes et appariements vidéo compris. Recompter autrement rouvrirait
-# l'écart que ces tableaux servent justement à fermer.
+# Une SEULE passe sur toutes les séances, mise en cache : elle alimente le
+# graphe « Activité citoyenne » (qui a besoin du décompte des chapitres vidéo
+# sans point de PV, absents de la base des PV) et le graphe des issues.
+# Passer par `seance_detail` plutôt que de recompter la base brute est
+# délibéré : c'est CE que l'application affiche — types, personnes et
+# appariements vidéo compris. Recompter autrement rouvrirait l'écart entre les
+# deux vues que ces compteurs servent justement à fermer.
 _annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date": None}
 # La passe coûte ~8 s à froid. Les endpoints FastAPI synchrones tournent dans
 # un pool de threads : sans verrou, N requêtes arrivant sur un cache froid la
@@ -362,14 +362,22 @@ _annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date"
 _annees_lock = threading.Lock()
 
 # Types affichés, dans l'ordre des puces de l'onglet Séances. La somme de ces
-# cinq compteurs égale le nombre de points de l'année (partition vérifiée par
-# test) — c'est l'invariant que les tableaux donnent à lire.
+# cinq compteurs égale le nombre de points de l'année : c'est la partition que
+# les puces promettent, et qu'elles ont déjà rompue une fois (659 affichés
+# pour 676 points en 2025). Vérifiée par test.
 ANNEE_TYPE_ORDER = ["Point", "Motion", "Question orale", "Demande", "Débat filmé"]
 
 
 def annees_stats() -> list:
     """Une ligne par année : nombre de séances et de points, répartition par
     type, et rapprochement des personnes.
+
+    Aucune vue ne l'affiche plus (les deux tableaux de contrôle par année ont
+    été retirés de l'onglet Statistiques) : ces lignes sont désormais lues par
+    les tests, qui y vérifient la partition des types et les deux identités du
+    rapprochement ci-dessous. Elles sont construites de toute façon par la
+    passe que partagent hors_pv_par_date() et statuts_par_date(), donc les
+    garder ne coûte rien de plus qu'un compteur par point.
 
     Le rapprochement répond à une question simple — « puis-je retrouver le
     total en agrégeant par intervenant·e ? » — dont la réponse est non, pour

@@ -172,34 +172,67 @@
   <!-- ── ONGLET STATS ── -->
   <section class="panel" id="panel-stats">
     <div class="stats-toolbar">
-      <button class="msg-act" type="button" data-click="shareStats" title="Partager le lien vers les statistiques">Partager</button>
-    </div>
-    <div class="trend-panel">
-      <h3><svg class="icon" aria-hidden="true"><use href="#ico-montant"/></svg>Évolution d'un thème (budget)</h3>
-      <p class="trend-intro">Additionne les montants cités <strong>par année</strong> sur <strong>tous</strong> les points liés à un thème — une vue exhaustive, complémentaire au chat.</p>
-      <div class="trend-bar">
-        <input type="text" id="trendInput" class="trend-input"
-               placeholder="Ex. propreté, mobilité, écoles…">
-        <button class="ask-btn" data-click="loadTrend"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Voir</span></button>
-      </div>
-      <div class="suggestions">
-        <span class="suggestion" data-click="trendSuggestion">propreté</span>
-        <span class="suggestion" data-click="trendSuggestion">mobilité</span>
-        <span class="suggestion" data-click="trendSuggestion">sécurité</span>
-        <span class="suggestion" data-click="trendSuggestion">CPAS</span>
-        <span class="suggestion" data-click="trendSuggestion">écoles</span>
-        <span class="suggestion" data-click="trendSuggestion">culture</span>
-        <span class="suggestion" data-click="trendSuggestion">sport</span>
-        <span class="suggestion" data-click="trendSuggestion">logement</span>
-        <span class="suggestion" data-click="trendSuggestion">voirie</span>
-        <span class="suggestion" data-click="trendSuggestion">environnement</span>
-        <span class="suggestion" data-click="trendSuggestion">finances</span>
-      </div>
-      <div id="trendResult"></div>
+      <button class="msg-act" type="button" data-click="shareStats" title="Partager le lien vers la vue affichée">Partager</button>
     </div>
 
-    <div id="statsContent">
-      <div class="loading"><span>Chargement des statistiques</span><span class="dots"><span></span><span></span><span></span></span></div>
+    <!-- Le périmètre (année → mois → PV) est un CONTEXTE, pas le contenu d'une
+         vue : il reste au-dessus des sous-onglets et survit au passage de l'un
+         à l'autre. Forer mars 2025 puis ouvrir « Procès-verbaux » y montre les
+         PV de mars 2025. Rempli par stats.js une fois /stats reçu. -->
+    <div id="statsScope"></div>
+
+    <div class="subtabs" role="tablist" aria-label="Vues des statistiques">
+      <button class="subtab" type="button" role="tab" id="statsvue-activite" aria-selected="true"
+              aria-controls="statsvue-panel-activite" data-click="showStatsVue" data-arg="activite">
+        <svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Activité par année</span>
+      </button>
+      <button class="subtab" type="button" role="tab" id="statsvue-pv" aria-selected="false"
+              aria-controls="statsvue-panel-pv" data-click="showStatsVue" data-arg="pv">
+        <svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg><span>Procès-verbaux</span>
+        <span class="subtab-count" id="statsPvCount" hidden></span>
+      </button>
+      <button class="subtab" type="button" role="tab" id="statsvue-theme" aria-selected="false"
+              aria-controls="statsvue-panel-theme" data-click="showStatsVue" data-arg="theme">
+        <svg class="icon" aria-hidden="true"><use href="#ico-montant"/></svg><span>Évolution d'un thème</span>
+      </button>
+    </div>
+
+    <div class="subpanel active" id="statsvue-panel-activite" role="tabpanel" aria-labelledby="statsvue-activite">
+      <div id="statsContent">
+        <div class="loading"><span>Chargement des statistiques</span><span class="dots"><span></span><span></span><span></span></span></div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="statsvue-panel-pv" role="tabpanel" aria-labelledby="statsvue-pv">
+      <div id="statsPvContent">
+        <div class="loading"><span>Chargement des procès-verbaux</span><span class="dots"><span></span><span></span><span></span></span></div>
+      </div>
+    </div>
+
+    <div class="subpanel" id="statsvue-panel-theme" role="tabpanel" aria-labelledby="statsvue-theme">
+      <div class="trend-panel">
+        <h3><svg class="icon" aria-hidden="true"><use href="#ico-montant"/></svg>Évolution d'un thème (budget)</h3>
+        <p class="trend-intro">Additionne les montants cités <strong>par année</strong> sur <strong>tous</strong> les points liés à un thème — une vue exhaustive, complémentaire au chat.</p>
+        <div class="trend-bar">
+          <input type="text" id="trendInput" class="trend-input"
+                 placeholder="Ex. propreté, mobilité, écoles…">
+          <button class="ask-btn" data-click="loadTrend"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Voir</span></button>
+        </div>
+        <div class="suggestions">
+          <span class="suggestion" data-click="trendSuggestion">propreté</span>
+          <span class="suggestion" data-click="trendSuggestion">mobilité</span>
+          <span class="suggestion" data-click="trendSuggestion">sécurité</span>
+          <span class="suggestion" data-click="trendSuggestion">CPAS</span>
+          <span class="suggestion" data-click="trendSuggestion">écoles</span>
+          <span class="suggestion" data-click="trendSuggestion">culture</span>
+          <span class="suggestion" data-click="trendSuggestion">sport</span>
+          <span class="suggestion" data-click="trendSuggestion">logement</span>
+          <span class="suggestion" data-click="trendSuggestion">voirie</span>
+          <span class="suggestion" data-click="trendSuggestion">environnement</span>
+          <span class="suggestion" data-click="trendSuggestion">finances</span>
+        </div>
+        <div id="trendResult"></div>
+      </div>
     </div>
   </section>
 
