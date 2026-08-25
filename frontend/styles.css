@@ -1082,17 +1082,6 @@ body {
    Résumé AVANT le détail : le total de chaque type sur le périmètre affiché.
    Volontairement NON cliquable — la légende sous le graphe fait déjà l'isolement
    d'une série ; deux commandes concurrentes pour le même geste embrouillent. */
-/* Tableaux de contrôle par année (voir stats.js/renderAnneesTables) : même
-   composant que les tableaux du chat (.md-table, défilement horizontal propre
-   sur mobile), avec des chiffres alignés et une ligne de total. */
-.annees-h {
-  font-family: var(--display); font-weight: 600; font-size: 15px;
-  color: var(--encre); margin: 18px 0 8px;
-}
-.annees-h:first-child { margin-top: 0; }
-.annees-table td, .annees-table th { font-variant-numeric: tabular-nums; }
-.annees-table td:not(:first-child), .annees-table th:not(:first-child) { text-align: right; }
-.annees-table tfoot th { border-top: 2px solid var(--ligne); background: var(--papier-dark); }
 
 .act-kpis {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));

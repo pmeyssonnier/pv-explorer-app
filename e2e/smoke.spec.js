@@ -426,37 +426,16 @@ test('la somme des puces de type égale le nombre de points annoncé', async ({ 
 // l'onglet ; à deux, elles ne suffisent plus.
 const STATS_FROID = { timeout: 45_000 };
 
-test('les KPI d\'activité et les tableaux par année sont cohérents', async ({ page }) => {
+test('un KPI d\'activité par série, dans l\'ordre de la légende', async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto('/');
   await page.locator('#tab-stats').click();
-  await expect(page.locator('#anneesTables .annees-table').first()).toBeVisible(STATS_FROID);
+  await expect(page.locator('#activityKPIs .act-kpi').first()).toBeVisible(STATS_FROID);
 
-  // 1. Un KPI par série, dans le même ordre que la légende du graphe.
   const kpis = await page.$$eval('#activityKPIs .act-kpi', els => els.map(e => e.getAttribute('title')));
   const legende = await page.$$eval('#activityLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
   expect(kpis).toEqual(legende);
   expect(kpis).toContain('Débat filmé hors PV');
-
-  // 2. Tableau des types : la somme des colonnes de type fait la colonne Points.
-  const lignes = await page.$$eval('#anneesTables .annees-table', ts => {
-    const cells = tr => [...tr.children].map(c => +c.textContent.replace(/[^\d]/g, '') || 0);
-    return [...ts[0].querySelectorAll('tbody tr'), ...ts[0].querySelectorAll('tfoot tr')].map(cells);
-  });
-  expect(lignes.length).toBeGreaterThan(3);
-  // [année|Total, séances, points, puis les 5 types]
-  lignes.forEach(c => expect(c.slice(3).reduce((a, b) => a + b, 0)).toBe(c[2]));
-
-  // 3. Tableau des personnes : les deux identités du rapprochement.
-  const pers = await page.$$eval('#anneesTables .annees-table', ts => {
-    const cells = tr => [...tr.children].map(c => +c.textContent.replace(/[^\d]/g, '') || 0);
-    return [...ts[1].querySelectorAll('tbody tr')].map(cells);
-  });
-  // [année, points, avec, sans, intervenants, somme, surplus]
-  pers.forEach(c => {
-    expect(c[1]).toBe(c[2] + c[3]);
-    expect(c[5]).toBe(c[2] + c[6]);
-  });
   expect(errors).toEqual([]);
 });
 
@@ -474,11 +453,11 @@ test('le graphe des statuts descend année → mois, sans jamais dépasser les p
     .toContain('Pris pour information');
 
   // 2. Un point a au plus une issue : chaque année reste sous son total de
-  //    points, lu dans le tableau par année.
-  const parAnnee = await page.$$eval('#anneesTables .annees-table', ts => Object.fromEntries(
-    [...ts[0].querySelectorAll('tbody tr')]
-      .filter(tr => /^\d{4}$/.test(tr.children[0].textContent.trim()))
-      .map(tr => [tr.children[0].textContent.trim(), +tr.children[2].textContent.replace(/[^\d]/g, '')])));
+  //    points, lu dans le graphe d'activité (métrique « Points »).
+  const parAnnee = await page.$$eval('#drillPlot .yc-col', els => Object.fromEntries(els.map(e => [
+    e.querySelector('.yc-yr').textContent.trim(),
+    +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),
+  ])));
   const colonnes = await page.$$eval('#statutPlot .yc-col', els => els.map(e => [
     e.querySelector('.yc-yr').textContent.trim(),
     +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),

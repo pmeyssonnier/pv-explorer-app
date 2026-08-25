@@ -20,7 +20,6 @@ let activiteTypeOrder = [];       // ordre fixe des séries (voir ACTIVITY_TYPE_
 let horsPvParDate = {};           // date -> nb de chapitres vidéo sans point de PV
 let statutsParDate = {};          // date -> {statut: nb de points} (voir seances.statuts_par_date)
 let statutFilter = 'all';         // série isolée dans le graphe des issues
-let anneesStats = [];             // synthèse par année (voir seances.annees_stats)
 let qeResume = [];                // {date, thematiques} par question écrite (voir /stats qe_resume)
 // Type isolé dans le graphe « Activité citoyenne » via un clic sur sa puce de
 // légende ('all' = vue empilée normale) — voir onActivityTypeChipClick.
@@ -365,60 +364,6 @@ function renderStatuts() {
     : 'Cliquez un mois pour affiner les indicateurs, thématiques et la liste des PV ci-dessous.';
 }
 
-// ── TABLEAUX DE CONTRÔLE PAR ANNÉE (voir seances.annees_stats côté backend) ──
-// Deux tableaux qui donnent à lire ce que les graphes résument, et surtout
-// leurs invariants — c'est ce qui permet de vérifier un total à la main.
-const TABLE_TYPES = ['Point', 'Motion', 'Question orale', 'Demande', 'Débat filmé'];
-const TABLE_TYPE_SHORT = { 'Point': 'Point', 'Motion': 'Motion', 'Question orale': 'Q. orale',
-  'Demande': 'Demande', 'Débat filmé': 'Hors PV' };
-
-const _tr = (cells, tag = 'td') => '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
-const _somme = (rows, get) => rows.reduce((a, r) => a + get(r), 0);
-
-function renderAnneesTables() {
-  const box = document.getElementById('anneesTables');
-  if (!box) return;
-  if (!anneesStats.length) { box.innerHTML = '<p class="yc-note">Aucune donnée.</p>'; return; }
-  const rows = [...anneesStats].sort((a, b) => b.annee.localeCompare(a.annee));
-
-  // 1. Types : la somme des colonnes de type égale la colonne « Points ».
-  const tetes1 = ['Année', 'Séances', 'Points', ...TABLE_TYPES.map(t => TABLE_TYPE_SHORT[t])];
-  const corps1 = rows.map(r => _tr([r.annee, fmtInt(r.seances), `<b>${fmtInt(r.points)}</b>`,
-    ...TABLE_TYPES.map(t => fmtInt(r.types[t] || 0))]));
-  const total1 = _tr(['Total', fmtInt(_somme(rows, r => r.seances)), fmtInt(_somme(rows, r => r.points)),
-    ...TABLE_TYPES.map(t => fmtInt(_somme(rows, r => r.types[t] || 0)))], 'th');
-
-  // 2. Personnes : deux écarts de sens contraire, explicités par les colonnes.
-  const tetes2 = ['Année', 'Points', 'Nommant quelqu\'un', 'Sans personne',
-    'Intervenant·e·s', 'Σ par personne', 'Surplus'];
-  const corps2 = rows.map(r => _tr([r.annee, `<b>${fmtInt(r.points)}</b>`,
-    fmtInt(r.points_avec_personne), fmtInt(r.points_sans_personne),
-    `<b>${fmtInt(r.intervenants)}</b>`, fmtInt(r.somme_par_personne), fmtInt(r.surplus)]));
-  const total2 = _tr(['Total', fmtInt(_somme(rows, r => r.points)),
-    fmtInt(_somme(rows, r => r.points_avec_personne)), fmtInt(_somme(rows, r => r.points_sans_personne)),
-    '—', fmtInt(_somme(rows, r => r.somme_par_personne)), fmtInt(_somme(rows, r => r.surplus))], 'th');
-
-  const table = (titre, tetes, corps, total, note) => `<h4 class="annees-h">${titre}</h4>
-    <div class="md-tablewrap"><table class="md-table annees-table">
-      <thead>${_tr(tetes, 'th')}</thead>
-      <tbody>${corps.join('')}</tbody>
-      <tfoot>${total}</tfoot>
-    </table></div><p class="yc-note">${note}</p>`;
-
-  box.innerHTML =
-    table('Points par année et par type', tetes1, corps1, total1,
-      'Chaque point porte un type et un seul : la somme des cinq colonnes de type égale '
-      + 'la colonne « Points ». « Hors PV » = débat filmé dont le point de procès-verbal '
-      + "n'a pas été retrouvé — le PV n'est pas encore extrait, ou l'appariement n'est pas sûr.")
-    + table('Intervenant·e·s par année', tetes2, corps2, total2,
-      'Agréger par intervenant·e ne redonne pas le total, pour deux raisons de sens contraire : '
-      + 'en moins, les points qui ne nomment personne (administratifs ou collectifs) ; en plus, '
-      + 'le surplus des points à plusieurs personnes, comptés une fois par chacune. '
-      + 'Points = « nommant quelqu\'un » + « sans personne » ; Σ par personne = '
-      + '« nommant quelqu\'un » + « surplus ». La colonne « Intervenant·e·s » compte les '
-      + 'personnes distinctes de l\'année : elle ne s\'additionne pas d\'une année à l\'autre.');
-}
-
 // Reclique sur la puce déjà active → retour à la vue empilée (toutes les
 // séries) ; sinon isole cette série (même geste que eluTypeChip côté Par élu·e).
 export function onActivityTypeChipClick(typeLabel) {
@@ -579,7 +524,7 @@ export function toggleYear(y) {
 }
 
 function refreshStats() {
-  renderKPIs(); renderDrill(); renderActivityTypes(); renderStatuts(); renderAnneesTables();
+  renderKPIs(); renderDrill(); renderActivityTypes(); renderStatuts();
   renderThemes(); renderPvList();
 }
 
@@ -629,7 +574,6 @@ export async function loadStats() {
     activiteTypeOrder = s.activite_type_order || [];
     horsPvParDate = s.hors_pv_par_date || {};
     statutsParDate = s.statuts_par_date || {};
-    anneesStats = s.annees || [];
     qeResume = s.qe_resume || [];
     latestYear = seancesResume.reduce((mx, x) => x.date.slice(0, 4) > mx ? x.date.slice(0, 4) : mx, '');
     expandedYears = new Set([latestYear]);   // année la plus récente dépliée par défaut
@@ -680,12 +624,6 @@ export async function loadStats() {
           (prises d'acte, prises pour information, débats sans vote…) est regroupé sous « Autres
           issues », dont le détail s'affiche au survol de la légende. Les points sans décision
           (chapitres vidéo sans PV) n'y figurent pas.</p>
-      </div>
-      <div class="stat-section" id="anneesSection">
-        <div class="yc-head">
-          <h3><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg>Par année, en chiffres</h3>
-        </div>
-        <div id="anneesTables"></div>
       </div>
       <div class="stat-section" id="themesSection">
         <div class="yc-head">

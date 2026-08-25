@@ -1165,13 +1165,12 @@ def test_video_chapters_file_valid():
     assert any((p.get("deeplink") or "").startswith("http") for p in pts)
 
 
-# ── Synthèse par année (onglet Statistiques : graphe + tableaux) ──
+# ── Synthèse par année (source des graphes de l'onglet Statistiques) ──
 def test_annees_stats_types_partition_the_points():
-    # L'invariant que les tableaux donnent à lire, et que les puces de
-    # l'onglet Séances doivent respecter : chaque point porte un type et un
-    # seul, donc la somme des cinq compteurs égale le nombre de points. Il
-    # tombait en défaut avant que « Débat filmé » soit un type à part entière
-    # (659 affichés pour 676 points en 2025).
+    # L'invariant que les puces de l'onglet Séances doivent respecter : chaque
+    # point porte un type et un seul, donc la somme des cinq compteurs égale le
+    # nombre de points. Il tombait en défaut avant que « Débat filmé » soit un
+    # type à part entière (659 affichés pour 676 points en 2025).
     rows = seances.annees_stats()
     assert rows
     for r in rows:
@@ -1180,7 +1179,7 @@ def test_annees_stats_types_partition_the_points():
 
 def test_annees_stats_person_reconciliation_holds():
     # Agréger par intervenant·e ne redonne pas le total : deux écarts de sens
-    # contraire, que ces colonnes rendent vérifiables.
+    # contraire, que ces compteurs rendent vérifiables.
     for r in seances.annees_stats():
         assert r["points"] == r["points_avec_personne"] + r["points_sans_personne"]
         assert r["somme_par_personne"] == r["points_avec_personne"] + r["surplus"]
