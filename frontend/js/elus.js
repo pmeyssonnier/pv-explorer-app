@@ -13,24 +13,30 @@ let elusLoaded = false;
 let pendingEluKey = null;   // élu·e à présélectionner depuis un lien partagé (?elu=)
 let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltrer sans refetch)
 let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
-let eluTypeFilter = 'all';  // type d'intervention sélectionné ("all" = tous) — depose uniquement
+// Puces = interrupteurs indépendants et cumulables. Ensemble VIDE = aucun
+// filtre (tout est montré) ; sinon on garde les actions correspondant à l'un
+// des éléments cochés (OU dans un groupe, ET entre les deux groupes).
+let eluTypeSel = new Set();   // types d'action cochés — dépôts uniquement
 let eluThemeFilter = 'all'; // thématique sélectionnée ("all" = toutes) — depose ET repond
-let eluRoleFilter = 'all';  // rôle sélectionné ("all" = tous) — filtre le menu élu·e, voir puces
+let eluRoleSel = new Set();   // rôles cochés ('conseiller', 'echevin', 'bourgmestre')
 let eluSelectedKey = null;  // clé actuellement chargée
+let eluQuery = '';          // texte tapé dans le champ de recherche ('' = liste complète)
+let eluActiveKey = null;    // option mise en avant au clavier (aria-activedescendant)
+let eluMatches = [];        // dernier résultat de recherche affiché (ordre de la liste)
 
 // Présélection appliquée depuis un lien partagé (?tab=elus&elu=…), voir handleDeepLink.
 export function setPendingEluKey(key) { pendingEluKey = key; }
 
 export async function loadElus() {
   if (elusLoaded) return;
-  const input = document.getElementById('eluSelect');
+  const input = document.getElementById('eluSearch');
   if (!input) return;
   try {
     const res = await fetch(API_URL + '/elus');
     if (!res.ok) throw new Error('Erreur ' + res.status);
     elusData = (await res.json()).elus || [];
+    elusData.forEach(decorateElu);
     elusLoaded = true;
-    renderEluRoleChips();
     populateElus();
   } catch (err) {
     input.disabled = true;
@@ -38,72 +44,424 @@ export async function loadElus() {
   }
 }
 
-// Puces de rôle (Conseiller·ère / Collège) — même libellé/widget que les puces de
-// l'onglet Séances (.elu-chip/.elu-chip-active) : reclique sur la puce déjà
-// active → "Tous les rôles" ; comptent le nombre d'élu·e·s ayant ce rôle
-// (indépendant du filtre lui-même, contrairement aux puces à facettes de
-// l'onglet Séances — ici un seul filtre, pas de comptage croisé nécessaire).
-function eluRoleChip(role, label, count) {
-  const active = eluRoleFilter === role ? ' elu-chip-active' : '';
-  return `<button type="button" class="elu-chip${active}" data-click="onEluRoleChipClick" data-arg="${role}">${escapeHtml(label)} (${count})</button>`;
-}
-function renderEluRoleChips() {
-  const box = document.getElementById('eluRoleChips');
-  if (!box || !elusData) return;
-  const nConseiller = elusData.filter(e => e.role === 'conseiller').length;
-  const nCollege = elusData.filter(e => e.role === 'college').length;
-  box.innerHTML = eluRoleChip('conseiller', 'Conseiller·ère', nConseiller)
-    + eluRoleChip('college', 'Collège', nCollege);
-}
-export function onEluRoleChipClick(role) {
-  eluRoleFilter = eluRoleFilter === role ? 'all' : role;
-  renderEluRoleChips();
-  populateElus();
+// ── Puces de RÔLE de la personne affichée ───────────────────────────────────
+// Une même personne change de rôle au fil des législatures (conseiller·ère,
+// puis échevin·e, puis bourgmestre…) : chaque action est rattachée au rôle
+// qu'elle exerçait À SA DATE, d'après ses mandats déclarés (voir
+// backend/services/people/mandats.py, même règle de priorité). Une puce par
+// rôle réellement exercé, avec son nombre d'actions ; un clic n'affiche que
+// les actions de ce rôle, un reclic les rend toutes.
+
+// Libellés courts (MANDAT_LABEL est la forme longue, pour l'en-tête de fiche).
+const ROLE_CHIP_LABEL = {
+  conseiller: 'Conseiller·ère',
+  echevin: 'Échevin·e',
+  bourgmestre: 'Bourgmestre',
+};
+
+const _inRanges = (year, ranges) => (ranges || [])
+  .some(r => r.debut <= year && (r.fin === null || r.fin === undefined || year <= r.fin));
+
+// Rôle exact à une date (« 2019-02-27 » → 'echevin'). Un mandat de Collège
+// l'emporte sur le mandat de conseiller·ère simultané — les échevin·e·s
+// restent conseiller·ère·s mais agissent ès qualité de Collège. null hors de
+// tout mandat connu (personne absente des données déclaratives, action
+// antérieure à l'entrée en fonction, trou entre deux mandats).
+function roleAt(mandats, date) {
+  const year = parseInt(String(date || '').slice(0, 4), 10);
+  if (!mandats || !year) return null;
+  if (_inRanges(year, mandats.bourgmestre)) return 'bourgmestre';
+  if (_inRanges(year, mandats.echevin)) return 'echevin';
+  if (_inRanges(year, mandats.conseiller)) return 'conseiller';
+  return null;
 }
 
-// (Re)remplit le menu déroulant selon le filtre de rôle courant.
+function filterByRole(items, mandats, roles) {
+  if (!roles.size) return items;
+  return items.filter(it => roles.has(roleAt(mandats, it.date)));
+}
+
+// Nombre d'actions (dépôts + réponses) par rôle, sur la période affichée.
+function eluRoleCounts(mandats, actions) {
+  const counts = { conseiller: 0, echevin: 0, bourgmestre: 0 };
+  actions.forEach(it => {
+    const r = roleAt(mandats, it.date);
+    if (r) counts[r] += 1;
+  });
+  return counts;
+}
+
+function eluRoleChip(role, count) {
+  if (!count) return '';
+  const on = eluRoleSel.has(role);
+  return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"`
+    + ` data-click="onEluRoleChipClick" data-arg="${role}">`
+    + `<strong>${escapeHtml(ROLE_CHIP_LABEL[role])}</strong> · ${count} action${count > 1 ? 's' : ''}</button>`;
+}
+
+function renderEluRoleChips(counts) {
+  const box = document.getElementById('eluRoleChips');
+  if (!box) return;
+  const html = MANDAT_ORDER.map(r => eluRoleChip(r, counts[r])).join('');
+  box.innerHTML = html;
+  box.hidden = !html;
+}
+
+// Interrupteur : coche/décoche ce rôle. Plus aucun coché = tous les rôles.
+export function onEluRoleChipClick(role) {
+  toggle(eluRoleSel, role);
+  if (currentEluData) renderElu(currentEluData);
+}
+
+const toggle = (set, v) => (set.has(v) ? set.delete(v) : set.add(v));
+
+// ── SÉLECTEUR D'ÉLU·E : COMBOBOX AVEC RECHERCHE ─────────────────────────────
+// Le <select> natif ne tenait plus à 105 élu·e·s : la frappe rapide du
+// navigateur ne matche que le DÉBUT du libellé affiché — donc le PRÉNOM
+// (« Georges Verzin ») — alors que la liste est triée par NOM DE FAMILLE (clé
+// backend, particules gérées : « Yvan de Beauffort » → clé « beauffort »).
+// Taper « verzin » ne trouvait rien, l'ordre paraissait aléatoire, et il
+// fallait choisir à l'aveugle (ni rôle ni volume d'activité visibles).
+// Ici : recherche libre sur le prénom ET le nom, insensible aux accents et à
+// la casse, avec rôle et compteurs affichés avant de choisir.
+
+// Sans accents ni casse : « Amrani » / « amrani » / « Ammi » ↔ « ammi ».
+// (NFD décompose « é » en « e » + diacritique combinant, qu'on retire.)
+const _deburr = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+// Mots d'un nom : « Mohamed el Arnouki » → ['mohamed','el','arnouki'] ; les
+// apostrophes et traits d'union séparent aussi (« Ben-Addi », « d'Hondt »).
+const _wordsOf = s => _deburr(s).split(/[^a-z0-9]+/).filter(Boolean);
+
+// Champs de recherche pré-calculés une fois pour toutes (105 entrées × chaque
+// frappe, autant ne pas re-normaliser à chaque fois).
+function decorateElu(e) {
+  e._key = _deburr(e.key);
+  e._flat = _deburr(e.nom);
+  e._words = [..._wordsOf(e.nom), e._key];
+}
+
+// Pertinence d'un mot de la requête (le plus petit gagne) : nom de famille
+// d'abord — c'est ce qu'on tape le plus souvent — puis n'importe quel mot du
+// nom, puis une correspondance au milieu d'un mot. null = ne matche pas.
+const R_KEY = 0, R_WORD = 1, R_INSIDE = 2;
+function tokenRank(tok, e) {
+  if (e._key.startsWith(tok)) return R_KEY;
+  if (e._words.some(w => w.startsWith(tok))) return R_WORD;
+  if (e._flat.includes(tok)) return R_INSIDE;
+  return null;
+}
+
+// Élu·e·s cherchables : tout le monde, trié par nom de famille (la clé
+// backend), pas par nombre d'interventions — liste stable et parcourable.
+// Aucun pré-filtre : le rôle se lit sur chaque option, et les puces de rôle
+// portent désormais sur la fiche affichée, pas sur la recherche.
+function eluCandidates() {
+  return (elusData || []).slice().sort((a, b) => a.key.localeCompare(b.key, 'fr'));
+}
+
+// Recherche : TOUS les mots de la requête doivent matcher (« verzin georges »
+// comme « georges verzin »), le classement retenant le pire rang de chacun.
+function searchElus(query, pool = eluCandidates()) {
+  const tokens = _wordsOf(query);
+  if (!tokens.length) return pool;
+  const scored = [];
+  for (const e of pool) {
+    let worst = R_KEY;
+    let ok = true;
+    for (const tok of tokens) {
+      const r = tokenRank(tok, e);
+      if (r === null) { ok = false; break; }
+      if (r > worst) worst = r;
+    }
+    if (ok) scored.push([worst, e]);
+  }
+  return scored
+    .sort((a, b) => a[0] - b[0] || a[1].key.localeCompare(b[1].key, 'fr'))
+    .map(x => x[1]);
+}
+
+// Surligne la partie trouvée, mot par mot. Découpe en conservant les
+// séparateurs pour réécrire le nom à l'identique ; normalisation NFC d'abord,
+// pour que les index de `_deburr` (é→e, ç→c : 1 caractère → 1 caractère)
+// restent alignés sur la source qu'on découpe.
+function highlightName(nom, tokens) {
+  const parts = String(nom).normalize('NFC').split(/([^\p{L}\p{N}]+)/u);
+  if (!tokens.length) return parts.map(escapeHtml).join('');
+  return parts.map(src => {
+    const norm = _deburr(src);
+    if (!norm) return escapeHtml(src);
+    // Début de mot : on surligne le plus long préfixe trouvé.
+    let pref = 0;
+    tokens.forEach(t => { if (norm.startsWith(t) && t.length > pref) pref = t.length; });
+    if (pref) return `<mark>${escapeHtml(src.slice(0, pref))}</mark>${escapeHtml(src.slice(pref))}`;
+    for (const t of tokens) {
+      const i = norm.indexOf(t);
+      if (i >= 0) {
+        return escapeHtml(src.slice(0, i)) + `<mark>${escapeHtml(src.slice(i, i + t.length))}</mark>`
+          + escapeHtml(src.slice(i + t.length));
+      }
+    }
+    return escapeHtml(src);
+  }).join('');
+}
+
+const ROLE_LABEL = { college: 'Collège', conseiller: 'Conseiller·ère' };
+
+// Une option : nom (partie trouvée surlignée) + rôle + volume d'activité —
+// de quoi reconnaître la bonne personne SANS ouvrir sa fiche (homonymes,
+// élu·e·s d'une seule législature…).
+function eluOptionHtml(e, tokens, i) {
+  const counts = [];
+  if (e.depose) counts.push(`${e.depose} déposée${e.depose > 1 ? 's' : ''}`);
+  if (e.repond) counts.push(`${e.repond} réponse${e.repond > 1 ? 's' : ''}`);
+  const cls = 'elu-opt' + (e.key === eluActiveKey ? ' elu-opt-active' : '');
+  return `<li class="${cls}" role="option" id="elu-opt-${i}" data-key="${escapeHtml(e.key)}"
+      aria-selected="${e.key === eluSelectedKey}">
+    <span class="elu-opt-name">${highlightName(e.nom, tokens)}</span>
+    <span class="elu-opt-meta">
+      <span class="elu-opt-role elu-opt-role-${e.role}">${ROLE_LABEL[e.role] || e.role}</span>
+      ${counts.length ? `<span class="elu-opt-count">${counts.join(' · ')}</span>` : ''}
+    </span>
+  </li>`;
+}
+
+// (Re)dessine la liste déroulante pour la requête courante. `resetActive` :
+// la frappe repositionne la mise en avant sur le 1er résultat (Entrée le
+// choisit directement) ; la navigation au clavier la conserve.
+function renderEluOptions(resetActive = false) {
+  const list = document.getElementById('eluOptions');
+  if (!list || !elusData) return;
+  const tokens = _wordsOf(eluQuery);
+  eluMatches = searchElus(eluQuery);
+  if (resetActive || !eluMatches.some(e => e.key === eluActiveKey)) {
+    eluActiveKey = eluMatches.length
+      ? (eluMatches.some(e => e.key === eluSelectedKey) && !tokens.length ? eluSelectedKey : eluMatches[0].key)
+      : null;
+  }
+  if (eluMatches.length) {
+    list.innerHTML = eluMatches.map((e, i) => eluOptionHtml(e, tokens, i)).join('');
+  } else {
+    list.innerHTML = `<li class="elu-opt-empty" role="presentation">
+      Aucun·e élu·e ne correspond à « ${escapeHtml(eluQuery)} ».
+    </li>`;
+  }
+  syncEluActiveDescendant();
+  const status = document.getElementById('eluComboStatus');
+  if (status) {
+    status.textContent = eluMatches.length
+      ? `${eluMatches.length} élu·e${eluMatches.length > 1 ? 's' : ''} — utilisez les flèches puis Entrée`
+      : 'Aucun résultat';
+  }
+}
+
+// Reflète l'option mise en avant : attribut ARIA sur le champ + défilement
+// pour la garder visible (liste de 105 entrées, 8 visibles à la fois).
+function syncEluActiveDescendant() {
+  const input = document.getElementById('eluSearch');
+  const list = document.getElementById('eluOptions');
+  if (!input || !list) return;
+  const i = eluMatches.findIndex(e => e.key === eluActiveKey);
+  input.setAttribute('aria-activedescendant', i >= 0 ? `elu-opt-${i}` : '');
+  const el = i >= 0 ? list.children[i] : null;
+  if (el && !list.hidden) scrollOptionIntoView(list, el);
+}
+
+// Défilement calculé À LA MAIN dans la liste, jamais scrollIntoView : celui-ci
+// remonte la chaîne des ancêtres et fait sauter la PAGE quand la liste est
+// près du bas de l'écran (la liste est `position:absolute`, donc l'offsetParent
+// de ses options — offsetTop est bien relatif à elle).
+function scrollOptionIntoView(list, el) {
+  const haut = el.offsetTop;
+  const bas = haut + el.offsetHeight;
+  if (haut < list.scrollTop) list.scrollTop = haut;
+  else if (bas > list.scrollTop + list.clientHeight) list.scrollTop = bas - list.clientHeight;
+}
+
+function openEluList() {
+  const input = document.getElementById('eluSearch');
+  const list = document.getElementById('eluOptions');
+  // `elusData` absent = /elus pas encore répondu : rien à dérouler (sinon une
+  // boîte vide s'ouvre le temps du chargement).
+  if (!input || !list || input.disabled || !elusData) return;
+  list.hidden = false;
+  input.setAttribute('aria-expanded', 'true');
+}
+
+// Referme et remet le nom sélectionné dans le champ : jamais de recherche
+// partielle laissée à l'écran alors qu'une autre fiche est affichée.
+function closeEluList() {
+  const input = document.getElementById('eluSearch');
+  const list = document.getElementById('eluOptions');
+  if (!input || !list) return;
+  list.hidden = true;
+  input.setAttribute('aria-expanded', 'false');
+  input.setAttribute('aria-activedescendant', '');
+  eluQuery = '';
+  syncEluInput();
+}
+
+// Le champ affiche, au repos, l'élu·e dont la fiche est ouverte.
+function syncEluInput() {
+  const input = document.getElementById('eluSearch');
+  if (!input) return;
+  const entry = (elusData || []).find(e => e.key === eluSelectedKey);
+  input.value = entry ? entry.nom : '';
+  const clear = document.getElementById('eluClear');
+  if (clear) clear.hidden = !input.value;
+}
+
+// Placeholder parlant : le nombre d'élu·e·s cherchables — l'utilisateur sait
+// ce qu'il interroge (« Rechercher parmi 105 élu·e·s… »).
+function syncEluPlaceholder() {
+  const input = document.getElementById('eluSearch');
+  if (!input || input.disabled) return;
+  const n = eluCandidates().length;
+  input.placeholder = n ? `Rechercher parmi ${n} élu·e·s…` : 'Rechercher un·e élu·e…';
+}
+
+// (Re)construit la liste des candidat·e·s selon le filtre de rôle courant et
+// garantit une sélection valide.
 export function populateElus() {
-  const select = document.getElementById('eluSelect');
-  if (!select || !elusData) return;
+  if (!elusData) return;
   const prevKey = eluSelectedKey;
-  // Tri par nom de famille (la clé backend gère déjà les particules, ex.
-  // « de Fierlant » → clé « fierlant »), pas par nombre d'interventions.
-  const list = elusData.filter(e => eluRoleFilter === 'all' || e.role === eluRoleFilter)
-    .slice()
-    .sort((a, b) => a.key.localeCompare(b.key, 'fr'));
-  select.innerHTML = list.map(e => `<option value="${escapeHtml(e.key)}">${escapeHtml(e.nom)}</option>`).join('');
-  // Présélection : lien partagé (?elu=) prioritaire, sinon on conserve la
-  // sélection courante si elle reste visible, sinon la 1re entrée.
+  const list = eluCandidates();
+  syncEluPlaceholder();
+  // Présélection : uniquement un lien partagé (?elu=), ou la sélection déjà
+  // faite. Aucun repli sur la 1re entrée — ouvrir l'onglet sur la fiche d'une
+  // personne prise dans l'ordre alphabétique donnerait à lire une activité que
+  // personne n'a demandé à voir. Sans sélection : écran d'accueil.
   let nextKey = null;
   if (pendingEluKey && list.some(e => e.key === pendingEluKey)) {
     nextKey = pendingEluKey;
     pendingEluKey = null;
   } else if (list.some(e => e.key === prevKey)) {
     nextKey = prevKey;
-  } else if (list.length) {
-    nextKey = list[0].key;
   }
-  selectElu(nextKey, list);
+  selectElu(nextKey);
 }
 
-// Applique une sélection par clé et charge la fiche. `list` (optionnel)
-// évite de re-chercher dans elusData quand l'appelant l'a déjà filtrée/triée.
-function selectElu(key, list) {
+// Applique une sélection par clé et charge la fiche ; sans clé, l'onglet
+// revient à son écran d'accueil.
+function selectElu(key) {
   eluSelectedKey = key;
-  const select = document.getElementById('eluSelect');
-  const entry = key ? (list || elusData || []).find(e => e.key === key) : null;
-  if (entry) {
-    if (select) select.value = key;
-    loadElu(key);
-  } else {
-    if (select) select.value = '';
-    document.getElementById('eluResult').innerHTML = '';
-    document.getElementById('eluYear').hidden = true;
+  const entry = key ? (elusData || []).find(e => e.key === key) : null;
+  syncEluInput();
+  if (entry) loadElu(key);
+  else renderEluAccueil();
+}
+
+// Écran d'accueil : aucune fiche ouverte, donc aucun filtre à proposer — on
+// masque toute la barre de filtres, sinon des puces d'une fiche précédente y
+// resteraient affichées sans rien à filtrer.
+function renderEluAccueil() {
+  currentEluData = null;
+  ['eluRoleChips', 'eluTypeFilterChips', 'eluMoreFilters'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.hidden = true;
+  });
+  const box = document.getElementById('eluResult');
+  if (!box) return;
+  box.innerHTML = `<div class="elu-accueil">
+    <svg class="icon elu-accueil-icon" aria-hidden="true"><use href="#ico-search"/></svg>
+    <p class="elu-accueil-titre">Cherchez un·e élu·e</p>
+    <p>Par nom ou par prénom — trois lettres suffisent.</p>
+  </div>`;
+}
+
+// ── Câblage du combobox (écouteurs directs : éléments statiques, et une CSP
+// sans 'unsafe-inline' interdit les attributs onXXX — voir delegate.js). ──
+export function initEluCombo() {
+  const input = document.getElementById('eluSearch');
+  const list = document.getElementById('eluOptions');
+  const clear = document.getElementById('eluClear');
+  if (!input || !list) return;
+
+  input.addEventListener('input', () => {
+    eluQuery = input.value;
+    if (clear) clear.hidden = !input.value;
+    openEluList();
+    renderEluOptions(true);
+  });
+
+  // Prise de focus : on montre TOUTE la liste (le champ affiche un nom, ce
+  // n'est pas une recherche) et on sélectionne le texte — la 1re frappe le
+  // remplace, sans avoir à effacer.
+  input.addEventListener('focus', () => {
+    eluQuery = '';
+    input.select();
+    openEluList();
+    renderEluOptions(true);
+  });
+
+  input.addEventListener('keydown', onEluSearchKeydown);
+
+  // mousedown : on garde le focus dans le champ (sinon le blur ferme la liste
+  // avant que le click n'atteigne l'option).
+  list.addEventListener('mousedown', ev => ev.preventDefault());
+  list.addEventListener('click', ev => {
+    const li = ev.target.closest('.elu-opt');
+    if (!li) return;
+    selectElu(li.dataset.key);
+    closeEluList();
+    input.blur();
+  });
+
+  if (clear) {
+    clear.addEventListener('mousedown', ev => ev.preventDefault());
+    clear.addEventListener('click', () => {
+      input.value = '';
+      eluQuery = '';
+      clear.hidden = true;
+      input.focus();
+      openEluList();
+      renderEluOptions(true);
+    });
+  }
+
+  // Clic à l'extérieur / passage à un autre champ : on referme proprement.
+  input.addEventListener('blur', () => closeEluList());
+}
+
+function onEluSearchKeydown(ev) {
+  const list = document.getElementById('eluOptions');
+  if (!list) return;
+  const open = !list.hidden;
+  switch (ev.key) {
+    case 'ArrowDown':
+    case 'ArrowUp':
+      ev.preventDefault();
+      if (!open) { openEluList(); renderEluOptions(true); return; }
+      moveEluActive(ev.key === 'ArrowDown' ? 1 : -1);
+      return;
+    case 'Home':
+    case 'End':
+      if (!open || !eluMatches.length) return;
+      ev.preventDefault();
+      eluActiveKey = (ev.key === 'Home' ? eluMatches[0] : eluMatches[eluMatches.length - 1]).key;
+      renderEluOptions();
+      return;
+    case 'Enter':
+      if (!open || !eluActiveKey) return;
+      ev.preventDefault();
+      selectElu(eluActiveKey);
+      closeEluList();
+      return;
+    case 'Escape':
+      if (!open) return;
+      ev.preventDefault();
+      closeEluList();
+      return;
+    default:
   }
 }
 
-export function onEluSelectChange(sel) {
-  if (sel.value) selectElu(sel.value);
+function moveEluActive(delta) {
+  if (!eluMatches.length) return;
+  const i = eluMatches.findIndex(e => e.key === eluActiveKey);
+  const next = i < 0 ? (delta > 0 ? 0 : eluMatches.length - 1)
+    : (i + delta + eluMatches.length) % eluMatches.length;   // boucle haut ↔ bas
+  eluActiveKey = eluMatches[next].key;
+  renderEluOptions();
 }
 
 // Partage : lien profond vers l'onglet Par élu·e, sur la fiche sélectionnée.
@@ -205,35 +563,43 @@ function filterByTheme(items, theme) {
 // sens quel que soit l'élu·e sélectionné·e.
 const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
 
-function filterByType(items, typeLabel) {
-  if (typeLabel === 'all') return items;
-  return items.filter(it => it.type_label === typeLabel);
+// Les deux listes de valeurs (année, thématique) vivent dans un <details>
+// replié. On le masque s'il n'a rien à offrir, on le déplie d'office quand un
+// filtre y est actif, et le résumé rappelle lesquels — un résultat filtré ne
+// doit jamais paraître inexpliqué parce que le filtre est replié.
+function syncEluMoreFilters() {
+  const box = document.getElementById('eluMoreFilters');
+  const year = document.getElementById('eluYear');
+  const theme = document.getElementById('eluTheme');
+  const actif = document.getElementById('eluMoreActive');
+  if (!box || !year || !theme) return;
+  box.hidden = year.hidden && theme.hidden;
+  const actifs = [];
+  if (eluYearFilter !== 'all') actifs.push(eluYearFilter);
+  if (eluThemeFilter !== 'all') actifs.push(eluThemeFilter);
+  if (actif) actif.textContent = actifs.length ? ` · ${actifs.join(' · ')}` : '';
+  if (actifs.length) box.open = true;
 }
 
-// Puce CLIQUABLE par type présent — dans la barre de filtres (#eluTypeFilterChips),
-// même emplacement/logique que les puces de type de l'onglet Séances. '' si
-// aucune intervention de ce type cette année (jamais de puce à 0).
+function filterByType(items, types) {
+  if (!types.size) return items;
+  return items.filter(it => types.has(it.type_label));
+}
+
+// Puce-interrupteur par type présent, dans la barre de filtres
+// (#eluTypeFilterChips). '' si aucune action de ce type dans le périmètre
+// courant (jamais de puce à 0).
 function eluTypeChip(typeLabel, count) {
   if (!count) return '';
-  const active = eluTypeFilter === typeLabel ? ' elu-chip-active' : '';
+  const on = eluTypeSel.has(typeLabel);
   const text = TYPE_COUNT_LABEL[typeLabel](count);
-  return `<button type="button" class="elu-chip${active}" data-click="onEluChipClick" data-arg="${escapeHtml(typeLabel)}">${escapeHtml(text)}</button>`;
+  return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"`
+    + ` data-click="onEluChipClick" data-arg="${escapeHtml(typeLabel)}">${escapeHtml(text)}</button>`;
 }
 
-// Pastille NON cliquable par type présent — sous le nom de l'élu·e, simple
-// rappel du profil d'activité (le filtre lui-même vit dans la barre de
-// filtres, voir eluTypeChip ci-dessus/#eluTypeFilterChips). Même décompte
-// (année en cours), juste un autre rendu : <span>, pas <button>.
-function eluTypeCountBadge(typeLabel, count) {
-  if (!count) return '';
-  const text = TYPE_COUNT_LABEL[typeLabel](count);
-  return `<span class="elu-chip-static">${escapeHtml(text)}</span>`;
-}
-
-// Reclique sur la puce déjà active → bascule vers "Tous les types" ; sinon
-// sélectionne ce type.
+// Interrupteur : coche/décoche ce type. Plus aucun coché = tous les types.
 export function onEluChipClick(typeLabel) {
-  eluTypeFilter = eluTypeFilter === typeLabel ? 'all' : typeLabel;
+  toggle(eluTypeSel, typeLabel);
   if (currentEluData) renderElu(currentEluData);
 }
 
@@ -348,46 +714,67 @@ function renderElu(d) {
   // types (chacune doit rester visible/cliquable pour changer de filtre).
   const deposeForYear = filterByYear(d.depose || [], eluYearFilter);
   const repondForYear = filterByYear(d.repond || [], eluYearFilter);
-  // Un type resté sélectionné en changeant d'élu·e/d'année peut ne plus être
-  // présent (sa puce ne s'affiche alors plus, voir eluTypeChip) : retombe sur
-  // "Tous les types" plutôt que de filtrer silencieusement sans puce active.
-  if (eluTypeFilter !== 'all' && !deposeForYear.some(it => it.type_label === eluTypeFilter)) {
-    eluTypeFilter = 'all';
-  }
-  // Thématiques disponibles pour l'année courante — indépendantes du type et
-  // de la thématique déjà choisis, sinon le menu se viderait au filtrage.
-  populateEluThemeSelect(eluThemes(deposeForYear, repondForYear));
-  const depose = filterByType(filterByTheme(deposeForYear, eluThemeFilter), eluTypeFilter);
-  const repond = filterByTheme(repondForYear, eluThemeFilter);
-  const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
-    ? 'Collège (échevin·e / bourgmestre)'
-    : 'Conseiller·ère');
-  // Décompte par type pour l'année courante — une seule fois, réutilisé pour
-  // le filtre cliquable (barre de filtres) ET le rappel non cliquable
-  // (sous le nom) : même chiffre, deux rendus différents.
-  const typeCounts = TYPE_FILTER_ORDER.map(t => [t, deposeForYear.filter(it => it.type_label === t).length]);
+  // Une sélection devenue vide de sens en changeant d'élu·e/d'année (sa puce
+  // n'est alors plus affichée) laisserait un filtre actif sans interrupteur
+  // pour le défaire : on la nettoie.
+  eluTypeSel.forEach(t => { if (!deposeForYear.some(it => it.type_label === t)) eluTypeSel.delete(t); });
+
+  // Comptages CROISÉS : chaque groupe de puces compte dans le périmètre défini
+  // par l'AUTRE groupe (et non par lui-même), sinon cocher une puce ferait
+  // tomber à 0 toutes les autres de sa rangée et le filtre deviendrait un
+  // cul-de-sac. Chaque puce annonce donc ce qu'elle ajoute réellement.
+  const deposeParType = filterByType(deposeForYear, eluTypeSel);
+  const roleCounts = eluRoleCounts(d.mandats,
+    // Une réponse en séance n'a pas de type : dès qu'un type est coché, elle
+    // sort du périmètre.
+    eluTypeSel.size ? deposeParType : [...deposeForYear, ...repondForYear]);
+  renderEluRoleChips(roleCounts);
+  eluRoleSel.forEach(r => { if (!roleCounts[r]) eluRoleSel.delete(r); });
+
+  const deposeForRole = filterByRole(deposeForYear, d.mandats, eluRoleSel);
+  const repondForRole = filterByRole(repondForYear, d.mandats, eluRoleSel);
   const typeFilterChips = document.getElementById('eluTypeFilterChips');
   if (typeFilterChips) {
-    const chipsHtml = typeCounts.map(([t, n]) => eluTypeChip(t, n)).join('');
+    const chipsHtml = TYPE_FILTER_ORDER
+      .map(t => eluTypeChip(t, deposeForRole.filter(it => it.type_label === t).length)).join('');
     typeFilterChips.innerHTML = chipsHtml;
     typeFilterChips.hidden = !chipsHtml;
   }
-  const badges = typeCounts.map(([t, n]) => eluTypeCountBadge(t, n)).join('');
+
+  // Thématiques disponibles pour la période affichée — indépendantes du type et
+  // de la thématique déjà choisis, sinon le menu se viderait au filtrage.
+  populateEluThemeSelect(eluThemes(deposeForRole, repondForRole));
+  syncEluMoreFilters();
+  const depose = filterByType(filterByTheme(deposeForRole, eluThemeFilter), eluTypeSel);
+  // Une réponse en séance n'a aucun type : cocher un type l'exclut.
+  const repond = eluTypeSel.size ? [] : filterByTheme(repondForRole, eluThemeFilter);
+  const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
+    ? 'Collège (échevin·e / bourgmestre)'
+    : 'Conseiller·ère');
 
   let html = `<div class="elu-head">
     <div class="elu-name">${escapeHtml(d.nom)}</div>
     <span class="elu-role elu-role-${d.role}">${roleLabel}</span>
   </div>`;
 
-  if (deposeForYear.length) {
-    html += `<div class="elu-summary"><strong>${depose.length}</strong> intervention${depose.length > 1 ? 's' : ''} déposée${depose.length > 1 ? 's' : ''}</div>`;
-    if (badges) html += `<div class="elu-chips">${badges}</div>`;
+  // Total RECALCULÉ à chaque bascule d'interrupteur, avec sa décomposition —
+  // c'est le chiffre que l'on vient chercher, il doit suivre les puces.
+  const total = depose.length + repond.length;
+  if (total) {
+    const detail = [];
+    if (depose.length) detail.push(`${depose.length} déposée${depose.length > 1 ? 's' : ''}`);
+    if (repond.length) detail.push(`${repond.length} réponse${repond.length > 1 ? 's' : ''} en séance`);
+    html += `<div class="elu-summary"><strong>${total}</strong> action${total > 1 ? 's' : ''}`
+      + (detail.length > 1 ? ` <span class="elu-summary-detail">${detail.join(' · ')}</span>` : '')
+      + '</div>';
   }
   if (depose.length) {
     html += `<div class="elu-list">${groupByYear(depose, it => eluDeposeRow(it, d.nom))}</div>`;
   }
 
   if (repond.length) {
+    // Repliées quand elles accompagnent les dépôts (activité secondaire d'un·e
+    // conseiller·ère) ; dépliées dès qu'elles sont ce qu'on est venu voir.
     html += `<details class="elu-repond"${depose.length ? '' : ' open'}>
       <summary><strong>${repond.length}</strong> réponse${repond.length > 1 ? 's' : ''} en séance <span class="elu-repond-hint">(activité de Collège)</span></summary>
       <div class="elu-list">${groupByYear(repond, it => eluRepondRow(it, d.nom))}</div>
@@ -396,7 +783,9 @@ function renderElu(d) {
 
   if (!depose.length && !repond.length) {
     const filters = [];
-    if (eluTypeFilter !== 'all') filters.push(`de type « ${eluTypeFilter} »`);
+    const listeFr = xs => xs.length > 1 ? `${xs.slice(0, -1).join(', ')} ou ${xs[xs.length - 1]}` : xs[0];
+    if (eluRoleSel.size) filters.push(`en tant que ${listeFr([...eluRoleSel].map(r => ROLE_CHIP_LABEL[r]))}`);
+    if (eluTypeSel.size) filters.push(`de type ${listeFr([...eluTypeSel].map(t => `« ${t} »`))}`);
     if (eluThemeFilter !== 'all') filters.push(`sur la thématique « ${eluThemeFilter} »`);
     if (eluYearFilter !== 'all') filters.push(`en ${eluYearFilter}`);
     html += filters.length

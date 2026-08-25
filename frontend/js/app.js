@@ -18,7 +18,7 @@ import {
   selectTheme, setMetric, shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick,
 } from './stats.js';
 import {
-  loadElus, onEluSelectChange, onEluYearChange, onEluThemeChange,
+  loadElus, initEluCombo, onEluYearChange, onEluThemeChange,
   onEluChipClick, onEluRoleChipClick, shareElu, setPendingEluKey,
 } from './elus.js';
 import {
@@ -91,7 +91,6 @@ function initStaticListeners() {
   bind('askInput', 'input', onAskInput);
   bind('askInput', 'keydown', e => { if (e.key === 'Enter') submitQuestion(); });
   bind('trendInput', 'keydown', e => { if (e.key === 'Enter') loadTrend(); });
-  bind('eluSelect', 'change', e => onEluSelectChange(e.target));
   bind('eluYear', 'change', onEluYearChange);
   bind('eluTheme', 'change', onEluThemeChange);
   bind('seanceYear', 'change', renderSeanceYearList);
@@ -112,5 +111,6 @@ initSettingsDrag();
 initSettingsOverlay();
 initAdminLoginOverlay();
 initStaticListeners();
+initEluCombo();
 handleDeepLink();
 checkAdminSession();

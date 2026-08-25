@@ -92,3 +92,174 @@ test('pas de débordement horizontal en 390px de large', async ({ page }) => {
   }
   expect(errors).toEqual([]);
 });
+
+// ── Recherche d'élu·e (combobox, voir frontend/js/elus.js) ──
+// Ces tests interrogent la vraie base (le backend local sert /elus) mais ne
+// codent en dur AUCUN nom : les cas sont dérivés de la liste affichée, pour
+// rester valables quand la base évolue.
+
+// Ouvre l'onglet « Par élu·e » et déplie la liste des élu·e·s. L'onglet
+// s'ouvre sur son écran d'accueil : aucune fiche n'est chargée tant qu'on n'a
+// pas choisi quelqu'un.
+async function openEluCombo(page) {
+  await page.locator('#tab-elus').click();
+  await expect(page.locator('#eluResult .elu-accueil')).toBeVisible();
+  await page.locator('#eluSearch').click();
+  await expect(page.locator('#eluOptions .elu-opt').first()).toBeVisible();
+}
+const optionNames = page => page.$$eval('#eluOptions .elu-opt .elu-opt-name', els => els.map(e => e.textContent.trim()));
+
+// Le cas que le <select> natif ne savait PAS traiter : sa frappe rapide ne
+// cherche que dans le début du libellé affiché, donc le prénom.
+test('recherche d\'un·e élu·e par son nom de famille', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+  const noms = await optionNames(page);
+  const cible = noms.find(n => n.split(/\s+/).length > 1);
+  expect(cible, 'aucun nom en deux mots dans la liste').toBeTruthy();
+  const famille = cible.split(/\s+/).pop();
+
+  await page.locator('#eluSearch').fill(famille);
+  await expect(page.locator('#eluOptions .elu-opt').first()).toBeVisible();
+  expect(await optionNames(page)).toContain(cible);
+  expect(errors).toEqual([]);
+});
+
+test('recherche insensible aux accents', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+  const noms = await optionNames(page);
+  // Un nom accentué, cherché sans son accent (« cecile » → « Cécile »).
+  const accentue = noms.find(n => n.normalize('NFD') !== n.normalize('NFC'));
+  expect(accentue, 'aucun nom accentué dans la liste').toBeTruthy();
+  const mot = accentue.split(/\s+/).find(w => w.normalize('NFD') !== w.normalize('NFC'));
+  const sansAccent = mot.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  await page.locator('#eluSearch').fill(sansAccent);
+  await expect(page.locator('#eluOptions .elu-opt').first()).toBeVisible();
+  expect(await optionNames(page)).toContain(accentue);
+  expect(errors).toEqual([]);
+});
+
+test('sélection au clavier (flèches + Entrée) puis fermeture', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+
+  await page.keyboard.press('ArrowDown');
+  // L'option mise en avant est celle qu'Entrée doit charger (on la lit plutôt
+  // que de supposer son rang : la liste s'ouvre sur la sélection courante).
+  const attendu = await page.locator('#eluOptions .elu-opt-active .elu-opt-name').textContent();
+  await page.keyboard.press('Enter');
+
+  await expect(page.locator('#eluResult .elu-name')).toHaveText(attendu);
+  await expect(page.locator('#eluOptions')).toBeHidden();
+  await expect(page.locator('#eluSearch')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#eluSearch')).toHaveValue(attendu);
+  expect(errors).toEqual([]);
+});
+
+test('aucun résultat : la liste le dit', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+  await page.locator('#eluSearch').fill('zzzzq');
+  await expect(page.locator('#eluOptions .elu-opt-empty')).toContainText('Aucun·e élu·e');
+  expect(errors).toEqual([]);
+});
+
+// ── Filtres de la fiche (puces de rôle / de type, filtres repliés) ──
+
+// Sélectionne le/la premier·ère élu·e du Collège ayant exercé PLUSIEURS rôles
+// (donc plusieurs puces) — c'est le cas que le filtre par mandat sert.
+async function ficheMultiRoles(page) {
+  await openEluCombo(page);
+  const college = await page.$$eval('#eluOptions .elu-opt', els => els
+    .filter(e => e.querySelector('.elu-opt-role-college'))
+    .map(e => e.dataset.key));
+  for (const key of college.slice(0, 8)) {
+    await page.locator('#eluSearch').click();
+    await page.locator(`#eluOptions .elu-opt[data-key="${key}"]`).click();
+    await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+    if (await page.locator('#eluRoleChips .elu-chip').count() >= 2) return true;
+  }
+  return false;
+}
+
+const compte = async loc => Number((await loc.textContent()).match(/(\d+)\s+action/)[1]);
+const totalAffiche = page => compte(page.locator('#eluResult .elu-summary'));
+
+// Chaque action est rattachée au rôle exercé À SA DATE (mandats déclarés) :
+// isoler un rôle doit afficher exactement le nombre d'actions annoncé par sa
+// puce, et cocher les deux doit rendre leur somme — les puces sont des
+// interrupteurs indépendants, pas un choix unique.
+test('les puces de rôle sont des interrupteurs cumulables, et le total suit', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  test.skip(!await ficheMultiRoles(page), 'aucun·e élu·e à plusieurs rôles dans la base');
+
+  const [chip1, chip2] = [0, 1].map(i => page.locator('#eluRoleChips .elu-chip').nth(i));
+  const [n1, n2] = [await compte(chip1), await compte(chip2)];
+  const totalInitial = await totalAffiche(page);
+
+  await chip1.click();
+  await expect(chip1).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(n1);
+  expect(await totalAffiche(page)).toBe(n1);
+
+  await chip2.click();   // les DEUX cochés → somme, pas remplacement
+  await expect(chip1).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(n1 + n2);
+
+  await chip1.click();   // décoché → il ne reste que le second
+  await expect(chip1).toHaveAttribute('aria-pressed', 'false');
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(n2);
+
+  await chip2.click();   // plus rien de coché → tout revient
+  expect(await totalAffiche(page)).toBe(totalInitial);
+  expect(errors).toEqual([]);
+});
+
+test('les filtres année et thématique sont repliés au départ', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await openEluCombo(page);
+  await page.locator('#eluOptions .elu-opt').first().click();
+  await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+
+  const more = page.locator('#eluMoreFilters');
+  await expect(more).toBeVisible();
+  await expect(page.locator('#eluYear')).toBeHidden();      // replié = non atteignable
+  await page.locator('.elu-more-summary').click();
+  await expect(page.locator('#eluYear')).toBeVisible();
+
+  // Une année choisie reste lisible même une fois le bloc replié.
+  const annee = (await page.$$eval('#eluYear option', els => els.map(e => e.value)))[1];
+  await page.locator('#eluYear').selectOption(annee);
+  await expect(page.locator('#eluMoreActive')).toHaveText(` · ${annee}`);
+  expect(errors).toEqual([]);
+});
+
+// L'onglet n'ouvre plus la fiche d'une personne prise dans l'ordre
+// alphabétique : il invite à chercher, et ne charge que ce qu'on lui demande.
+test('l\'onglet s\'ouvre sur un écran d\'accueil, sans élu·e présélectionné·e', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-elus').click();
+
+  await expect(page.locator('#eluResult .elu-accueil')).toBeVisible();
+  await expect(page.locator('#eluResult .elu-name')).toHaveCount(0);
+  await expect(page.locator('#eluSearch')).toHaveValue('');
+  await expect(page.locator('#eluRoleChips')).toBeHidden();
+  await expect(page.locator('#eluTypeFilterChips')).toBeHidden();
+  await expect(page.locator('#eluMoreFilters')).toBeHidden();
+
+  // Un choix explicite ouvre bien une fiche, et l'accueil s'efface.
+  await page.locator('#eluSearch').click();
+  await page.locator('#eluOptions .elu-opt').first().click();
+  await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+  await expect(page.locator('#eluResult .elu-accueil')).toHaveCount(0);
+  expect(errors).toEqual([]);
+});

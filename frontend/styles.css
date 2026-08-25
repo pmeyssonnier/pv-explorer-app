@@ -533,6 +533,99 @@ body {
 .elu-select-year { flex: 0 0 auto; }
 .elu-select-date { flex: 0 1 220px; min-width: 0; }
 
+/* ── Recherche d'élu·e : combobox (voir elus.js) ──
+   Remplace le <select> natif — inutilisable à 105 entrées : la frappe rapide
+   du navigateur ne cherche que dans le libellé affiché, donc le prénom. Le
+   champ garde l'habillage .elu-select (même hauteur/bordure que les filtres
+   voisins) ; ne s'ajoutent ici que la loupe, la croix d'effacement et la
+   liste déroulante. */
+/* Le champ de recherche occupe toute sa ligne (action principale de l'onglet). */
+.elus-bar-search { margin-bottom: 4px; }
+.elus-bar-search .elu-combo { flex: 1 1 100%; }
+/* Puces de filtrage de la fiche : rôle(s) sur une ligne, types sur la suivante
+   — deux critères distincts, jamais mêlés sur la même rangée. */
+.elus-bar-filters { gap: 0; }
+.elus-bar-filters .elu-chips { flex: 1 1 100%; margin: 6px 0 0; }
+
+/* Écran d'accueil de l'onglet : aucune fiche ouverte (voir renderEluAccueil).
+   Volontairement sobre — il invite à chercher sans mettre personne en avant. */
+.elu-accueil {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  text-align: center; padding: 46px 20px 40px; color: var(--encre-soft);
+}
+.elu-accueil-icon { width: 26px; height: 26px; color: var(--ligne); }
+.elu-accueil-titre {
+  font-family: var(--display); font-weight: 600; font-size: 19px; color: var(--encre);
+}
+.elu-accueil p { max-width: 48ch; font-size: 14px; margin: 0; }
+
+/* ── Filtres secondaires repliés (année, thématique) ── */
+.elu-more { margin: 10px 0 4px; }
+.elu-more[hidden] { display: none; }
+.elu-more-summary {
+  display: inline-flex; align-items: baseline; gap: 4px; cursor: pointer;
+  font-size: 13px; color: var(--encre-soft); padding: 4px 2px; width: fit-content;
+}
+.elu-more-summary:hover { color: var(--bordeaux); }
+/* Rappel des filtres actifs quand le bloc est replié (voir syncEluMoreFilters). */
+.elu-more-active { color: var(--bordeaux); font-weight: 600; }
+.elu-more .elus-bar { margin-top: 4px; }
+.elu-combo { position: relative; flex: 1 1 260px; min-width: 0; }
+.elu-combo-input { width: 100%; padding-left: 34px; padding-right: 36px; }
+.elu-combo-icon {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; color: var(--encre-soft); pointer-events: none;
+}
+.elu-combo-clear {
+  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+  font: inherit; font-size: 13px; line-height: 1; color: var(--encre-soft);
+  background: none; border: 0; border-radius: 999px; padding: 7px 9px; cursor: pointer;
+}
+.elu-combo-clear:hover { color: var(--bordeaux); background: var(--papier-dark); }
+.elu-combo-list {
+  position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0;
+  margin: 0; padding: 4px; list-style: none;
+  max-height: min(46vh, 340px); overflow-y: auto; overscroll-behavior: contain;
+  background: var(--blanc); border: 1px solid var(--ligne); border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+}
+/* Même piège de spécificité que .elus-bar[hidden] plus haut : `display` posé
+   par une classe l'emporterait sur la règle par défaut de [hidden]. */
+.elu-combo-list[hidden] { display: none; }
+.elu-opt {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px;
+  padding: 9px 11px; border-radius: 6px; cursor: pointer;
+}
+.elu-opt-name { font-size: 15px; color: var(--encre); }
+/* Partie trouvée par la recherche — surlignage discret, jamais du jaune
+   navigateur (qui ignore le thème sombre). */
+.elu-opt mark {
+  background: color-mix(in srgb, var(--or) 28%, transparent);
+  color: inherit; border-radius: 2px; padding: 0 1px;
+}
+.elu-opt-meta {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px;
+  margin-left: auto; font-size: 12px; color: var(--encre-soft);
+}
+.elu-opt-role {
+  font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+  border: 1px solid var(--ligne); background: var(--papier-dark); color: var(--encre-soft);
+  white-space: nowrap;
+}
+.elu-opt-role-college { color: var(--bordeaux); border-color: var(--bordeaux-clair); }
+.elu-opt-count { white-space: nowrap; }
+/* Une seule mise en avant, partagée par la souris et le clavier (l'option
+   « active » d'aria-activedescendant) — sinon deux surbrillances à l'écran. */
+.elu-opt:hover, .elu-opt-active { background: var(--papier-dark); }
+.elu-opt[aria-selected="true"] .elu-opt-name { font-weight: 600; color: var(--bordeaux); }
+.elu-opt-empty { padding: 11px; font-size: 14px; color: var(--encre-soft); }
+
+/* Texte réservé aux lecteurs d'écran (annonce du nombre de résultats). */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
 .elu-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; margin: 18px 0 2px; }
 .elu-name { font-family: var(--display); font-weight: 600; font-size: 21px; color: var(--bordeaux); }
 .elu-role {
@@ -545,6 +638,10 @@ body {
   font-size: 13.5px; color: var(--encre-soft); margin: 8px 0 4px;
 }
 .elu-summary strong { color: var(--bordeaux); font-size: 16px; }
+/* Décomposition du total (« 21 déposées · 3 réponses ») — secondaire au
+   chiffre lui-même, qui est ce que les puces font varier. */
+.elu-summary-detail { color: var(--encre-soft); }
+.elu-summary-detail::before { content: '— '; }
 /* Puces cliquables (voir elus.js/eluTypeChip, seances.js) : filtre à un clic,
    vit dans la barre de filtres (#eluTypeFilterChips, #eluRoleChips côté Par
    élu·e ; #seanceRoleChips, #seanceTypeChips côté Séances). */
@@ -555,19 +652,14 @@ body {
   padding: 5px 12px; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .elu-chip:hover { border-color: var(--bordeaux-clair); color: var(--bordeaux); }
+/* Puce de rôle (voir elus.js/eluRoleChip) : « Échevin·e · 21 réponses » — le
+   rôle porte, le décompte accompagne. */
+.elu-chip strong { font-weight: 600; color: var(--encre); }
+.elu-chip-active strong { color: inherit; }
 .elu-chip-active {
   background: color-mix(in srgb, var(--bordeaux) 15%, transparent);
   border-color: var(--bordeaux); color: var(--bordeaux); font-weight: 600;
 }
-/* Pastille NON cliquable (voir elus.js/eluTypeCountBadge) : simple rappel du
-   profil d'activité sous le nom de l'élu·e — même gabarit que .elu-chip,
-   sans curseur/interaction (le filtre lui-même vit dans la barre, ci-dessus). */
-.elu-chip-static {
-  font: inherit; font-size: 12.5px; color: var(--encre-soft);
-  background: var(--papier-dark); border: 1px solid var(--ligne); border-radius: 999px;
-  padding: 5px 12px; display: inline-block;
-}
-
 .elu-year {
   font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--bordeaux);
   margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 1px solid var(--ligne);
