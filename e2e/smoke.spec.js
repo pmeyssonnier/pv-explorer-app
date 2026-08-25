@@ -418,3 +418,38 @@ test('la somme des puces de type égale le nombre de points annoncé', async ({ 
   await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
   expect(errors).toEqual([]);
 });
+
+// ── Onglet Statistiques : KPI par série et tableaux par année ──
+test('les KPI d\'activité et les tableaux par année sont cohérents', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#anneesTables .annees-table').first()).toBeVisible();
+
+  // 1. Un KPI par série, dans le même ordre que la légende du graphe.
+  const kpis = await page.$$eval('#activityKPIs .act-kpi', els => els.map(e => e.getAttribute('title')));
+  const legende = await page.$$eval('#activityLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
+  expect(kpis).toEqual(legende);
+  expect(kpis).toContain('Débat filmé hors PV');
+
+  // 2. Tableau des types : la somme des colonnes de type fait la colonne Points.
+  const lignes = await page.$$eval('#anneesTables .annees-table', ts => {
+    const cells = tr => [...tr.children].map(c => +c.textContent.replace(/[^\d]/g, '') || 0);
+    return [...ts[0].querySelectorAll('tbody tr'), ...ts[0].querySelectorAll('tfoot tr')].map(cells);
+  });
+  expect(lignes.length).toBeGreaterThan(3);
+  // [année|Total, séances, points, puis les 5 types]
+  lignes.forEach(c => expect(c.slice(3).reduce((a, b) => a + b, 0)).toBe(c[2]));
+
+  // 3. Tableau des personnes : les deux identités du rapprochement.
+  const pers = await page.$$eval('#anneesTables .annees-table', ts => {
+    const cells = tr => [...tr.children].map(c => +c.textContent.replace(/[^\d]/g, '') || 0);
+    return [...ts[1].querySelectorAll('tbody tr')].map(cells);
+  });
+  // [année, points, avec, sans, intervenants, somme, surplus]
+  pers.forEach(c => {
+    expect(c[1]).toBe(c[2] + c[3]);
+    expect(c[5]).toBe(c[2] + c[6]);
+  });
+  expect(errors).toEqual([]);
+});

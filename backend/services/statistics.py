@@ -110,7 +110,12 @@ _ACTIVITY_PV_TYPE_LABEL = {
     "demande_habitant": "Demande",
     "motion": "Motion",
 }
-ACTIVITY_TYPE_ORDER = ["Question orale", "Demande", "Motion", "Question écrite"]
+# 5e série : les chapitres vidéo dont le point de PV n'a pas été retrouvé.
+# Ils ne sont PAS dans la base des PV (ils viennent du chapitrage vidéo) : leur
+# décompte par année est injecté par l'appelant — voir le paramètre
+# `hors_pv_par_annee` de compute_stats et services.seances.annees_stats.
+ACTIVITY_TYPE_ORDER = ["Question orale", "Demande", "Motion", "Question écrite",
+                       "Débat filmé hors PV"]
 
 
 def _is_excluded_amount(p: dict) -> bool:
@@ -151,7 +156,7 @@ def _trend_tokens(theme: str) -> list[str]:
     return sorted(terms)
 
 
-def compute_stats(db: dict) -> dict:
+def compute_stats(db: dict, hors_pv_par_date: dict = None) -> dict:
     """Statistiques globales : totaux, montants engagés (filtrés), répartition
     par année (PV + points) et thématiques (globales + par année canonisées)."""
     all_points = [p for s in db.get("seances", []) for p in s.get("points", [])]
@@ -221,6 +226,14 @@ def compute_stats(db: dict) -> dict:
                 qe_resume.append({"date": q["date"], "thematiques": canon_thematiques})
     except Exception:
         pass
+    # Série « Débat filmé hors PV » : injectée PAR DATE, car ces points
+    # n'existent que dans le chapitrage vidéo (voir ACTIVITY_TYPE_ORDER) — y
+    # compris pour des séances dont aucun PV n'est extrait, absentes de la
+    # boucle ci-dessus. Absente → série à 0, jamais une colonne manquante qui
+    # décalerait les couleurs du graphe.
+    for d, n in (hors_pv_par_date or {}).items():
+        if n and d[:4]:
+            activite_year[d[:4]]["Débat filmé hors PV"] += n
     activite_types_par_annee = [
         {"annee": y, **{t: activite_year[y].get(t, 0) for t in ACTIVITY_TYPE_ORDER}}
         for y in sorted(activite_year)
@@ -290,6 +303,12 @@ def compute_stats(db: dict) -> dict:
         "pv_par_annee": pv_par_annee,
         "activite_types_par_annee": activite_types_par_annee,
         "activite_type_order": ACTIVITY_TYPE_ORDER,
+        # Chapitres vidéo sans point de PV, par DATE : le niveau mois du graphe
+        # agrège côté client, et certaines de ces séances n'ont aucun PV — donc
+        # aucune ligne dans seances_resume à laquelle les rattacher. C'est la
+        # SEULE source de cette série côté client : l'ajouter aussi au résumé
+        # par séance la compterait deux fois (constaté : 34 au lieu de 17).
+        "hors_pv_par_date": hors_pv_par_date or {},
         "qe_resume": qe_resume,
         "themes_par_annee": themes_par_annee,
         "dates_par_annee": dates_par_annee,

@@ -33,6 +33,14 @@
   --chart-s1: #1baf7a;   /* Demande */
   --chart-s2: #eda100;   /* Motion */
   --chart-s3: #4a3aa7;   /* Question écrite */
+  /* 5e série ajoutée avec la même méthode : teinte reprise telle quelle du
+     référentiel du skill dataviz (slot « magenta »), pas inventée, puis
+     re-validée en jeu de 5 sur les DEUX surfaces réelles de l'app —
+     `validate_palette.js … --surface "#f7f3ec"` en clair, "#17130f" en sombre.
+     Grille des paires ADJACENTES, celle que le skill prescrit pour un
+     empilement (`--pairs all` vise les nuages de points et les cartes : même
+     le référentiel à 8 teintes n'y passe pas au-delà de 3 séries). */
+  --chart-s4: #e87ba4;   /* Débat filmé hors PV */
   /* Traits du logo header (petites lignes de la « page ») : égal à --ligne en
      clair (contraste déjà suffisant), mais redéfini en sombre ci-dessous —
      --ligne y est trop proche de --papier-dark pour rester lisible à cette
@@ -72,6 +80,8 @@
     --chart-s1: #199e70;
     --chart-s2: #c98500;
     --chart-s3: #9085e9;
+  --chart-s4: #d55181;
+    --chart-s4: #d55181;
   }
 }
 :root[data-theme="dark"] {
@@ -1058,10 +1068,45 @@ body {
 .yc-note { font-size: 12px; color: var(--encre-soft); margin-top: 10px; }
 
 /* ── GRAPHE EMPILÉ « ACTIVITÉ CITOYENNE PAR AN » (voir stats.js/renderActivityTypes) ──
-   Palette catégorielle dédiée (--chart-s0..s3, voir tokens en tête de fichier) : 4
-   séries disjointes (question orale/demande/motion/question écrite), jamais les
-   points administratifs "point_normal"/"point_urgent" (~95 % du volume, qui
-   écraserait visuellement ces 4-là dans le même graphe). */
+   Palette catégorielle dédiée (--chart-s0..s4, voir tokens en tête de fichier) : 5
+   séries disjointes (question orale/demande/motion/question écrite/débat filmé
+   hors PV), jamais les points administratifs "point_normal"/"point_urgent"
+   (~95 % du volume, qui écraserait visuellement celles-ci dans le même graphe). */
+/* Rangée de KPI par série, au-dessus du graphe (voir stats.js/renderActivityKPIs).
+   Résumé AVANT le détail : le total de chaque type sur le périmètre affiché.
+   Volontairement NON cliquable — la légende sous le graphe fait déjà l'isolement
+   d'une série ; deux commandes concurrentes pour le même geste embrouillent. */
+/* Tableaux de contrôle par année (voir stats.js/renderAnneesTables) : même
+   composant que les tableaux du chat (.md-table, défilement horizontal propre
+   sur mobile), avec des chiffres alignés et une ligne de total. */
+.annees-h {
+  font-family: var(--display); font-weight: 600; font-size: 15px;
+  color: var(--encre); margin: 18px 0 8px;
+}
+.annees-h:first-child { margin-top: 0; }
+.annees-table td, .annees-table th { font-variant-numeric: tabular-nums; }
+.annees-table td:not(:first-child), .annees-table th:not(:first-child) { text-align: right; }
+.annees-table tfoot th { border-top: 2px solid var(--ligne); background: var(--papier-dark); }
+
+.act-kpis {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 10px; margin: 4px 0 16px;
+}
+.act-kpi {
+  background: var(--blanc); border: 1px solid var(--ligne); border-radius: 4px;
+  padding: 10px 12px;
+}
+.act-kpi-head { display: flex; align-items: center; gap: 6px; }
+.act-kpi-label {
+  font-size: 11px; color: var(--encre-soft);
+  text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap;
+}
+.act-kpi-num {
+  font-family: var(--display); font-size: 24px; font-weight: 900;
+  color: var(--encre); line-height: 1.1; margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
 .yc-stack {
   width: 100%; max-width: 30px; display: flex; flex-direction: column;
   justify-content: flex-end; transition: filter 0.15s;
@@ -1074,6 +1119,7 @@ body {
 .yc-seg-s1 { background: var(--chart-s1); }
 .yc-seg-s2 { background: var(--chart-s2); }
 .yc-seg-s3 { background: var(--chart-s3); }
+.yc-seg-s4 { background: var(--chart-s4); }
 .yc-legend {
   display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 12px 0 2px;
   font-size: 12.5px; color: var(--encre-soft);

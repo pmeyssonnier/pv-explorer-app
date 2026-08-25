@@ -16,7 +16,9 @@ let selectedSeance = null;   // date d'un PV choisi dans la liste (affine KPI + 
 let selectedTheme = null;    // thème choisi → ne garde dans la liste que les PV concernés
 let expandedYears = new Set();  // années dépliées dans la vue « tous les PV » groupée
 let activiteTypesParAnnee = [];   // [{annee, "Question orale":n, "Demande":n, ...}] — voir /stats
-let activiteTypeOrder = [];       // ordre fixe des 4 séries (voir ACTIVITY_TYPE_ORDER, backend)
+let activiteTypeOrder = [];       // ordre fixe des séries (voir ACTIVITY_TYPE_ORDER, backend)
+let horsPvParDate = {};           // date -> nb de chapitres vidéo sans point de PV
+let anneesStats = [];             // synthèse par année (voir seances.annees_stats)
 let qeResume = [];                // {date, thematiques} par question écrite (voir /stats qe_resume)
 // Type isolé dans le graphe « Activité citoyenne » via un clic sur sa puce de
 // légende ('all' = vue empilée normale) — voir onActivityTypeChipClick.
@@ -224,7 +226,95 @@ function activityRows() {
     const e = m[mo] || (m[mo] = {});
     e['Question écrite'] = (e['Question écrite'] || 0) + 1;
   });
+  // Chapitres vidéo sans point de PV : comptés par DATE, car certaines de ces
+  // séances n'ont aucun PV — elles n'ont donc pas de ligne dans seancesResume.
+  Object.entries(horsPvParDate).forEach(([d, n]) => {
+    if (d.slice(0, 4) !== drill.year) return;
+    const mo = d.slice(5, 7);
+    const e = m[mo] || (m[mo] = {});
+    e['Débat filmé hors PV'] = (e['Débat filmé hors PV'] || 0) + n;
+  });
   return Object.keys(m).sort().map(k => ({ key: k, label: MOIS_FR[+k].slice(0, 4) + '.', counts: m[k] }));
+}
+
+// KPI par série, au-dessus du graphe : le total de chaque type sur le périmètre
+// affiché (toutes les années, une année, un mois) — le chiffre qu'on vient
+// chercher, avant d'aller le lire barre par barre. Chaque pastille porte la
+// couleur de sa série, mais l'identité ne repose jamais sur la seule couleur
+// (libellé + nombre l'accompagnent), et la couleur suit la série, pas son rang.
+const ACTIVITY_KPI_SHORT = {
+  'Question orale': 'Q. orales',
+  'Demande': 'Demandes',
+  'Motion': 'Motions',
+  'Question écrite': 'Q. écrites',
+  'Débat filmé hors PV': 'Hors PV',
+};
+
+function renderActivityKPIs(rows) {
+  const box = document.getElementById('activityKPIs');
+  if (!box) return;
+  box.innerHTML = activiteTypeOrder.map((t, si) => {
+    const n = rows.reduce((sum, row) => sum + (row.counts[t] || 0), 0);
+    return `<div class="act-kpi" title="${escapeHtml(t)}">
+      <div class="act-kpi-head"><span class="yc-legend-swatch yc-seg-s${si}"></span>`
+      + `<span class="act-kpi-label">${escapeHtml(ACTIVITY_KPI_SHORT[t] || t)}</span></div>
+      <div class="act-kpi-num">${fmtInt(n)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── TABLEAUX DE CONTRÔLE PAR ANNÉE (voir seances.annees_stats côté backend) ──
+// Deux tableaux qui donnent à lire ce que les graphes résument, et surtout
+// leurs invariants — c'est ce qui permet de vérifier un total à la main.
+const TABLE_TYPES = ['Point', 'Motion', 'Question orale', 'Demande', 'Débat filmé'];
+const TABLE_TYPE_SHORT = { 'Point': 'Point', 'Motion': 'Motion', 'Question orale': 'Q. orale',
+  'Demande': 'Demande', 'Débat filmé': 'Hors PV' };
+
+const _tr = (cells, tag = 'td') => '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
+const _somme = (rows, get) => rows.reduce((a, r) => a + get(r), 0);
+
+function renderAnneesTables() {
+  const box = document.getElementById('anneesTables');
+  if (!box) return;
+  if (!anneesStats.length) { box.innerHTML = '<p class="yc-note">Aucune donnée.</p>'; return; }
+  const rows = [...anneesStats].sort((a, b) => b.annee.localeCompare(a.annee));
+
+  // 1. Types : la somme des colonnes de type égale la colonne « Points ».
+  const tetes1 = ['Année', 'Séances', 'Points', ...TABLE_TYPES.map(t => TABLE_TYPE_SHORT[t])];
+  const corps1 = rows.map(r => _tr([r.annee, fmtInt(r.seances), `<b>${fmtInt(r.points)}</b>`,
+    ...TABLE_TYPES.map(t => fmtInt(r.types[t] || 0))]));
+  const total1 = _tr(['Total', fmtInt(_somme(rows, r => r.seances)), fmtInt(_somme(rows, r => r.points)),
+    ...TABLE_TYPES.map(t => fmtInt(_somme(rows, r => r.types[t] || 0)))], 'th');
+
+  // 2. Personnes : deux écarts de sens contraire, explicités par les colonnes.
+  const tetes2 = ['Année', 'Points', 'Nommant quelqu\'un', 'Sans personne',
+    'Intervenant·e·s', 'Σ par personne', 'Surplus'];
+  const corps2 = rows.map(r => _tr([r.annee, `<b>${fmtInt(r.points)}</b>`,
+    fmtInt(r.points_avec_personne), fmtInt(r.points_sans_personne),
+    `<b>${fmtInt(r.intervenants)}</b>`, fmtInt(r.somme_par_personne), fmtInt(r.surplus)]));
+  const total2 = _tr(['Total', fmtInt(_somme(rows, r => r.points)),
+    fmtInt(_somme(rows, r => r.points_avec_personne)), fmtInt(_somme(rows, r => r.points_sans_personne)),
+    '—', fmtInt(_somme(rows, r => r.somme_par_personne)), fmtInt(_somme(rows, r => r.surplus))], 'th');
+
+  const table = (titre, tetes, corps, total, note) => `<h4 class="annees-h">${titre}</h4>
+    <div class="md-tablewrap"><table class="md-table annees-table">
+      <thead>${_tr(tetes, 'th')}</thead>
+      <tbody>${corps.join('')}</tbody>
+      <tfoot>${total}</tfoot>
+    </table></div><p class="yc-note">${note}</p>`;
+
+  box.innerHTML =
+    table('Points par année et par type', tetes1, corps1, total1,
+      'Chaque point porte un type et un seul : la somme des cinq colonnes de type égale '
+      + 'la colonne « Points ». « Hors PV » = débat filmé dont le point de procès-verbal '
+      + "n'a pas été retrouvé — le PV n'est pas encore extrait, ou l'appariement n'est pas sûr.")
+    + table('Intervenant·e·s par année', tetes2, corps2, total2,
+      'Agréger par intervenant·e ne redonne pas le total, pour deux raisons de sens contraire : '
+      + 'en moins, les points qui ne nomment personne (administratifs ou collectifs) ; en plus, '
+      + 'le surplus des points à plusieurs personnes, comptés une fois par chacune. '
+      + 'Points = « nommant quelqu\'un » + « sans personne » ; Σ par personne = '
+      + '« nommant quelqu\'un » + « surplus ». La colonne « Intervenant·e·s » compte les '
+      + 'personnes distinctes de l\'année : elle ne s\'additionne pas d\'une année à l\'autre.');
 }
 
 // Reclique sur la puce déjà active → retour à la vue empilée (toutes les
@@ -234,11 +324,11 @@ export function onActivityTypeChipClick(typeLabel) {
   renderActivityTypes();
 }
 
-// Graphe empilé « Activité citoyenne » : 4 séries DISJOINTES (question
-// orale/demande/motion/question écrite) — volontairement PAS les points
-// administratifs "point normal"/"urgent" (~95 % du volume total, qui
-// écraserait visuellement ces 4-là dans le même graphe empilé, voir
-// backend/services/statistics.py). Palette catégorielle dédiée (--chart-s0..s3),
+// Graphe empilé « Activité citoyenne » : 5 séries DISJOINTES (question
+// orale/demande/motion/question écrite/débat filmé hors PV) — volontairement
+// PAS les points administratifs "point normal"/"urgent" (~95 % du volume
+// total, qui écraserait visuellement celles-ci dans le même graphe empilé,
+// voir backend/services/statistics.py). Palette catégorielle dédiée (--chart-s0..s4),
 // hors de l'accent --bordeaux réservé aux éléments interactifs. Partage le
 // drill-down Année → Mois de l'autre graphe (même état `drill`, mêmes
 // gestes drillInto/drillTo) : légende + étiquette de total + infobulle par
@@ -257,6 +347,7 @@ function renderActivityTypes() {
     return;
   }
   const rows = activityRows();
+  renderActivityKPIs(rows);
   const isolate = activiteTypeFilter !== 'all' && activiteTypeOrder.includes(activiteTypeFilter);
   const totals = rows.map(row => activiteTypeOrder.reduce((sum, t) => sum + (row.counts[t] || 0), 0));
   const values = isolate ? rows.map(row => row.counts[activiteTypeFilter] || 0) : totals;
@@ -385,7 +476,9 @@ export function toggleYear(y) {
   renderPvList();
 }
 
-function refreshStats() { renderKPIs(); renderDrill(); renderActivityTypes(); renderThemes(); renderPvList(); }
+function refreshStats() {
+  renderKPIs(); renderDrill(); renderActivityTypes(); renderAnneesTables(); renderThemes(); renderPvList();
+}
 
 // Navigation graphe : Année → mois ; mois → focalise ce mois. Toute navigation
 // dans le graphe annule la sélection d'un PV précis.
@@ -431,6 +524,8 @@ export async function loadStats() {
     seancesResume = s.seances_resume || [];
     activiteTypesParAnnee = s.activite_types_par_annee || [];
     activiteTypeOrder = s.activite_type_order || [];
+    horsPvParDate = s.hors_pv_par_date || {};
+    anneesStats = s.annees || [];
     qeResume = s.qe_resume || [];
     latestYear = seancesResume.reduce((mx, x) => x.date.slice(0, 4) > mx ? x.date.slice(0, 4) : mx, '');
     expandedYears = new Set([latestYear]);   // année la plus récente dépliée par défaut
@@ -461,12 +556,19 @@ export async function loadStats() {
           <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span id="activityTitle">Activité citoyenne par année</span></h3>
         </div>
         <div class="drill-crumb" id="activityCrumb"></div>
+        <div class="act-kpis" id="activityKPIs"></div>
         <div class="yc-scroll"><div class="yc-plot" id="activityPlot"></div></div>
         <div class="yc-legend" id="activityLegend"></div>
         <p class="yc-note" id="activityHint"></p>
-        <p class="yc-note">Questions orales, demandes, motions et questions écrites — les points
-          administratifs/collectifs (approbations, conventions…) ne sont pas comptés ici, ils
-          domineraient sans rien dire de l'activité citoyenne.</p>
+        <p class="yc-note">Questions orales, demandes, motions, questions écrites et débats filmés
+          hors PV — les points administratifs/collectifs (approbations, conventions…) ne sont pas
+          comptés ici, ils domineraient sans rien dire de l'activité citoyenne.</p>
+      </div>
+      <div class="stat-section" id="anneesSection">
+        <div class="yc-head">
+          <h3><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg>Par année, en chiffres</h3>
+        </div>
+        <div id="anneesTables"></div>
       </div>
       <div class="stat-section" id="themesSection">
         <div class="yc-head">

@@ -6,7 +6,7 @@ Python ; ce routeur les traduit en réponses HTTP (404 / 400).
 from fastapi import APIRouter, HTTPException, Request, Query
 
 from limiter import limiter
-from services import statistics, elus
+from services import statistics, elus, seances
 
 router = APIRouter(tags=["Statistiques"])
 
@@ -19,7 +19,13 @@ def stats(request: Request):
         db = statistics.load_db()
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Fichier de stats non disponible")
-    return statistics.compute_stats(db)
+    # Synthèse par année (mise en cache, voir seances.annees_stats) : elle sert
+    # aux tableaux de contrôle ET à la 5e série du graphe d'activité, dont les
+    # points n'existent que dans le chapitrage vidéo — donc introuvables depuis
+    # la seule base des PV que compute_stats parcourt.
+    out = statistics.compute_stats(db, seances.hors_pv_par_date())
+    out["annees"] = seances.annees_stats()
+    return out
 
 
 @router.get("/trend")

@@ -17,7 +17,7 @@ from services.people.names import (
     _clean, _is_non_person_video_author, _key, _resolve_display_name,
     _split_person_names, _strip_accents, _titlecase,
 )
-from services.people.registry import _index, _load_video, _nom_by_key, _pairs
+from services.people.registry import _index, _load_video, _nom_by_key, _pairs, _sig
 from services.video_merge import _match_pv_point
 
 
@@ -341,3 +341,99 @@ def seance_detail(date: str):
         "n_points": len(points),
         "points": points,
     }
+
+
+# ── SYNTHÈSE PAR ANNÉE (onglet Statistiques) ────────────────────────────────
+# Une SEULE passe sur toutes les séances, mise en cache : elle sert à la fois
+# au graphe « Activité citoyenne » (qui a besoin du décompte des chapitres
+# vidéo sans point de PV, absents de la base des PV) et aux tableaux de
+# contrôle par année. Passer par `seance_detail` plutôt que de recompter la
+# base brute est délibéré : c'est CE que l'application affiche — types,
+# personnes et appariements vidéo compris. Recompter autrement rouvrirait
+# l'écart que ces tableaux servent justement à fermer.
+_annees_cache = {"sig": None, "rows": None}
+
+# Types affichés, dans l'ordre des puces de l'onglet Séances. La somme de ces
+# cinq compteurs égale le nombre de points de l'année (partition vérifiée par
+# test) — c'est l'invariant que les tableaux donnent à lire.
+ANNEE_TYPE_ORDER = ["Point", "Motion", "Question orale", "Demande", "Débat filmé"]
+
+
+def annees_stats() -> list:
+    """Une ligne par année : nombre de séances et de points, répartition par
+    type, et rapprochement des personnes.
+
+    Le rapprochement répond à une question simple — « puis-je retrouver le
+    total en agrégeant par intervenant·e ? » — dont la réponse est non, pour
+    deux raisons de sens contraire, que ces colonnes rendent explicites :
+
+        points          = points_avec_personne + points_sans_personne
+        somme_par_personne = points_avec_personne + surplus
+
+    En moins, les points qui ne nomment personne (points administratifs ou
+    collectifs, ~70 % du corpus) ; en plus, le surplus des points à plusieurs
+    personnes, comptés une fois par chacune. Seule une UNION dédoublonnée des
+    points couverts retombe sur le total."""
+    _ensure_annees()
+    return _annees_cache["rows"]
+
+
+def hors_pv_par_date() -> dict:
+    """Nombre de chapitres vidéo sans point de PV, PAR DATE de séance — pour
+    le niveau MOIS du graphe d'activité, qui agrège par date côté client.
+    Certaines de ces séances n'ont aucun PV extrait : elles n'existent que
+    dans le chapitrage, d'où une map par date plutôt qu'un champ ajouté au
+    résumé des séances du PV."""
+    _ensure_annees()
+    return _annees_cache["par_date"]
+
+
+def _ensure_annees():
+    sig = _sig()
+    if _annees_cache["sig"] == sig:
+        return
+
+    # Toutes les dates connues : celles des PV, plus les séances filmées dont
+    # le PV n'est pas (encore) extrait — elles figurent dans la liste des
+    # séances, leurs chapitres sont donc des points de l'année.
+    dates = {(s.get("seance") or {}).get("date") for s in load_db().get("seances", [])}
+    dates |= {s.get("date") for s in _load_video()}
+    dates = sorted(d for d in dates if d)
+
+    par_annee = {}
+    par_date = {}
+    for date in dates:
+        detail = seance_detail(date)
+        if not detail:
+            continue
+        row = par_annee.setdefault(date[:4], {
+            "annee": date[:4], "seances": 0, "points": 0,
+            "types": {t: 0 for t in ANNEE_TYPE_ORDER},
+            "points_avec_personne": 0, "somme_par_personne": 0, "_noms": set(),
+        })
+        row["seances"] += 1
+        for p in detail["points"]:
+            row["points"] += 1
+            if p["type_label"] in row["types"]:
+                row["types"][p["type_label"]] += 1
+            if p["type_label"] == "Débat filmé":
+                par_date[date] = par_date.get(date, 0) + 1
+            # Dédoublonné PAR POINT : quelqu'un présent des deux côtés d'un
+            # même point ne le compte qu'une fois.
+            noms = {x["nom"] for x in (p.get("demandeurs") or []) + (p.get("repondants") or [])}
+            if noms:
+                row["points_avec_personne"] += 1
+                row["somme_par_personne"] += len(noms)
+                row["_noms"] |= noms
+
+    rows = []
+    for annee in sorted(par_annee):
+        row = par_annee[annee]
+        row["intervenants"] = len(row.pop("_noms"))
+        row["points_sans_personne"] = row["points"] - row["points_avec_personne"]
+        row["surplus"] = row["somme_par_personne"] - row["points_avec_personne"]
+        rows.append(row)
+
+    _annees_cache["sig"] = sig
+    _annees_cache["rows"] = rows
+    _annees_cache["par_date"] = par_date

@@ -11,7 +11,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 import app
-from services import elus
+from services import elus, seances
 from services.people.attribution import audit_authors, audit_respondents
 
 client = TestClient(app.app)
@@ -1163,3 +1163,37 @@ def test_video_chapters_file_valid():
     pts = [p for s in seances for p in s.get("points", [])]
     assert any(p.get("auteur") for p in pts)
     assert any((p.get("deeplink") or "").startswith("http") for p in pts)
+
+
+# ── Synthèse par année (onglet Statistiques : graphe + tableaux) ──
+def test_annees_stats_types_partition_the_points():
+    # L'invariant que les tableaux donnent à lire, et que les puces de
+    # l'onglet Séances doivent respecter : chaque point porte un type et un
+    # seul, donc la somme des cinq compteurs égale le nombre de points. Il
+    # tombait en défaut avant que « Débat filmé » soit un type à part entière
+    # (659 affichés pour 676 points en 2025).
+    rows = seances.annees_stats()
+    assert rows
+    for r in rows:
+        assert sum(r["types"].values()) == r["points"], r["annee"]
+
+
+def test_annees_stats_person_reconciliation_holds():
+    # Agréger par intervenant·e ne redonne pas le total : deux écarts de sens
+    # contraire, que ces colonnes rendent vérifiables.
+    for r in seances.annees_stats():
+        assert r["points"] == r["points_avec_personne"] + r["points_sans_personne"]
+        assert r["somme_par_personne"] == r["points_avec_personne"] + r["surplus"]
+        # Une personne peut porter plusieurs points : jamais plus de personnes
+        # distinctes que d'occurrences comptées.
+        assert r["intervenants"] <= r["somme_par_personne"]
+
+
+def test_annees_stats_hors_pv_matches_the_seance_view():
+    # Le décompte « hors PV » d'une année doit être exactement ce que l'onglet
+    # Séances montre : même source (seance_detail), jamais un recomptage
+    # parallèle qui rouvrirait l'écart.
+    par_date = seances.hors_pv_par_date()
+    for r in seances.annees_stats():
+        attendu = sum(n for d, n in par_date.items() if d[:4] == r["annee"])
+        assert r["types"]["Débat filmé"] == attendu, r["annee"]
