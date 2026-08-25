@@ -139,14 +139,15 @@ function renderDrill() {
   renderCrumb();
 }
 
-// Fil d'Ariane cliquable pour remonter d'un niveau — dupliqué au-dessus des
-// DEUX graphes (ils partagent le même état `drill`, voir renderActivityTypes)
-// pour rester utilisable sans remonter en haut de page une fois descendu
-// jusqu'au graphe « Activité citoyenne ».
+// Fil d'Ariane cliquable pour remonter d'un niveau — répété au-dessus des TROIS
+// graphes, qui partagent le même état `drill` : une fois descendu jusqu'au
+// graphe des issues, remonter d'un niveau ne doit pas obliger à retourner en
+// haut de la page.
+const CRUMB_BOXES = ['drillCrumb', 'activityCrumb', 'statutCrumb'];
+
 function renderCrumb() {
-  const bc = document.getElementById('drillCrumb');
-  const bc2 = document.getElementById('activityCrumb');
-  if (!bc && !bc2) return;
+  const boxes = CRUMB_BOXES.map(id => document.getElementById(id)).filter(Boolean);
+  if (!boxes.length) return;
   let p;
   if (drill.level === 'year') {
     p = [selectedSeance
@@ -167,8 +168,7 @@ function renderCrumb() {
   }
   if (selectedSeance) p.push(`<span class="crumb-here">Séance du ${formatDate(selectedSeance)}</span>`);
   const html = p.join('<span class="crumb-sep">›</span>');
-  if (bc) bc.innerHTML = html;
-  if (bc2) bc2.innerHTML = html;
+  boxes.forEach(box => { box.innerHTML = html; });
 }
 
 // Thématiques des questions écrites dans le périmètre courant (année/mois du
@@ -240,10 +240,10 @@ function activityRows() {
 }
 
 // KPI par série, au-dessus du graphe : le total de chaque type sur le périmètre
-// affiché (toutes les années, une année, un mois) — le chiffre qu'on vient
-// chercher, avant d'aller le lire barre par barre. Chaque pastille porte la
-// couleur de sa série, mais l'identité ne repose jamais sur la seule couleur
-// (libellé + nombre l'accompagnent), et la couleur suit la série, pas son rang.
+// affiché — le chiffre qu'on vient chercher, avant d'aller le lire barre par
+// barre. Chaque pastille porte la couleur de sa série, mais l'identité ne
+// repose jamais sur la seule couleur (libellé + nombre l'accompagnent), et la
+// couleur suit la série, pas son rang.
 const ACTIVITY_KPI_SHORT = {
   'Question orale': 'Q. orales',
   'Demande': 'Demandes',
@@ -255,8 +255,13 @@ const ACTIVITY_KPI_SHORT = {
 function renderActivityKPIs(rows) {
   const box = document.getElementById('activityKPIs');
   if (!box) return;
+  // Le graphe montre TOUS les mois de l'année, un seul mis en évidence : sommer
+  // ses barres redonnerait l'année entière alors que le périmètre affiché est
+  // ce mois-là. On restreint donc au mois foré, comme le font les KPI du haut
+  // et les thématiques.
+  const scope = drill.month ? rows.filter(row => row.key === drill.month) : rows;
   box.innerHTML = activiteTypeOrder.map((t, si) => {
-    const n = rows.reduce((sum, row) => sum + (row.counts[t] || 0), 0);
+    const n = scope.reduce((sum, row) => sum + (row.counts[t] || 0), 0);
     return `<div class="act-kpi" title="${escapeHtml(t)}">
       <div class="act-kpi-head"><span class="yc-legend-swatch yc-seg-s${si}"></span>`
       + `<span class="act-kpi-label">${escapeHtml(ACTIVITY_KPI_SHORT[t] || t)}</span></div>

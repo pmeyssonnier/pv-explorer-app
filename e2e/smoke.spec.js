@@ -510,3 +510,56 @@ test('le périmètre survit au changement de vue, et un lien rouvre la bonne', a
   await expect(page.locator('#statsvue-panel-pv')).toHaveClass(/active/);
   expect(errors).toEqual([]);
 });
+
+test('les KPI d\'activité suivent le périmètre, jusqu\'au mois', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#activityKPIs .act-kpi').first()).toBeVisible(STATS_FROID);
+
+  const sommeKPI = () => page.$$eval('#activityKPIs .act-kpi .act-kpi-num',
+    els => els.reduce((a, e) => a + (+e.textContent.replace(/[^\d]/g, '') || 0), 0));
+  const barres = () => page.$$eval('#activityPlot .yc-col .yc-val',
+    els => els.map(e => +e.textContent.replace(/[^\d]/g, '') || 0));
+
+  // 1. Toutes les années : les KPI totalisent toutes les barres.
+  const annees = await barres();
+  expect(annees.length).toBeGreaterThan(3);
+  expect(await sommeKPI()).toBe(annees.reduce((a, b) => a + b, 0));
+
+  // 2. Une année : ses mois, dont la somme est la même que celle des KPI.
+  await page.locator('#activityPlot .yc-col').nth(annees.length - 2).click();
+  const mois = await barres();
+  expect(mois.length).toBeGreaterThan(1);
+  expect(await sommeKPI()).toBe(mois.reduce((a, b) => a + b, 0));
+
+  // 3. Un mois : le graphe montre toujours TOUS les mois, un seul mis en
+  //    évidence — les KPI, eux, doivent tomber sur ce seul mois.
+  await page.locator('#activityPlot .yc-col').nth(2).click();
+  await expect(page.locator('#scopeLabel')).not.toHaveText(/^\d{4}$/);
+  expect(await sommeKPI()).toBe(mois[2]);
+  expect(errors).toEqual([]);
+});
+
+test('le fil d\'Ariane est répété au-dessus des trois graphes', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#statutLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
+
+  const fils = () => page.$$eval('.drill-crumb', els => els.map(e => e.textContent.replace(/\s+/g, ' ').trim()));
+  await expect(page.locator('.drill-crumb')).toHaveCount(3);
+
+  // Forer depuis le graphe des issues : les trois fils suivent, identiques.
+  const n = await page.$$eval('#statutPlot .yc-col', els => els.length);
+  await page.locator('#statutPlot .yc-col').nth(n - 2).click();
+  await page.locator('#statutPlot .yc-col').nth(2).click();
+  const apres = await fils();
+  expect(new Set(apres).size).toBe(1);
+  expect(apres[0]).toMatch(/^Toutes les années›\d{4}›\w+$/);
+
+  // Et il remonte depuis là, sans avoir à retourner en haut de page.
+  await page.locator('#statutCrumb a').first().click();
+  await expect(page.locator('#scopeLabel')).toHaveText('Toutes les années');
+  expect(errors).toEqual([]);
+});
