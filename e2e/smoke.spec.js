@@ -713,7 +713,7 @@ test('les puces d\'issue et de manque partitionnent les points de la séance', a
   await inconnu.click();
   await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
   const badges = await page.$$eval('#seancePointsList .elu-badge', els => [...new Set(els.map(e => e.textContent.trim()))]);
-  expect(badges).not.toContain('POINT');
+  expect(badges).not.toContain('POINT DÉLIBÉRATIF');
   expect(errors).toEqual([]);
 });
 

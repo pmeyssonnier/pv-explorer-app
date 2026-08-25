@@ -155,9 +155,16 @@ export function renderReponseDetails(reponse) {
 // dans elus.js). Ce qui reste spécifique à chaque appelant — QUELS liens
 // afficher, sous QUELLE condition, avec QUEL libellé — reste dans
 // l'appelant : seule la construction du fragment HTML est partagée. ──
+// Libellé affiché d'un type, quand le type brut prête à confusion ailleurs.
+// « Point » se dispute le mot avec le décompte « Points » du graphe d'activité,
+// qui couvre TOUS les points d'une séance : on précise donc de quel point il
+// s'agit — celui que le conseil délibère et tranche.
+const TYPE_BADGE_LABEL = { 'Point': 'Point délibératif' };
+
 export function renderTypeBadge(typeLabel) {
   const cls = TYPE_BADGE[typeLabel] || 'b-d';
-  return `<span class="elu-badge ${cls}">${escapeHtml(typeLabel)}</span>`;
+  const texte = TYPE_BADGE_LABEL[typeLabel] || typeLabel;
+  return `<span class="elu-badge ${cls}" title="${escapeHtml(typeLabel)}">${escapeHtml(texte)}</span>`;
 }
 
 export function renderPvPdfLink(url, label = 'PV (PDF)', title = 'Ouvrir le PV (PDF) sur 1030.be') {

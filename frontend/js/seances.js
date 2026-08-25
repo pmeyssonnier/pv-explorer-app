@@ -283,7 +283,12 @@ function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && ma
 // facette (ci-dessous).
 //                     [type_label backend, libellé de la puce]
 const _TYPE_FILTER_ORDER = [
-  ['Point', 'Point'],
+  // « Point délibératif » et non « Point » tout court : le graphe « Activité
+  // par année » compte, lui, TOUS les points de la séance sous le libellé
+  // « Points » (45 en mars 2024). Le même mot pour deux périmètres — 45 contre
+  // 30 — laissait croire à une incohérence entre les deux vues. Le type
+  // backend reste « Point », seul son libellé change.
+  ['Point', 'Point délibératif'],
   ['Motion', 'Motion'],
   ['Question orale', 'Question orale'],
   ['Demande', 'Demande'],
