@@ -539,11 +539,25 @@ body {
    champ garde l'habillage .elu-select (même hauteur/bordure que les filtres
    voisins) ; ne s'ajoutent ici que la loupe, la croix d'effacement et la
    liste déroulante. */
-/* Le champ occupe toute une ligne (action principale de l'onglet), sous les
-   puces de rôle qui délimitent l'ensemble cherché. */
+/* Le champ de recherche occupe toute sa ligne (action principale de l'onglet). */
 .elus-bar-search { margin-bottom: 4px; }
-.elus-bar-search .elu-chips { flex: 1 1 100%; margin: 0 0 2px; }
 .elus-bar-search .elu-combo { flex: 1 1 100%; }
+/* Puces de filtrage de la fiche : rôle(s) sur une ligne, types sur la suivante
+   — deux critères distincts, jamais mêlés sur la même rangée. */
+.elus-bar-filters { gap: 0; }
+.elus-bar-filters .elu-chips { flex: 1 1 100%; margin: 6px 0 0; }
+
+/* ── Filtres secondaires repliés (année, thématique) ── */
+.elu-more { margin: 10px 0 4px; }
+.elu-more[hidden] { display: none; }
+.elu-more-summary {
+  display: inline-flex; align-items: baseline; gap: 4px; cursor: pointer;
+  font-size: 13px; color: var(--encre-soft); padding: 4px 2px; width: fit-content;
+}
+.elu-more-summary:hover { color: var(--bordeaux); }
+/* Rappel des filtres actifs quand le bloc est replié (voir syncEluMoreFilters). */
+.elu-more-active { color: var(--bordeaux); font-weight: 600; }
+.elu-more .elus-bar { margin-top: 4px; }
 .elu-combo { position: relative; flex: 1 1 260px; min-width: 0; }
 .elu-combo-input { width: 100%; padding-left: 34px; padding-right: 36px; }
 .elu-combo-icon {
@@ -593,12 +607,6 @@ body {
 .elu-opt:hover, .elu-opt-active { background: var(--papier-dark); }
 .elu-opt[aria-selected="true"] .elu-opt-name { font-weight: 600; color: var(--bordeaux); }
 .elu-opt-empty { padding: 11px; font-size: 14px; color: var(--encre-soft); }
-.elu-opt-allroles {
-  display: block; margin-top: 8px; font: inherit; font-size: 13px;
-  color: var(--bordeaux); background: none; border: 1px solid var(--ligne);
-  border-radius: 999px; padding: 5px 12px; cursor: pointer;
-}
-.elu-opt-allroles:hover { border-color: var(--bordeaux-clair); }
 
 /* Texte réservé aux lecteurs d'écran (annonce du nombre de résultats). */
 .sr-only {
@@ -628,19 +636,14 @@ body {
   padding: 5px 12px; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .elu-chip:hover { border-color: var(--bordeaux-clair); color: var(--bordeaux); }
+/* Puce de rôle (voir elus.js/eluRoleChip) : « Échevin·e · 21 réponses » — le
+   rôle porte, le décompte accompagne. */
+.elu-chip strong { font-weight: 600; color: var(--encre); }
+.elu-chip-active strong { color: inherit; }
 .elu-chip-active {
   background: color-mix(in srgb, var(--bordeaux) 15%, transparent);
   border-color: var(--bordeaux); color: var(--bordeaux); font-weight: 600;
 }
-/* Pastille NON cliquable (voir elus.js/eluTypeCountBadge) : simple rappel du
-   profil d'activité sous le nom de l'élu·e — même gabarit que .elu-chip,
-   sans curseur/interaction (le filtre lui-même vit dans la barre, ci-dessus). */
-.elu-chip-static {
-  font: inherit; font-size: 12.5px; color: var(--encre-soft);
-  background: var(--papier-dark); border: 1px solid var(--ligne); border-radius: 999px;
-  padding: 5px 12px; display: inline-block;
-}
-
 .elu-year {
   font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--bordeaux);
   margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 1px solid var(--ligne);

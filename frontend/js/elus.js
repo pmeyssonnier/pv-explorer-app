@@ -15,7 +15,9 @@ let currentEluData = null;  // dernière fiche /elu/{key} chargée (pour reFiltr
 let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = toutes)
 let eluTypeFilter = 'all';  // type d'intervention sélectionné ("all" = tous) — depose uniquement
 let eluThemeFilter = 'all'; // thématique sélectionnée ("all" = toutes) — depose ET repond
-let eluRoleFilter = 'all';  // rôle sélectionné ("all" = tous) — filtre le menu élu·e, voir puces
+// Rôle sélectionné dans la fiche : 'all' | 'conseiller' (ce que la personne a
+// DÉPOSÉ) | 'college' (ce à quoi elle a RÉPONDU en séance).
+let eluRoleFilter = 'all';
 let eluSelectedKey = null;  // clé actuellement chargée
 let eluQuery = '';          // texte tapé dans le champ de recherche ('' = liste complète)
 let eluActiveKey = null;    // option mise en avant au clavier (aria-activedescendant)
@@ -34,7 +36,6 @@ export async function loadElus() {
     elusData = (await res.json()).elus || [];
     elusData.forEach(decorateElu);
     elusLoaded = true;
-    renderEluRoleChips();
     populateElus();
   } catch (err) {
     input.disabled = true;
@@ -42,27 +43,72 @@ export async function loadElus() {
   }
 }
 
-// Puces de rôle (Conseiller·ère / Collège) — même libellé/widget que les puces de
-// l'onglet Séances (.elu-chip/.elu-chip-active) : reclique sur la puce déjà
-// active → "Tous les rôles" ; comptent le nombre d'élu·e·s ayant ce rôle
-// (indépendant du filtre lui-même, contrairement aux puces à facettes de
-// l'onglet Séances — ici un seul filtre, pas de comptage croisé nécessaire).
-function eluRoleChip(role, label, count) {
+// ── Puces de RÔLE de la personne affichée ───────────────────────────────────
+// Une même personne change de rôle au fil des législatures (conseiller·ère,
+// puis échevin·e, puis bourgmestre…) : chaque action est rattachée au rôle
+// qu'elle exerçait À SA DATE, d'après ses mandats déclarés (voir
+// backend/services/people/mandats.py, même règle de priorité). Une puce par
+// rôle réellement exercé, avec son nombre d'actions ; un clic n'affiche que
+// les actions de ce rôle, un reclic les rend toutes.
+
+// Libellés courts (MANDAT_LABEL est la forme longue, pour l'en-tête de fiche).
+const ROLE_CHIP_LABEL = {
+  conseiller: 'Conseiller·ère',
+  echevin: 'Échevin·e',
+  bourgmestre: 'Bourgmestre',
+};
+
+const _inRanges = (year, ranges) => (ranges || [])
+  .some(r => r.debut <= year && (r.fin === null || r.fin === undefined || year <= r.fin));
+
+// Rôle exact à une date (« 2019-02-27 » → 'echevin'). Un mandat de Collège
+// l'emporte sur le mandat de conseiller·ère simultané — les échevin·e·s
+// restent conseiller·ère·s mais agissent ès qualité de Collège. null hors de
+// tout mandat connu (personne absente des données déclaratives, action
+// antérieure à l'entrée en fonction, trou entre deux mandats).
+function roleAt(mandats, date) {
+  const year = parseInt(String(date || '').slice(0, 4), 10);
+  if (!mandats || !year) return null;
+  if (_inRanges(year, mandats.bourgmestre)) return 'bourgmestre';
+  if (_inRanges(year, mandats.echevin)) return 'echevin';
+  if (_inRanges(year, mandats.conseiller)) return 'conseiller';
+  return null;
+}
+
+function filterByRole(items, mandats, role) {
+  if (role === 'all') return items;
+  return items.filter(it => roleAt(mandats, it.date) === role);
+}
+
+// Nombre d'actions (dépôts + réponses) par rôle, sur la période affichée.
+function eluRoleCounts(mandats, actions) {
+  const counts = { conseiller: 0, echevin: 0, bourgmestre: 0 };
+  actions.forEach(it => {
+    const r = roleAt(mandats, it.date);
+    if (r) counts[r] += 1;
+  });
+  return counts;
+}
+
+function eluRoleChip(role, count) {
+  if (!count) return '';
   const active = eluRoleFilter === role ? ' elu-chip-active' : '';
-  return `<button type="button" class="elu-chip${active}" data-click="onEluRoleChipClick" data-arg="${role}">${escapeHtml(label)} (${count})</button>`;
+  return `<button type="button" class="elu-chip${active}" data-click="onEluRoleChipClick" data-arg="${role}">`
+    + `<strong>${escapeHtml(ROLE_CHIP_LABEL[role])}</strong> · ${count} action${count > 1 ? 's' : ''}</button>`;
 }
-function renderEluRoleChips() {
+
+function renderEluRoleChips(counts) {
   const box = document.getElementById('eluRoleChips');
-  if (!box || !elusData) return;
-  const nConseiller = elusData.filter(e => e.role === 'conseiller').length;
-  const nCollege = elusData.filter(e => e.role === 'college').length;
-  box.innerHTML = eluRoleChip('conseiller', 'Conseiller·ère', nConseiller)
-    + eluRoleChip('college', 'Collège', nCollege);
+  if (!box) return;
+  const html = MANDAT_ORDER.map(r => eluRoleChip(r, counts[r])).join('');
+  box.innerHTML = html;
+  box.hidden = !html;
 }
+
+// Reclique sur la puce déjà active → toutes les actions, tous rôles confondus.
 export function onEluRoleChipClick(role) {
   eluRoleFilter = eluRoleFilter === role ? 'all' : role;
-  renderEluRoleChips();
-  populateElus();
+  if (currentEluData) renderElu(currentEluData);
 }
 
 // ── SÉLECTEUR D'ÉLU·E : COMBOBOX AVEC RECHERCHE ─────────────────────────────
@@ -101,13 +147,12 @@ function tokenRank(tok, e) {
   return null;
 }
 
-// Élu·e·s candidat·e·s selon le filtre de rôle, triés par nom de famille (la
-// clé backend), pas par nombre d'interventions : liste stable et parcourable.
+// Élu·e·s cherchables : tout le monde, trié par nom de famille (la clé
+// backend), pas par nombre d'interventions — liste stable et parcourable.
+// Aucun pré-filtre : le rôle se lit sur chaque option, et les puces de rôle
+// portent désormais sur la fiche affichée, pas sur la recherche.
 function eluCandidates() {
-  return (elusData || [])
-    .filter(e => eluRoleFilter === 'all' || e.role === eluRoleFilter)
-    .slice()
-    .sort((a, b) => a.key.localeCompare(b.key, 'fr'));
+  return (elusData || []).slice().sort((a, b) => a.key.localeCompare(b.key, 'fr'));
 }
 
 // Recherche : TOUS les mots de la requête doivent matcher (« verzin georges »
@@ -157,8 +202,6 @@ function highlightName(nom, tokens) {
 }
 
 const ROLE_LABEL = { college: 'Collège', conseiller: 'Conseiller·ère' };
-// Même rôle, formulé pour une phrase (« … parmi les membres du Collège »).
-const ROLE_LABEL_PARMI = { college: 'membres du Collège', conseiller: 'conseiller·ère·s' };
 
 // Une option : nom (partie trouvée surlignée) + rôle + volume d'activité —
 // de quoi reconnaître la bonne personne SANS ouvrir sa fiche (homonymes,
@@ -194,12 +237,8 @@ function renderEluOptions(resetActive = false) {
   if (eluMatches.length) {
     list.innerHTML = eluMatches.map((e, i) => eluOptionHtml(e, tokens, i)).join('');
   } else {
-    // Aucun résultat : si le filtre de rôle est ce qui masque la personne
-    // cherchée, on le dit et on propose de l'élargir — plutôt qu'un cul-de-sac.
-    const ailleurs = eluRoleFilter !== 'all' && searchElus(eluQuery, elusData).length;
     list.innerHTML = `<li class="elu-opt-empty" role="presentation">
-      Aucun·e élu·e ne correspond à « ${escapeHtml(eluQuery)} »${eluRoleFilter !== 'all' ? ` parmi les ${escapeHtml(ROLE_LABEL_PARMI[eluRoleFilter])}` : ''}.
-      ${ailleurs ? `<button type="button" class="elu-opt-allroles" data-allroles="1">Chercher parmi tous les rôles (${ailleurs})</button>` : ''}
+      Aucun·e élu·e ne correspond à « ${escapeHtml(eluQuery)} ».
     </li>`;
   }
   syncEluActiveDescendant();
@@ -267,8 +306,8 @@ function syncEluInput() {
   if (clear) clear.hidden = !input.value;
 }
 
-// Placeholder parlant : le nombre d'élu·e·s cherchables (variable avec le
-// filtre de rôle) — l'utilisateur sait ce qu'il interroge.
+// Placeholder parlant : le nombre d'élu·e·s cherchables — l'utilisateur sait
+// ce qu'il interroge (« Rechercher parmi 105 élu·e·s… »).
 function syncEluPlaceholder() {
   const input = document.getElementById('eluSearch');
   if (!input || input.disabled) return;
@@ -341,13 +380,6 @@ export function initEluCombo() {
   // avant que le click n'atteigne l'option).
   list.addEventListener('mousedown', ev => ev.preventDefault());
   list.addEventListener('click', ev => {
-    if (ev.target.closest('[data-allroles]')) {
-      eluRoleFilter = 'all';
-      renderEluRoleChips();
-      syncEluPlaceholder();
-      renderEluOptions(true);
-      return;
-    }
     const li = ev.target.closest('.elu-opt');
     if (!li) return;
     selectElu(li.dataset.key);
@@ -512,6 +544,24 @@ function filterByTheme(items, theme) {
 // sens quel que soit l'élu·e sélectionné·e.
 const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
 
+// Les deux listes de valeurs (année, thématique) vivent dans un <details>
+// replié. On le masque s'il n'a rien à offrir, on le déplie d'office quand un
+// filtre y est actif, et le résumé rappelle lesquels — un résultat filtré ne
+// doit jamais paraître inexpliqué parce que le filtre est replié.
+function syncEluMoreFilters() {
+  const box = document.getElementById('eluMoreFilters');
+  const year = document.getElementById('eluYear');
+  const theme = document.getElementById('eluTheme');
+  const actif = document.getElementById('eluMoreActive');
+  if (!box || !year || !theme) return;
+  box.hidden = year.hidden && theme.hidden;
+  const actifs = [];
+  if (eluYearFilter !== 'all') actifs.push(eluYearFilter);
+  if (eluThemeFilter !== 'all') actifs.push(eluThemeFilter);
+  if (actif) actif.textContent = actifs.length ? ` · ${actifs.join(' · ')}` : '';
+  if (actifs.length) box.open = true;
+}
+
 function filterByType(items, typeLabel) {
   if (typeLabel === 'all') return items;
   return items.filter(it => it.type_label === typeLabel);
@@ -525,16 +575,6 @@ function eluTypeChip(typeLabel, count) {
   const active = eluTypeFilter === typeLabel ? ' elu-chip-active' : '';
   const text = TYPE_COUNT_LABEL[typeLabel](count);
   return `<button type="button" class="elu-chip${active}" data-click="onEluChipClick" data-arg="${escapeHtml(typeLabel)}">${escapeHtml(text)}</button>`;
-}
-
-// Pastille NON cliquable par type présent — sous le nom de l'élu·e, simple
-// rappel du profil d'activité (le filtre lui-même vit dans la barre de
-// filtres, voir eluTypeChip ci-dessus/#eluTypeFilterChips). Même décompte
-// (année en cours), juste un autre rendu : <span>, pas <button>.
-function eluTypeCountBadge(typeLabel, count) {
-  if (!count) return '';
-  const text = TYPE_COUNT_LABEL[typeLabel](count);
-  return `<span class="elu-chip-static">${escapeHtml(text)}</span>`;
 }
 
 // Reclique sur la puce déjà active → bascule vers "Tous les types" ; sinon
@@ -655,46 +695,56 @@ function renderElu(d) {
   // types (chacune doit rester visible/cliquable pour changer de filtre).
   const deposeForYear = filterByYear(d.depose || [], eluYearFilter);
   const repondForYear = filterByYear(d.repond || [], eluYearFilter);
-  // Un type resté sélectionné en changeant d'élu·e/d'année peut ne plus être
-  // présent (sa puce ne s'affiche alors plus, voir eluTypeChip) : retombe sur
-  // "Tous les types" plutôt que de filtrer silencieusement sans puce active.
+  // Un type resté sélectionné en changeant d'élu·e/d'année/de rôle peut ne plus
+  // être présent (sa puce ne s'affiche alors plus, voir eluTypeChip) : retombe
+  // sur « tous les types » plutôt que de filtrer sans puce active pour le voir.
   if (eluTypeFilter !== 'all' && !deposeForYear.some(it => it.type_label === eluTypeFilter)) {
     eluTypeFilter = 'all';
   }
-  // Thématiques disponibles pour l'année courante — indépendantes du type et
+  // Puces de RÔLE : comptées sur l'année courante mais AVANT le filtre de rôle
+  // lui-même — chacune doit rester visible et cliquable pour en changer.
+  const roleCounts = eluRoleCounts(d.mandats, [...deposeForYear, ...repondForYear]);
+  renderEluRoleChips(roleCounts);
+  // Un rôle resté sélectionné en changeant d'élu·e/d'année peut n'avoir plus
+  // aucune action ici (sa puce disparaît alors) : retour à « tous les rôles »
+  // plutôt qu'un filtre actif sans puce pour le défaire.
+  if (eluRoleFilter !== 'all' && !roleCounts[eluRoleFilter]) eluRoleFilter = 'all';
+  const deposeForRole = filterByRole(deposeForYear, d.mandats, eluRoleFilter);
+  const repondForRole = filterByRole(repondForYear, d.mandats, eluRoleFilter);
+  // Thématiques disponibles pour la période affichée — indépendantes du type et
   // de la thématique déjà choisis, sinon le menu se viderait au filtrage.
-  populateEluThemeSelect(eluThemes(deposeForYear, repondForYear));
-  const depose = filterByType(filterByTheme(deposeForYear, eluThemeFilter), eluTypeFilter);
-  const repond = filterByTheme(repondForYear, eluThemeFilter);
+  populateEluThemeSelect(eluThemes(deposeForRole, repondForRole));
+  syncEluMoreFilters();
+  const depose = filterByType(filterByTheme(deposeForRole, eluThemeFilter), eluTypeFilter);
+  const repond = filterByTheme(repondForRole, eluThemeFilter);
   const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
     : 'Conseiller·ère');
-  // Décompte par type pour l'année courante — une seule fois, réutilisé pour
-  // le filtre cliquable (barre de filtres) ET le rappel non cliquable
-  // (sous le nom) : même chiffre, deux rendus différents.
-  const typeCounts = TYPE_FILTER_ORDER.map(t => [t, deposeForYear.filter(it => it.type_label === t).length]);
+  // Puces de TYPE : elles décrivent ce qui est DÉPOSÉ (une réponse en séance
+  // n'a pas de type), comptées dans le rôle sélectionné.
   const typeFilterChips = document.getElementById('eluTypeFilterChips');
   if (typeFilterChips) {
-    const chipsHtml = typeCounts.map(([t, n]) => eluTypeChip(t, n)).join('');
+    const chipsHtml = TYPE_FILTER_ORDER
+      .map(t => eluTypeChip(t, deposeForRole.filter(it => it.type_label === t).length)).join('');
     typeFilterChips.innerHTML = chipsHtml;
     typeFilterChips.hidden = !chipsHtml;
   }
-  const badges = typeCounts.map(([t, n]) => eluTypeCountBadge(t, n)).join('');
 
   let html = `<div class="elu-head">
     <div class="elu-name">${escapeHtml(d.nom)}</div>
     <span class="elu-role elu-role-${d.role}">${roleLabel}</span>
   </div>`;
 
-  if (deposeForYear.length) {
+  if (deposeForRole.length) {
     html += `<div class="elu-summary"><strong>${depose.length}</strong> intervention${depose.length > 1 ? 's' : ''} déposée${depose.length > 1 ? 's' : ''}</div>`;
-    if (badges) html += `<div class="elu-chips">${badges}</div>`;
   }
   if (depose.length) {
     html += `<div class="elu-list">${groupByYear(depose, it => eluDeposeRow(it, d.nom))}</div>`;
   }
 
   if (repond.length) {
+    // Repliées quand elles accompagnent les dépôts (activité secondaire d'un·e
+    // conseiller·ère) ; dépliées dès qu'elles sont ce qu'on est venu voir.
     html += `<details class="elu-repond"${depose.length ? '' : ' open'}>
       <summary><strong>${repond.length}</strong> réponse${repond.length > 1 ? 's' : ''} en séance <span class="elu-repond-hint">(activité de Collège)</span></summary>
       <div class="elu-list">${groupByYear(repond, it => eluRepondRow(it, d.nom))}</div>
@@ -703,6 +753,7 @@ function renderElu(d) {
 
   if (!depose.length && !repond.length) {
     const filters = [];
+    if (eluRoleFilter !== 'all') filters.push(`en tant que ${ROLE_CHIP_LABEL[eluRoleFilter]}`);
     if (eluTypeFilter !== 'all') filters.push(`de type « ${eluTypeFilter} »`);
     if (eluThemeFilter !== 'all') filters.push(`sur la thématique « ${eluThemeFilter} »`);
     if (eluYearFilter !== 'all') filters.push(`en ${eluYearFilter}`);

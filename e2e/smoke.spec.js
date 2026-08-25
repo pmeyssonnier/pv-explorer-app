@@ -159,31 +159,68 @@ test('sélection au clavier (flèches + Entrée) puis fermeture', async ({ page 
   expect(errors).toEqual([]);
 });
 
-test('aucun résultat : le filtre de rôle propose de s\'élargir', async ({ page }) => {
+test('aucun résultat : la liste le dit', async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto('/');
   await openEluCombo(page);
-  // Une personne du Collège, cherchée alors que le filtre est sur les
-  // conseiller·ère·s : le message doit proposer d'élargir plutôt que de
-  // laisser l'utilisateur devant une liste vide inexpliquée.
-  const parRole = await page.$$eval('#eluOptions .elu-opt', els => els.map(e => ({
-    nom: e.querySelector('.elu-opt-name').textContent.trim(),
-    college: !!e.querySelector('.elu-opt-role-college'),
-  })));
-  const deburr = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-  const conseillers = parRole.filter(e => !e.college).map(e => deburr(e.nom));
-  // Un nom de famille du Collège qu'aucun·e conseiller·ère ne porte non plus
-  // (sinon la recherche filtrée ne serait pas vide, et le cas testé disparaît).
-  const cible = parRole.find(e => e.college
-    && !conseillers.some(n => n.includes(deburr(e.nom.split(/\s+/).pop()))));
-  expect(cible, 'aucun membre du Collège au nom distinctif').toBeTruthy();
+  await page.locator('#eluSearch').fill('zzzzq');
+  await expect(page.locator('#eluOptions .elu-opt-empty')).toContainText('Aucun·e élu·e');
+  expect(errors).toEqual([]);
+});
 
-  await page.locator('#eluRoleChips .elu-chip', { hasText: 'Conseiller' }).click();
-  await page.locator('#eluSearch').click();
-  await page.locator('#eluSearch').fill(cible.nom.split(/\s+/).pop());
-  await expect(page.locator('#eluOptions .elu-opt-empty')).toBeVisible();
+// ── Filtres de la fiche (puces de rôle / de type, filtres repliés) ──
 
-  await page.locator('.elu-opt-allroles').click();
-  expect(await optionNames(page)).toContain(cible.nom);
+// Sélectionne le/la premier·ère élu·e du Collège ayant exercé PLUSIEURS rôles
+// (donc plusieurs puces) — c'est le cas que le filtre par mandat sert.
+async function ficheMultiRoles(page) {
+  await openEluCombo(page);
+  const college = await page.$$eval('#eluOptions .elu-opt', els => els
+    .filter(e => e.querySelector('.elu-opt-role-college'))
+    .map(e => e.dataset.key));
+  for (const key of college.slice(0, 8)) {
+    await page.locator('#eluSearch').click();
+    await page.locator(`#eluOptions .elu-opt[data-key="${key}"]`).click();
+    await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+    if (await page.locator('#eluRoleChips .elu-chip').count() >= 2) return true;
+  }
+  return false;
+}
+
+// Chaque action est rattachée au rôle exercé À SA DATE (mandats déclarés) :
+// isoler un rôle doit donc afficher exactement le nombre d'actions annoncé
+// par sa puce.
+test('les puces de rôle filtrent les actions du mandat correspondant', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  test.skip(!await ficheMultiRoles(page), 'aucun·e élu·e à plusieurs rôles dans la base');
+
+  const chip = page.locator('#eluRoleChips .elu-chip').nth(1);
+  const annonce = Number((await chip.textContent()).match(/(\d+)\s+action/)[1]);
+  await chip.click();
+
+  await expect(chip).toHaveClass(/elu-chip-active/);
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(annonce);
+
+  await chip.click();   // reclic → tous les rôles
+  await expect(chip).not.toHaveClass(/elu-chip-active/);
+  expect(errors).toEqual([]);
+});
+
+test('les filtres année et thématique sont repliés au départ', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-elus').click();
+  await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+
+  const more = page.locator('#eluMoreFilters');
+  await expect(more).toBeVisible();
+  await expect(page.locator('#eluYear')).toBeHidden();      // replié = non atteignable
+  await page.locator('.elu-more-summary').click();
+  await expect(page.locator('#eluYear')).toBeVisible();
+
+  // Une année choisie reste lisible même une fois le bloc replié.
+  const annee = (await page.$$eval('#eluYear option', els => els.map(e => e.value)))[1];
+  await page.locator('#eluYear').selectOption(annee);
+  await expect(page.locator('#eluMoreActive')).toHaveText(` · ${annee}`);
   expect(errors).toEqual([]);
 });
