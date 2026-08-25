@@ -297,18 +297,30 @@ def print_author_audit(report: dict) -> dict:
 _TYPES_REPONDANT_ATTENDU = frozenset({"question_orale", "demande_habitant", "interpellation"})
 
 
-def _sans_reponse_attendue(decision: str) -> bool:
-    """Un point RETIRÉ ou REPORTÉ n'a pas été débattu en séance : aucune réponse
-    n'est attendue (donc un `repondant` vide y est NORMAL). Détecté sur la
-    décision (« RETIRÉ » / « REPORTÉ », variantes de casse)."""
-    d = (decision or "").upper()
-    return "RETIR" in d or "REPORT" in d
+# Question orale RENVOYÉE À L'ÉCRIT : « transformée en question écrite » ou
+# « réponse … par écrit ». La réponse est alors différée et donnée par écrit au
+# nom du Collège — aucun·e répondant·e oral·e nommé·e n'est attendu·e ce jour-là.
+_RE_RENVOI_ECRIT = re.compile(r"transform\w+ en question [ée]crite|par [ée]crit", re.IGNORECASE)
+
+
+def _sans_reponse_attendue(point: dict) -> bool:
+    """Aucune réponse ORALE attendue → un `repondant` vide y est NORMAL (pas une
+    anomalie) dans deux cas :
+      • point RETIRÉ / REPORTÉ (décision) — pas débattu en séance ;
+      • question orale transformée en question écrite / à répondre par écrit
+        (resume) — réponse différée, donnée par écrit au nom du Collège."""
+    dec = (point.get("decision") or "").upper()
+    if "RETIR" in dec or "REPORT" in dec:
+        return True
+    return bool(_RE_RENVOI_ECRIT.search(point.get("resume") or ""))
 
 
 def audit_respondents(db: dict, types_repondant_attendu=_TYPES_REPONDANT_ATTENDU) -> list[dict]:
     """Recense les points où un·e RÉPONDANT·E est attendu·e mais absent·e, en
     tenant compte du TYPE (seules questions/demandes/interpellations appellent une
-    réponse du Collège) ET du STATUT (un point RETIRÉ/REPORTÉ n'a pas été débattu →
+    réponse du Collège), du STATUT (RETIRÉ/REPORTÉ exclu) et du RENVOI À L'ÉCRIT
+    (question transformée en question écrite → réponse par écrit, exclue). Détails :
+    (un point RETIRÉ/REPORTÉ n'a pas été débattu →
     aucune réponse attendue). Hors-ligne (sans PDF ni LLM). Un·e répondant·e est
     jugé·e présent·e dès que _respondents en extrait au moins un nom (un rôle seul,
     ex. « Bourgmestre », est résolu via les métadonnées de séance). Retourne un
@@ -321,7 +333,7 @@ def audit_respondents(db: dict, types_repondant_attendu=_TYPES_REPONDANT_ATTENDU
         for p in s.get("points", []):
             if p.get("type") not in types_repondant_attendu:
                 continue
-            if _sans_reponse_attendue(p.get("decision")):
+            if _sans_reponse_attendue(p):
                 continue
             if _respondents(p.get("repondant"), meta):
                 continue

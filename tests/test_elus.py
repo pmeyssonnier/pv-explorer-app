@@ -291,6 +291,9 @@ def test_audit_respondents_considers_type_and_status():
             {"sp": 5, "type": "question_orale", "repondant": None, "decision": "RETIRÉ"},
             # Délibération sans répondant → type sans réponse attendue → ignorée.
             {"sp": 6, "type": "point_normal", "repondant": None, "decision": "APPROUVÉ"},
+            # Question transformée en question écrite → réponse par écrit → exclue.
+            {"sp": 7, "type": "question_orale", "repondant": None, "decision": "",
+             "resume": "Question de M. X transformée en question écrite."},
         ],
     }]}
     report = audit_respondents(db)
