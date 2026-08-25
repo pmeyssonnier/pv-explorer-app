@@ -296,14 +296,17 @@ const STATUT_SERIES = ['Approuvé', 'Décidé', STATUT_REPORTE];
 // issues » plutôt qu'un fourre-tout muet.
 const serieDuStatut = st => STATUT_REPORTE_MEMBRES.includes(st) ? STATUT_REPORTE
   : STATUT_PRINCIPAUX.includes(st) ? st : STATUT_AUTRES;
-// Sixième et dernière série : les points de PV dont AUCUNE décision n'a été
-// relevée. Sans elle, ce graphe restait 67 points sous « Activité par année »
+// Sixième et dernière série : les points de PV dont le PV ne dit PAS ce qu'ils
+// sont devenus. « Issue » et non « décision » : pour une question orale ou une
+// demande, l'issue relevée est le plus souvent « Débat » ou « Pris pour
+// information », pas un vote — et ces types-là en portent une dans 95 % des
+// cas, donc son absence est bien une lacune, pas leur régime normal. Sans elle, ce graphe restait 67 points sous « Activité par année »
 // (663 contre 658 en 2024) sans dire pourquoi — les deux graphes se lisent
 // maintenant l'un sous l'autre et totalisent le même nombre de points. Rendue
 // hachurée plutôt que pleine : c'est une ABSENCE de donnée, pas une issue de
 // plus, et la trame la distingue du gris d'« Autres issues » (qui, lui, groupe
 // de vraies décisions) autrement que par la seule couleur.
-const STATUT_SANS = 'Sans décision';
+const STATUT_SANS = 'Sans issue relevée';
 
 // Statuts du périmètre courant, repliés sur les 5 séries. Retourne aussi le
 // détail de ce qui a été regroupé, pour l'infobulle de la légende.
@@ -342,7 +345,7 @@ function statutRows() {
 
 // Les deux reliquats sortent de la palette catégorielle : « Autres issues » en
 // gris plein (de vraies décisions, simplement pas l'une des quatre nommées),
-// « Sans décision » en trame (une donnée absente).
+// « Sans issue relevée » en trame (une donnée absente).
 function statutSegClass(t, si) {
   if (t === STATUT_AUTRES) return 'yc-seg-autres';
   if (t === STATUT_SANS) return 'yc-seg-sans';
@@ -676,8 +679,8 @@ export async function loadStats() {
           reporté ou retiré (deux façons de ne pas trancher ce soir-là, détaillées au survol —
           « retiré » ne compte que 6 points sur tout le corpus) — le reste (prises d'acte, prises pour information, débats sans vote…)
           est regroupé sous « Autres issues », dont le détail s'affiche au survol de la légende.
-          « Sans décision » est le solde : des points du PV dont aucune décision n'a été relevée
-          (67 sur 10 062, concentrés sur quelques séances). Les deux graphes comptent donc
+          « Sans issue relevée » est le solde : des points dont le PV ne dit pas ce qu'ils sont
+          devenus (67 sur 10 062, concentrés sur quelques séances). Les deux graphes comptent donc
           exactement les mêmes points ; les chapitres vidéo sans PV, eux, ne figurent dans ni
           l'un ni l'autre.</p>
       </div>

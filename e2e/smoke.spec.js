@@ -449,7 +449,7 @@ test('le graphe des statuts totalise les mêmes points que celui d\'activité, e
 
   // 1. Les quatre issues demandées, plus le reliquat neutre en dernier.
   const legende = await page.$$eval('#statutLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
-  expect(legende).toEqual(['Approuvé', 'Décidé', 'Reporté ou retiré', 'Autres issues', 'Sans décision']);
+  expect(legende).toEqual(['Approuvé', 'Décidé', 'Reporté ou retiré', 'Autres issues', 'Sans issue relevée']);
   // Chaque regroupement nomme ce qu'il replie, sinon il devient un fourre-tout
   // opaque — « Autres issues » ses statuts, « Reporté ou retiré » ses deux.
   const infobulle = nom => page.locator('#statutLegend .yc-legend-chip', { hasText: nom })
@@ -467,7 +467,7 @@ test('le graphe des statuts totalise les mêmes points que celui d\'activité, e
   // 3. Les deux graphes comptent les mêmes points et se lisent l'un sous
   //    l'autre : leurs totaux doivent coïncider année par année. C'est ce qui
   //    manquait — 663 contre 658 en 2024, l'écart étant les points de PV sans
-  //    décision relevée, désormais empilés sous « Sans décision ».
+  //    issue relevée, désormais empilés sous « Sans issue relevée ».
   const activite = await page.$$eval('#drillPlot .yc-col', els => Object.fromEntries(els.map(e => [
     e.querySelector('.yc-yr').textContent.trim(),
     +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),
@@ -693,14 +693,14 @@ test('les puces d\'issue et de manque partitionnent les points de la séance', a
 
   // Chaque point du PV a une issue OU aucune ; un chapitre vidéo sans PV n'a ni
   // l'une ni l'autre. Les trois ensembles couvrent donc exactement la séance —
-  // c'est ce que « Sans décision » rend vérifiable, en nommant le solde qui
+  // c'est ce que « Sans issue relevée » rend vérifiable, en nommant le solde qui
   // manquait.
   const types = await lire('#seanceTypeChips .elu-chip');
   const facettes = await lire('#seanceFacetChips .elu-chip');
   const horsPv = types.filter(t => t.startsWith('Débat filmé hors PV')).reduce((a, t) => a + nb(t), 0);
-  const sansDecision = facettes.filter(t => t.startsWith('Sans décision')).reduce((a, t) => a + nb(t), 0);
+  const sansDecision = facettes.filter(t => t.startsWith('Sans issue relevée')).reduce((a, t) => a + nb(t), 0);
   const issues = facettes
-    .filter(t => !/^Avec débat filmé|^Sans décision|^Intervenant/.test(t))
+    .filter(t => !/^Avec débat filmé|^Sans issue|^Intervenant/.test(t))
     .reduce((a, t) => a + nb(t), 0);
   expect(sansDecision).toBeGreaterThan(0);
   expect(issues + sansDecision + horsPv).toBe(annonce);
