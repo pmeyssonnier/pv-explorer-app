@@ -383,3 +383,38 @@ test('le filtre par intervenant·e cherche sur le nom de famille, et se défait'
   await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(tousLesPoints);
   expect(errors).toEqual([]);
 });
+
+// Les puces de TYPE partitionnent les points : leur somme doit égaler le
+// nombre annoncé en tête. Elle tombait à 659 pour 676 points en 2025 — les
+// chapitres vidéo sans point de PV n'avaient aucune puce. Les FACETTES
+// (« Avec débat filmé », statuts) se superposent aux types et ne s'y ajoutent
+// pas : elles vivent dans une rangée à part.
+test('la somme des puces de type égale le nombre de points annoncé', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption('2025');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('2025');
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  // Vue agrégée de l'année : le plus grand nombre de points, tous types mêlés.
+  await page.locator('#seanceList').selectOption('__all__');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('Toutes les séances');
+  await page.locator('#seanceFilterToggle').click();
+
+  const annonce = Number((await page.locator('#seanceResult .elu-role').textContent()).match(/(\d+)\s+points/)[1]);
+  const compte = async sel => (await page.$$eval(sel, els => els.map(e => +e.textContent.match(/\((\d+)\)/)[1])));
+  const types = await compte('#seanceTypeChips .elu-chip');
+  expect(types.reduce((a, b) => a + b, 0)).toBe(annonce);
+
+  // Les facettes existent, et aucune ne dépasse le total.
+  const facettes = await compte('#seanceFacetChips .elu-chip');
+  expect(facettes.length).toBeGreaterThan(0);
+  facettes.forEach(n => expect(n).toBeLessThanOrEqual(annonce));
+
+  // Chaque puce de type ramène exactement le nombre de points qu'elle annonce.
+  const premiere = page.locator('#seanceTypeChips .elu-chip').last();   // le type le plus rare
+  const n = Number((await premiere.textContent()).match(/\((\d+)\)/)[1]);
+  await premiere.click();
+  await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
+  expect(errors).toEqual([]);
+});

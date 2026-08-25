@@ -665,6 +665,13 @@ body {
   background: color-mix(in srgb, var(--bordeaux) 15%, transparent);
   border-color: var(--bordeaux); color: var(--bordeaux); font-weight: 600;
 }
+/* Puce de FACETTE (onglet Séances : « Avec débat filmé », « Reporté »,
+   « Retiré ») : elle se superpose aux types au lieu de les partitionner — un
+   point reporté compte aussi dans son type. Trait discontinu pour qu'on ne
+   l'additionne pas aux puces de type, dont la somme, elle, fait le total. */
+.elu-chip-facette { border-style: dashed; }
+.elu-chip-facette.elu-chip-active { border-style: solid; }
+
 .elu-year {
   font-family: var(--display); font-weight: 600; font-size: 16px; color: var(--bordeaux);
   margin: 18px 0 6px; padding-bottom: 3px; border-bottom: 1px solid var(--ligne);

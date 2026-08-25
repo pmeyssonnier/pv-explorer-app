@@ -86,21 +86,34 @@ def _is_retire(decision) -> bool:
     return _strip_accents(decision or "").strip().lower().startswith("retir")
 
 
+def _decision_label(decision):
+    """Statut canonique d'un point, SANS le détail du vote : « Approuvé »,
+    « Décidé », « Pris pour information », « Reporté », « Retiré »… None si
+    aucune décision (ex. chapitre vidéo sans point de PV). Ce que
+    `_decision_summary` complète ensuite du décompte des voix — mais un
+    libellé stable est ce qu'il faut pour regrouper/filtrer les points par
+    issue (voir les puces de statut de l'onglet Séances), là où « Approuvé à
+    l'unanimité » et « Approuvé (33 pour, 9 contre) » sont un même statut."""
+    d = (decision or "").strip()
+    if not d:
+        return None
+    norm = _strip_accents(d).lower()
+    # Lexique éditable en priorité, puis libellés en dur, puis repli casse
+    # (variantes rares/coquilles non répertoriées, ex. « PREND ACTE +
+    # DÉROGATION ART.12 »).
+    return (lexique_store.decisions().get(norm) or _DECISION_LABELS.get(norm)
+            or (d[:1].upper() + d[1:].lower()))
+
+
 def _decision_summary(decision, vote):
     """Résumé lisible de l'issue d'un point (décision + vote quand il y en a
     un), pour indiquer explicitement, selon chaque cas, pourquoi il n'y a
     par exemple ni répondant·e ni débat filmé à trouver (point voté sans
     discussion, reporté, pris pour information...) plutôt que de laisser
     croire à une recherche infructueuse. None si la décision est vide."""
-    d = (decision or "").strip()
-    if not d:
-        return None
-    norm = _strip_accents(d).lower()
-    label = lexique_store.decisions().get(norm) or _DECISION_LABELS.get(norm)
+    label = _decision_label(decision)
     if not label:
-        # Repli pour les variantes rares/coquilles non répertoriées
-        # (ex. « PREND ACTE + DÉROGATION ART.12 ») : casse homogène.
-        label = d[:1].upper() + d[1:].lower()
+        return None
     vote = vote if isinstance(vote, dict) else {}
     vtype = vote.get("type")
     if vtype == "unanimite":
@@ -242,6 +255,9 @@ def seance_detail(date: str):
             "reporte": _is_reportee(p.get("decision")),
             "retire": _is_retire(p.get("decision")),
             "decision": _decision_summary(p.get("decision"), p.get("vote")),
+            # Statut canonique, sans le décompte des voix : c'est lui qui
+            # regroupe les points par issue dans les puces de l'onglet Séances.
+            "statut": _decision_label(p.get("decision")),
             "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
             "montant_eur": p.get("montant_eur"),
             "url": meta.get("source_url"),
@@ -303,6 +319,7 @@ def seance_detail(date: str):
                     "reporte": False,
                     "retire": False,
                     "decision": None,
+                    "statut": None,
                     "thematiques": [],
                     "montant_eur": None,
                     "url": deeplink,
