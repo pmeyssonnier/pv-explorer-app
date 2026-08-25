@@ -20,6 +20,11 @@ let eluYearFilter = 'all';  // année sélectionnée dans le filtre ("all" = tou
 // des éléments cochés (OU dans un groupe, ET entre les deux groupes).
 let eluTypeSel = new Set();   // types d'action cochés — dépôts uniquement
 let eluThemeFilter = 'all'; // thématique sélectionnée ("all" = toutes) — depose ET repond
+// Le filtre thématique passe par le même composant que la recherche d'élu·e et
+// que celui de l'onglet Séances : un menu natif ne tient pas la centaine de
+// thématiques d'une fiche, et sa frappe rapide ne cherche que le début du
+// libellé. Créé une fois (l'élément est statique dans index.html).
+let eluThemeCombo = null;
 let eluRoleSel = new Set();   // rôles cochés ('conseiller', 'echevin', 'bourgmestre')
 let eluSelectedKey = null;  // clé actuellement chargée
 let eluCombo = null;        // instance du combobox partagé (voir combobox.js)
@@ -167,6 +172,35 @@ export function initEluCombo() {
     placeholder: n => (n ? `Rechercher parmi ${n} élu·e·s…` : 'Rechercher un·e élu·e…'),
     onSelect: key => selectElu(key),
   });
+
+  eluThemeCombo = createCombobox({
+    input: document.getElementById('eluTheme'),
+    list: document.getElementById('eluThemeOptions'),
+    clear: document.getElementById('eluThemeClear'),
+    status: document.getElementById('eluThemeStatus'),
+    idPrefix: 'elu-theme',
+    itemKey: t => t.theme,
+    // Le libellé stocké porte des « _ » (voir _thematique_label côté backend) :
+    // on les remplace À L'AFFICHAGE ET DANS LE TEXTE CHERCHÉ, sinon taper
+    // « marché public » ne trouverait pas « marche_public ».
+    itemLabel: t => t.theme.replace(/_/g, ' '),
+    renderItem: eluThemeOptionHtml,
+    emptyText: q => `Aucune thématique ne correspond à « ${q} ».`,
+    statusText: n => (n ? `${n} thématique${n > 1 ? 's' : ''} — utilisez les flèches puis Entrée`
+      : 'Aucun résultat'),
+    placeholder: n => (n > 1 ? `Filtrer parmi ${n - 1} thématiques…` : 'Filtrer par thématique…'),
+    onSelect: onEluThemeSelect,
+  });
+}
+
+// Une option : la thématique (partie trouvée surlignée) et son nombre
+// d'interventions sur la fiche courante.
+function eluThemeOptionHtml(t, { id, active, selected, label }) {
+  return `<li class="elu-opt${active ? ' elu-opt-active' : ''}" role="option" id="${id}"
+      data-key="${escapeHtml(t.theme)}" aria-selected="${selected}">
+    <span class="elu-opt-name">${t.tous ? 'Toutes les thématiques' : label}</span>
+    <span class="elu-opt-meta"><span class="elu-opt-count">${t.n} ${t.tous ? 'thématiques' : `intervention${t.n > 1 ? 's' : ''}`}</span></span>
+  </li>`;
 }
 
 // (Re)construit la liste des candidat·e·s selon le filtre de rôle courant et
@@ -283,27 +317,32 @@ function filterByYear(items, year) {
 // alphabétiquement — indépendant du filtre de type, pour que la liste des
 // thématiques disponibles ne se réduise pas selon le type déjà choisi.
 function eluThemes(deposeForYear, repondForYear) {
-  const s = new Set();
-  deposeForYear.forEach(it => (it.thematiques || []).forEach(t => s.add(t)));
-  repondForYear.forEach(it => (it.thematiques || []).forEach(t => s.add(t)));
-  return [...s].sort((a, b) => a.localeCompare(b, 'fr'));
+  // Comptées, ce que le menu natif ne montrait pas : savoir qu'une thématique
+  // ne porte qu'une intervention évite d'y aller pour rien.
+  const counts = new Map();
+  const compte = it => (it.thematiques || []).forEach(t => counts.set(t, (counts.get(t) || 0) + 1));
+  deposeForYear.forEach(compte);
+  repondForYear.forEach(compte);
+  return [...counts.keys()].sort((a, b) => a.localeCompare(b, 'fr'))
+    .map(t => ({ theme: t, n: counts.get(t) }));
 }
 
 // (Re)remplit le filtre de thématique pour la fiche courante ; conserve la
 // thématique sélectionnée si elle existe encore, sinon "Toutes".
 function populateEluThemeSelect(themes) {
-  const sel = document.getElementById('eluTheme');
-  if (!sel) return;
-  if (!themes.length) { sel.innerHTML = ''; sel.hidden = true; eluThemeFilter = 'all'; return; }
-  if (!themes.includes(eluThemeFilter)) eluThemeFilter = 'all';
-  sel.hidden = false;
-  sel.innerHTML = '<option value="all">Toutes les thématiques</option>' +
-    themes.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
-  sel.value = eluThemeFilter;
+  const box = document.getElementById('eluThemeCombo');
+  if (!box || !eluThemeCombo) return;
+  if (!themes.length) { box.hidden = true; eluThemeFilter = 'all'; eluThemeCombo.setItems([]); return; }
+  if (!themes.some(t => t.theme === eluThemeFilter)) eluThemeFilter = 'all';
+  box.hidden = false;
+  // 1re entrée : revenir à toutes les thématiques. La croix du champ n'efface
+  // que la recherche — un filtre doit pouvoir se défaire depuis la liste.
+  eluThemeCombo.setItems([{ theme: '', n: themes.length, tous: true }, ...themes]);
+  eluThemeCombo.setSelected(eluThemeFilter === 'all' ? '' : eluThemeFilter);
 }
 
-export function onEluThemeChange() {
-  eluThemeFilter = document.getElementById('eluTheme').value;
+function onEluThemeSelect(key) {
+  eluThemeFilter = key || 'all';
   if (currentEluData) renderElu(currentEluData);
 }
 
@@ -337,13 +376,16 @@ const countOfType = (items, typeLabel) => (typeLabel === TYPE_DEBAT
 function syncEluMoreFilters() {
   const box = document.getElementById('eluMoreFilters');
   const year = document.getElementById('eluYear');
-  const theme = document.getElementById('eluTheme');
+  // L'enveloppe du combobox, pas le champ : c'est elle qui porte [hidden]
+  // (le champ, lui, reste toujours visible à l'intérieur).
+  const theme = document.getElementById('eluThemeCombo');
   const actif = document.getElementById('eluMoreActive');
   if (!box || !year || !theme) return;
   box.hidden = year.hidden && theme.hidden;
   const actifs = [];
   if (eluYearFilter !== 'all') actifs.push(eluYearFilter);
-  if (eluThemeFilter !== 'all') actifs.push(eluThemeFilter);
+  // Affiché comme dans la liste : « marche public », pas « marche_public ».
+  if (eluThemeFilter !== 'all') actifs.push(eluThemeFilter.replace(/_/g, ' '));
   if (actif) actif.textContent = actifs.length ? ` · ${actifs.join(' · ')}` : '';
   if (actifs.length) box.open = true;
 }

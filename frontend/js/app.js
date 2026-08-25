@@ -19,12 +19,12 @@ import {
   onStatutChipClick, showStatsVue, setPendingStatsVue,
 } from './stats.js';
 import {
-  loadElus, initEluCombo, onEluYearChange, onEluThemeChange,
+  loadElus, initEluCombo, onEluYearChange,
   onEluChipClick, onEluRoleChipClick, shareElu, setPendingEluKey,
 } from './elus.js';
 import {
   loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
-  jumpToSeance, setPendingSeanceDate, onSeanceRoleChipClick, onSeanceTypeChipClick,
+  jumpToSeance, setPendingSeanceDate, onSeanceTypeChipClick,
 } from './seances.js';
 import {
   checkAdminSession, openAdminLogin, closeAdminLogin, initAdminLoginOverlay,
@@ -80,7 +80,7 @@ registerActions({
   shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick, onStatutChipClick,
   showStatsVue,
   shareElu, onEluChipClick, onEluRoleChipClick,
-  shareSeance, jumpToSeance, onSeanceRoleChipClick, onSeanceTypeChipClick,
+  shareSeance, jumpToSeance, onSeanceTypeChipClick,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
   cancelQeExtract, confirmQePublish,
 });
@@ -97,7 +97,6 @@ function initStaticListeners() {
   bind('askInput', 'keydown', e => { if (e.key === 'Enter') submitQuestion(); });
   bind('trendInput', 'keydown', e => { if (e.key === 'Enter') loadTrend(); });
   bind('eluYear', 'change', onEluYearChange);
-  bind('eluTheme', 'change', onEluThemeChange);
   bind('seanceYear', 'change', renderSeanceYearList);
   bind('seanceList', 'change', e => onSeanceListChange(e.target));
   bind('adminLoginForm', 'submit', submitAdminLogin);

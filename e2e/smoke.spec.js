@@ -598,3 +598,79 @@ test('chaque puce de statut ramène exactement ses points, mention de vote compr
   await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
   expect(errors).toEqual([]);
 });
+
+// ── Filtre par thématique : un champ de recherche, plus un menu natif ──
+// Une fiche d'élu·e en compte jusqu'à 232, une séance 113 en médiane : la
+// frappe rapide d'un <select> ne cherche que le début du libellé, exactement
+// le problème déjà corrigé pour le choix d'un·e élu·e et d'un·e intervenant·e.
+for (const cas of [
+  {
+    nom: 'Par élu·e',
+    ouvrir: async page => {
+      await page.locator('#tab-elus').click();
+      await page.locator('#eluSearch').fill('verzin');
+      await page.locator('#eluOptions .elu-opt').first().click();
+      await expect(page.locator('#eluResult .elu-item').first()).toBeVisible();
+      await page.locator('#eluMoreFilters summary').click();
+    },
+    champ: '#eluTheme', options: '#eluThemeOptions', croix: '#eluThemeClear',
+    liste: '#eluResult .elu-item',
+    unite: /intervention/,
+  },
+  {
+    nom: 'Séances',
+    ouvrir: async page => {
+      await page.locator('#tab-seances').click();
+      await page.locator('#seanceYear').selectOption('2026');
+      await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+      await page.locator('#seanceList').selectOption('2026-05-27');
+      await expect(page.locator('#seanceResult .elu-name')).toContainText('27/05/2026');
+      await page.locator('#seanceFilterToggle').click();
+    },
+    champ: '#seanceThemeFilter', options: '#seanceThemeOptions', croix: '#seanceThemeClear',
+    liste: '#seancePointsList .elu-item',
+    unite: /point/,
+  },
+]) {
+  test(`onglet ${cas.nom} : le filtre thématique se cherche et se défait`, async ({ page }) => {
+    const errors = trackErrors(page);
+    await page.goto('/');
+    await cas.ouvrir(page);
+
+    const champ = page.locator(cas.champ);
+    // Le placeholder annonce ce qu'on interroge, et la 1re entrée permet de
+    // revenir à tout — la croix, elle, n'efface que la recherche.
+    expect(await champ.getAttribute('placeholder')).toMatch(/Filtrer parmi \d+ thématiques/);
+    const total = await page.locator(cas.liste).count();
+    expect(total).toBeGreaterThan(1);
+
+    // La recherche ignore les « _ » du libellé stocké (marche_public).
+    await champ.click();
+    await champ.fill('marche pub');
+    const trouve = page.locator(`${cas.options} .elu-opt`).first();
+    await expect(trouve).toBeVisible();
+    const n = Number((await trouve.textContent()).match(/(\d+)\s*(?:point|intervention)/)[1]);
+    expect((await trouve.textContent())).toMatch(cas.unite);
+    await trouve.click();
+    await expect(page.locator(cas.liste)).toHaveCount(n);
+    expect(n).toBeLessThan(total);
+
+    // Se défaire par la 1re entrée de la liste…
+    await champ.click();
+    await page.locator(`${cas.options} .elu-opt`).first().click();
+    await expect(page.locator(cas.liste)).toHaveCount(total);
+
+    // …ou par la croix, qui DÉFAIT le filtre et ne se contente pas de vider le
+    // champ : n'effacer que le texte laissait la liste filtrée derrière un
+    // champ vide, sans rien qui l'explique. Au repos, elle est cachée.
+    await expect(page.locator(cas.croix)).toBeHidden();
+    await champ.click();
+    await champ.fill('marche pub');
+    await page.locator(`${cas.options} .elu-opt`).first().click();
+    await expect(page.locator(cas.liste)).toHaveCount(n);
+    await expect(page.locator(cas.croix)).toBeVisible();
+    await page.locator(cas.croix).click();
+    await expect(page.locator(cas.liste)).toHaveCount(total);
+    expect(errors).toEqual([]);
+  });
+}
