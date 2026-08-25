@@ -288,3 +288,76 @@ def print_author_audit(report: dict) -> dict:
     print(f"{bar}\n")
     return {"anomalies": len(anomalies), "motions_non_attribuees": len(motions),
             "motions_attribuables": len(candidates)}
+
+
+# ── Audit « sans répondant » (hors-ligne) ────────────────────────────────────
+# Seuls les points appelant une RÉPONSE du Collège en attendent un·e : questions
+# orales, demandes d'habitants, interpellations. Les délibérations/motions, elles,
+# sont votées, pas « répondues » — exclues d'office (par le TYPE).
+_TYPES_REPONDANT_ATTENDU = frozenset({"question_orale", "demande_habitant", "interpellation"})
+
+
+# Question orale RENVOYÉE À L'ÉCRIT : « transformée en question écrite » ou
+# « réponse … par écrit ». La réponse est alors différée et donnée par écrit au
+# nom du Collège — aucun·e répondant·e oral·e nommé·e n'est attendu·e ce jour-là.
+_RE_RENVOI_ECRIT = re.compile(r"transform\w+ en question [ée]crite|par [ée]crit", re.IGNORECASE)
+
+
+def _sans_reponse_attendue(point: dict) -> bool:
+    """Aucune réponse ORALE attendue → un `repondant` vide y est NORMAL (pas une
+    anomalie) dans deux cas :
+      • point RETIRÉ / REPORTÉ (décision) — pas débattu en séance ;
+      • question orale transformée en question écrite / à répondre par écrit
+        (resume) — réponse différée, donnée par écrit au nom du Collège."""
+    dec = (point.get("decision") or "").upper()
+    if "RETIR" in dec or "REPORT" in dec:
+        return True
+    return bool(_RE_RENVOI_ECRIT.search(point.get("resume") or ""))
+
+
+def audit_respondents(db: dict, types_repondant_attendu=_TYPES_REPONDANT_ATTENDU) -> list[dict]:
+    """Recense les points où un·e RÉPONDANT·E est attendu·e mais absent·e, en
+    tenant compte du TYPE (seules questions/demandes/interpellations appellent une
+    réponse du Collège), du STATUT (RETIRÉ/REPORTÉ exclu) et du RENVOI À L'ÉCRIT
+    (question transformée en question écrite → réponse par écrit, exclue). Détails :
+    (un point RETIRÉ/REPORTÉ n'a pas été débattu →
+    aucune réponse attendue). Hors-ligne (sans PDF ni LLM). Un·e répondant·e est
+    jugé·e présent·e dès que _respondents en extrait au moins un nom (un rôle seul,
+    ex. « Bourgmestre », est résolu via les métadonnées de séance). Retourne un
+    rapport, une entrée par séance concernée, trié par date."""
+    report = []
+    for s in db.get("seances", []):
+        meta = s.get("seance") or {}
+        date = meta.get("date")
+        manquants = []
+        for p in s.get("points", []):
+            if p.get("type") not in types_repondant_attendu:
+                continue
+            if _sans_reponse_attendue(p):
+                continue
+            if _respondents(p.get("repondant"), meta):
+                continue
+            manquants.append(p)
+        if manquants:
+            report.append({
+                "date": date,
+                "sans_repondant": len(manquants),
+                "sp": sorted(p.get("sp") for p in manquants if isinstance(p.get("sp"), int)),
+            })
+    report.sort(key=lambda r: r["date"] or "")
+    return report
+
+
+def print_respondent_audit(report: list[dict]) -> dict:
+    """Résumé lisible de audit_respondents : total et détail par séance. Retourne
+    un dict agrégé (total, séances, dates)."""
+    total = sum(r["sans_repondant"] for r in report)
+    bar = "━" * 56
+    print(f"\n{bar}\n  AUDIT « SANS RÉPONDANT » (hors-ligne — type + statut pris en compte)\n{bar}")
+    print(f"  Questions/demandes (non retirées) sans répondant : {total} "
+          f"(sur {len(report)} séance(s))")
+    for r in report:
+        print(f"    ⚠ {r['date']} : {r['sans_repondant']} — SP {r['sp']}")
+    print(f"{bar}\n")
+    return {"total_sans_repondant": total, "seances": len(report),
+            "dates": [r["date"] for r in report]}

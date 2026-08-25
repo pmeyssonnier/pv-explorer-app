@@ -28,9 +28,10 @@ Deux audits COMPLÉMENTAIRES, tous deux hors-ligne :
 from pathlib import Path
 from typing import Optional
 
-from pv_extraction_pipeline import (
-    extract_text_from_pdf, expected_sp_from_pages, extract_pdf_metadata,
-)
+# NB : l'import de pv_extraction_pipeline (→ pdfplumber, anthropic) est fait
+# PARESSEUSEMENT dans _index_pdfs/audit_completeness (les seules fonctions qui
+# lisent des PDF). Ainsi audit_decisions — qui ne lit AUCUN PDF — reste utilisable
+# sans installer ces dépendances lourdes (voir voir_audits.py à la racine).
 
 
 # ── Audit des DÉCISIONS (compteur « sans statut ») ──────────────────────────
@@ -95,6 +96,7 @@ def print_decision_audit(report: list[dict]) -> dict:
 def _index_pdfs(input_dir: str) -> tuple[dict, dict]:
     """Deux index des PDF présents : par nom de fichier, et par date (déduite du
     nom). Permet de retrouver le PDF d'une séance même sans champ source_file."""
+    from pv_extraction_pipeline import extract_pdf_metadata  # deps PDF (lazy)
     by_name, by_date = {}, {}
     for p in sorted(Path(input_dir).glob("**/*.pdf")):
         by_name[p.name] = p
@@ -117,6 +119,7 @@ def _find_pdf(seance: dict, by_name: dict, by_date: dict) -> Optional[Path]:
 def audit_completeness(db: dict, input_dir: str) -> list[dict]:
     """Compare, séance par séance, les SP attendus (regex sur le PDF) aux SP déjà
     présents dans la base. AUCUN appel LLM. Retourne un rapport par séance."""
+    from pv_extraction_pipeline import extract_text_from_pdf, expected_sp_from_pages  # lazy
     by_name, by_date = _index_pdfs(input_dir)
     report = []
     for s in db.get("seances", []):
