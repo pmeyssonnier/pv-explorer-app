@@ -11,6 +11,9 @@ import threading
 
 import lexique_store
 from services.statistics import load_db
+from utils.statut import (
+    STATUT_REPORTE, STATUT_RETIRE, classer_decision, dimensions, mot_issue,
+)
 from utils.text import _DECISION_LABELS, _thematique_label, liste_fr
 from utils.video import video_session_map
 
@@ -78,15 +81,20 @@ def _people_list(names, pairs, date, idx, resolve, fallback=None):
 
 def _is_reportee(decision) -> bool:
     """Point renvoyé à une séance ultérieure (« REPORTÉ ») : jamais débattu
-    ce jour-là, donc jamais de répondant·e ni de débat filmé à en attendre."""
-    return _strip_accents(decision or "").strip().lower().startswith("report")
+    ce jour-là, donc jamais de répondant·e ni de débat filmé à en attendre.
+
+    Juge le MOT écrit par le PV. Pour juger un POINT, passer par `dimensions`,
+    qui lit d'abord le champ stocké `statut_traitement` — un point séparé n'a
+    plus de mot dans `decision`, son report y est un champ à part entière."""
+    return classer_decision(decision)[0] == STATUT_REPORTE
 
 
 def _is_retire(decision) -> bool:
     """Point RETIRÉ de l'ordre du jour (« RETIRÉ ») : statut DISTINCT du report
     (le point est ôté, pas renvoyé à une séance ultérieure), mais lui aussi
-    jamais débattu ce jour-là — donc pas de répondant·e ni de débat filmé."""
-    return _strip_accents(decision or "").strip().lower().startswith("retir")
+    jamais débattu ce jour-là — donc pas de répondant·e ni de débat filmé.
+    Même remarque que ci-dessus : juge un mot, pas un point."""
+    return classer_decision(decision)[0] == STATUT_RETIRE
 
 
 # Mention du VOTE parfois recollée à la décision par le PV (« Pris acte à
@@ -262,6 +270,12 @@ def seance_detail(date: str):
             noms_rep = {x["nom"] for x in repondants}
             demandeurs = [x for x in demandeurs if x["nom"] not in noms_rep]
         demandeur = liste_fr([x["nom"] for x in demandeurs]) or None
+        # Les trois dimensions du point (voir utils.statut) : `dimensions` rend
+        # le même triplet que la base soit déjà séparée ou non, `mot_issue` en
+        # tire le seul mot que l'affichage montre. Tout ce que l'onglet Séances
+        # et les graphes de Statistiques savent d'une issue vient d'ici.
+        statut_traitement, _, _ = dimensions(p)
+        issue = mot_issue(p)
         points.append({
             "sp": p.get("sp") or 0,
             "type": p.get("type"),
@@ -283,12 +297,12 @@ def seance_detail(date: str):
             "demandeur_role": _combined_role([_key(x["nom"], pairs) for x in demandeurs], date, idx),
             "repondant": repondant,
             "repondant_role": _combined_role(resp_keys, date, idx),
-            "reporte": _is_reportee(p.get("decision")),
-            "retire": _is_retire(p.get("decision")),
-            "decision": _decision_summary(p.get("decision"), p.get("vote")),
+            "reporte": statut_traitement == STATUT_REPORTE,
+            "retire": statut_traitement == STATUT_RETIRE,
+            "decision": _decision_summary(issue, p.get("vote")),
             # Statut canonique, sans le décompte des voix : c'est lui qui
             # regroupe les points par issue dans les puces de l'onglet Séances.
-            "statut": _decision_label(p.get("decision")),
+            "statut": _decision_label(issue),
             "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
             "montant_eur": p.get("montant_eur"),
             "url": meta.get("source_url"),

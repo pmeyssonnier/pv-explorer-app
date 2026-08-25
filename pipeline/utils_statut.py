@@ -92,3 +92,91 @@ def classer_decision(decision):
     if n == "debat":
         return STATUT_TRAITE, None, True
     return STATUT_TRAITE, decision, False
+
+
+# Un champ `decision` réduit à un marqueur vide — mêmes variantes que la
+# récupération déterministe du pipeline (« None » vient d'un str(None) écrit
+# par un extracteur ancien).
+_DECISION_VIDE = {"", "-", "—", "None"}
+
+
+def dimensions(point: dict):
+    """(statut_traitement, decision, debat) d'un point, base séparée ou non.
+
+    Base séparée   : les champs stockés font foi.
+    Base d'origine : le mot écrit dans `decision` est classé à la volée — par
+                     la table ci-dessus, donc au même résultat.
+
+    C'est le seul point de passage : une vue écrite au-dessus ne sait pas, et
+    n'a pas à savoir, si la base a déjà été séparée. Sans quoi la séparation
+    aurait dû se déployer d'un bloc avec le code qui la lit.
+    """
+    statut = point.get("statut_traitement")
+    if statut in STATUTS_TRAITEMENT:
+        return statut, point.get("decision"), bool(point.get("debat"))
+    return classer_decision(point.get("decision"))
+
+
+def decision_manquante(point: dict) -> bool:
+    """Le point attendait une décision et n'en a pas.
+
+    Un point REPORTÉ, RETIRÉ ou DÉBATTU n'en manque aucune : il n'en attendait
+    pas. Les compter parmi les trous ferait passer 1 480 points correctement
+    extraits pour des extractions ratées — précisément l'erreur que la
+    séparation des dimensions supprime. (Le TYPE, lui, se juge à part : une
+    question orale n'attend pas de décision non plus — voir
+    audit_completeness.TYPES_SANS_DECISION.)
+    """
+    statut, decision, debat = dimensions(point)
+    if statut != STATUT_TRAITE or debat:
+        return False
+    return decision is None or (isinstance(decision, str)
+                                and decision.strip() in _DECISION_VIDE)
+
+
+# Le mot que le PV écrivait pour chaque dimension sortie de `decision`. Sert à
+# retrouver le LIBELLÉ d'affichage (« Reporté », « Débat ») par le seul chemin
+# qui existe — la table _DECISION_LABELS et le lexique éditable de l'admin —
+# plutôt que d'ouvrir une deuxième table de libellés, que l'admin ne pourrait
+# pas corriger et qui divergerait de la première.
+_MOT = {STATUT_REPORTE: "REPORTÉ", STATUT_RETIRE: "RETIRÉ"}
+_MOT_DEBAT = "DÉBAT"
+
+
+def mot_issue(point: dict):
+    """Le mot qui résume l'ISSUE du point, à donner aux libellés d'affichage.
+
+    Une seule chaîne pour trois dimensions, parce que l'affichage n'en montre
+    qu'une : un point reporté n'a pas d'autre issue que son report. Ordre de
+    priorité — traitement, puis débat, puis décision — car un point reporté
+    ne peut avoir ni débat ni décision, par construction du backfill.
+    None quand le PV ne relève rien (le cas NORMAL d'une question orale).
+    """
+    statut, decision, debat = dimensions(point)
+    if statut in _MOT:
+        return _MOT[statut]
+    if debat:
+        return _MOT_DEBAT
+    return decision
+
+
+def poser_decision(point: dict, decision) -> None:
+    """Écrit EN PLACE une décision récupérée, dans la forme du point.
+
+    Point déjà séparé  : la décision passe par la table — un « RETIRÉ » récupéré
+                         du texte va dans `statut_traitement`, pas dans
+                         `decision`, sinon la récupération réintroduirait point
+                         par point le mélange que la séparation a défait.
+    Point d'origine    : le mot va dans `decision`, comme avant. L'envoyer dans
+                         un champ que ce point n'a pas perdrait le retrait.
+
+    Les deux écrivains de décisions récupérées (backfill_decisions et
+    pv_extraction_pipeline._recover_missing_decisions) passent par ici : la
+    règle de forme ne se décide qu'à un endroit.
+    """
+    if "statut_traitement" in point:
+        (point["statut_traitement"], point["decision"],
+         point["debat"]) = classer_decision(decision)
+    else:
+        point["decision"] = decision
+
