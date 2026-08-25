@@ -3,7 +3,7 @@
 import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, fmtMontant, renderThemeTags,
-  renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine,
+  renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, hasDebateLink,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
@@ -138,16 +138,6 @@ export function jumpToSeance(date) {
   if (date) loadSeance(date, { scroll: false });
 }
 
-// Un point a un lien vers le débat filmé quand c'est un chapitre vidéo
-// autonome (type "video", pas de point PV associé), ou quand un chapitre
-// vidéo a été apparié précisément à ce point (video_precise). Un point
-// reporté OU retiré de l'ordre du jour n'a jamais rien été débattu ce jour-là.
-// Fonction partagée entre le rendu de la ligne (lien affiché) et le filtre
-// "Débat filmé" (voir seanceTypeChips/pointMatchesFilters) — même définition
-// partout.
-function hasDebateLink(it) {
-  return (it.type === 'video' && !!it.url) || !!(it.video_url && it.video_precise && !it.reporte && !it.retire);
-}
 
 function seancePointRow(it) {
   const badge = renderTypeBadge(it.type_label);

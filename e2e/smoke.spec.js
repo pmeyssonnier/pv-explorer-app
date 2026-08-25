@@ -263,3 +263,34 @@ test('l\'onglet s\'ouvre sur un écran d\'accueil, sans élu·e présélectionn�
   await expect(page.locator('#eluResult .elu-accueil')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
+
+// « Débat filmé » n'est pas un type exclusif mais une FACETTE : la plupart des
+// débats filmés sont appariés à leur point PV et gardent leur type (question
+// orale, demande…) tout en portant le lien « ▶ Voir le débat ». La puce doit
+// compter TOUS ces points — pas seulement les chapitres vidéo orphelins.
+async function ficheAvecDebatFilme(page) {
+  await openEluCombo(page);
+  const cles = await page.$$eval('#eluOptions .elu-opt', els => els.map(e => e.dataset.key));
+  for (const key of cles.slice(0, 12)) {
+    await page.locator('#eluSearch').click();
+    await page.locator(`#eluOptions .elu-opt[data-key="${key}"]`).click();
+    await expect(page.locator('#eluResult .elu-name')).toBeVisible();
+    if (await page.locator('#eluTypeFilterChips .elu-chip', { hasText: 'filmé' }).count()) return true;
+  }
+  return false;
+}
+
+test('la puce « débat filmé » compte tous les points menant au débat', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  test.skip(!await ficheAvecDebatFilme(page), 'aucune fiche avec débat filmé dans les 12 premières');
+
+  const chip = page.locator('#eluTypeFilterChips .elu-chip', { hasText: 'filmé' });
+  const annonce = Number((await chip.textContent()).match(/(\d+)/)[1]);
+  await chip.click();
+
+  // Chaque action retenue mène bien au débat, et le compte annoncé est tenu.
+  await expect(page.locator('#eluResult .elu-item')).toHaveCount(annonce);
+  await expect(page.locator('#eluResult .elu-links a:has-text("Voir le débat")')).toHaveCount(annonce);
+  expect(errors).toEqual([]);
+});

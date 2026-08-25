@@ -652,6 +652,37 @@ def test_seance_detail_lists_every_point_including_unattributed():
     assert unattributed  # ex. « Hommage à M. Jacques Bouvier »
 
 
+def test_video_chapter_without_author_still_gives_precise_link_in_elu_view():
+    # Cas réel (29/05/2024, SP 58 — recours Boulevard Lambermont, demande de
+    # Georges Verzin) : le chapitre vidéo correspondant n'a PAS de champ
+    # `auteur` dans la source. L'index par personne sautait purement et
+    # simplement ces chapitres — la fiche affichait donc le lien GÉNÉRIQUE de
+    # séance là où l'onglet Séances, qui apparie déjà les chapitres sans
+    # auteur·e (seuil 0.6), donnait le lien PRÉCIS pour le même point.
+    d = elus.elu_detail("verzin")
+    it = next(x for x in d["depose"] if x["date"] == "2024-05-29")
+    assert it["video_precise"] is True
+    assert "&t=" in it["video_url"]
+    # Les deux vues doivent pointer exactement le même instant.
+    p = next(x for x in elus.seance_detail("2024-05-29")["points"] if x["sp"] == 58)
+    assert it["video_url"] == p["video_url"]
+
+
+def test_video_chapter_without_author_never_attributes_authorship():
+    # La 2e passe n'apporte qu'un LIEN : un chapitre sans auteur·e ne doit
+    # créer aucune intervention ni attribuer quoi que ce soit à quelqu'un
+    # (contrairement aux chapitres attribués, qui peuvent devenir un « Débat
+    # filmé » autonome faute de point PV apparié).
+    avant = {k: len(e["depose"]) for k, e in elus._index().items()}
+    video = [s for s in elus._load_video() if s.get("date") == "2024-05-29"]
+    sans_auteur = [p for s in video for p in s.get("points", []) if not (p.get("auteur") or "").strip()]
+    assert sans_auteur          # le cas testé existe bien dans le corpus
+    # Aucun « Débat filmé » autonome n'est né de ces chapitres à cette date.
+    for k, e in elus._index().items():
+        assert len(e["depose"]) == avant[k]
+        assert not [it for it in e["depose"] if it["type"] == "video" and it["date"] == "2024-05-29"]
+
+
 def test_seance_detail_demandeur_repondant_and_video_precise_match_elu_view():
     # Même cas réel que la vue par élu·e (Yousra Douhri, 22/04/2026) : les
     # deux vues doivent s'accorder — même registre de noms canoniques, même

@@ -5,6 +5,7 @@ import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, TYPE_COUNT_LABEL, renderThemeTags,
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
+  hasDebateLink,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
@@ -562,6 +563,19 @@ function filterByTheme(items, theme) {
 // ordre que TYPE_BADGE côté utils.js, pour une liste toujours dans le même
 // sens quel que soit l'élu·e sélectionné·e.
 const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
+const TYPE_DEBAT = 'Débat filmé';
+
+// « Débat filmé » est une FACETTE, pas un type exclusif — même définition que
+// l'onglet Séances (voir hasDebateLink). La plupart des débats filmés sont
+// appariés à leur point PV : le point garde alors son type (question orale,
+// demande…) et porte le lien « ▶ Voir le débat ». Ne compter que le type
+// `video` — les chapitres qu'on n'a PAS su apparier — donnait un chiffre à
+// contresens du libellé : 2 pour Georges Verzin, là où 14 de ses interventions
+// sont filmées. Conséquence assumée : les puces ne forment plus une partition,
+// leur somme peut dépasser le total.
+const countOfType = (items, typeLabel) => (typeLabel === TYPE_DEBAT
+  ? items.filter(hasDebateLink).length
+  : items.filter(it => it.type_label === typeLabel).length);
 
 // Les deux listes de valeurs (année, thématique) vivent dans un <details>
 // replié. On le masque s'il n'a rien à offrir, on le déplie d'office quand un
@@ -583,7 +597,8 @@ function syncEluMoreFilters() {
 
 function filterByType(items, types) {
   if (!types.size) return items;
-  return items.filter(it => types.has(it.type_label));
+  return items.filter(it => types.has(it.type_label)
+    || (types.has(TYPE_DEBAT) && hasDebateLink(it)));
 }
 
 // Puce-interrupteur par type présent, dans la barre de filtres
@@ -717,7 +732,7 @@ function renderElu(d) {
   // Une sélection devenue vide de sens en changeant d'élu·e/d'année (sa puce
   // n'est alors plus affichée) laisserait un filtre actif sans interrupteur
   // pour le défaire : on la nettoie.
-  eluTypeSel.forEach(t => { if (!deposeForYear.some(it => it.type_label === t)) eluTypeSel.delete(t); });
+  eluTypeSel.forEach(t => { if (!countOfType(deposeForYear, t)) eluTypeSel.delete(t); });
 
   // Comptages CROISÉS : chaque groupe de puces compte dans le périmètre défini
   // par l'AUTRE groupe (et non par lui-même), sinon cocher une puce ferait
@@ -736,7 +751,7 @@ function renderElu(d) {
   const typeFilterChips = document.getElementById('eluTypeFilterChips');
   if (typeFilterChips) {
     const chipsHtml = TYPE_FILTER_ORDER
-      .map(t => eluTypeChip(t, deposeForRole.filter(it => it.type_label === t).length)).join('');
+      .map(t => eluTypeChip(t, countOfType(deposeForRole, t))).join('');
     typeFilterChips.innerHTML = chipsHtml;
     typeFilterChips.hidden = !chipsHtml;
   }

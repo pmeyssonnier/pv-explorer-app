@@ -106,6 +106,18 @@ export const TYPE_COUNT_LABEL = {
   'Question écrite': n => `${n} question${n > 1 ? 's' : ''} écrite${n > 1 ? 's' : ''}`,
 };
 
+// Un point donne accès au DÉBAT FILMÉ quand c'est un chapitre vidéo autonome
+// (type "video", aucun point PV apparié), ou quand un chapitre vidéo a été
+// apparié précisément à ce point (video_precise) — dans ce dernier cas le
+// point garde son type (question orale, demande…) et le lien pointe l'instant
+// du débat. Un point reporté OU retiré n'a rien été débattu ce jour-là.
+// Définition partagée par l'onglet Séances (ligne + puce de filtre) et la vue
+// Par élu·e (puce « Débat filmé ») : une seule définition, partout la même.
+export function hasDebateLink(it) {
+  return (it.type === 'video' && !!it.url)
+    || !!(it.video_url && it.video_precise && !it.reporte && !it.retire);
+}
+
 // Bloc de tags « thématiques » — même rendu partout où un point est affiché
 // (Séances, Par élu·e, sources des réponses) : avant ce correctif, seule la
 // vue Séances les montrait. '' si aucune thématique (jamais de bloc vide).

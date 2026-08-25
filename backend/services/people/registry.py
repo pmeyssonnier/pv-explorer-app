@@ -133,6 +133,10 @@ def _build_all():
     # à un point de chapitrage vidéo, et les fusionner en une seule
     # intervention (voir _match_pv_point).
     pv_lookup = defaultdict(list)
+    # Mêmes entrées, indexées par DATE seule : un chapitre vidéo sans auteur·e
+    # ne peut être restreint à une personne, on le compare alors au titre de
+    # tous les points du jour (voir la 2e passe vidéo plus bas).
+    pv_by_date = defaultdict(list)
 
     for s in pv:
         meta = s.get("seance", {}) or {}
@@ -183,6 +187,7 @@ def _build_all():
                 }
                 people[author_key]["depose"].append(entry)
                 pv_lookup[(author_key, date)].append(entry)
+                pv_by_date[date].append(entry)
 
     # Questions écrites : canal totalement séparé des points de PV (adressées
     # au Collège hors séance, jamais de SP — voir services/questions_ecrites*.py).
@@ -246,11 +251,15 @@ def _build_all():
                 "video_url": None,
             })
 
+    # 1re passe : chapitres ATTRIBUÉS à une personne — fusion avec son point
+    # PV du jour (bassin restreint à elle, donc seuil de similarité normal).
+    sans_auteur = []
     for s in video:
         date = s.get("date")
         for p in s.get("points", []):
             author = p.get("auteur")
             if not author or _is_non_person_video_author(author):
+                sans_auteur.append((date, p))
                 continue
             k = _key(author, pairs)
             if not k:
@@ -282,6 +291,28 @@ def _build_all():
                 "url": deeplink,
                 "video_url": s.get("video_url"),
             })
+
+    # 2e passe : chapitres SANS auteur·e (~59 % du chapitrage : motions
+    # collectives, points du Collège, ou champ `auteur` simplement absent
+    # de la source). Ils n'attribuent rien à personne — mais quand leur titre
+    # correspond sûrement à un point déjà listé, ils lui apportent son lien
+    # vidéo PRÉCIS, au lieu de le laisser sur le lien générique de séance.
+    # Sans cette passe, la fiche d'un·e élu·e affichait « ▶ vidéo » (début de
+    # séance) là où l'onglet Séances — qui fait déjà cette fusion, voir
+    # seances.seance_detail — affichait « ▶ Voir le débat » pour LE MÊME point.
+    # Seuil 0.6 (et non 0.35) : le bassin de candidats n'étant pas restreint à
+    # une personne, le risque de score élevé fortuit est bien plus grand ;
+    # même valeur, même justification empirique que côté Séances.
+    for date, p in sans_auteur:
+        deeplink = p.get("deeplink")
+        candidates = [e for e in pv_by_date.get(date, []) if not e.get("video_precise")]
+        if not deeplink or not candidates:
+            continue
+        titre = p.get("titre_fr") or p.get("titre") or ""
+        match = _match_pv_point(titre, candidates, threshold=0.6)
+        if match is not None:
+            match["video_url"] = deeplink
+            match["video_precise"] = True
 
     # Enrichissement du nom d'affichage UNIQUEMENT : certain·e·s élu·e·s
     # n'apparaissent en tant qu'auteur·e/répondant·e (les deux seuls rôles
