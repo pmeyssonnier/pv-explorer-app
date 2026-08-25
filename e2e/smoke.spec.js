@@ -674,3 +674,43 @@ for (const cas of [
     expect(errors).toEqual([]);
   });
 }
+
+test('les puces d\'issue et de manque partitionnent les points de la séance', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption('2018');
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  await page.locator('#seanceList').selectOption('__all__');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('Toutes les séances');
+  await page.locator('#seanceFilterToggle').click();
+
+  const annonce = Number((await page.locator('#seanceResult .elu-role').textContent()).match(/(\d+)\s+points/)[1]);
+  const lire = async sel => (await page.$$eval(sel, els => els.map(e => e.textContent.trim())));
+  const nb = t => +t.match(/\((\d+)\)$/)[1];
+
+  // Chaque point du PV a une issue OU aucune ; un chapitre vidéo sans PV n'a ni
+  // l'une ni l'autre. Les trois ensembles couvrent donc exactement la séance —
+  // c'est ce que « Sans décision » rend vérifiable, en nommant le solde qui
+  // manquait.
+  const types = await lire('#seanceTypeChips .elu-chip');
+  const facettes = await lire('#seanceFacetChips .elu-chip');
+  const horsPv = types.filter(t => t.startsWith('Débat filmé hors PV')).reduce((a, t) => a + nb(t), 0);
+  const sansDecision = facettes.filter(t => t.startsWith('Sans décision')).reduce((a, t) => a + nb(t), 0);
+  const issues = facettes
+    .filter(t => !/^Avec débat filmé|^Sans décision|^Intervenant/.test(t))
+    .reduce((a, t) => a + nb(t), 0);
+  expect(sansDecision).toBeGreaterThan(0);
+  expect(issues + sansDecision + horsPv).toBe(annonce);
+
+  // « Intervenant·e inconnu·e » ne vise que les types déposés par quelqu'un :
+  // un point délibératif sans nom est normal, pas une lacune.
+  const inconnu = page.locator('#seanceFacetChips .elu-chip', { hasText: 'Intervenant·e inconnu·e' }).first();
+  await expect(inconnu).toBeVisible();
+  const n = nb(await inconnu.textContent());
+  await inconnu.click();
+  await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
+  const badges = await page.$$eval('#seancePointsList .elu-badge', els => [...new Set(els.map(e => e.textContent.trim()))]);
+  expect(badges).not.toContain('POINT');
+  expect(errors).toEqual([]);
+});

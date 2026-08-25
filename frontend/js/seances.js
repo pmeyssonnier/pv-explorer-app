@@ -217,9 +217,28 @@ export async function loadSeance(date, opts = {}) {
 function matchesType(p) {
   return seanceTypeFilter === 'all' ? true
     : seanceTypeFilter === 'debat_filme' ? hasDebateLink(p)
+    : seanceTypeFilter === 'sans_decision' ? estSansDecision(p)
+    : seanceTypeFilter === 'intervenant_inconnu' ? estIntervenantInconnu(p)
     : seanceTypeFilter.startsWith('statut:') ? p.statut === seanceTypeFilter.slice(7)
     : p.type_label === seanceTypeFilter;
 }
+// Point du PV dont AUCUNE décision n'a été relevée — le solde entre ce que la
+// séance compte de points et ce que les puces de statut savent en dire. Même
+// définition que la série « Sans décision » du graphe des issues : les
+// chapitres vidéo sans point de PV en sont exclus, ils n'ont pas de décision
+// par construction et ne sont pas un manque.
+const estSansDecision = p => !p.statut && p.type_label !== 'Débat filmé';
+
+// Types qu'une personne DÉPOSE : une motion, une question orale ou une demande
+// a forcément un·e auteur·e, et appelle une réponse en séance. Un point
+// délibératif, lui, est porté par le Collège et tranché par un vote — n'y
+// trouver personne est normal, pas une lacune. D'où cette liste, et pas
+// « tout point sans personne » : celui-là serait vrai de 71 % du corpus et ne
+// signalerait rien.
+const TYPES_A_INTERVENANT = ['Motion', 'Question orale', 'Demande'];
+const estIntervenantInconnu = p => TYPES_A_INTERVENANT.includes(p.type_label)
+  && !personnesDuPoint(p).length;
+
 function matchesTheme(p) {
   return seanceThemeFilter === 'all' || (p.thematiques || []).includes(seanceThemeFilter);
 }
@@ -380,6 +399,20 @@ function seanceFacetChips(points) {
     chips.push(seanceTypeChip(`statut:${st}`, st, n,
       `Points dont l'issue est « ${st} ». Chacun compte aussi dans son type.`));
   });
+  // Puis les deux MANQUES, en fin de rangée : ce que la source ne dit pas, là
+  // où elle le dit d'habitude. Ils ne s'affichent que s'il y en a — sur la
+  // plupart des séances, cette fin de rangée est vide.
+  chips.push(seanceTypeChip('sans_decision', 'Sans décision', points.filter(estSansDecision).length,
+    "Points du procès-verbal dont aucune décision n'a été relevée. Les chapitres "
+    + "vidéo sans point de PV n'en font pas partie : ils n'ont pas de décision par "
+    + 'construction. C\'est l\'écart entre le nombre de points de la séance et la somme '
+    + 'des puces d\'issue ci-contre.'));
+  chips.push(seanceTypeChip('intervenant_inconnu', 'Intervenant·e inconnu·e',
+    points.filter(estIntervenantInconnu).length,
+    `Motions, questions orales et demandes qui ne nomment personne — ni auteur·e ni `
+    + `répondant·e — alors que ces types-là sont déposés par quelqu'un. Les points `
+    + `délibératifs en sont exclus : portés par le Collège et tranchés par un vote, `
+    + `n'y trouver personne est normal.`));
   // Pas de puce « Autres issues » ici, contrairement au graphe de l'onglet
   // Statistiques : là-bas, quinze séries ne se lisent pas, donc les issues
   // rares sont repliées. Ici chaque statut a déjà SA puce, avec son compte

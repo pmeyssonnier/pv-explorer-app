@@ -165,6 +165,10 @@ def seances_list() -> list:
     seraient absentes de la liste d'une année pourtant filmée."""
     pv = load_db().get("seances", [])
     session_map = video_session_map()
+    # Même source que seance_detail, pour que la liste et la fiche pointent le
+    # même enregistrement quand une séance a été filmée en plusieurs fois (voir
+    # registry._load_video, qui les regroupe et choisit le principal).
+    video_par_date = {vs.get("date"): vs for vs in _load_video() if vs.get("date")}
     pv_dates = set()
     out = []
     for s in pv:
@@ -177,9 +181,9 @@ def seances_list() -> list:
             "date": date,
             "n_points": len(s.get("points", [])),
             "url": meta.get("source_url"),
-            "video_url": session_map.get(date),
+            "video_url": (video_par_date.get(date) or {}).get("video_url") or session_map.get(date),
         })
-    for vs in _load_video():
+    for vs in video_par_date.values():
         date = vs.get("date")
         if not date or date in pv_dates:
             continue

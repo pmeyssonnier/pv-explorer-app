@@ -7,6 +7,7 @@ sources, qui ne changent qu'au redéploiement).
 Classification conseiller·ère / Collège (rôle dominant) incluse : dérivée de
 l'activité observée, pas d'une source déclarative.
 """
+import datetime
 import json
 import os
 from collections import defaultdict
@@ -31,12 +32,75 @@ _VIDEO_PATH = os.path.join(
 
 
 def _load_video():
+    """Chapitrage vidéo, UNE entrée par séance — recalé sur le PV et fusionné.
+
+    Le fichier source suit les vidéos, pas les séances, ce qui l'en écarte de
+    deux façons :
+
+    1. Une séance filmée en PLUSIEURS enregistrements y occupe autant d'entrées
+       (« partie 1 » / « partie 2 », « SUITE · VERVOLG »). Les appelants
+       prenaient la première venue : le 29/03/2023, cela retenait la suite (8
+       chapitres) et perdait l'enregistrement principal (24).
+    2. Une séance qui s'est prolongée après minuit est titrée AU LENDEMAIN
+       (« Conseil communal du 26/11/2020 » pour le PV du 25/11), ce qui en
+       faisait une séance fantôme, sans PV, à côté de la vraie.
+
+    On regroupe donc par date, en recalant d'abord une date sans PV sur celle
+    de la veille quand elle en a un — jamais l'inverse, et jamais sur une date
+    qui a déjà son propre PV : le recalage ne peut pas déplacer une séance
+    réelle. Les chapitres, eux, portent leur `deeplink` complet (video_id
+    inclus) : les réunir ne mélange aucun lien.
+    """
     try:
         with open(_VIDEO_PATH, encoding="utf-8") as f:
             data = json.load(f)
     except Exception:
         return []
-    return data.get("seances", data) if isinstance(data, dict) else data
+    seances = data.get("seances", data) if isinstance(data, dict) else data
+    if not isinstance(seances, list):
+        return []
+    return _regroupe_par_seance(seances, _dates_pv())
+
+
+def _dates_pv() -> set:
+    return {(s.get("seance") or {}).get("date") for s in load_db().get("seances", [])}
+
+
+def _veille(date: str):
+    """Date du jour précédent, ou None si `date` n'est pas une date ISO."""
+    try:
+        return (datetime.date.fromisoformat(date) - datetime.timedelta(days=1)).isoformat()
+    except (TypeError, ValueError):
+        return None
+
+
+def _regroupe_par_seance(seances: list, dates_pv: set) -> list:
+    """Voir _load_video. Ordre de sortie : celui de la première entrée de
+    chaque date, pour rester stable d'un chargement à l'autre."""
+    par_date = {}
+    for vs in seances:
+        date = vs.get("date")
+        if not date:
+            continue
+        if date not in dates_pv:
+            veille = _veille(date)
+            if veille in dates_pv:
+                date = veille
+        par_date.setdefault(date, []).append(vs)
+
+    out = []
+    for date, parts in par_date.items():
+        if len(parts) == 1:
+            out.append({**parts[0], "date": date})
+            continue
+        # Lien « séance complète » : l'enregistrement le plus chapitré, puis le
+        # plus long — jamais l'ordre du fichier, qui met parfois la suite en
+        # tête (29/03/2023) ou un extrait de 2 minutes (25/11/2020, partie 1).
+        principal = max(parts, key=lambda v: (len(v.get("points") or []), v.get("duree_s") or 0))
+        points = [p for v in parts for p in (v.get("points") or [])]
+        out.append({**principal, "date": date, "points": points,
+                    "duree_s": sum(v.get("duree_s") or 0 for v in parts)})
+    return out
 
 
 def _sig():
