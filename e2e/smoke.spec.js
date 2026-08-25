@@ -601,6 +601,52 @@ test('chaque puce de statut ramène exactement ses points, mention de vote compr
   expect(errors).toEqual([]);
 });
 
+test('type et statut se croisent : choisir l\'un recalcule les valeurs de l\'autre', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption('2022');
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  await page.locator('#seanceList').selectOption('__all__');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('Toutes les séances');
+  await page.locator('#seanceFilterToggle').click();
+
+  // 1. Cliquer sur le type « Motion » recalcule les statuts affichés dans
+  // l'AUTRE rangée : seules les issues qui existent chez les motions
+  // apparaissent, avec le compte restreint à ce type — pas le compte global.
+  await page.locator('#seanceTypeChips .elu-chip', { hasText: /^Motion/ }).click();
+  const rejeteSousMotion = page.locator('#seanceFacetChips .elu-chip', { hasText: /^Rejeté/ }).first();
+  await expect(rejeteSousMotion).toBeVisible();
+  const nRejeteMotion = Number((await rejeteSousMotion.textContent()).match(/\((\d+)\)/)[1]);
+  expect(nRejeteMotion).toBeGreaterThan(0);
+
+  // 2. Changer de type recalcule à nouveau : en 2022, aucun point délibératif
+  // n'a été rejeté (le backfill des rejets ne porte que sur les motions) — la
+  // puce « Rejeté » doit donc DISPARAÎTRE de la rangée statut, preuve que le
+  // recalcul dépend bien du type sélectionné.
+  await page.locator('#seanceTypeChips .elu-chip', { hasText: /^Point délibératif/ }).click();
+  await expect(page.locator('#seanceFacetChips .elu-chip', { hasText: /^Rejeté/ })).toHaveCount(0);
+
+  // 3. Dans l'autre sens : cliquer sur le statut « Rejeté » (sans type choisi)
+  // recalcule la rangée des types — seul « Motion » y reste, les autres types
+  // disparaissent puisqu'aucun de leurs points n'a cette issue.
+  await page.locator('#seanceTypeChips .elu-chip', { hasText: /^Point délibératif/ }).click();  // se désélectionne
+  await page.locator('#seanceFacetChips .elu-chip', { hasText: /^Rejeté/ }).click();
+  await expect(page.locator('#seanceTypeChips .elu-chip')).toHaveCount(1);
+  const motionSousRejete = page.locator('#seanceTypeChips .elu-chip', { hasText: /^Motion/ });
+  await expect(motionSousRejete).toBeVisible();
+  const nMotionRejete = Number((await motionSousRejete.textContent()).match(/\((\d+)\)/)[1]);
+  expect(nMotionRejete).toBe(nRejeteMotion);   // même sous-ensemble, lu depuis l'autre rangée
+
+  // 4. Les DEUX filtres tiennent en même temps : le sélectionner l'un après
+  // l'autre affiche exactement les points qui portent les deux à la fois.
+  await motionSousRejete.click();
+  await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(nRejeteMotion);
+  const badges = await page.$$eval('#seancePointsList .elu-item', els => els.map(e => e.textContent));
+  expect(badges.every(t => /Motion/.test(t))).toBe(true);
+  expect(errors).toEqual([]);
+});
+
 // ── Filtre par thématique : un champ de recherche, plus un menu natif ──
 // Une fiche d'élu·e en compte jusqu'à 232, une séance 113 en médiane : la
 // frappe rapide d'un <select> ne cherche que le début du libellé, exactement
