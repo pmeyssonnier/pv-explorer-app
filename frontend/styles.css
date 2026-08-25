@@ -583,6 +583,10 @@ body {
 .elu-select:focus { border-color: var(--or); }
 .elu-select-name { flex: 1 1 260px; min-width: 0; }
 .elu-select-theme { flex: 0 1 200px; min-width: 0; }
+/* Le filtre thématique est un combobox (voir combobox.js) : il occupe la place
+   d'un menu, pas toute la largeur de la barre comme la recherche d'élu·e. */
+.elu-combo-theme { flex: 0 1 260px; min-width: 0; }
+.elu-combo-theme[hidden] { display: none; }
 .elu-select-year { flex: 0 0 auto; }
 .elu-select-date { flex: 0 1 220px; min-width: 0; }
 
@@ -702,7 +706,7 @@ body {
 .elu-summary-detail::before { content: '— '; }
 /* Puces cliquables (voir elus.js/eluTypeChip, seances.js) : filtre à un clic,
    vit dans la barre de filtres (#eluTypeFilterChips, #eluRoleChips côté Par
-   élu·e ; #seanceRoleChips, #seanceTypeChips côté Séances). */
+   élu·e ; #seanceTypeChips côté Séances). */
 .elu-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 4px; }
 .elu-chip {
   font: inherit; font-size: 12.5px; color: var(--encre-soft);

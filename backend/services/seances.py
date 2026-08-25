@@ -6,6 +6,7 @@ demandeur/répondant résolus via le même registre de noms canoniques (voir
 services.people.registry) pour un affichage homogène — et pour chaque point,
 un résumé lisible de sa décision/vote et de ses thématiques.
 """
+import re
 import threading
 
 import lexique_store
@@ -88,6 +89,23 @@ def _is_retire(decision) -> bool:
     return _strip_accents(decision or "").strip().lower().startswith("retir")
 
 
+# Mention du VOTE parfois recollée à la décision par le PV (« Pris acte à
+# l'unanimité », « Pris pour information (33 pour, 0 contre, 0 abstentions) »).
+# Le statut doit rester le libellé nu : sans ce retrait, chaque variante de
+# décompte formerait son propre statut — donc sa propre puce dans l'onglet
+# Séances et sa propre part dans le graphe des issues. Le décompte n'est pas
+# perdu : `_decision_summary` le réaffiche depuis le champ `vote`, qui en est
+# la source structurée. La base actuelle écrit des libellés nus ; c'est ce qui
+# se passera si l'extraction change qui est couvert ici.
+_MENTION_VOTE = re.compile(
+    r"\s*(?:[-–—,;:]\s*)?(?:"
+    r"a l'unanimite"
+    r"|\(\s*\d+\s*(?:pour|voix)[^)]*\)"
+    r"|par \d+\s*(?:voix|pour)\b.*"
+    r")\s*$"
+)
+
+
 def _decision_label(decision):
     """Statut canonique d'un point, SANS le détail du vote : « Approuvé »,
     « Décidé », « Pris pour information », « Reporté », « Retiré »… None si
@@ -100,9 +118,16 @@ def _decision_label(decision):
     if not d:
         return None
     norm = _strip_accents(d).lower()
+    nu = _MENTION_VOTE.sub("", norm).strip()
+    if nu and nu != norm:
+        # _strip_accents ne change pas la longueur (NFD puis retrait des
+        # diacritiques) : la coupe se reporte telle quelle sur le texte
+        # d'origine, accents compris. On se garde quand même du cas contraire.
+        if len(norm) == len(d):
+            d = d[:len(nu)].strip()
+        norm = nu
     # Lexique éditable en priorité, puis libellés en dur, puis repli casse
-    # (variantes rares/coquilles non répertoriées, ex. « PREND ACTE +
-    # DÉROGATION ART.12 »).
+    # (variantes rares/coquilles non répertoriées).
     return (lexique_store.decisions().get(norm) or _DECISION_LABELS.get(norm)
             or (d[:1].upper() + d[1:].lower()))
 

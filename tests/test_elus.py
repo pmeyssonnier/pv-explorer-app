@@ -1272,3 +1272,34 @@ def test_sans_decision_exclut_les_chapitres_video():
         detail = seances.seance_detail(date)
         if all(p["type_label"] == "Débat filmé" for p in detail["points"]):
             assert date not in sans, date
+
+
+def test_le_statut_ignore_la_mention_du_vote():
+    # Le PV écrit souvent l'issue avec son vote : « Pris acte à l'unanimité »,
+    # « Pris pour information (33 pour, 0 contre, 0 abstentions) ». Le STATUT
+    # doit rester le libellé nu, sinon chaque variante de vote formerait son
+    # propre statut — donc sa propre puce dans l'onglet Séances et sa propre
+    # part dans le graphe des issues.
+    assert seances._decision_label("Pris acte à l'unanimité") == "Pris acte"
+    assert seances._decision_label("PRIS POUR INFORMATION (33 POUR, 0 CONTRE, 0 ABSTENTIONS)") \
+        == "Pris pour information"
+    assert seances._decision_label("Approuvé à l'unanimité") == "Approuvé"
+
+
+def test_les_statuts_dune_seance_partitionnent_ses_points_decides():
+    # Contrôle sur une séance réelle (27/05/2026), celle qui a fait douter :
+    # 3 « Pris acte » + 12 « Pris pour information » + 12 « Débat » = les 27
+    # points hors des quatre issues nommées. Aucun n'est perdu ni compté deux
+    # fois, et le total des statuts plus les points sans décision fait bien le
+    # nombre de points de PV de la séance.
+    detail = seances.seance_detail("2026-05-27")
+    assert detail
+    pv = [p for p in detail["points"] if p["type_label"] != "Débat filmé"]
+    compte = {}
+    for p in pv:
+        compte[p.get("statut")] = compte.get(p.get("statut"), 0) + 1
+    assert sum(compte.values()) == len(pv)
+    nommes = {"Approuvé", "Décidé", "Reporté", "Retiré"}
+    autres = sum(n for st, n in compte.items() if st and st not in nommes)
+    assert autres == compte.get("Pris acte", 0) + compte.get("Pris pour information", 0) \
+        + compte.get("Débat", 0)

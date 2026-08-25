@@ -4,13 +4,17 @@
 // d'une personne — alors que ces listes se pensent par NOM DE FAMILLE. Taper
 // « verzin » n'y trouvait rien.
 //
-// Ce composant le remplace partout où l'on choisit une personne : recherche
-// libre sur tous les mots du libellé, insensible aux accents et à la casse,
-// navigation au clavier complète, et rendu d'option libre (l'appelant décide
-// ce qu'on lit avant de choisir : rôle, décompte…).
+// Ce composant le remplace partout où l'on choisit dans une longue liste :
+// recherche libre sur tous les mots du libellé, insensible aux accents et à la
+// casse, navigation au clavier complète, et rendu d'option libre (l'appelant
+// décide ce qu'on lit avant de choisir : rôle, décompte…).
 //
-// Utilisé par l'onglet Par élu·e (105 élu·e·s) et par le filtre
-// « intervenant·e » de l'onglet Séances (jusqu'à 115 personnes sur une séance).
+// Quatre usages : le choix d'un·e élu·e (105 personnes), le filtre
+// « intervenant·e » d'une séance (jusqu'à 115), et les deux filtres par
+// thématique — celui d'une séance (113 en médiane, jusqu'à 252) et celui d'une
+// fiche d'élu·e (jusqu'à 232). Les trois FILTRES portent une entrée « tou·te·s
+// / toutes » de clé vide en tête, ce qui change ce que fait leur croix : voir
+// le gestionnaire de `clear`.
 import { escapeHtml } from './utils.js';
 
 // Sans accents ni casse : « Amrani » / « amrani » ; « Köse » / « kose ».
@@ -271,6 +275,14 @@ export function createCombobox({
   if (clear) {
     clear.addEventListener('mousedown', ev => ev.preventDefault());
     clear.addEventListener('click', () => {
+      // Les listes de FILTRAGE portent une entrée « tou·te·s / toutes » en
+      // tête, de clé vide : la croix la sélectionne, autrement dit elle DÉFAIT
+      // le filtre. N'effacer que le texte laissait la liste filtrée derrière
+      // un champ vide — le geste promettait plus qu'il ne faisait.
+      // Les listes de SÉLECTION (le choix d'un·e élu·e) n'ont pas cette entrée :
+      // là, la croix se contente de vider la recherche, sans désélectionner.
+      const defait = items.some(e => e.key === '');
+      if (defait && selectedKey !== '') select('');
       input.value = '';
       query = '';
       clear.hidden = true;
