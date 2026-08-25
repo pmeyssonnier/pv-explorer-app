@@ -4,7 +4,6 @@ import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, fmtMontant, renderThemeTags,
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, hasDebateLink,
-  STATUT_PRINCIPAUX, STATUT_AUTRES,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 import { createCombobox } from './combobox.js';
@@ -214,17 +213,9 @@ export async function loadSeance(date, opts = {}) {
 function matchesType(p) {
   return seanceTypeFilter === 'all' ? true
     : seanceTypeFilter === 'debat_filme' ? hasDebateLink(p)
-    : seanceTypeFilter === 'statut:autres' ? estAutreIssue(p)
     : seanceTypeFilter.startsWith('statut:') ? p.statut === seanceTypeFilter.slice(7)
     : p.type_label === seanceTypeFilter;
 }
-// « Autres issues » : le point a bien été tranché, mais autrement que par l'une
-// des quatre issues nommées (prise d'acte, prise pour information, débat sans
-// vote…). Même regroupement que le graphe des issues, à partir de la même
-// liste (utils.STATUT_PRINCIPAUX) — les deux vues ne peuvent donc pas diverger
-// sur ce qu'est une « autre » issue. Un point SANS statut n'en fait pas partie.
-const estAutreIssue = p => !!p.statut && !STATUT_PRINCIPAUX.includes(p.statut);
-
 function matchesTheme(p) {
   return seanceThemeFilter === 'all' || (p.thematiques || []).includes(seanceThemeFilter);
 }
@@ -390,15 +381,13 @@ function seanceFacetChips(points) {
     chips.push(seanceTypeChip(`statut:${st}`, st, n,
       `Points dont l'issue est « ${st} ». Chacun compte aussi dans son type.`));
   });
-  // Puis le regroupement : les issues autres que les quatre nommées, d'un seul
-  // geste — le même « Autres issues » que le graphe de l'onglet Statistiques.
-  const autres = points.filter(estAutreIssue);
-  if (autres.length || seanceTypeFilter === 'statut:autres') {
-    const detail = seanceStatutCounts(autres).map(([st, n]) => `${st} : ${n}`).join(' · ');
-    chips.push(seanceTypeChip('statut:autres', STATUT_AUTRES, autres.length,
-      `Points tranchés autrement que par « ${STATUT_PRINCIPAUX.join(' », « ')} »`
-      + `${detail ? ' — ' + detail : ''}. Chacun compte aussi dans son type.`));
-  }
+  // Pas de puce « Autres issues » ici, contrairement au graphe de l'onglet
+  // Statistiques : là-bas, quinze séries ne se lisent pas, donc les issues
+  // rares sont repliées. Ici chaque statut a déjà SA puce, avec son compte
+  // exact — un regroupement par-dessus les aurait fait lire comme « issues
+  // non identifiées » alors qu'elles sont nommées à côté (27/05/2026 :
+  // « Autres issues (27) » à côté de « Pris acte (3) », « Pris pour
+  // information (12) » et « Débat (12) », qui en sont la somme).
   return chips.join('');
 }
 // Nombre de points où au moins une des deux personnes (demandeur·se OU

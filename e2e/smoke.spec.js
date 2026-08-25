@@ -571,37 +571,30 @@ test('le fil d\'Ariane est répété au-dessus des trois graphes', async ({ page
   expect(errors).toEqual([]);
 });
 
-test('la puce « Autres issues » regroupe les issues non nommées, et les ramène', async ({ page }) => {
+test('chaque puce de statut ramène exactement ses points, mention de vote comprise', async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto('/');
   await page.locator('#tab-seances').click();
-  await page.locator('#seanceYear').selectOption('2025');
+  await page.locator('#seanceYear').selectOption('2026');
   await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
-  await page.locator('#seanceList').selectOption('__all__');
-  await expect(page.locator('#seanceResult .elu-name')).toContainText('Toutes les séances');
+  await page.locator('#seanceList').selectOption('2026-05-27');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('27/05/2026');
   await page.locator('#seanceFilterToggle').click();
 
-  const puce = nom => page.locator('#seanceFacetChips .elu-chip', { hasText: nom }).first();
-  const nombre = async loc => Number((await loc.textContent()).match(/\((\d+)\)/)[1]);
-
-  // 1. Le regroupement égale la somme des statuts qu'il replie — ni les quatre
-  //    issues nommées, ni les points sans statut n'y entrent.
-  const autres = puce('Autres issues');
-  await expect(autres).toBeVisible();
-  const n = await nombre(autres);
-  const nommes = ['Approuvé', 'Décidé', 'Reporté', 'Retiré'];
+  // Les statuts sont listés un par un, avec leur compte exact. Le libellé du
+  // PV porte souvent la mention du vote (« Pris acte à l'unanimité ») : elle
+  // est retirée pour le statut, sans quoi chaque variante ferait sa propre
+  // puce. Et pas de regroupement par-dessus : il se lirait « issues non
+  // identifiées » alors qu'elles sont nommées juste à côté.
   const facettes = await page.$$eval('#seanceFacetChips .elu-chip', els => els.map(e => e.textContent.trim()));
-  const replies = facettes
-    .filter(t => !/^Autres issues|^Avec débat filmé/.test(t) && !nommes.some(s => t.startsWith(s)))
-    .map(t => +t.match(/\((\d+)\)/)[1]);
-  expect(replies.length).toBeGreaterThan(0);
-  expect(n).toBe(replies.reduce((a, b) => a + b, 0));
+  expect(facettes).not.toContain(expect.stringContaining('Autres issues'));
+  expect(facettes.some(t => /^Pris acte \(\d+\)$/.test(t))).toBe(true);
+  expect(facettes.some(t => /^Pris pour information \(\d+\)$/.test(t))).toBe(true);
 
-  // 2. L'infobulle nomme ce qu'elle replie, comme la légende du graphe.
-  expect(await autres.getAttribute('title')).toMatch(/Pris pour information|Pris acte|Débat/);
-
-  // 3. Et elle ramène exactement les points annoncés.
-  await autres.click();
+  const puce = page.locator('#seanceFacetChips .elu-chip', { hasText: /^Pris acte/ }).first();
+  const n = Number((await puce.textContent()).match(/\((\d+)\)/)[1]);
+  expect(n).toBeGreaterThan(0);
+  await puce.click();
   await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
   expect(errors).toEqual([]);
 });
