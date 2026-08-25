@@ -147,17 +147,23 @@ def mot_issue(point: dict):
     """Le mot qui résume l'ISSUE du point, à donner aux libellés d'affichage.
 
     Une seule chaîne pour trois dimensions, parce que l'affichage n'en montre
-    qu'une : un point reporté n'a pas d'autre issue que son report. Ordre de
-    priorité — traitement, puis débat, puis décision — car un point reporté
-    ne peut avoir ni débat ni décision, par construction du backfill.
+    qu'une. Ordre de priorité :
+
+      1. le TRAITEMENT — un point reporté n'a pas d'autre issue que son report ;
+      2. la DÉCISION — une motion débattue puis REJETÉE a pour issue le rejet,
+         pas le débat : le débat est ce qui s'est passé, le rejet est ce qui a
+         été décidé. C'est précisément ce que la séparation permet de dire, et
+         pourquoi la décision passe devant `debat` ;
+      3. le DÉBAT, quand il n'y a rien d'autre — le PV a discuté sans trancher.
+
     None quand le PV ne relève rien (le cas NORMAL d'une question orale).
     """
     statut, decision, debat = dimensions(point)
     if statut in _MOT:
         return _MOT[statut]
-    if debat:
-        return _MOT_DEBAT
-    return decision
+    if decision:
+        return decision
+    return _MOT_DEBAT if debat else decision
 
 
 def poser_decision(point: dict, decision) -> None:

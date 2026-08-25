@@ -69,6 +69,11 @@ _DECISION_LABELS = {
     "debat": "Débat",
     "reporte": "Reporté",
     "retire": "Retiré",
+    # Le conseil a dit NON. Une décision à part entière — il s'est prononcé —
+    # et non un statut de traitement : le point a bien été traité (voir
+    # utils_statut). Le PV l'écrit « rejetée » ou « verworpen ».
+    "rejete": "Rejeté",
+    "rejetee": "Rejeté",
     "prend acte": "Pris acte",
     "prendre acte": "Pris acte",
     # Une prise d'acte assortie d'une dérogation reste une prise d'acte : c'est

@@ -323,15 +323,25 @@ def test_recover_decision_retrait_wins_over_approbation_in_title():
     assert pts[0]["decision"] == "RETIRÉ"
 
 
-def test_recover_decision_approbation_blocked_by_rejection_or_negation():
-    # « Approbation » ne doit PAS produire APPROUVÉ en présence d'un rejet ou
-    # d'une tournure négative (« rejeté », « sans/ni approbation », « refus »).
-    for resume in ["Point rejeté par le Conseil", "Adopté sans approbation formelle",
-                   "Refus d'approbation du règlement"]:
+def test_recover_decision_approbation_blocked_by_negation():
+    # « Approbation » ne doit PAS produire APPROUVÉ en présence d'une tournure
+    # négative (« sans/ni approbation », « refus ») : on ne présume alors rien.
+    # Le doute suffit à bloquer — il ne suffit PAS à écrire un rejet, qui est
+    # une décision et demande la formule explicite (test suivant).
+    for resume in ["Adopté sans approbation formelle", "Refus d'approbation du règlement"]:
         pts = [{"sp": 9, "page": 1, "titre": "Objet - Approbation",
                 "resume": resume, "decision": "", "vote": {"type": None}}]
         assert _recover_missing_decisions(pts, [{"page_num": 1, "text": "SP 9.- x SP 10.- y"}]) == 0
         assert pts[0]["decision"] == ""
+
+
+def test_recover_decision_rejet_explicite_est_enregistre():
+    # Un rejet écrit noir sur blanc n'est plus seulement un BLOCAGE de
+    # l'approbation : c'est une décision, et elle s'écrit (voir backfill_rejets).
+    pts = [{"sp": 9, "page": 1, "titre": "Objet - Approbation",
+            "resume": "Point rejeté par le Conseil", "decision": "", "vote": {"type": None}}]
+    assert _recover_missing_decisions(pts, [{"page_num": 1, "text": "SP 9.- x SP 10.- y"}]) == 1
+    assert pts[0]["decision"] == "REJETÉ"
 
 
 def test_recover_decision_approved_unanime_on_extracted_empty_decision():
