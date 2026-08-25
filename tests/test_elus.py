@@ -858,14 +858,21 @@ def test_manual_author_override_joint_debate_repondant_also_intervenant():
     # les intervenant·e·s et le répondant au PV, SP60 avait
     # "intervenants": [] avant correction manuelle à l'identique. Cas
     # particulier : l'échevin répondant (Bouhjar) figure aussi parmi les
-    # intervenant·e·s (il participe au débat en plus d'y répondre).
+    # intervenant·e·s du PV (il participe au débat en plus d'y répondre) — il
+    # est donc RETIRÉ de la ligne des intervenant·e·s, où il faisait doublon
+    # avec sa propre ligne de répondant (un point délibératif n'a pas
+    # d'auteur·e : cette ligne liste qui est intervenu, voir TYPE_ACTOR_LABEL
+    # « Intervenant·e·s »).
     d = elus.seance_detail("2025-06-25")
     it = next(p for p in d["points"] if p["sp"] == 60)
     assert it["demandeur"] == (
-        "Saït Köse et Ibrahim Dönmez et Elias Ammi et "
-        "Yvan de Beauffort et Abobakre Bouhjar"
+        "Saït Köse et Ibrahim Dönmez et Elias Ammi et Yvan de Beauffort"
     )
     assert it["repondant"] == "Abobakre Bouhjar"
+    # Retiré de l'affichage, mais toujours atteignable par le filtre : il
+    # reste dans `repondants`, d'où le point se retrouve par son nom.
+    assert [x["nom"] for x in it["repondants"]] == ["Abobakre Bouhjar"]
+    assert "Abobakre Bouhjar" not in [x["nom"] for x in it["demandeurs"]]
 
 
 def test_manual_author_override_joint_debate_three_sibling_points():

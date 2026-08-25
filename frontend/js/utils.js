@@ -88,6 +88,11 @@ export const TYPE_BADGE = {
 // au-dessus du/de la répondant·e pour que chaque ligne se comprenne seule
 // (ex. sur une capture d'écran, sans le contexte de la page).
 export const TYPE_ACTOR_LABEL = {
+  // Un point délibératif (approbation, règlement, convention…) est déposé par
+  // le Collège : personne ne l'a « demandé ». Les noms qui y figurent sont
+  // celles et ceux qui SONT INTERVENU·E·S au débat (voir attribution.py,
+  // _MANUAL_AUTHOR_OVERRIDES) — les appeler « Auteur·e » était faux.
+  'Point': 'Intervenant·e·s',
   'Question orale': 'Auteur·e de la question',
   'Demande': 'Demandeur·se',
   'Motion': 'Auteur·e de la motion',
