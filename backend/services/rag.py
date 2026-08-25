@@ -19,6 +19,7 @@ import lexique_store
 from models.api import Source, AnswerResponse
 from prompts.rag import SYSTEM_PROMPT
 from utils.dates import _year_filter, _describe_year_filter
+from utils.statut import decision_recherchee
 from utils.text import _decision_status, _strip_accents, _thematique_label
 from utils.video import video_session_map, video_chunk_counts
 from services.pinecone_service import get_pinecone_index
@@ -176,6 +177,44 @@ def _clamp(val, default, lo, hi, cast):
         return default
 
 
+# Nombre de passages ramenés par la recherche d'appoint (voir _renfort_issue).
+# Petit : il s'agit d'atteindre une poignée de points rares, pas de noyer le
+# contexte — les 10 rejets du corpus y tiennent tous.
+TOP_K_ISSUE = 10
+
+
+def _renfort_issue(index, question: str, filters: dict, decision: str, matches: list) -> list:
+    """Ajoute aux résultats les points portant l'issue RARE sur laquelle porte
+    la question (voir utils.statut.decision_recherchee).
+
+    Pourquoi une seconde recherche plutôt qu'un filtre sur la première : le
+    filtre REMPLACERAIT le corpus par les seuls points rejetés/reportés, et une
+    question comme « pourquoi ma demande de prime a-t-elle été rejetée ? » n'y
+    trouverait plus rien de ce qu'elle cherche. On ÉLARGIT la pêche, on ne la
+    détourne pas — un déclenchement à tort ne coûte alors que quelques passages
+    de plus, jamais une réponse à côté.
+
+    Le classement final reste celui des scores : on ne truque pas la
+    pertinence, on donne à ces points l'occasion d'être vus.
+
+    Best-effort : la réponse principale ne dépend pas de ce renfort. S'il
+    échoue (quota, timeout), on répond avec ce qu'on a plutôt que rien.
+    """
+    query = {"inputs": {"text": question}, "top_k": TOP_K_ISSUE,
+             "filter": {**filters, "decision": {"$eq": decision}}}
+    try:
+        res = index.search(namespace=NAMESPACE, query=query, timeout=PINECONE_TIMEOUT)
+        renfort = res.get("result", {}).get("hits", [])
+    except Exception as e:  # noqa: BLE001 — appoint, jamais bloquant
+        logger.warning("Recherche d'appoint « %s » indisponible : %s", decision, e)
+        return matches
+    connus = {_hit_id(h) for h in matches}
+    ajouts = [h for h in renfort if _hit_id(h) not in connus]
+    if ajouts:
+        logger.info("Renfort « %s » : %d point(s) ajouté(s) au contexte", decision, len(ajouts))
+    return sorted(matches + ajouts, key=_hit_score, reverse=True)
+
+
 def answer(question_raw: str, commune_raw: Optional[str], *,
            top_k: Optional[int] = None, max_sources: Optional[int] = None,
            score_min: Optional[float] = None, model: Optional[str] = None) -> AnswerResponse:
@@ -213,6 +252,12 @@ def answer(question_raw: str, commune_raw: Optional[str], *,
         index = get_pinecone_index()
         results = index.search(namespace=NAMESPACE, query=query, timeout=PINECONE_TIMEOUT)
         matches = results.get("result", {}).get("hits", [])
+        # 1bis. Repêchage des issues RARES (rejet, retrait, report) : elles ne
+        # tiennent qu'à un mot dans le texte vectorisé et ne remontent pas d'une
+        # recherche par ressemblance générale — voir _renfort_issue.
+        issue = decision_recherchee(question)
+        if issue:
+            matches = _renfort_issue(index, question, filters, issue, matches)
         # PAS de repli sans le filtre année : mieux vaut répondre honnêtement
         # « aucun point pour cette période » que de citer silencieusement une
         # autre année (l'index est réindexé avec le champ `year`).
