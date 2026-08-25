@@ -11,7 +11,7 @@ import threading
 
 import lexique_store
 from services.statistics import load_db
-from utils.text import _DECISION_LABELS, _thematique_label
+from utils.text import _DECISION_LABELS, _thematique_label, liste_fr
 from utils.video import video_session_map
 
 from services.people.attribution import _TYPE_LABEL, _point_author, _respondents
@@ -249,7 +249,7 @@ def seance_detail(date: str):
         resp_keys = [_key(n, pairs) for n in resp_names]
         repondants = _people_list(resp_names, pairs, date, idx, resolve,
                                   fallback=_titlecase(_clean(p.get("repondant") or "")) or None)
-        repondant = " et ".join(x["nom"] for x in repondants) or None
+        repondant = liste_fr([x["nom"] for x in repondants]) or None
         demandeurs = _people_list(author_names, pairs, date, idx, resolve)
         # Un point délibératif n'a pas d'auteur·e : ce que l'attribution y
         # inscrit, ce sont les INTERVENANT·E·S du débat (voir attribution.py,
@@ -261,7 +261,7 @@ def seance_detail(date: str):
         if _TYPE_LABEL.get(p.get("type"), "Point") == "Point":
             noms_rep = {x["nom"] for x in repondants}
             demandeurs = [x for x in demandeurs if x["nom"] not in noms_rep]
-        demandeur = " et ".join(x["nom"] for x in demandeurs) or None
+        demandeur = liste_fr([x["nom"] for x in demandeurs]) or None
         points.append({
             "sp": p.get("sp") or 0,
             "type": p.get("type"),
@@ -383,7 +383,8 @@ def seance_detail(date: str):
 # appariements vidéo compris. Recompter autrement rouvrirait l'écart entre les
 # deux vues que ces compteurs servent justement à fermer.
 _annees_cache = {"sig": None, "rows": None, "par_date": None, "statuts_par_date": None,
-                 "sans_decision_par_date": None}
+                 "sans_decision_par_date": None, "types_par_date": None,
+                 "issues_par_date": None}
 # La passe coûte ~8 s à froid. Les endpoints FastAPI synchrones tournent dans
 # un pool de threads : sans verrou, N requêtes arrivant sur un cache froid la
 # refaisaient toutes en parallèle — trois appels simultanés mettaient 34 s
@@ -444,6 +445,39 @@ def statuts_par_date() -> dict:
     return _annees_cache["statuts_par_date"]
 
 
+def issues_par_date() -> dict:
+    """{date: {type: {issue: nb}}} — le CROISEMENT type × issue, par séance.
+
+    Une seule structure d'où se dérivent les trois lectures de l'onglet :
+    la répartition par type (somme sur les issues), la répartition par issue
+    (somme sur les types), et — ce que les deux précédentes ne pouvaient pas
+    dire — ce que devient CHAQUE type : les demandes finissent en débat, les
+    motions se votent ou se reportent, les points délibératifs s'approuvent.
+
+    L'issue vaut "" quand le PV n'en relève aucune (voir sans_decision_par_date).
+    Les chapitres vidéo sans point de PV n'y figurent pas : ils ne sont pas des
+    points du procès-verbal.
+    """
+    _ensure_annees()
+    return _annees_cache["issues_par_date"]
+
+
+def types_par_date() -> dict:
+    """{date de séance: {type: nb de points}} pour les quatre types du PV.
+
+    Alimente l'empilement du graphe « Activité par année » (métrique Points),
+    dont le total doit rester CELUI QU'IL AFFICHE DÉJÀ : le nombre de points du
+    procès-verbal. Les chapitres vidéo sans point de PV en sont donc exclus —
+    ils ne sont pas des points du PV et ne comptent pas dans cette métrique
+    (ils ont leur propre série dans le graphe d'activité citoyenne).
+
+    Trois vues montrent ainsi les mêmes points sous trois angles : par type
+    (ici), par issue (statuts_par_date), et le sous-ensemble citoyen.
+    """
+    _ensure_annees()
+    return _annees_cache["types_par_date"]
+
+
 def sans_decision_par_date() -> dict:
     """Points de PV dont AUCUNE décision n'a été relevée, PAR DATE de séance.
 
@@ -485,6 +519,8 @@ def _build_annees(sig):
     par_date = {}
     statuts = {}
     sans_decision = {}
+    types = {}
+    issues = {}
     for date in dates:
         detail = seance_detail(date)
         if not detail:
@@ -501,6 +537,12 @@ def _build_annees(sig):
                 row["types"][p["type_label"]] += 1
             if p["type_label"] == "Débat filmé":
                 par_date[date] = par_date.get(date, 0) + 1
+            else:
+                t = types.setdefault(date, {})
+                t[p["type_label"]] = t.get(p["type_label"], 0) + 1
+                croise = issues.setdefault(date, {}).setdefault(p["type_label"], {})
+                cle = p.get("statut") or ""
+                croise[cle] = croise.get(cle, 0) + 1
             if p.get("statut"):
                 st = statuts.setdefault(date, {})
                 st[p["statut"]] = st.get(p["statut"], 0) + 1
@@ -528,3 +570,5 @@ def _build_annees(sig):
     _annees_cache["par_date"] = par_date
     _annees_cache["statuts_par_date"] = statuts
     _annees_cache["sans_decision_par_date"] = sans_decision
+    _annees_cache["types_par_date"] = types
+    _annees_cache["issues_par_date"] = issues

@@ -5,7 +5,7 @@ import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, TYPE_COUNT_LABEL, renderThemeTags,
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
-  hasDebateLink,
+  hasDebateLink, listeFr,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 import { createCombobox } from './combobox.js';
@@ -440,7 +440,12 @@ function eluDeposeRow(it, nom) {
   // avec le nom de la fiche consultée, quelle que soit celle-ci — jamais
   // masqués simplement parce qu'on a filtré sur l'un d'eux (voir registry.py,
   // co_auteurs résolu pour chaque auteur·e depuis les autres signataires).
-  const auteurs = it.co_auteurs ? `${nom} et ${it.co_auteurs}` : nom;
+  // co_auteurs est une LISTE de noms. Tolère la chaîne recollée que renvoyait
+  // l'ancien backend : le frontend (Vercel) et l'API (Render) se déploient
+  // séparément, et un spread sur une chaîne l'écrirait lettre par lettre.
+  const co = Array.isArray(it.co_auteurs) ? it.co_auteurs
+    : (it.co_auteurs ? [it.co_auteurs] : []);
+  const auteurs = listeFr([nom, ...co]);
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, auteurs);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
   const tags = renderThemeTags(it.thematiques);

@@ -222,11 +222,16 @@ function matchesType(p) {
     : seanceTypeFilter.startsWith('statut:') ? p.statut === seanceTypeFilter.slice(7)
     : p.type_label === seanceTypeFilter;
 }
-// Point du PV dont AUCUNE décision n'a été relevée — le solde entre ce que la
-// séance compte de points et ce que les puces de statut savent en dire. Même
-// définition que la série « Sans décision » du graphe des issues : les
-// chapitres vidéo sans point de PV en sont exclus, ils n'ont pas de décision
-// par construction et ne sont pas un manque.
+// Point du PV dont on ne sait PAS ce qu'il est devenu — le solde entre ce que
+// la séance compte de points et ce que les puces d'issue savent en dire. Même
+// définition que la série du graphe des issues.
+//
+// « Issue » et non « décision » : une question orale ou une demande ne se
+// tranche pas par un vote, son issue relevée est le plus souvent « Débat » ou
+// « Pris pour information ». Elles n'en sont pas exclues pour autant — 95 %
+// d'entre elles en portent une, donc son absence reste une lacune du PV (les
+// 5 points du 27/03/2024, par exemple). Les chapitres vidéo sans point de PV,
+// eux, sont exclus : ils n'ont aucune issue par construction.
 const estSansDecision = p => !p.statut && p.type_label !== 'Débat filmé';
 
 // Types qu'une personne DÉPOSE : une motion, une question orale ou une demande
@@ -278,7 +283,12 @@ function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && ma
 // facette (ci-dessous).
 //                     [type_label backend, libellé de la puce]
 const _TYPE_FILTER_ORDER = [
-  ['Point', 'Point'],
+  // « Point délibératif » et non « Point » tout court : le graphe « Activité
+  // par année » compte, lui, TOUS les points de la séance sous le libellé
+  // « Points » (45 en mars 2024). Le même mot pour deux périmètres — 45 contre
+  // 30 — laissait croire à une incohérence entre les deux vues. Le type
+  // backend reste « Point », seul son libellé change.
+  ['Point', 'Point délibératif'],
   ['Motion', 'Motion'],
   ['Question orale', 'Question orale'],
   ['Demande', 'Demande'],
@@ -402,11 +412,12 @@ function seanceFacetChips(points) {
   // Puis les deux MANQUES, en fin de rangée : ce que la source ne dit pas, là
   // où elle le dit d'habitude. Ils ne s'affichent que s'il y en a — sur la
   // plupart des séances, cette fin de rangée est vide.
-  chips.push(seanceTypeChip('sans_decision', 'Sans décision', points.filter(estSansDecision).length,
-    "Points du procès-verbal dont aucune décision n'a été relevée. Les chapitres "
-    + "vidéo sans point de PV n'en font pas partie : ils n'ont pas de décision par "
-    + 'construction. C\'est l\'écart entre le nombre de points de la séance et la somme '
-    + 'des puces d\'issue ci-contre.'));
+  chips.push(seanceTypeChip('sans_decision', 'Sans issue relevée',
+    points.filter(estSansDecision).length,
+    "Points dont le procès-verbal ne dit pas ce qu'ils sont devenus — ni décision, "
+    + "ni débat, ni prise pour information. C'est l'écart entre le nombre de points de "
+    + "la séance et la somme des puces d'issue ci-contre. Les chapitres vidéo sans "
+    + "point de PV n'en font pas partie : ils n'ont aucune issue par construction."));
   chips.push(seanceTypeChip('intervenant_inconnu', 'Intervenant·e inconnu·e',
     points.filter(estIntervenantInconnu).length,
     `Motions, questions orales et demandes qui ne nomment personne — ni auteur·e ni `

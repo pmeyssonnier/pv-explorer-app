@@ -16,7 +16,7 @@ import {
 import {
   loadStats, toggleYear, drillInto, drillTo, selectSeance, clearSeance,
   selectTheme, setMetric, shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick,
-  onStatutChipClick, showStatsVue, setPendingStatsVue,
+  onStatutChipClick, onDrillTypeChipClick, showStatsVue, setPendingStatsVue,
 } from './stats.js';
 import {
   loadElus, initEluCombo, onEluYearChange,
@@ -78,7 +78,7 @@ registerActions({
   newSearch, toggleDictation, submitQuestion, copyAnswer, downloadAnswer, shareAnswer,
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick, onStatutChipClick,
-  showStatsVue,
+  showStatsVue, onDrillTypeChipClick,
   shareElu, onEluChipClick, onEluRoleChipClick,
   shareSeance, jumpToSeance, onSeanceTypeChipClick,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,

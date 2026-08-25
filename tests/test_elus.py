@@ -897,8 +897,11 @@ def test_manual_author_override_joint_debate_five_names():
     # que l'override à N noms (N > 2) résout et joint chaque personne.
     d = elus.seance_detail("2025-09-24")
     it = next(p for p in d["points"] if p["sp"] == 6)
+    # Ponctuation à la française (voir utils.text.liste_fr) : « A, B et C »,
+    # pas « A et B et C » — cinq noms recollés par « et » se lisaient comme un
+    # libellé brut du PV, alors que l'app les a bel et bien séparés.
     assert it["demandeur"] == (
-        "Cécile Jodogne et Naïma Belkhatir et Georges Verzin et "
+        "Cécile Jodogne, Naïma Belkhatir, Georges Verzin, "
         "Matthieu Degrez et Elias Ammi"
     )
     assert it["repondant"] == "Cédric Mahieu"
@@ -921,7 +924,7 @@ def test_manual_author_override_joint_debate_repondant_also_intervenant():
     d = elus.seance_detail("2025-06-25")
     it = next(p for p in d["points"] if p["sp"] == 60)
     assert it["demandeur"] == (
-        "Saït Köse et Ibrahim Dönmez et Elias Ammi et Yvan de Beauffort"
+        "Saït Köse, Ibrahim Dönmez, Elias Ammi et Yvan de Beauffort"
     )
     assert it["repondant"] == "Abobakre Bouhjar"
     # Retiré de l'affichage, mais toujours atteignable par le filtre : il
@@ -941,7 +944,7 @@ def test_manual_author_override_joint_debate_three_sibling_points():
     # appliqué à plusieurs points d'une même séance.
     d = elus.seance_detail("2025-04-23")
     expected = (
-        "Sadik Köksal et Leila Lahssaini et Matthieu Degrez et "
+        "Sadik Köksal, Leila Lahssaini, Matthieu Degrez, "
         "Cécile Jodogne et Isabelle Durant"
     )
     for sp in (21, 23, 24):
@@ -1303,3 +1306,51 @@ def test_les_statuts_dune_seance_partitionnent_ses_points_decides():
     autres = sum(n for st, n in compte.items() if st and st not in nommes)
     assert autres == compte.get("Pris acte", 0) + compte.get("Pris pour information", 0) \
         + compte.get("Débat", 0)
+
+
+def test_les_types_par_date_totalisent_les_points_du_pv():
+    # Le graphe « Activité par année » (métrique Points) empile désormais ces
+    # quatre types, et sa hauteur doit rester CE QU'IL AFFICHAIT DÉJÀ : le
+    # nombre de points du procès-verbal. Les chapitres vidéo sans point de PV
+    # n'en font pas partie — ils ne sont pas des points du PV.
+    types = seances.types_par_date()
+    assert types
+    assert all("Débat filmé" not in m for m in types.values())
+    for r in seances.annees_stats():
+        annee = r["annee"]
+        somme = sum(n for d, m in types.items() if d[:4] == annee for n in m.values())
+        assert somme == r["points"] - r["types"]["Débat filmé"], annee
+
+
+def test_les_trois_vues_comptent_les_memes_points():
+    # Trois angles, un seul ensemble : par type (types_par_date), par issue
+    # (statuts_par_date + sans_decision_par_date). Lire 45 dans l'un et 40 dans
+    # l'autre pour la même séance a coûté assez de doutes pour être verrouillé.
+    types = seances.types_par_date()
+    statuts = seances.statuts_par_date()
+    sans = seances.sans_decision_par_date()
+    for date, par_type in types.items():
+        par_issue = sum((statuts.get(date) or {}).values()) + sans.get(date, 0)
+        assert sum(par_type.values()) == par_issue, date
+
+
+def test_le_croisement_type_issue_retombe_sur_les_deux_lectures():
+    # Une seule structure sert les deux graphes de l'onglet : sommée sur les
+    # issues elle donne la répartition par type, sommée sur les types elle donne
+    # la répartition par issue. C'est ce qui rend leur contradiction impossible
+    # — et ce qui permet, en isolant un type, de voir ce qu'il devient.
+    croise = seances.issues_par_date()
+    types = seances.types_par_date()
+    statuts = seances.statuts_par_date()
+    sans = seances.sans_decision_par_date()
+    assert croise
+    for date, par_type in croise.items():
+        assert "Débat filmé" not in par_type, date
+        for t, issues in par_type.items():
+            assert sum(issues.values()) == types[date][t], (date, t)
+        plat = {}
+        for issues in par_type.values():
+            for st, n in issues.items():
+                plat[st] = plat.get(st, 0) + n
+        assert plat.pop("", 0) == sans.get(date, 0), date
+        assert plat == (statuts.get(date) or {}), date

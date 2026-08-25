@@ -333,7 +333,9 @@ test('un point à plusieurs répondant·e·s se retrouve par chacun de leurs nom
   const ligne = page.locator('#seancePointsList .elu-item', { has: page.locator('.elu-rep') })
     .filter({ hasText: ' et ' }).first();
   const rep = (await ligne.locator('.elu-rep').textContent()).trim();
-  const noms = rep.replace(/^[^:]+:\s*/, '').split(' et ');
+  // « A, B et C » (voir utils.text.liste_fr) : la virgule sépare autant que
+  // le « et » final.
+  const noms = rep.replace(/^[^:]+:\s*/, '').split(/,\s*|\s+et\s+/);
   expect(noms.length).toBeGreaterThan(1);
 
   // Filtré sur le PREMIER nom, puis sur le DERNIER : le point reste trouvable
@@ -447,7 +449,7 @@ test('le graphe des statuts totalise les mêmes points que celui d\'activité, e
 
   // 1. Les quatre issues demandées, plus le reliquat neutre en dernier.
   const legende = await page.$$eval('#statutLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
-  expect(legende).toEqual(['Approuvé', 'Décidé', 'Reporté ou retiré', 'Autres issues', 'Sans décision']);
+  expect(legende).toEqual(['Approuvé', 'Décidé', 'Reporté ou retiré', 'Autres issues', 'Sans issue relevée']);
   // Chaque regroupement nomme ce qu'il replie, sinon il devient un fourre-tout
   // opaque — « Autres issues » ses statuts, « Reporté ou retiré » ses deux.
   const infobulle = nom => page.locator('#statutLegend .yc-legend-chip', { hasText: nom })
@@ -465,7 +467,7 @@ test('le graphe des statuts totalise les mêmes points que celui d\'activité, e
   // 3. Les deux graphes comptent les mêmes points et se lisent l'un sous
   //    l'autre : leurs totaux doivent coïncider année par année. C'est ce qui
   //    manquait — 663 contre 658 en 2024, l'écart étant les points de PV sans
-  //    décision relevée, désormais empilés sous « Sans décision ».
+  //    issue relevée, désormais empilés sous « Sans issue relevée ».
   const activite = await page.$$eval('#drillPlot .yc-col', els => Object.fromEntries(els.map(e => [
     e.querySelector('.yc-yr').textContent.trim(),
     +e.querySelector('.yc-val').textContent.replace(/[^\d]/g, ''),
@@ -691,14 +693,14 @@ test('les puces d\'issue et de manque partitionnent les points de la séance', a
 
   // Chaque point du PV a une issue OU aucune ; un chapitre vidéo sans PV n'a ni
   // l'une ni l'autre. Les trois ensembles couvrent donc exactement la séance —
-  // c'est ce que « Sans décision » rend vérifiable, en nommant le solde qui
+  // c'est ce que « Sans issue relevée » rend vérifiable, en nommant le solde qui
   // manquait.
   const types = await lire('#seanceTypeChips .elu-chip');
   const facettes = await lire('#seanceFacetChips .elu-chip');
   const horsPv = types.filter(t => t.startsWith('Débat filmé hors PV')).reduce((a, t) => a + nb(t), 0);
-  const sansDecision = facettes.filter(t => t.startsWith('Sans décision')).reduce((a, t) => a + nb(t), 0);
+  const sansDecision = facettes.filter(t => t.startsWith('Sans issue relevée')).reduce((a, t) => a + nb(t), 0);
   const issues = facettes
-    .filter(t => !/^Avec débat filmé|^Sans décision|^Intervenant/.test(t))
+    .filter(t => !/^Avec débat filmé|^Sans issue|^Intervenant/.test(t))
     .reduce((a, t) => a + nb(t), 0);
   expect(sansDecision).toBeGreaterThan(0);
   expect(issues + sansDecision + horsPv).toBe(annonce);
@@ -711,6 +713,71 @@ test('les puces d\'issue et de manque partitionnent les points de la séance', a
   await inconnu.click();
   await expect(page.locator('#seancePointsList .elu-item')).toHaveCount(n);
   const badges = await page.$$eval('#seancePointsList .elu-badge', els => [...new Set(els.map(e => e.textContent.trim()))]);
-  expect(badges).not.toContain('POINT');
+  expect(badges).not.toContain('POINT DÉLIBÉRATIF');
+  expect(errors).toEqual([]);
+});
+
+test('une liste de plusieurs personnes se lit « A, B et C »', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-seances').click();
+  await page.locator('#seanceYear').selectOption('2025');
+  await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
+  await page.locator('#seanceList').selectOption('2025-09-24');
+  await expect(page.locator('#seanceResult .elu-name')).toContainText('24/09/2025');
+
+  // Les noms sont bien séparés côté données depuis longtemps ; c'est
+  // l'AFFICHAGE qui les recollait avec « et » entre chacun — « A et B et C et
+  // D et E » se lit comme un libellé brut du PV, pas comme une liste.
+  const lignes = await page.$$eval('#seancePointsList .elu-demandeur, #seancePointsList .elu-rep',
+    els => els.map(e => e.textContent.replace(/\s+/g, ' ').trim()));
+  const multiples = lignes.filter(t => / et /.test(t));
+  expect(multiples.length).toBeGreaterThan(0);
+  multiples.forEach(t => expect(t.match(/ et /g)).toHaveLength(1));
+  expect(multiples.some(t => t.includes(', '))).toBe(true);
+  expect(errors).toEqual([]);
+});
+
+test('le graphe d\'activité s\'empile par type et s\'isole à la puce', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await page.locator('#tab-stats').click();
+  await expect(page.locator('#drillLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
+
+  // 1. Quatre types, et la somme des segments EST le total affiché : c'est ce
+  //    qui permet de lire 45 ici et 45 dans le graphe des issues plus bas.
+  const puces = await page.$$eval('#drillLegend .yc-legend-chip', els => els.map(e => e.textContent.trim()));
+  expect(puces).toEqual(['Point délibératif', 'Motion', 'Question orale', 'Demande']);
+  const totalActivite = await page.$$eval('#drillPlot .yc-col .yc-val',
+    els => els.reduce((a, e) => a + (+e.textContent.replace(/[^\d]/g, '') || 0), 0));
+  const totalIssues = await page.$$eval('#statutPlot .yc-col .yc-val',
+    els => els.reduce((a, e) => a + (+e.textContent.replace(/[^\d]/g, '') || 0), 0));
+  expect(totalActivite).toBe(totalIssues);
+
+  // 2. Isoler une série : la barre ne mesure plus que ce type, et le titre le dit.
+  const avant = await page.$$eval('#drillPlot .yc-col .yc-val',
+    els => els.map(e => +e.textContent.replace(/[^\d]/g, '') || 0));
+  await page.locator('#drillLegend .yc-legend-chip', { hasText: 'Demande' }).click();
+  await expect(page.locator('#drillTitle')).toHaveText('Demande par année');
+  const apres = await page.$$eval('#drillPlot .yc-col .yc-val',
+    els => els.map(e => +e.textContent.replace(/[^\d]/g, '') || 0));
+  apres.forEach((n, i) => expect(n).toBeLessThanOrEqual(avant[i]));
+  expect(apres.reduce((a, b) => a + b, 0)).toBeLessThan(totalActivite);
+
+  // 3. Le graphe des issues suit : « que devient une demande ? » — son titre
+  //    le dit, et son total tombe sur celui de la série isolée.
+  await expect(page.locator('#statutTitle')).toHaveText('Issue des demandes par année');
+  const issuesIsolees = await page.$$eval('#statutPlot .yc-col .yc-val',
+    els => els.reduce((a, e) => a + (+e.textContent.replace(/[^\d]/g, '') || 0), 0));
+  expect(issuesIsolees).toBe(apres.reduce((a, b) => a + b, 0));
+
+  // 4. Re-cliquer revient à l'empilement complet, des deux côtés.
+  await page.locator('#drillLegend .yc-legend-chip', { hasText: 'Demande' }).click();
+  await expect(page.locator('#drillTitle')).toHaveText('Activité par année');
+  await expect(page.locator('#statutTitle')).toHaveText('Issue des points par année');
+
+  // 5. Métrique « PV » : on compte des séances, il n'y a rien à répartir.
+  await page.locator('[data-metric="pv"]').click();
+  await expect(page.locator('#drillLegend .yc-legend-chip')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
