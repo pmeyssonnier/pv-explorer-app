@@ -4,6 +4,7 @@ import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, fmtMontant, renderThemeTags,
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, hasDebateLink,
+  renderLoadingReveil,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 import { createCombobox } from './combobox.js';
@@ -56,8 +57,15 @@ export async function loadSeances() {
   if (seancesLoaded) return;
   const yearSel = document.getElementById('seanceYear');
   if (!yearSel) return;
+  // Premier appel réseau de l'onglet : le plus exposé au réveil du service
+  // (voir utils.REVEIL_DELAI_MS). #seanceResult est vide tant qu'aucune
+  // séance n'est chargée — sans ce message, cette attente s'y lisait comme
+  // un panneau resté blanc plutôt qu'un chargement en cours.
+  const box = document.getElementById('seanceResult');
+  const finReveil = box ? renderLoadingReveil(box, 'Chargement des séances') : () => {};
   try {
     const res = await fetch(API_URL + '/seances');
+    finReveil();   // réponse arrivée : le message de réveil n'a plus lieu d'être
     if (!res.ok) throw new Error('Erreur ' + res.status);
     seancesData = (await res.json()).seances || [];
     seancesLoaded = true;
@@ -77,6 +85,7 @@ export async function loadSeances() {
     }
     pendingSeanceDate = null;
   } catch (err) {
+    finReveil();   // idempotent — utile si le fetch lui-même a échoué (réseau) avant la ligne ci-dessus
     yearSel.innerHTML = '<option value="">Indisponible</option>';
   }
 }

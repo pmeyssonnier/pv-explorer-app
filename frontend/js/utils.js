@@ -193,3 +193,27 @@ export const listeFr = noms => {
 export function renderPersonLine(cssClass, label, name) {
   return name ? `<div class="${cssClass}">${escapeHtml(label)} : ${escapeHtml(name)}</div>` : '';
 }
+
+// ── CHARGEMENT & RÉVEIL DU SERVEUR ──
+// Le plan gratuit qui héberge l'API (voir render.yaml) l'endort après une
+// période d'inactivité ; la réveiller prend jusqu'à une minute, largement
+// plus qu'une requête normale. En dessous de ce délai, une réponse aurait
+// déjà eu le temps d'arriver — pas la peine d'inquiéter pour rien. Partagé
+// par les onglets Séances et Par élu·e, dont le tout premier appel réseau
+// (respectivement /seances et /elus) est le plus exposé : c'est lui qui
+// réveille le service si personne ne l'a fait avant.
+export const REVEIL_DELAI_MS = 4000;
+
+// Indicateur de chargement dont le message évolue si la réponse tarde. Sans
+// lui, une attente de 30 à 50 s sur un simple « Chargement… » se lit comme
+// une panne plutôt qu'un démarrage. Retourne une fonction à appeler dès que
+// la réponse arrive (succès ou échec) pour annuler le minuteur — sans quoi le
+// message de réveil s'afficherait même après une réponse déjà revenue.
+export function renderLoadingReveil(box, msg = 'Chargement') {
+  box.innerHTML = `<div class="loading"><span>${escapeHtml(msg)}</span><span class="dots"><span></span><span></span><span></span></span></div>`;
+  const minuteur = setTimeout(() => {
+    box.innerHTML = `<div class="loading"><span>Réveil du service</span><span class="dots"><span></span><span></span><span></span></span></div>
+      <p class="loading-hint">Le service gratuit qui héberge les données se réveille après une période d'inactivité — jusqu'à une minute la première fois, puis ce sera rapide.</p>`;
+  }, REVEIL_DELAI_MS);
+  return () => clearTimeout(minuteur);
+}
