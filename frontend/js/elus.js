@@ -5,7 +5,7 @@ import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, TYPE_COUNT_LABEL, renderThemeTags,
   renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
-  hasDebateLink, listeFr,
+  hasDebateLink, listeFr, REVEIL_DELAI_MS,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 import { createCombobox } from './combobox.js';
@@ -41,13 +41,28 @@ export async function loadElus() {
   // (base des PV + chapitrage + questions écrites), et le panneau restait
   // vide pendant ce temps.
   renderEluAccueil();
+  // Le champ de recherche reste affiché mais ne peut rien trouver tant que
+  // /elus n'a pas répondu : désactivé, avec un message plutôt qu'un silence.
+  // Si l'API a dû se réveiller (plan Render gratuit, endormi après une
+  // période d'inactivité — voir REVEIL_DELAI_MS), le message évolue pour ne
+  // pas laisser croire à une panne pendant jusqu'à une minute.
+  input.disabled = true;
+  const placeholderInitial = input.placeholder;
+  input.placeholder = 'Chargement…';
+  const minuteurReveil = setTimeout(() => {
+    input.placeholder = 'Réveil du service, patientez…';
+  }, REVEIL_DELAI_MS);
   try {
     const res = await fetch(API_URL + '/elus');
+    clearTimeout(minuteurReveil);
     if (!res.ok) throw new Error('Erreur ' + res.status);
     elusData = (await res.json()).elus || [];
     elusLoaded = true;
+    input.disabled = false;
+    input.placeholder = placeholderInitial;
     populateElus();
   } catch (err) {
+    clearTimeout(minuteurReveil);
     input.disabled = true;
     input.placeholder = 'Indisponible';
   }
