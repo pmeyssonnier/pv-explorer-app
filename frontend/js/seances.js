@@ -17,12 +17,20 @@ let currentSeanceDetail = null;
 // doit garder "__all__" sélectionné plutôt que retomber sur la plus récente.
 let currentAggregateYear = null;
 // Filtres de la séance affichée (réinitialisés à chaque nouvelle séance
-// chargée) : 'all', un type_label ("Motion", "Question orale", …), ou une
-// FACETTE qui se superpose aux types — 'debat_filme' (a un lien vers le débat
-// filmé, voir hasDebateLink) ou 'statut:<libellé>' (issue du point :
-// « Approuvé », « Reporté », « Retiré »…). Détail dans seanceTypeChips /
-// seanceFacetChips.
+// chargée). Type et facette sont deux variables DISTINCTES, pas une seule :
+// une motion rejetée doit pouvoir se filtrer par les deux à la fois, et
+// choisir l'un doit recalculer les valeurs ATTEIGNABLES de l'autre (voir
+// renderSeanceFilterOptions) — deux rangées de puces qui se croisent, plutôt
+// qu'un choix qui en efface un autre.
+//   seanceTypeFilter  : 'all' ou un type_label ("Motion", "Question orale"…) —
+//                       PARTITION des points, un seul par point.
+//   seanceFacetFilter : 'all', 'debat_filme' (lien vers le débat filmé, voir
+//                       hasDebateLink), 'statut:<libellé>' (issue du point :
+//                       « Approuvé », « Rejeté », « Reporté »…), ou l'un des
+//                       deux MANQUES ('sans_decision', 'intervenant_inconnu').
+//                       Se superpose aux types plutôt que de les partitionner.
 let seanceTypeFilter = 'all';
+let seanceFacetFilter = 'all';
 let seanceThemeFilter = 'all';
 // Personne (demandeur·se OU répondant·e) impliquée dans le point — un même
 // filtre couvre les deux rôles, pour retrouver tout ce qui concerne une
@@ -215,12 +223,14 @@ export async function loadSeance(date, opts = {}) {
 // c'est ce qui permet de calculer "les points qui passeraient le filtre X
 // si on l'ignorait" pour peupler les options de X.
 function matchesType(p) {
-  return seanceTypeFilter === 'all' ? true
-    : seanceTypeFilter === 'debat_filme' ? hasDebateLink(p)
-    : seanceTypeFilter === 'sans_decision' ? estSansDecision(p)
-    : seanceTypeFilter === 'intervenant_inconnu' ? estIntervenantInconnu(p)
-    : seanceTypeFilter.startsWith('statut:') ? p.statut === seanceTypeFilter.slice(7)
-    : p.type_label === seanceTypeFilter;
+  return seanceTypeFilter === 'all' || p.type_label === seanceTypeFilter;
+}
+function matchesFacet(p) {
+  return seanceFacetFilter === 'all' ? true
+    : seanceFacetFilter === 'debat_filme' ? hasDebateLink(p)
+    : seanceFacetFilter === 'sans_decision' ? estSansDecision(p)
+    : seanceFacetFilter === 'intervenant_inconnu' ? estIntervenantInconnu(p)
+    : p.statut === seanceFacetFilter.slice(7);   // 'statut:<libellé>'
 }
 // Point du PV dont on ne sait PAS ce qu'il est devenu — le solde entre ce que
 // la séance compte de points et ce que les puces d'issue savent en dire. Même
@@ -260,7 +270,9 @@ function matchesPerson(p) {
   return seancePersonFilter === 'all'
     || personnesDuPoint(p).some(x => x.nom === seancePersonFilter);
 }
-function pointMatchesFilters(p) { return matchesType(p) && matchesTheme(p) && matchesPerson(p); }
+function pointMatchesFilters(p) {
+  return matchesType(p) && matchesFacet(p) && matchesTheme(p) && matchesPerson(p);
+}
 
 // Types réellement atteignables compte tenu des filtres thématique/
 // intervenant·e actifs, avec leur nombre de points, plus deux pseudo-types
@@ -362,15 +374,22 @@ function seancePersonOptionHtml(p, { id, active, selected, label }) {
   </li>`;
 }
 
-// Puces de type (Point/Motion/Question orale/Demande/Débat filmé/Reporté) —
-// remplace l'ancien menu déroulant #seanceTypeFilter
-// (trop de clics pour un choix aussi fréquent que le rôle).
-function seanceTypeChip(value, label, count, aide = null) {
-  if (!count && seanceTypeFilter !== value) return '';
-  const active = seanceTypeFilter === value ? ' elu-chip-active' : '';
+// Une puce de filtre, générique aux deux rangées (type / facette) — chacune
+// avec SA variable active et SON gestionnaire de clic, pour que les deux
+// rangées se croisent au lieu de se remplacer (voir l'en-tête du fichier).
+// Remplace l'ancien menu déroulant #seanceTypeFilter (trop de clics pour un
+// choix aussi fréquent que le rôle).
+function _seanceChip(value, label, count, active, handler, aide = null) {
+  if (!count && !active) return '';
   const facette = aide ? ' elu-chip-facette' : '';
   const title = aide ? ` title="${escapeHtml(aide)}"` : '';
-  return `<button type="button" class="elu-chip${facette}${active}"${title} data-click="onSeanceTypeChipClick" data-arg="${escapeHtml(value)}">${escapeHtml(label)} (${count})</button>`;
+  return `<button type="button" class="elu-chip${facette}${active ? ' elu-chip-active' : ''}"${title} data-click="${handler}" data-arg="${escapeHtml(value)}">${escapeHtml(label)} (${count})</button>`;
+}
+function seanceTypeChip(value, label, count, aide = null) {
+  return _seanceChip(value, label, count, seanceTypeFilter === value, 'onSeanceTypeChipClick', aide);
+}
+function seanceFacetChip(value, label, count, aide = null) {
+  return _seanceChip(value, label, count, seanceFacetFilter === value, 'onSeanceFacetChipClick', aide);
 }
 function seanceTypeChips(points) {
   return _TYPE_FILTER_ORDER
@@ -401,24 +420,24 @@ function seanceStatutCounts(points) {
 }
 
 function seanceFacetChips(points) {
-  const chips = [seanceTypeChip('debat_filme', 'Avec débat filmé', points.filter(hasDebateLink).length,
+  const chips = [seanceFacetChip('debat_filme', 'Avec débat filmé', points.filter(hasDebateLink).length,
     'Points menant au débat filmé — chapitres vidéo autonomes ET points de PV appariés à leur chapitre. Se recoupe avec les types.')];
   // Statuts (« Approuvé », « Reporté »…) : l'issue d'un point est indépendante
   // de son type, d'où leur place ici plutôt que parmi les puces de type.
   seanceStatutCounts(points).forEach(([st, n]) => {
-    chips.push(seanceTypeChip(`statut:${st}`, st, n,
+    chips.push(seanceFacetChip(`statut:${st}`, st, n,
       `Points dont l'issue est « ${st} ». Chacun compte aussi dans son type.`));
   });
   // Puis les deux MANQUES, en fin de rangée : ce que la source ne dit pas, là
   // où elle le dit d'habitude. Ils ne s'affichent que s'il y en a — sur la
   // plupart des séances, cette fin de rangée est vide.
-  chips.push(seanceTypeChip('sans_decision', 'Sans issue relevée',
+  chips.push(seanceFacetChip('sans_decision', 'Sans issue relevée',
     points.filter(estSansDecision).length,
     "Points dont le procès-verbal ne dit pas ce qu'ils sont devenus — ni décision, "
     + "ni débat, ni prise pour information. C'est l'écart entre le nombre de points de "
     + "la séance et la somme des puces d'issue ci-contre. Les chapitres vidéo sans "
     + "point de PV n'en font pas partie : ils n'ont aucune issue par construction."));
-  chips.push(seanceTypeChip('intervenant_inconnu', 'Intervenant·e inconnu·e',
+  chips.push(seanceFacetChip('intervenant_inconnu', 'Intervenant·e inconnu·e',
     points.filter(estIntervenantInconnu).length,
     `Motions, questions orales et demandes qui ne nomment personne — ni auteur·e ni `
     + `répondant·e — alors que ces types-là sont déposés par quelqu'un. Les points `
@@ -441,18 +460,24 @@ function renderSeanceFilterOptions() {
   const all = currentSeanceDetail.points;
   const typeBox = document.getElementById('seanceTypeChips');
   const facetBox = document.getElementById('seanceFacetChips');
-  const pourLesPuces = all.filter(p => matchesTheme(p) && matchesPerson(p));
-  if (typeBox) typeBox.innerHTML = seanceTypeChips(pourLesPuces);
-  if (facetBox) facetBox.innerHTML = seanceFacetChips(pourLesPuces);
+  // Types : recalculés sur les points qui passeraient facette/thème/
+  // intervenant·e — pas le type lui-même. Choisir un statut (facette) doit
+  // ainsi recompter les types de CE statut, et réciproquement.
+  if (typeBox) {
+    typeBox.innerHTML = seanceTypeChips(all.filter(p => matchesFacet(p) && matchesTheme(p) && matchesPerson(p)));
+  }
+  if (facetBox) {
+    facetBox.innerHTML = seanceFacetChips(all.filter(p => matchesType(p) && matchesTheme(p) && matchesPerson(p)));
+  }
   if (seanceThemeCombo) {
     seanceThemeCombo.setItems(
-      seanceThemeFilterOptions(all.filter(p => matchesType(p) && matchesPerson(p))));
+      seanceThemeFilterOptions(all.filter(p => matchesType(p) && matchesFacet(p) && matchesPerson(p))));
     // '' est la clé de l'entrée « toutes » — le filtre, lui, dit 'all'.
     seanceThemeCombo.setSelected(seanceThemeFilter === 'all' ? '' : seanceThemeFilter);
   }
   if (seancePersonCombo) {
     seancePersonCombo.setItems(
-      seancePersonFilterOptions(all.filter(p => matchesType(p) && matchesTheme(p))));
+      seancePersonFilterOptions(all.filter(p => matchesType(p) && matchesFacet(p) && matchesTheme(p))));
     // '' est la clé de l'entrée « tou·te·s » — le filtre, lui, dit 'all'.
     seancePersonCombo.setSelected(seancePersonFilter === 'all' ? '' : seancePersonFilter);
   }
@@ -468,8 +493,8 @@ function renderSeancePoints() {
   list.innerHTML = filtered.length
     ? filtered.map(seancePointRow).join('')
     : '<p class="trend-empty">Aucun point ne correspond à ces filtres.</p>';
-  const filtering = seanceTypeFilter !== 'all' || seanceThemeFilter !== 'all'
-    || seancePersonFilter !== 'all';
+  const filtering = seanceTypeFilter !== 'all' || seanceFacetFilter !== 'all'
+    || seanceThemeFilter !== 'all' || seancePersonFilter !== 'all';
   if (count) {
     count.textContent = filtering ? `${filtered.length} / ${currentSeanceDetail.points.length} point(s) affiché(s)` : '';
   }
@@ -485,13 +510,23 @@ function onSeancePersonSelect(key) {
   refreshSeanceFilteredView();
 }
 // Reclique sur la puce déjà active → "Tous les types" ; sinon sélectionne ce
-// type (même geste que les puces de l'onglet Par élu·e).
+// type (même geste que les puces de l'onglet Par élu·e). Ne touche QUE
+// seanceTypeFilter : une facette (statut…) déjà choisie reste active, et se
+// recalcule sur ce nouveau type via renderSeanceFilterOptions.
 export function onSeanceTypeChipClick(type) {
   seanceTypeFilter = seanceTypeFilter === type ? 'all' : type;
   refreshSeanceFilteredView();
 }
+// Même geste, pour la rangée des facettes (statut, débat filmé, manques) —
+// variable séparée, pour que type et facette se croisent au lieu de
+// s'écraser l'un l'autre.
+export function onSeanceFacetChipClick(value) {
+  seanceFacetFilter = seanceFacetFilter === value ? 'all' : value;
+  refreshSeanceFilteredView();
+}
 function onSeanceFilterReset() {
   seanceTypeFilter = 'all';
+  seanceFacetFilter = 'all';
   seanceThemeFilter = 'all';
   seancePersonFilter = 'all';
   refreshSeanceFilteredView();
@@ -501,6 +536,7 @@ function renderSeance(d, scroll) {
   currentSeanceDetail = d;
   currentAggregateYear = d.isAggregate ? d.year : null;
   seanceTypeFilter = 'all';
+  seanceFacetFilter = 'all';
   seanceThemeFilter = 'all';
   seancePersonFilter = 'all';
   const box = document.getElementById('seanceResult');
