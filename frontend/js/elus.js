@@ -369,7 +369,7 @@ function filterByTheme(items, theme) {
 // Ordre d'affichage fixe (pas l'ordre d'apparition dans les données) : même
 // ordre que TYPE_BADGE côté utils.js, pour une liste toujours dans le même
 // sens quel que soit l'élu·e sélectionné·e.
-const TYPE_FILTER_ORDER = ['Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
+const TYPE_FILTER_ORDER = ['Point', 'Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
 const TYPE_DEBAT = 'Débat filmé';
 
 // « Débat filmé » est une FACETTE, pas un type exclusif — même définition que
