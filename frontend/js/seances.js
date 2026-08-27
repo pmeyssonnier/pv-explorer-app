@@ -2,8 +2,9 @@
 // pas seulement ceux d'une personne) ──
 import { API_URL } from './config.js';
 import {
-  escapeHtml, formatDate, TYPE_ACTOR_LABEL, fmtMontant, renderThemeTags,
-  renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, hasDebateLink,
+  escapeHtml, formatDate, TYPE_ACTOR_LABEL, renderThemeTags,
+  renderTypeBadge, renderStatutBadge, renderDecision, renderMontant,
+  renderPvPdfLink, renderVideoLink, renderPersonLine, hasDebateLink,
   renderLoadingReveil,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
@@ -166,11 +167,7 @@ export function jumpToSeance(date) {
 
 function seancePointRow(it) {
   const badge = renderTypeBadge(it.type_label);
-  // Deux statuts DISTINCTS (voir backend seances.py _is_reportee/_is_retire) :
-  // « Reporté » (renvoyé à une séance ultérieure) vs « Retiré » (ôté de
-  // l'ordre du jour) — jamais confondus.
-  const statutBadge = it.reporte ? `<span class="elu-badge b-report">Reporté</span>`
-    : it.retire ? `<span class="elu-badge b-retire">Retiré</span>` : '';
+  const statutBadge = renderStatutBadge(it);
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   // Vue agrégée "Toutes les séances" uniquement : rappelle de quelle séance
   // vient ce point, et permet d'y revenir directement (voir jumpToSeance).
@@ -189,10 +186,8 @@ function seancePointRow(it) {
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, it.demandeur);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
-  // Déjà signalé via le badge « Reporté »/« Retiré » ci-dessus, pas besoin de répéter.
-  const decision = (it.decision && !it.reporte && !it.retire) ? `<div class="elu-decision">${escapeHtml(it.decision)}</div>` : '';
-  const montant = (it.montant_eur !== null && it.montant_eur !== undefined)
-    ? `<div class="elu-montant">Montant engagé : ${fmtMontant(it.montant_eur)}</div>` : '';
+  const decision = renderDecision(it);
+  const montant = renderMontant(it);
   const tags = renderThemeTags(it.thematiques);
   return `<div class="elu-item">
     <div class="elu-body">

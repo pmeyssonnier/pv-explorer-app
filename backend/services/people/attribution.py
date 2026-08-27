@@ -21,7 +21,9 @@ mandat :
 """
 import re
 
+import lexique_store
 from utils.statut import STATUT_TRAITE, dimensions
+from utils.text import _DECISION_LABELS
 from services.people.names import (
     _RESP_SPLIT, _clean, _is_role_token, _key, _looks_like_name,
     _split_person_names, _strip_accents,
@@ -222,6 +224,82 @@ def _respondents(raw: str, seance: dict) -> list:
             if b and _looks_like_name(b):
                 names.append(b)
     return names
+
+
+# ── Issue d'un point (décision + vote) ──────────────────────────────────────
+# Partagé entre l'agrégation par personne (registry._build_all, pour le champ
+# « decision » d'une réponse en séance) et la vue par séance (seance_detail) —
+# vivent ici, pas dans services.seances, pour rester importables par les deux
+# sans import circulaire (services.seances importe déjà depuis ce module ET
+# depuis services.people.registry).
+
+# Mention du VOTE parfois recollée à la décision par le PV (« Pris acte à
+# l'unanimité », « Pris pour information (33 pour, 0 contre, 0 abstentions) »).
+# Le statut doit rester le libellé nu : sans ce retrait, chaque variante de
+# décompte formerait son propre statut — donc sa propre puce dans l'onglet
+# Séances et sa propre part dans le graphe des issues. Le décompte n'est pas
+# perdu : `_decision_summary` le réaffiche depuis le champ `vote`, qui en est
+# la source structurée. La base actuelle écrit des libellés nus ; c'est ce qui
+# se passera si l'extraction change qui est couvert ici.
+_MENTION_VOTE = re.compile(
+    r"\s*(?:[-–—,;:]\s*)?(?:"
+    r"a l'unanimite"
+    r"|\(\s*\d+\s*(?:pour|voix)[^)]*\)"
+    r"|par \d+\s*(?:voix|pour)\b.*"
+    r")\s*$"
+)
+
+
+def _decision_label(decision):
+    """Statut canonique d'un point, SANS le détail du vote : « Approuvé »,
+    « Décidé », « Pris pour information », « Reporté », « Retiré »… None si
+    aucune décision (ex. chapitre vidéo sans point de PV). Ce que
+    `_decision_summary` complète ensuite du décompte des voix — mais un
+    libellé stable est ce qu'il faut pour regrouper/filtrer les points par
+    issue (voir les puces de statut de l'onglet Séances), là où « Approuvé à
+    l'unanimité » et « Approuvé (33 pour, 9 contre) » sont un même statut."""
+    d = (decision or "").strip()
+    if not d:
+        return None
+    norm = _strip_accents(d).lower()
+    nu = _MENTION_VOTE.sub("", norm).strip()
+    if nu and nu != norm:
+        # _strip_accents ne change pas la longueur (NFD puis retrait des
+        # diacritiques) : la coupe se reporte telle quelle sur le texte
+        # d'origine, accents compris. On se garde quand même du cas contraire.
+        if len(norm) == len(d):
+            d = d[:len(nu)].strip()
+        norm = nu
+    # Lexique éditable en priorité, puis libellés en dur, puis repli casse
+    # (variantes rares/coquilles non répertoriées).
+    return (lexique_store.decisions().get(norm) or _DECISION_LABELS.get(norm)
+            or (d[:1].upper() + d[1:].lower()))
+
+
+def _decision_summary(decision, vote):
+    """Résumé lisible de l'issue d'un point (décision + vote quand il y en a
+    un), pour indiquer explicitement, selon chaque cas, pourquoi il n'y a
+    par exemple ni répondant·e ni débat filmé à trouver (point voté sans
+    discussion, reporté, pris pour information...) plutôt que de laisser
+    croire à une recherche infructueuse. None si la décision est vide."""
+    label = _decision_label(decision)
+    if not label:
+        return None
+    vote = vote if isinstance(vote, dict) else {}
+    vtype = vote.get("type")
+    if vtype == "unanimite":
+        return f"{label} à l'unanimité"
+    if vtype == "vote_nominal":
+        pour = vote.get("pour")
+        contre = vote.get("contre") or 0
+        abst = vote.get("abstentions") or 0
+        bits = []
+        if pour is not None:
+            bits.append(f"{pour} pour")
+        bits.append(f"{contre} contre")
+        bits.append(f"{abst} abstention{'s' if abst != 1 else ''}")
+        return f"{label} ({', '.join(bits)})"
+    return label
 
 
 # ── Audit « sans demandeur » (hors-ligne, sans PDF ni LLM) ───────────────────

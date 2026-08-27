@@ -4,7 +4,8 @@
 import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, TYPE_COUNT_LABEL, renderThemeTags,
-  renderTypeBadge, renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
+  renderTypeBadge, renderStatutBadge, renderDecision, renderMontant,
+  renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
   hasDebateLink, listeFr, REVEIL_DELAI_MS,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
@@ -445,6 +446,7 @@ export function onEluChipClick(typeLabel) {
 
 function eluDeposeRow(it, nom) {
   const badge = renderTypeBadge(it.type_label);
+  const statutBadge = renderStatutBadge(it);
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   // Lien : deep-link « ▶ Voir le débat » pour un point filmé (débat filmé
   // pur, ou point PV fusionné avec son chapitre vidéo — video_precise), sinon
@@ -478,15 +480,19 @@ function eluDeposeRow(it, nom) {
   const auteurs = listeFr([nom, ...co]);
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, auteurs);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
+  const decision = renderDecision(it);
+  const montant = renderMontant(it);
   const tags = renderThemeTags(it.thematiques);
   const reponse = it.type === 'question_ecrite' ? renderReponseDetails(it.reponse) : '';
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
-      ${badge}${sp}
+      ${badge}${statutBadge}${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}
+      ${decision}
+      ${montant}
       ${tags}
       ${reponse}
       ${links ? `<div class="elu-links">${links}</div>` : ''}
@@ -498,18 +504,33 @@ function eluRepondRow(it, nom) {
   // Badge = type du POINT auquel on répond (voir registry.py) : montre à
   // quel filtre de puce cette réponse correspond, comme pour un dépôt.
   const badge = renderTypeBadge(it.type_label);
+  const statutBadge = renderStatutBadge(it);
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   const link = renderPvPdfLink(it.url);
   const demandeur = renderPersonLine('elu-demandeur', 'Demandé par', it.demandeur);
-  const rep = renderPersonLine('elu-rep', 'Répondant·e', nom);
+  // Point délibératif seulement (voir registry.py) : qui d'autre est
+  // intervenu au débat — même libellé que TYPE_ACTOR_LABEL['Point'], même
+  // ligne que l'onglet Séances pour ce même point.
+  const intervenants = renderPersonLine('elu-demandeur', 'Intervenant·e·s', it.intervenants);
+  // Point à plusieurs répondant·e·s (« Denis Grimberghs et Cécile
+  // Jodogne ») : les DEUX affiché·e·s côte à côte, comme l'onglet Séances —
+  // même schéma que les cosignataires d'une question écrite (co_auteurs).
+  const coRep = Array.isArray(it.co_repondants) ? it.co_repondants
+    : (it.co_repondants ? [it.co_repondants] : []);
+  const rep = renderPersonLine('elu-rep', 'Répondant·e', listeFr([nom, ...coRep]));
+  const decision = renderDecision(it);
+  const montant = renderMontant(it);
   const tags = renderThemeTags(it.thematiques);
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
-      ${badge}${sp}
+      ${badge}${statutBadge}${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
+      ${intervenants}
       ${rep}
+      ${decision}
+      ${montant}
       ${tags}
       ${link ? `<div class="elu-links">${link}</div>` : ''}
     </div>
