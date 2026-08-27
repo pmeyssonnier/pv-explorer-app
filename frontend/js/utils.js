@@ -104,6 +104,7 @@ export const TYPE_ACTOR_LABEL = {
 // par les puces cliquables de l'onglet Par élu·e (résumé d'activité) et de
 // l'onglet Statistiques (légende du graphe « Activité citoyenne »).
 export const TYPE_COUNT_LABEL = {
+  'Point': n => `${n} point${n > 1 ? 's' : ''} délibératif${n > 1 ? 's' : ''}`,
   'Question orale': n => `${n} question${n > 1 ? 's' : ''} orale${n > 1 ? 's' : ''}`,
   'Demande': n => `${n} demande${n > 1 ? 's' : ''}`,
   'Motion': n => `${n} motion${n > 1 ? 's' : ''}`,
