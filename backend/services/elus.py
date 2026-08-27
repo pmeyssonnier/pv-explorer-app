@@ -29,7 +29,8 @@ from services.people.attribution import (  # noqa: F401 (réexportés)
 )
 from services.people.names import (  # noqa: F401 (réexportés)
     _best_display_variant, _clean, _HOMONYM_KEY_OVERRIDES, _is_non_person_video_author,
-    _is_role_token, _key, _norm_tok, _resolve_display_name, _split_person_names, _titlecase,
+    _is_role_token, _key, _NON_ELU_REPONDANTS, _norm_tok, _resolve_display_name,
+    _split_person_names, _titlecase,
 )
 from services.people.mandats import mandats_for  # noqa: F401 (réexporté)
 from services.people.registry import (  # noqa: F401 (réexportés)
