@@ -15,10 +15,13 @@ from collections import defaultdict
 import lexique_store
 from services.statistics import load_db
 from services.questions_ecrites import QE_JSON_PATH, load_qe_db
+from utils.statut import STATUT_REPORTE, STATUT_RETIRE, dimensions, mot_issue
 from utils.text import _thematique_label, liste_fr
 from utils.video import video_session_map
 
-from services.people.attribution import _author_of, _point_author, _respondents
+from services.people.attribution import (
+    _author_of, _decision_summary, _point_author, _respondents, _TYPE_LABEL,
+)
 from services.people.mandats import current_role
 from services.people.names import (
     _DISPLAY_NAME_OVERRIDES, _best_display_variant, _clean, _is_non_person_video_author,
@@ -217,10 +220,45 @@ def _build_all():
             # l'affichage "repondant" côté "depose" — canonisés en fin de
             # fonction (voir nom_by_key) pour un affichage homogène (casse,
             # ordre prénom/nom, nom complet) plutôt que le texte brut du PV.
+            # Résolus AVANT la boucle qui les ajoute (pas au fil de l'eau) :
+            # un point à plusieurs répondant·e·s (« Denis Grimberghs et
+            # Cécile Jodogne ») doit exclure LES DEUX des intervenant·e·s
+            # affichés ci-dessous, pas seulement celui/celle dont on
+            # construit la fiche.
             resp_raw = p.get("repondant")
+            resp_names = _respondents(resp_raw, meta)
+            resp_keys_all = [_key(name, pairs) for name in resp_names]
+            resp_keys_connus = {k for k in resp_keys_all if k}
+
+            # Intervenant·e·s à afficher sur la fiche des RÉPONDANT·E·S d'un
+            # point délibératif (approbation, règlement…) — jamais compté
+            # comme un dépôt (voir docstring du module, et le commentaire
+            # analogue de seance_detail) : intervenir dans un débat n'est
+            # pas déposer un point, ça reste de l'AFFICHAGE seulement. Même
+            # repli qu'en séance : à défaut d'un·e auteur·e attribuable (rare
+            # pour ce type — voir _MANUAL_AUTHOR_OVERRIDES), les noms bruts
+            # du PV. Les répondant·e·s ont déjà leur propre ligne : exclu·e·s
+            # de la liste plutôt que répété·e·s dedans.
+            interv_keys = []
+            if _TYPE_LABEL.get(p.get("type"), "Point") == "Point":
+                interv_names = _split_person_names(author) if author_key else []
+                if not interv_names:
+                    interv_names = [n for mention in (p.get("intervenants") or [])
+                                     for n in _split_person_names(mention)]
+                interv_keys = [k for n in interv_names
+                               if (k := _key(n, pairs)) and k not in resp_keys_connus]
+            # Issue du point (décision + décompte du vote), traitement
+            # (reporté/retiré) et montant engagé — indépendants de qui
+            # dépose/répond, calculés une fois par point et joints à CHAQUE
+            # dépôt/réponse qu'il porte (voir seance_detail, même résumé).
+            decision = _decision_summary(mot_issue(p), p.get("vote"))
+            statut_traitement, _, _ = dimensions(p)
+            reporte = statut_traitement == STATUT_REPORTE
+            retire = statut_traitement == STATUT_RETIRE
+            montant_eur = p.get("montant_eur")
+
             resp_keys = []
-            for name in _respondents(resp_raw, meta):
-                k = _key(name, pairs)
+            for name, k in zip(resp_names, resp_keys_all):
                 if not k:
                     continue
                 add_variant(k, name)
@@ -236,6 +274,11 @@ def _build_all():
                     "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
                     "url": meta.get("source_url"),
                     "demandeur_keys": [author_key] if author_key else [],
+                    "intervenant_keys": interv_keys,
+                    "decision": decision,
+                    "reporte": reporte,
+                    "retire": retire,
+                    "montant_eur": montant_eur,
                 })
 
             if author_key:
@@ -252,6 +295,10 @@ def _build_all():
                     "repondant_fallback": None if resp_keys else (_titlecase(_clean(resp_raw or "")) or None),
                     "url": meta.get("source_url"),
                     "video_url": session_map.get(date),
+                    "decision": decision,
+                    "reporte": reporte,
+                    "retire": retire,
+                    "montant_eur": montant_eur,
                 }
                 people[author_key]["depose"].append(entry)
                 pv_lookup[(author_key, date)].append(entry)
@@ -438,6 +485,9 @@ def _build_all():
             dks = entry.pop("demandeur_keys", None) or []
             names = list(dict.fromkeys(nom_by_key[dk] for dk in dks if dk in nom_by_key))
             entry["demandeur"] = liste_fr(names) or None
+            iks = entry.pop("intervenant_keys", None) or []
+            inames = list(dict.fromkeys(nom_by_key[ik] for ik in iks if ik in nom_by_key))
+            entry["intervenants"] = liste_fr(inames) or None
         d["depose"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         d["repond"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         index[k] = {

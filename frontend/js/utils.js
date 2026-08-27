@@ -177,6 +177,27 @@ export function renderTypeBadge(typeLabel) {
   return `<span class="elu-badge ${cls}" title="${escapeHtml(typeLabel)}">${escapeHtml(texte)}</span>`;
 }
 
+// Deux statuts DISTINCTS (voir backend services/statistics.dimensions) :
+// « Reporté » (renvoyé à une séance ultérieure) vs « Retiré » (ôté de l'ordre
+// du jour) — jamais confondus.
+export function renderStatutBadge(it) {
+  return it.reporte ? `<span class="elu-badge b-report">Reporté</span>`
+    : it.retire ? `<span class="elu-badge b-retire">Retiré</span>` : '';
+}
+
+// Issue du point (décision + décompte du vote). Un point reporté ou retiré
+// n'a rien été décidé ce jour-là — déjà signalé via le badge de statut
+// ci-dessus, inutile de le répéter.
+export function renderDecision(it) {
+  return (it.decision && !it.reporte && !it.retire)
+    ? `<div class="elu-decision">${escapeHtml(it.decision)}</div>` : '';
+}
+
+export function renderMontant(it) {
+  return (it.montant_eur !== null && it.montant_eur !== undefined)
+    ? `<div class="elu-montant">Montant engagé : ${fmtMontant(it.montant_eur)}</div>` : '';
+}
+
 export function renderPvPdfLink(url, label = 'PV (PDF)', title = 'Ouvrir le PV (PDF) sur 1030.be') {
   return url
     ? `<a class="elu-link" href="${url}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(title)}"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>${escapeHtml(label)}</a>`

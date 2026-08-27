@@ -85,6 +85,12 @@ def elu_detail(key: str):
             "url": it.get("url"),
             "video_url": it.get("video_url"),
             "video_precise": bool(it.get("video_precise")),
+            # Même résumé d'issue que l'onglet Séances pour ce point (None
+            # pour un débat filmé/une question écrite, qui n'en ont pas).
+            "decision": it.get("decision"),
+            "reporte": bool(it.get("reporte")),
+            "retire": bool(it.get("retire")),
+            "montant_eur": it.get("montant_eur"),
         }
 
     def _fmt_repond(it):
@@ -96,6 +102,13 @@ def elu_detail(key: str):
             "thematiques": it.get("thematiques") or [],
             "url": it.get("url"),
             "demandeur": it.get("demandeur"),
+            # Point délibératif seulement (voir registry.py) : qui d'autre
+            # est intervenu au débat, et ce que le conseil en a décidé.
+            "intervenants": it.get("intervenants"),
+            "decision": it.get("decision"),
+            "reporte": bool(it.get("reporte")),
+            "retire": bool(it.get("retire")),
+            "montant_eur": it.get("montant_eur"),
         }
 
     depose = e["depose"]
