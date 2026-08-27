@@ -63,11 +63,28 @@ _DISPLAY_NAME_OVERRIDES = {
 # hériterait alors du nom affiché de l'autre. Ex. Marie Nyssens, autrice
 # d'une question écrite isolée (2020), n'a aucun lien avec Clotilde
 # Nyssens, conseillère communale citée des dizaines de fois dans les PV.
-# Clé = nom complet nettoyé (prénom + nom), accents/casse normalisés ;
+# Emel Köse (conseillère depuis 2019) et Saït Köse (échevin 2012-2018, puis
+# conseiller) siègent SIMULTANÉMENT — les deux nommé·e·s côte à côte à
+# l'installation du conseil du 01/12/2024 (« KÖSE Emel » / « KÖSE Saït » sur
+# le même point) : preuve directe que ce sont deux personnes, pas une
+# mention à deux dates différentes de la même.
+# Clé = ENSEMBLE des mots du nom complet nettoyé (accents/casse normalisés,
+# ordre indifférent — « Marie Nyssens » et « Nyssens Marie », vues toutes
+# deux dans le corpus, doivent matcher pareil, voir _homonym_override) ;
 # valeur = clé d'identité dédiée (jamais celle du seul nom de famille).
+# Une mention SANS prénom (« Nyssens », « Köse » seul) reste sur la clé par
+# défaut (la personne la plus citée) : aucun signal pour la désambiguïser,
+# et on ne devine jamais — seules les mentions portant le prénom complet
+# migrent vers la fiche dédiée.
 _HOMONYM_KEY_OVERRIDES = {
-    "marie nyssens": "nyssens_marie",
+    frozenset({"marie", "nyssens"}): "nyssens_marie",
+    frozenset({"emel", "kose"}): "kose_emel",
 }
+
+
+def _homonym_override(cleaned: str) -> str | None:
+    toks = frozenset(_norm_tok(t) for t in re.split(r"\s+", cleaned) if t)
+    return _HOMONYM_KEY_OVERRIDES.get(toks)
 
 # Organismes captés à tort comme « auteur » sur des points de convention/
 # partenariat du chapitrage vidéo (le contre-signataire, pas un·e citoyen·ne
@@ -126,7 +143,7 @@ def _key(name: str, pairs: set | None = None) -> str:
     — seule la paire complète est fiable.
     """
     cleaned = _clean(name)
-    override = _HOMONYM_KEY_OVERRIDES.get(_strip_accents(cleaned).lower())
+    override = _homonym_override(cleaned)
     if override:
         return override
     toks = [t for t in re.split(r"\s+", cleaned) if t]

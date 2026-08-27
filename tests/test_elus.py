@@ -27,6 +27,40 @@ def test_key_matches_pv_surname_and_video_fullname():
     assert elus._key("Noël, Bourgmestre") == "noel"
 
 
+def test_key_homonym_override_matches_regardless_of_word_order():
+    # « Marie Nyssens » (autrice, sans lien avec Clotilde Nyssens, conseillère
+    # citée des dizaines de fois) doit rester séparée quel que soit l'ordre
+    # des mots dans la mention brute (le PV mélange les deux, voir
+    # test_key_resolves_reversed_name_order_via_pairs) — bug réel trouvé en
+    # audit : « NYSSENS Marie »/« Nyssens Marie » (ordre inversé) échappaient
+    # à l'ancien override (comparaison de chaîne exacte, sensible à l'ordre)
+    # et polluaient la fiche de Clotilde.
+    assert elus._key("Marie Nyssens") == "nyssens_marie"
+    assert elus._key("NYSSENS Marie") == "nyssens_marie"
+    assert elus._key("Nyssens Marie") == "nyssens_marie"
+    # Mention SANS prénom : aucun signal pour désambiguïser, reste sur la
+    # clé par défaut (la personne la plus citée) — jamais une supposition.
+    assert elus._key("Nyssens") == "nyssens"
+    assert elus._key("Mme Nyssens") == "nyssens"
+
+
+def test_key_separates_emel_and_sait_kose():
+    # Deux personnes RÉELLES et DISTINCTES partageant un nom de famille : Saït
+    # Köse (échevin 2012-2018, puis conseiller) et Emel Köse (conseillère
+    # depuis 2019), toutes deux nommées côte à côte à l'installation du
+    # conseil du 01/12/2024 (« KÖSE Emel » / « KÖSE Saït » sur le même point
+    # du PV) — preuve qu'elles siègent SIMULTANÉMENT, pas la même personne à
+    # deux époques. _key() (nom de famille seul) les fusionnait à tort.
+    assert elus._key("Emel Köse") == "kose_emel"
+    assert elus._key("KÖSE Emel") == "kose_emel"
+    assert elus._key("Köse Emel") == "kose_emel"
+    assert elus._key("Saït Köse") == "kose"
+    # Mention SANS prénom : reste sur la clé par défaut (Saït, le plus cité
+    # comme répondant·e — ex-échevin) — jamais une supposition sur le genre.
+    assert elus._key("Köse") == "kose"
+    assert elus._key("Monsieur Köse") == "kose"
+
+
 def test_key_resolves_reversed_name_order_via_pairs():
     # Le PV mélange « Prénom Nom » et « Nom Prénom » selon les séances/sources,
     # ce qui scindait une même personne en deux fiches (ex. Verzin à 64
@@ -54,6 +88,21 @@ def test_elus_list_has_no_reversed_name_duplicates():
     assert "vincent" not in keys
     assert "(ff)" not in keys
     assert "ff" not in keys
+
+
+def test_elus_list_separates_emel_and_sait_kose():
+    # Bout en bout sur le corpus réel (pas un mock) : les deux fiches doivent
+    # coexister, avec l'activité qui leur revient réellement — voir
+    # test_key_separates_emel_and_sait_kose pour le détail de la preuve.
+    by_key = {e["key"]: e for e in elus.elus_list()}
+    assert "kose" in by_key
+    assert "kose_emel" in by_key
+    assert by_key["kose"]["nom"] == "Saït Köse"
+    assert by_key["kose_emel"]["nom"] == "Emel Köse"
+    # Saït (ex-échevin) a répondu au nom du Collège ; Emel (conseillère,
+    # jamais au Collège) n'a jamais cette casquette.
+    assert by_key["kose"]["repond"] > 0
+    assert by_key["kose_emel"]["repond"] == 0
 
 
 def test_key_resolves_reversed_particle_surname():
