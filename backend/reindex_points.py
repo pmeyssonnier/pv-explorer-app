@@ -92,28 +92,44 @@ def chunks_depuis_git(ref: str, json_path: Path, commune: str) -> list[dict]:
         tmp.unlink(missing_ok=True)
 
 
+
+# `fetch()` passe les ID en QUERY PARAMS d'un GET (voir pinecone.Index.fetch) —
+# pas de endpoint POST/batch côté SDK. Au-delà de quelques centaines d'ID,
+# l'URL dépasse la limite du serveur (414 Request-URI Too Large, observé en
+# pratique avec ~2 000 ID d'un coup) : la comparaison échouait alors pour
+# TOUS les ID demandés, pas seulement les surnuméraires, faisant passer des
+# points DÉJÀ à jour pour « absents de l'index » — donc ré-envoyés pour rien
+# (idempotent, jamais incorrect, mais gaspille le quota d'embedding).
+_FETCH_BATCH = 100
+
+
 def _lire_index(pc, ids: list[str]) -> dict:
     """{id: chunk_text} tel que Pinecone le stocke AUJOURD'HUI, pour comparer.
 
-    Best-effort : la forme de la réponse a changé selon les versions du SDK, et
-    ne pas pouvoir relire l'index n'est pas une raison de refuser de l'écrire.
-    En cas d'échec, on le dit et on continue sans comparaison.
+    Découpé en lots de _FETCH_BATCH (voir ci-dessus). Best-effort par lot : la
+    forme de la réponse a changé selon les versions du SDK, et ne pas pouvoir
+    relire l'index n'est pas une raison de refuser de l'écrire. Un lot en échec
+    n'empêche pas de lire les autres — ses ID retombent simplement à « absent »
+    par l'appelant, comme avant ce correctif, plutôt que de tout perdre.
     """
-    try:
-        rep = pc.Index(INDEX_NAME).fetch(ids=ids, namespace="pv")
-        vecteurs = getattr(rep, "vectors", None)
-        if vecteurs is None and isinstance(rep, dict):
-            vecteurs = rep.get("vectors", {})
-        out = {}
-        for i, v in (vecteurs or {}).items():
-            meta = getattr(v, "metadata", None)
-            if meta is None and isinstance(v, dict):
-                meta = v.get("metadata")
-            out[i] = (meta or {}).get("chunk_text", "")
-        return out
-    except Exception as e:  # noqa: BLE001 — lecture d'agrément, jamais bloquante
-        print(f"⚠️  Index illisible pour comparaison ({type(e).__name__}: {e})")
-        return {}
+    out = {}
+    index = pc.Index(INDEX_NAME)
+    for i in range(0, len(ids), _FETCH_BATCH):
+        lot = ids[i:i + _FETCH_BATCH]
+        try:
+            rep = index.fetch(ids=lot, namespace="pv")
+            vecteurs = getattr(rep, "vectors", None)
+            if vecteurs is None and isinstance(rep, dict):
+                vecteurs = rep.get("vectors", {})
+            for vid, v in (vecteurs or {}).items():
+                meta = getattr(v, "metadata", None)
+                if meta is None and isinstance(v, dict):
+                    meta = v.get("metadata")
+                out[vid] = (meta or {}).get("chunk_text", "")
+        except Exception as e:  # noqa: BLE001 — lecture d'agrément, jamais bloquante
+            print(f"⚠️  Lot {i // _FETCH_BATCH + 1} illisible pour comparaison "
+                  f"({type(e).__name__}: {e})")
+    return out
 
 
 def _ligne_decision(texte: str) -> str:
