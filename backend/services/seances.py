@@ -209,6 +209,10 @@ def seance_detail(date: str):
         issue = mot_issue(p)
         points.append({
             "sp": p.get("sp") or 0,
+            # Page du PV où le point commence — présente pour ~27% du corpus
+            # seulement (extraction pas encore rétro-appliquée partout, voir
+            # pipeline) : None ailleurs, jamais un numéro inventé.
+            "page": p.get("page"),
             "type": p.get("type"),
             "type_label": _TYPE_LABEL.get(p.get("type"), "Point"),
             "titre": p.get("titre") or "",

@@ -198,10 +198,21 @@ export function renderMontant(it) {
     ? `<div class="elu-montant">Montant engagé : ${fmtMontant(it.montant_eur)}</div>` : '';
 }
 
-export function renderPvPdfLink(url, label = 'PV (PDF)', title = 'Ouvrir le PV (PDF) sur 1030.be') {
-  return url
-    ? `<a class="elu-link" href="${url}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(title)}"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>${escapeHtml(label)}</a>`
-    : '';
+// `page` (optionnel, présent pour ~27 % du corpus seulement — extraction pas
+// encore rétro-appliquée partout) ouvre le PDF directement à la bonne page
+// via l'ancre standard `#page=N`, supportée par les visionneuses PDF des
+// navigateurs. Absent ailleurs : le lien reste vers le début du PV.
+export function renderPvPdfLink(url, page = null, label = 'PV (PDF)', title = 'Ouvrir le PV (PDF) sur 1030.be') {
+  if (!url) return '';
+  const href = (page !== null && page !== undefined) ? `${url}#page=${page}` : url;
+  return `<a class="elu-link" href="${href}" target="_blank" rel="noopener noreferrer" title="${escapeHtml(title)}"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>${escapeHtml(label)}</a>`;
+}
+
+// « SP x (page y) » — la page n'est affichée que quand on la connaît.
+export function renderSpBadge(it) {
+  if (!it.sp) return '';
+  const page = (it.page !== null && it.page !== undefined) ? ` (page ${it.page})` : '';
+  return `<span class="elu-sp">SP ${it.sp}${page}</span>`;
 }
 
 export function renderVideoLink(url, label, title) {

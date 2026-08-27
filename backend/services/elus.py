@@ -75,6 +75,7 @@ def elu_detail(key: str):
         return {
             "date": it["date"],
             "sp": it["sp"],
+            "page": it.get("page"),
             "type_label": _TYPE_LABEL.get(it["type"], "Point"),
             "type": it["type"],
             "titre": it["titre"],
@@ -97,6 +98,7 @@ def elu_detail(key: str):
         return {
             "date": it["date"],
             "sp": it["sp"],
+            "page": it.get("page"),
             "type_label": _TYPE_LABEL.get(it.get("type"), "Point"),
             "titre": it["titre"],
             "thematiques": it.get("thematiques") or [],

@@ -4,7 +4,7 @@
 import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, TYPE_COUNT_LABEL, renderThemeTags,
-  renderTypeBadge, renderStatutBadge, renderDecision, renderMontant,
+  renderTypeBadge, renderStatutBadge, renderDecision, renderMontant, renderSpBadge,
   renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
   hasDebateLink, listeFr, REVEIL_DELAI_MS,
 } from './utils.js';
@@ -447,7 +447,7 @@ export function onEluChipClick(typeLabel) {
 function eluDeposeRow(it, nom) {
   const badge = renderTypeBadge(it.type_label);
   const statutBadge = renderStatutBadge(it);
-  const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
+  const sp = renderSpBadge(it);
   // Lien : deep-link « ▶ Voir le débat » pour un point filmé (débat filmé
   // pur, ou point PV fusionné avec son chapitre vidéo — video_precise), sinon
   // PDF du PV et, si la séance a été filmée sans chapitre précis pour CE
@@ -456,9 +456,9 @@ function eluDeposeRow(it, nom) {
   if (it.type === 'video' && it.url) {
     links = renderVideoLink(it.url, '▶ Voir le débat', 'Voir le débat sur YouTube (au bon moment)');
   } else if (it.type === 'question_ecrite') {
-    links += renderPvPdfLink(it.url, 'Voir la question (PDF)', 'Ouvrir la question écrite (PDF) sur 1030.be');
+    links += renderPvPdfLink(it.url, null, 'Voir la question (PDF)', 'Ouvrir la question écrite (PDF) sur 1030.be');
   } else {
-    links += renderPvPdfLink(it.url);
+    links += renderPvPdfLink(it.url, it.page);
     if (it.video_url) {
       const label = it.video_precise ? '▶ Voir le débat' : '▶ vidéo';
       const title = it.video_precise
@@ -505,8 +505,8 @@ function eluRepondRow(it, nom) {
   // quel filtre de puce cette réponse correspond, comme pour un dépôt.
   const badge = renderTypeBadge(it.type_label);
   const statutBadge = renderStatutBadge(it);
-  const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
-  const link = renderPvPdfLink(it.url);
+  const sp = renderSpBadge(it);
+  const link = renderPvPdfLink(it.url, it.page);
   const demandeur = renderPersonLine('elu-demandeur', 'Demandé par', it.demandeur);
   // Point délibératif seulement (voir registry.py) : qui d'autre est
   // intervenu au débat — même libellé que TYPE_ACTOR_LABEL['Point'], même
