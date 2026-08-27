@@ -14,6 +14,18 @@ let seancesData = null;       // liste complète [{date,n_points,url,video_url}]
 let seancesLoaded = false;
 let pendingSeanceDate = null; // séance à présélectionner depuis un lien partagé (?seance=)
 let currentSeanceDetail = null;
+// Compteur de requête : loadSeance/loadSeanceYearAll s'enchaînent parfois
+// (présélection de la dernière séance de l'année au changement d'année,
+// puis choix explicite d'une autre séance avant que la 1re réponse soit
+// arrivée) — sans garde, une réponse ARRIVÉE EN RETARD écrase l'affichage
+// avec des données périmées, et sa propre synchronisation du menu
+// (renderSeanceYearList) relance même un rechargement sur la présélection
+// par défaut, effaçant le choix explicite de l'utilisateur·rice (race
+// observée en CI : sélectionner une séance précise après le changement
+// d'année retombait sur la plus récente si la 1re requête traînait).
+// Chaque appel capture le compteur AVANT son fetch ; s'il a changé à son
+// retour, une requête plus récente a pris le dessus, et celle-ci s'efface.
+let seanceRequestSeq = 0;
 // Année actuellement affichée en vue agrégée ("Toutes les séances"), ou null
 // si une séance précise est affichée — sert à savoir si renderSeanceYearList
 // doit garder "__all__" sélectionné plutôt que retomber sur la plus récente.
@@ -134,6 +146,7 @@ export function onSeanceListChange(sel) {
 // liste filtrable (mêmes filtres type/thématique/intervenant·e que pour une
 // séance unique), chaque point gardant trace de sa date d'origine.
 async function loadSeanceYearAll(year) {
+  const seq = ++seanceRequestSeq;
   const box = document.getElementById('seanceResult');
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   const dates = seancesData.filter(s => s.date.startsWith(year)).map(s => s.date);
@@ -143,6 +156,7 @@ async function loadSeanceYearAll(year) {
       if (!res.ok) throw new Error('Erreur ' + res.status);
       return res.json();
     }));
+    if (seq !== seanceRequestSeq) return;   // une sélection plus récente a pris le dessus
     const points = results
       .flatMap(d => d.points.map(p => ({ ...p, _seanceDate: d.date })))
       .sort((a, b) => b._seanceDate.localeCompare(a._seanceDate) || a.sp - b.sp);
@@ -154,6 +168,7 @@ async function loadSeanceYearAll(year) {
       points,
     });
   } catch (err) {
+    if (seq !== seanceRequestSeq) return;
     box.innerHTML = `<div class="error-box">Impossible de charger les séances de ${escapeHtml(year)}. ${escapeHtml(err.message)}</div>`;
   }
 }
@@ -214,14 +229,18 @@ function seancePointRow(it) {
 // pour une présélection automatique (ouverture de l'onglet, changement
 // d'année) qui ne doit pas faire sauter la page sous l'utilisateur·rice.
 export async function loadSeance(date, opts = {}) {
+  const seq = ++seanceRequestSeq;
   const box = document.getElementById('seanceResult');
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   try {
     const res = await fetch(API_URL + '/seance/' + encodeURIComponent(date));
     if (!res.ok) throw new Error('Erreur ' + res.status);
-    renderSeance(await res.json(), !!opts.scroll);
+    const data = await res.json();
+    if (seq !== seanceRequestSeq) return;   // une sélection plus récente a pris le dessus entre-temps
+    renderSeance(data, !!opts.scroll);
     renderSeanceYearList();  // synchronise le menu déroulant (option/année sélectionnées)
   } catch (err) {
+    if (seq !== seanceRequestSeq) return;
     box.innerHTML = `<div class="error-box">Impossible de charger cette séance. ${escapeHtml(err.message)}</div>`;
   }
 }
