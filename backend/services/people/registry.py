@@ -228,7 +228,8 @@ def _build_all():
             resp_raw = p.get("repondant")
             resp_names = _respondents(resp_raw, meta)
             resp_keys_all = [_key(name, pairs) for name in resp_names]
-            resp_keys_connus = {k for k in resp_keys_all if k}
+            resp_keys_ordonnes = [k for k in resp_keys_all if k]
+            resp_keys_connus = set(resp_keys_ordonnes)
 
             # Intervenant·e·s à afficher sur la fiche des RÉPONDANT·E·S d'un
             # point délibératif (approbation, règlement…) — jamais compté
@@ -275,6 +276,12 @@ def _build_all():
                     "url": meta.get("source_url"),
                     "demandeur_keys": [author_key] if author_key else [],
                     "intervenant_keys": interv_keys,
+                    # Les AUTRES répondant·e·s de CE point (jamais soi-même) —
+                    # un point à plusieurs répondant·e·s (« Denis Grimberghs
+                    # et Cécile Jodogne ») doit montrer les deux côte à côte
+                    # sur CHAQUE fiche, comme l'onglet Séances, pas escamoter
+                    # les autres derrière le seul nom de la fiche consultée.
+                    "co_repondant_keys": [rk for rk in resp_keys_ordonnes if rk != k],
                     "decision": decision,
                     "reporte": reporte,
                     "retire": retire,
@@ -488,6 +495,12 @@ def _build_all():
             iks = entry.pop("intervenant_keys", None) or []
             inames = list(dict.fromkeys(nom_by_key[ik] for ik in iks if ik in nom_by_key))
             entry["intervenants"] = liste_fr(inames) or None
+            crks = entry.pop("co_repondant_keys", None) or []
+            # LISTE, pas une chaîne : la fiche consultée s'ajoute en tête
+            # avant l'affichage (voir utils.js, listeFr), même schéma que
+            # co_auteurs côté dépôt.
+            entry["co_repondants"] = list(dict.fromkeys(
+                nom_by_key[crk] for crk in crks if crk in nom_by_key)) or None
         d["depose"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         d["repond"].sort(key=lambda it: (it["date"] or "", it["sp"]), reverse=True)
         index[k] = {

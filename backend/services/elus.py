@@ -102,6 +102,10 @@ def elu_detail(key: str):
             "thematiques": it.get("thematiques") or [],
             "url": it.get("url"),
             "demandeur": it.get("demandeur"),
+            # Les autres répondant·e·s de CE point (jamais soi-même) : un
+            # point à plusieurs répondant·e·s montre les deux, comme l'onglet
+            # Séances — jamais escamotés derrière le seul nom de la fiche.
+            "co_repondants": it.get("co_repondants"),
             # Point délibératif seulement (voir registry.py) : qui d'autre
             # est intervenu au débat, et ce que le conseil en a décidé.
             "intervenants": it.get("intervenants"),

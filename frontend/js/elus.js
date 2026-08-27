@@ -512,7 +512,12 @@ function eluRepondRow(it, nom) {
   // intervenu au débat — même libellé que TYPE_ACTOR_LABEL['Point'], même
   // ligne que l'onglet Séances pour ce même point.
   const intervenants = renderPersonLine('elu-demandeur', 'Intervenant·e·s', it.intervenants);
-  const rep = renderPersonLine('elu-rep', 'Répondant·e', nom);
+  // Point à plusieurs répondant·e·s (« Denis Grimberghs et Cécile
+  // Jodogne ») : les DEUX affiché·e·s côte à côte, comme l'onglet Séances —
+  // même schéma que les cosignataires d'une question écrite (co_auteurs).
+  const coRep = Array.isArray(it.co_repondants) ? it.co_repondants
+    : (it.co_repondants ? [it.co_repondants] : []);
+  const rep = renderPersonLine('elu-rep', 'Répondant·e', listeFr([nom, ...coRep]));
   const decision = renderDecision(it);
   const montant = renderMontant(it);
   const tags = renderThemeTags(it.thematiques);
