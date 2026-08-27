@@ -54,6 +54,7 @@ _DISPLAY_NAME_OVERRIDES = {
     "smeysters": "Christine Smeysters",
     "sobieski": "Christine Sobieski",
     "essaidi": "Tamimount Essaidi",
+    "hemamou": "Afaf Hemamou",
 }
 
 # Homonymes détectés dans le corpus : deux personnes RÉELLES et DISTINCTES
