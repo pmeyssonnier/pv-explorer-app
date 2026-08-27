@@ -20112,30 +20112,30 @@
           "rubrique": "SERVICES DU RECEVEUR COMMUNAL",
           "sous_rubrique": "Taxes",
           "titre": "Règlement redevance relatif au stationnement payant - Modifications",
-          "resume": "Modification du règlement de la redevance de stationnement payant fixant les tarifs et modalités de paiement du stationnement sur la voie publique",
+          "resume": "Modification du règlement redevance relatif au stationnement payant. Mise en place d'une tarification détaillée pour le stationnement payant en zones réglémentées, avec exemptions pour riverains, personnel médical/paramédical, vétérinaires et personnes handicapées. Procédures de recouvrement en cas de non-paiement.",
+          "auteurs": [],
           "intervenants": [
             "Charels",
             "Van Gorp",
             "Grimberghs"
           ],
-          "repondant": null,
+          "repondants": [],
           "decision": "APPROUVÉ",
+          "statut_traitement": "traité",
+          "debat": false,
           "vote": {
             "type": "unanimite",
             "pour": null,
             "contre": 0,
             "abstentions": 0
           },
-          "montant_eur": null,
+          "montant_eur": 12,
           "thematiques": [
             "stationnement",
-            "redevance",
-            "parking",
-            "tarification"
+            "taxes",
+            "circulation_routiere"
           ],
-          "source_file": "Pv%20CC%202011-03-30%20SP.pdf",
-          "statut_traitement": "traité",
-          "debat": false
+          "source_file": "Pv%20CC%202011-03-30%20SP.pdf"
         },
         {
           "sp": 4,
