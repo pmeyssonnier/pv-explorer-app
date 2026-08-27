@@ -5418,8 +5418,8 @@
       "numero": 3,
       "date": "2011-03-23",
       "auteur": "Bernadette Vriamont",
-      "titre": "Le décret flamand sur la politique culturelle locale",
-      "question": "",
+      "titre": "Het vlaams decreet op het lokaal cultuurbeleid",
+      "question": "Graag vernam ik of in het kader van het Vlaams decreet op het lokaal cultuurbeleid en in uitvoering van het cultuurbeleidsplan 2008-2013, het actieplan 2011 van de gemeente Schaarbeek al klaar is.\nIs het mogelijk om mij de actieplannen 2010 en 2011 te bezorgen?\nOp de gemeentelijke website staat dat de realisaties jaarlijks worden geëvalueerd. Is het mogelijk om deze evaluaties (de verslagen of nota's van de evaluaties) te ontvangen?\nGraag kreeg ik een overzicht van de projecten die in 2010 gerealiseerd werden in het kader van het decreet lokaal cultuurbeleid en een overzicht van de besteding per project van de subsidies 2010.",
       "reponse": null,
       "repondant": null,
       "source_file": "question_3_2011.pdf",
@@ -5427,7 +5427,9 @@
       "thematiques": [
         "culture",
         "politique_locale"
-      ]
+      ],
+      "question_langue": "nl",
+      "reponse_langue": null
     },
     {
       "id": "QE-2011-002",
