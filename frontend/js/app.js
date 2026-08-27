@@ -20,7 +20,7 @@ import {
 } from './stats.js';
 import {
   loadElus, initEluCombo, onEluYearChange,
-  onEluChipClick, onEluRoleChipClick, shareElu, setPendingEluKey,
+  onEluChipClick, onEluRoleChipClick, onEluFacetChipClick, shareElu, setPendingEluKey,
 } from './elus.js';
 import {
   loadSeances, renderSeanceYearList, onSeanceListChange, shareSeance,
@@ -79,7 +79,7 @@ registerActions({
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick, onStatutChipClick,
   showStatsVue, onDrillTypeChipClick,
-  shareElu, onEluChipClick, onEluRoleChipClick,
+  shareElu, onEluChipClick, onEluRoleChipClick, onEluFacetChipClick,
   shareSeance, jumpToSeance, onSeanceTypeChipClick, onSeanceFacetChipClick,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
   cancelQeExtract, confirmQePublish,

@@ -254,7 +254,7 @@ function selectElu(key) {
 // resteraient affichées sans rien à filtrer.
 function renderEluAccueil() {
   currentEluData = null;
-  ['eluRoleChips', 'eluTypeFilterChips', 'eluMoreFilters'].forEach(id => {
+  ['eluRoleChips', 'eluTypeFilterChips', 'eluFacetChips', 'eluMoreFilters'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.hidden = true;
   });
@@ -368,21 +368,18 @@ function filterByTheme(items, theme) {
 
 // Ordre d'affichage fixe (pas l'ordre d'apparition dans les données) : même
 // ordre que TYPE_BADGE côté utils.js, pour une liste toujours dans le même
-// sens quel que soit l'élu·e sélectionné·e.
+// sens quel que soit l'élu·e sélectionné·e. VRAIE partition : chaque action
+// porte un et un seul de ces types (« Débat filmé » n'y désigne QUE les
+// chapitres vidéo qu'on n'a pas su apparier à un point de PV — voir
+// _TYPE_LABEL["video"] côté backend — jamais un point d'un autre type qui se
+// trouve aussi avoir un lien vidéo), donc leur somme égale le total
+// d'actions du rôle affiché. Le lien vidéo TOUS TYPES confondus (la plupart
+// des débats filmés sont appariés à leur point PV, qui garde alors son type
+// propre — question orale, demande…) est une facette à part, indépendante
+// de cette partition : voir eluFacetChip/onEluFacetChipClick plus bas, même
+// logique que l'onglet Séances (hasDebateLink, puce « Avec débat filmé »).
 const TYPE_FILTER_ORDER = ['Point', 'Question orale', 'Demande', 'Motion', 'Débat filmé', 'Question écrite'];
-const TYPE_DEBAT = 'Débat filmé';
-
-// « Débat filmé » est une FACETTE, pas un type exclusif — même définition que
-// l'onglet Séances (voir hasDebateLink). La plupart des débats filmés sont
-// appariés à leur point PV : le point garde alors son type (question orale,
-// demande…) et porte le lien « ▶ Voir le débat ». Ne compter que le type
-// `video` — les chapitres qu'on n'a PAS su apparier — donnait un chiffre à
-// contresens du libellé : 2 pour Georges Verzin, là où 14 de ses interventions
-// sont filmées. Conséquence assumée : les puces ne forment plus une partition,
-// leur somme peut dépasser le total.
-const countOfType = (items, typeLabel) => (typeLabel === TYPE_DEBAT
-  ? items.filter(hasDebateLink).length
-  : items.filter(it => it.type_label === typeLabel).length);
+const countOfType = (items, typeLabel) => items.filter(it => it.type_label === typeLabel).length;
 
 // Les deux listes de valeurs (année, thématique) vivent dans un <details>
 // replié. On le masque s'il n'a rien à offrir, on le déplie d'office quand un
@@ -407,8 +404,26 @@ function syncEluMoreFilters() {
 
 function filterByType(items, types) {
   if (!types.size) return items;
-  return items.filter(it => types.has(it.type_label)
-    || (types.has(TYPE_DEBAT) && hasDebateLink(it)));
+  return items.filter(it => types.has(it.type_label));
+}
+
+// Puce-facette « dont N débats filmés » : le lien vidéo, tous types
+// confondus (voir hasDebateLink) — se recoupe avec les puces de type
+// ci-dessus (un débat filmé garde son type propre), donc jamais additive
+// à leur somme. Un seul interrupteur, pas un Set : une seule facette existe
+// ici pour l'instant (contrairement à l'onglet Séances, qui en a plusieurs).
+let eluDebatFilmeFacet = false;
+
+function eluFacetChip(count) {
+  if (!count) return '';
+  const on = eluDebatFilmeFacet;
+  return `<button type="button" class="elu-chip elu-chip-facette${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"`
+    + ` data-click="onEluFacetChipClick">dont ${count} débat${count > 1 ? 's' : ''} filmé${count > 1 ? 's' : ''}</button>`;
+}
+
+export function onEluFacetChipClick() {
+  eluDebatFilmeFacet = !eluDebatFilmeFacet;
+  if (currentEluData) renderElu(currentEluData);
 }
 
 // Puce-interrupteur par type présent, dans la barre de filtres
@@ -581,6 +596,22 @@ function renderElu(d) {
   syncEluMoreFilters();
   const depose = filterByType(filterByTheme(deposeForRole, eluThemeFilter), eluTypeSel);
   const repond = filterByType(filterByTheme(repondForRole, eluThemeFilter), eluTypeSel);
+
+  // Puce-facette « dont N débats filmés » : comptée sur depose/repond déjà
+  // filtrés par rôle+thème+type (comptages croisés, comme les puces de
+  // type) — seuls les dépôts portent un lien vidéo (voir _fmt_repond côté
+  // backend, aucun champ video_url sur une réponse).
+  const debatCount = depose.filter(hasDebateLink).length;
+  if (eluDebatFilmeFacet && !debatCount) eluDebatFilmeFacet = false;
+  const facetBox = document.getElementById('eluFacetChips');
+  if (facetBox) {
+    const facetHtml = eluFacetChip(debatCount);
+    facetBox.innerHTML = facetHtml;
+    facetBox.hidden = !facetHtml;
+  }
+  const deposeVus = eluDebatFilmeFacet ? depose.filter(hasDebateLink) : depose;
+  const repondVus = eluDebatFilmeFacet ? repond.filter(hasDebateLink) : repond;
+
   const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
     : 'Conseiller·ère');
@@ -592,33 +623,34 @@ function renderElu(d) {
 
   // Total RECALCULÉ à chaque bascule d'interrupteur, avec sa décomposition —
   // c'est le chiffre que l'on vient chercher, il doit suivre les puces.
-  const total = depose.length + repond.length;
+  const total = deposeVus.length + repondVus.length;
   if (total) {
     const detail = [];
-    if (depose.length) detail.push(`${depose.length} déposée${depose.length > 1 ? 's' : ''}`);
-    if (repond.length) detail.push(`${repond.length} réponse${repond.length > 1 ? 's' : ''} en séance`);
+    if (deposeVus.length) detail.push(`${deposeVus.length} déposée${deposeVus.length > 1 ? 's' : ''}`);
+    if (repondVus.length) detail.push(`${repondVus.length} réponse${repondVus.length > 1 ? 's' : ''} en séance`);
     html += `<div class="elu-summary"><strong>${total}</strong> action${total > 1 ? 's' : ''}`
       + (detail.length > 1 ? ` <span class="elu-summary-detail">${detail.join(' · ')}</span>` : '')
       + '</div>';
   }
-  if (depose.length) {
-    html += `<div class="elu-list">${groupByYear(depose, it => eluDeposeRow(it, d.nom))}</div>`;
+  if (deposeVus.length) {
+    html += `<div class="elu-list">${groupByYear(deposeVus, it => eluDeposeRow(it, d.nom))}</div>`;
   }
 
-  if (repond.length) {
+  if (repondVus.length) {
     // Repliées quand elles accompagnent les dépôts (activité secondaire d'un·e
     // conseiller·ère) ; dépliées dès qu'elles sont ce qu'on est venu voir.
-    html += `<details class="elu-repond"${depose.length ? '' : ' open'}>
-      <summary><strong>${repond.length}</strong> réponse${repond.length > 1 ? 's' : ''} en séance <span class="elu-repond-hint">(activité de Collège)</span></summary>
-      <div class="elu-list">${groupByYear(repond, it => eluRepondRow(it, d.nom))}</div>
+    html += `<details class="elu-repond"${deposeVus.length ? '' : ' open'}>
+      <summary><strong>${repondVus.length}</strong> réponse${repondVus.length > 1 ? 's' : ''} en séance <span class="elu-repond-hint">(activité de Collège)</span></summary>
+      <div class="elu-list">${groupByYear(repondVus, it => eluRepondRow(it, d.nom))}</div>
     </details>`;
   }
 
-  if (!depose.length && !repond.length) {
+  if (!deposeVus.length && !repondVus.length) {
     const filters = [];
     const listeFr = xs => xs.length > 1 ? `${xs.slice(0, -1).join(', ')} ou ${xs[xs.length - 1]}` : xs[0];
     if (eluRoleSel.size) filters.push(`en tant que ${listeFr([...eluRoleSel].map(r => ROLE_CHIP_LABEL[r]))}`);
     if (eluTypeSel.size) filters.push(`de type ${listeFr([...eluTypeSel].map(t => `« ${t} »`))}`);
+    if (eluDebatFilmeFacet) filters.push('avec un débat filmé');
     if (eluThemeFilter !== 'all') filters.push(`sur la thématique « ${eluThemeFilter} »`);
     if (eluYearFilter !== 'all') filters.push(`en ${eluYearFilter}`);
     html += filters.length
