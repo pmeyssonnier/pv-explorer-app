@@ -146,6 +146,49 @@ def test_normalize_question_reponse_none_when_not_yet_answered():
     assert q2["reponse"] is None
 
 
+def test_normalize_question_langues_none_by_default():
+    # Cas normal (contenu en français) : jamais de valeur devinée, None.
+    q = qe.normalize_question(_raw(), "x.pdf")
+    assert q["question_langue"] is None
+    assert q["reponse_langue"] is None
+
+
+def test_normalize_question_langue_nl_when_no_french_in_document():
+    # QE-2015-001 (voir backend/questions_ecrites_schaerbeek.json) : un
+    # document sans AUCUNE version française — titre/question/réponse sont
+    # alors le texte néerlandais tel quel, les deux champs "..._langue" le
+    # signalent.
+    q = qe.normalize_question(_raw(
+        titre="Resultaten aan het einde van de mobiliteitstest",
+        question="Op 1 mei loopt de mobiliteitstest ten einde.",
+        reponse="Het begeleidingscomité...", question_langue="nl", reponse_langue="nl",
+    ), "x.pdf")
+    assert q["question_langue"] == "nl"
+    assert q["reponse_langue"] == "nl"
+    assert q["titre"] == "Resultaten aan het einde van de mobiliteitstest"
+
+
+def test_normalize_question_langue_independent_between_question_and_reponse():
+    # QE-2026-004 (voir backend/questions_ecrites_schaerbeek.json) : question
+    # posée uniquement en néerlandais, mais réponse rédigée en français —
+    # chaque champ "..._langue" est indépendant, pas un seul drapeau global.
+    q = qe.normalize_question(_raw(
+        titre="De sluiting van het Recypark Noord", question="Het Recypark...",
+        question_langue="nl", reponse="La Direction de Bruxelles Propreté...", reponse_langue=None,
+    ), "x.pdf")
+    assert q["question_langue"] == "nl"
+    assert q["reponse_langue"] is None
+
+
+def test_normalize_question_langue_rejects_unexpected_value():
+    # Seule "nl" est un signal valide (voir SYSTEM_PROMPT) — toute autre
+    # valeur (hallucination, faute de frappe du modèle) retombe à None plutôt
+    # que de propager un code langue non prévu par le frontend.
+    q = qe.normalize_question(_raw(question_langue="fr", reponse_langue="fr"), "x.pdf")
+    assert q["question_langue"] is None
+    assert q["reponse_langue"] is None
+
+
 def test_normalize_question_rejects_missing_numero():
     assert qe.normalize_question(_raw(numero=None), "x.pdf") is None
 

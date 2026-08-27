@@ -152,6 +152,46 @@ def test_written_question_reponse_text_exposed_on_depose_entry(monkeypatch):
     assert entry["reponse"] == "Les travaux sont planifiés pour le prochain trimestre."
 
 
+def test_written_question_langues_absent_by_default(monkeypatch):
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2025-11-10", "auteur": "Georges Verzin", "titre": "Les nids-de-poule",
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    entry = next(it for it in index["verzin"]["depose"] if it["type"] == "question_ecrite")
+    assert entry.get("question_langue") is None
+    assert entry.get("reponse_langue") is None
+
+
+def test_written_question_langue_nl_exposed_on_depose_entry(monkeypatch):
+    # Document sans version française (voir pipeline/questions_ecrites_
+    # extraction_pipeline.py) : titre/question/réponse en néerlandais, ces
+    # champs le signalent plutôt que de laisser croire à du français.
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2015-04-24", "auteur": "Bernadette Vriamont",
+        "titre": "Resultaten aan het einde van de mobiliteitstest",
+        "reponse": "Het begeleidingscomité...", "question_langue": "nl", "reponse_langue": "nl",
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    entry = next(it for it in index["vriamont"]["depose"] if it["type"] == "question_ecrite")
+    assert entry["question_langue"] == "nl"
+    assert entry["reponse_langue"] == "nl"
+
+
+def test_written_question_langue_independent_between_question_and_reponse(monkeypatch):
+    # QE-2026-004 : question néerlandaise, réponse française — chaque champ
+    # est indépendant, pas un seul drapeau global sur toute l'entrée.
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2026-03-20", "auteur": "Anton Schuurmans",
+        "titre": "De sluiting van het Recypark Noord",
+        "reponse": "La Direction de Bruxelles Propreté...",
+        "question_langue": "nl", "reponse_langue": None,
+    }]})
+    index, pairs, nom_by_key = registry._build_all()
+    entry = next(it for it in index["schuurmans"]["depose"] if it["type"] == "question_ecrite")
+    assert entry["question_langue"] == "nl"
+    assert entry["reponse_langue"] is None
+
+
 def test_written_question_repondant_resolved_to_canonical_name_and_reciprocal_entry(monkeypatch):
     # Un·e répondant·e nommé·e (voir la pipeline d'extraction) doit être
     # résolu·e comme pour un point de PV : nom canonique sur la fiche de
@@ -220,6 +260,22 @@ def test_elu_detail_exposes_reponse_and_repondant_for_written_question(monkeypat
         # "valide" (même signature) mais peuplé avec cette donnée QE factice
         # une fois load_qe_db revenu à la normale — pollution pour les tests
         # suivants qui lisent le vrai corpus via _index()/elu_detail().
+        registry._cache["sig"] = None
+
+
+def test_elu_detail_exposes_langue_for_written_question(monkeypatch):
+    monkeypatch.setattr(registry, "load_qe_db", lambda: {"questions": [{
+        "date": "2015-04-24", "auteur": "Bernadette Vriamont",
+        "titre": "Resultaten aan het einde van de mobiliteitstest",
+        "reponse": "Het begeleidingscomité...", "question_langue": "nl", "reponse_langue": "nl",
+    }]})
+    registry._cache["sig"] = None
+    try:
+        d = elus.elu_detail("vriamont")
+        entry = next(it for it in d["depose"] if it["type"] == "question_ecrite")
+        assert entry["question_langue"] == "nl"
+        assert entry["reponse_langue"] == "nl"
+    finally:
         registry._cache["sig"] = None
 
 

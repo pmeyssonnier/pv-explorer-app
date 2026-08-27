@@ -365,6 +365,14 @@ def _build_all():
                 "titre": q.get("titre") or "",
                 "thematiques": [_thematique_label(t) for t in (q.get("thematiques") or [])],
                 "reponse": q.get("reponse"),
+                # None (français, cas normal) ou "nl" : le document ne portait
+                # aucune version française pour cette PARTIE précise — titre/
+                # question OU réponse (indépendamment l'une de l'autre, voir
+                # pipeline/questions_ecrites_extraction_pipeline.py) sont alors
+                # le texte néerlandais tel quel, jamais une traduction
+                # improvisée. Affiché comme un repère, pas caché.
+                "question_langue": q.get("question_langue"),
+                "reponse_langue": q.get("reponse_langue"),
                 "repondant_keys": [resp_key] if resp_key else [],
                 "repondant_fallback": _titlecase(_clean(resp_raw)) if resp_raw else None,
                 # Les AUTRES cosignataires de CETTE entrée (jamais soi-même)
