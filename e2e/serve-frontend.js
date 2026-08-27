@@ -9,7 +9,16 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'frontend');
 const PORT = process.env.PORT || 5500;
 
-const CSP = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' http://localhost:8000; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'";
+// CSP lue directement dans vercel.json (pas recopiée à la main) : une CSP
+// dupliquée ici divergeait silencieusement de la prod à chaque changement
+// de vercel.json (cas vécu : l'ajout de Vercel Web Analytics a mis à jour
+// vercel.json sans toucher cette copie, faisant échouer 32 tests en CSP
+// bloquant le script en test alors qu'il passait en prod). Seule
+// l'origine de l'API change : le backend de test tourne en local.
+const VERCEL_CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'vercel.json'), 'utf8'));
+const CSP = VERCEL_CONFIG.headers[0].headers
+  .find(h => h.key === 'Content-Security-Policy').value
+  .replace('https://pv-explorer-api.onrender.com', 'http://localhost:8000');
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
