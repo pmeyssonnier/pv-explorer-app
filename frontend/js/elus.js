@@ -483,8 +483,8 @@ function eluDeposeRow(it, nom) {
   const decision = renderDecision(it);
   const montant = renderMontant(it);
   const tags = renderThemeTags(it.thematiques);
-  const reponse = it.type === 'question_ecrite' ? renderReponseDetails(it.reponse) : '';
-  const langue = it.type === 'question_ecrite' ? renderLangueBadge(it.langue) : '';
+  const reponse = it.type === 'question_ecrite' ? renderReponseDetails(it.reponse, it.reponse_langue) : '';
+  const langue = it.type === 'question_ecrite' ? renderLangueBadge(it.question_langue) : '';
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">

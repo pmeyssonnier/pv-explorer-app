@@ -164,12 +164,13 @@ Bourgmestre et Échevins d'une commune belge (Schaerbeek). Le document est le pl
 bilingue (français/néerlandais) : la version française apparaît en premier, séparée de la \
 version néerlandaise par "-=-". N'extrais QUE la version française QUAND ELLE EXISTE.
 
-Certains documents n'ont PAS de version française du tout (titre, question et réponse
-uniquement en néerlandais, sans "-=-" ni contrepartie FR nulle part) — dans ce cas UNIQUEMENT,
-extrais le texte néerlandais tel quel pour "titre"/"question"/"reponse" (jamais de traduction :
-recopie le texte du document) et mets "langue": "nl". Si le français existe, même partiellement,
-utilise-le et laisse "langue" à null — "langue": "nl" ne sert QUE quand le français est
-totalement absent du document.
+Certains documents n'ont PAS de version française pour la QUESTION, ou pas pour la RÉPONSE —
+INDÉPENDAMMENT l'une de l'autre (ex. une question posée uniquement en néerlandais peut très bien
+recevoir une réponse rédigée en français). Dans ce cas UNIQUEMENT (français totalement absent
+pour la partie concernée), extrais le texte néerlandais tel quel plutôt que de laisser un champ
+vide (jamais de traduction : recopie le texte du document), et signale-le avec
+"question_langue"/"reponse_langue" (voir schéma). Si le français existe, même partiellement,
+utilise-le et laisse le champ "..._langue" correspondant à null.
 
 SCHÉMA JSON :
 {
@@ -177,34 +178,39 @@ SCHÉMA JSON :
   "date": <"YYYY-MM-DD"|null>, // date de la question (ex. "du 10 novembre 2025" -> "2025-11-10")
   "auteur": <string>,          // nom complet SANS civilité ni fonction (ex. "Georges Verzin",
                                 // pas "Monsieur Georges VERZIN, conseiller communal")
-  "titre": <string>,           // sujet de la question (le titre en gras/italique sous l'en-tête)
+  "titre": <string>,           // sujet de la question (le titre en gras/italique sous l'en-tête),
+                                // même langue que "question" (voir "question_langue")
   "question": <string>,        // texte intégral de la question, en français si possible
+  "question_langue": <"nl"|null>,  // "nl" UNIQUEMENT si "titre"/"question" ci-dessus sont en
+                                    // néerlandais faute de version française dans le document ;
+                                    // null dans le cas normal (français)
   "reponse": <string|null>,    // texte intégral de la réponse ("Réponse :"), en français
                                 // si possible ; null si absente du document
+  "reponse_langue": <"nl"|null>,   // même logique que "question_langue", pour "reponse" —
+                                    // INDÉPENDANT : une question posée en néerlandais peut avoir
+                                    // une réponse en français, et inversement
   "repondant": <string|null>   // nom SANS civilité ni fonction de la personne qui répond (ex.
                                 // "Bernard Clerfayt"), tel qu'indiqué en tête ou en signature de
                                 // la réponse (ex. "Réponse de M. Bernard Clerfayt, Bourgmestre :")
                                 // ; null si la réponse est absente ou non signée nommément
-  "thematiques": <array snake_case>,  // sujets abordés (ex. ["stationnement", "securite_routiere"])
+  "thematiques": <array snake_case>   // sujets abordés (ex. ["stationnement", "securite_routiere"])
                                        // — même style libre que pour un point de PV, pas de liste
                                        // fermée ; 1 à 4 tags pertinents, jamais un par phrase
-  "langue": <"nl"|null>         // "nl" UNIQUEMENT si le document n'a AUCUNE version française
-                                 // (titre/question/réponse ci-dessus sont alors en néerlandais) ;
-                                 // null dans le cas normal (contenu en français)
 }
 
 RÈGLES :
 - Ne DEVINE JAMAIS une valeur absente — mets null plutôt qu'une valeur plausible mais fausse.
-- Si une version française existe, n'extrais QU'elle ; ignore complètement la version
-  néerlandaise, y compris dans le titre bilingue de l'en-tête ("... -=- Vraag van de heer ...").
-  Bascule sur le néerlandais (voir "langue" ci-dessus) SEULEMENT si aucun français n'existe.
+- Si une version française existe (question ou réponse, chacune indépendamment), n'extrais QU'elle ;
+  ignore complètement la version néerlandaise, y compris dans le titre bilingue de l'en-tête
+  ("... -=- Vraag van de heer ..."). Bascule sur le néerlandais (voir "question_langue"/
+  "reponse_langue" ci-dessus) SEULEMENT pour la partie où aucun français n'existe.
 - "auteur" et "repondant" : nom propre normalisé (Prénom Nom), casse standard, sans
   civilité/fonction/date (ex. "Bernard Clerfayt", pas "M. Bernard Clerfayt, Bourgmestre").
 - Conserve la mise en forme du texte (listes numérotées, paragraphes) sous forme de texte
   brut lisible, pas de markdown.
 
 RÉPONDS UNIQUEMENT en JSON valide, sans markdown, sans texte avant/après :
-{"numero": ..., "date": ..., "auteur": ..., "titre": ..., "question": ..., "reponse": ..., "repondant": ..., "thematiques": [...], "langue": ...}
+{"numero": ..., "date": ..., "auteur": ..., "titre": ..., "question": ..., "question_langue": ..., "reponse": ..., "reponse_langue": ..., "repondant": ..., "thematiques": [...]}
 """
 
 
@@ -318,11 +324,14 @@ def normalize_question(data: dict, filename: str) -> Optional[dict]:
         "reponse": _clean_str(data.get("reponse")) or None,
         "repondant": _clean_str(data.get("repondant")) or None,
         "thematiques": _clean_str_list(data.get("thematiques")),
-        # "nl" si le document n'avait AUCUNE version française (voir
-        # SYSTEM_PROMPT) : titre/question/reponse ci-dessus sont alors le
-        # texte néerlandais tel quel, jamais une traduction. None (défaut) le
+        # "nl" si le document n'avait AUCUNE version française pour cette
+        # partie précise (voir SYSTEM_PROMPT) : le texte ci-dessus est alors
+        # le néerlandais tel quel, jamais une traduction. Indépendants l'un de
+        # l'autre — une question posée en néerlandais peut recevoir une
+        # réponse en français (constaté sur QE-2026-004). None (défaut) le
         # reste des cas — pas de valeur plausible mais fausse en cas de doute.
-        "langue": data.get("langue") if data.get("langue") == "nl" else None,
+        "question_langue": data.get("question_langue") if data.get("question_langue") == "nl" else None,
+        "reponse_langue": data.get("reponse_langue") if data.get("reponse_langue") == "nl" else None,
         "source_file": filename,
         "extracted_at": datetime.now().isoformat(),
     }

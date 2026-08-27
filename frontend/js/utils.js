@@ -163,10 +163,13 @@ export function renderLangueBadge(langue) {
 
 // Réponse d'une question écrite : repliée par défaut (texte souvent long) —
 // partagé entre l'onglet Par élu·e (elus.js) et les sources du chat (chat.js).
-// '' si aucune réponse (jamais de bloc vide).
-export function renderReponseDetails(reponse) {
+// '' si aucune réponse (jamais de bloc vide). `langue` optionnel ('nl' quand
+// le document ne portait aucune réponse en français, voir registry.py) :
+// annoncé dans le résumé replié, pour ne pas surprendre en dépliant.
+export function renderReponseDetails(reponse, langue) {
+  const label = langue === 'nl' ? 'Voir la réponse (en néerlandais)' : 'Voir la réponse';
   return reponse
-    ? `<details class="elu-qe-reponse"><summary>Voir la réponse</summary><p>${escapeHtml(reponse)}</p></details>`
+    ? `<details class="elu-qe-reponse"><summary>${label}</summary><p>${escapeHtml(reponse)}</p></details>`
     : '';
 }
 
