@@ -6,7 +6,7 @@ import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, TYPE_COUNT_LABEL, renderThemeTags,
   renderTypeBadge, renderStatutBadge, renderDecision, renderMontant, renderSpBadge,
   renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
-  hasDebateLink, listeFr, REVEIL_DELAI_MS,
+  renderLangueBadge, hasDebateLink, listeFr, REVEIL_DELAI_MS,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 import { createCombobox } from './combobox.js';
@@ -484,10 +484,11 @@ function eluDeposeRow(it, nom) {
   const montant = renderMontant(it);
   const tags = renderThemeTags(it.thematiques);
   const reponse = it.type === 'question_ecrite' ? renderReponseDetails(it.reponse) : '';
+  const langue = it.type === 'question_ecrite' ? renderLangueBadge(it.langue) : '';
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
-      ${badge}${statutBadge}${sp}
+      ${badge}${statutBadge}${sp}${langue}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}

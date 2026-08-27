@@ -150,6 +150,17 @@ export function renderThemeTags(thematiques) {
     : '';
 }
 
+// Question écrite dont le document source ne portait aucune version
+// française (voir pipeline/questions_ecrites_extraction_pipeline.py) : le
+// texte affiché (titre/question/réponse) est alors le néerlandais tel quel,
+// jamais une traduction improvisée — ce badge le signale plutôt que de
+// laisser croire à du français. '' si `langue` absent (cas normal).
+export function renderLangueBadge(langue) {
+  return langue === 'nl'
+    ? `<span class="elu-badge-lang" title="Aucune version française dans le document source : texte original en néerlandais">NL</span>`
+    : '';
+}
+
 // Réponse d'une question écrite : repliée par défaut (texte souvent long) —
 // partagé entre l'onglet Par élu·e (elus.js) et les sources du chat (chat.js).
 // '' si aucune réponse (jamais de bloc vide).

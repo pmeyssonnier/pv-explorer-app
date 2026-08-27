@@ -146,6 +146,33 @@ def test_normalize_question_reponse_none_when_not_yet_answered():
     assert q2["reponse"] is None
 
 
+def test_normalize_question_langue_none_by_default():
+    # Cas normal (contenu en français) : jamais de valeur devinée, None.
+    q = qe.normalize_question(_raw(), "x.pdf")
+    assert q["langue"] is None
+
+
+def test_normalize_question_langue_nl_when_no_french_in_document():
+    # QE-2015-001 (voir backend/questions_ecrites_schaerbeek.json) : un
+    # document sans AUCUNE version française — titre/question/réponse sont
+    # alors le texte néerlandais tel quel, "langue" le signale.
+    q = qe.normalize_question(_raw(
+        titre="Resultaten aan het einde van de mobiliteitstest",
+        question="Op 1 mei loopt de mobiliteitstest ten einde.",
+        reponse="Het begeleidingscomité...", langue="nl",
+    ), "x.pdf")
+    assert q["langue"] == "nl"
+    assert q["titre"] == "Resultaten aan het einde van de mobiliteitstest"
+
+
+def test_normalize_question_langue_rejects_unexpected_value():
+    # Seule "nl" est un signal valide (voir SYSTEM_PROMPT) — toute autre
+    # valeur (hallucination, faute de frappe du modèle) retombe à None plutôt
+    # que de propager un code langue non prévu par le frontend.
+    q = qe.normalize_question(_raw(langue="fr"), "x.pdf")
+    assert q["langue"] is None
+
+
 def test_normalize_question_rejects_missing_numero():
     assert qe.normalize_question(_raw(numero=None), "x.pdf") is None
 

@@ -6,9 +6,14 @@
 
 Une question écrite (adressée par un·e conseiller·ère au Collège en dehors
 d'une séance, réponse écrite du Collège — voir 1030.be/fr/questions-ecrites)
-est un document COURT (1 à 5 pages), bilingue FR/NL, portant UN SEUL
-enregistrement (numéro, date, auteur·e, question, réponse, répondant·e le
-cas échéant) — contrairement à
+est un document COURT (1 à 5 pages), le plus souvent bilingue FR/NL (le
+français apparaît en premier, séparé du néerlandais par "-=-") — mais pas
+toujours : certaines questions (et leur réponse) n'existent QU'en néerlandais,
+sans version française nulle part dans le document (constaté sur QE-2015-001).
+Dans ce cas le texte néerlandais est extrait tel quel plutôt que de laisser un
+enregistrement vide — voir le champ "langue" plus bas — jamais de traduction
+improvisée. Chaque document porte UN SEUL enregistrement (numéro, date,
+auteur·e, question, réponse, répondant·e le cas échéant) — contrairement à
 un PV (des dizaines de points), pas besoin ici du découpage en chunks ni de
 l'audit de complétude par regex de pv_extraction_pipeline.py : un seul appel
 Claude par fichier suffit. Les petites fonctions de nettoyage/normalisation
@@ -155,9 +160,16 @@ def extract_text_from_pdf(pdf_path: Path) -> str:
 # PROMPT SYSTEM
 # ══════════════════════════════════════════════════════════════════════════
 SYSTEM_PROMPT = """Tu es un expert en analyse de questions écrites adressées au Collège des \
-Bourgmestre et Échevins d'une commune belge (Schaerbeek). Le document est bilingue \
-(français/néerlandais) : la version française apparaît en premier, séparée de la version \
-néerlandaise par "-=-". N'extrais QUE la version française.
+Bourgmestre et Échevins d'une commune belge (Schaerbeek). Le document est le plus souvent \
+bilingue (français/néerlandais) : la version française apparaît en premier, séparée de la \
+version néerlandaise par "-=-". N'extrais QUE la version française QUAND ELLE EXISTE.
+
+Certains documents n'ont PAS de version française du tout (titre, question et réponse
+uniquement en néerlandais, sans "-=-" ni contrepartie FR nulle part) — dans ce cas UNIQUEMENT,
+extrais le texte néerlandais tel quel pour "titre"/"question"/"reponse" (jamais de traduction :
+recopie le texte du document) et mets "langue": "nl". Si le français existe, même partiellement,
+utilise-le et laisse "langue" à null — "langue": "nl" ne sert QUE quand le français est
+totalement absent du document.
 
 SCHÉMA JSON :
 {
@@ -166,29 +178,33 @@ SCHÉMA JSON :
   "auteur": <string>,          // nom complet SANS civilité ni fonction (ex. "Georges Verzin",
                                 // pas "Monsieur Georges VERZIN, conseiller communal")
   "titre": <string>,           // sujet de la question (le titre en gras/italique sous l'en-tête)
-  "question": <string>,        // texte intégral de la question, en français uniquement
+  "question": <string>,        // texte intégral de la question, en français si possible
   "reponse": <string|null>,    // texte intégral de la réponse ("Réponse :"), en français
-                                // uniquement ; null si absente du document
+                                // si possible ; null si absente du document
   "repondant": <string|null>   // nom SANS civilité ni fonction de la personne qui répond (ex.
                                 // "Bernard Clerfayt"), tel qu'indiqué en tête ou en signature de
                                 // la réponse (ex. "Réponse de M. Bernard Clerfayt, Bourgmestre :")
                                 // ; null si la réponse est absente ou non signée nommément
-  "thematiques": <array snake_case>   // sujets abordés (ex. ["stationnement", "securite_routiere"])
+  "thematiques": <array snake_case>,  // sujets abordés (ex. ["stationnement", "securite_routiere"])
                                        // — même style libre que pour un point de PV, pas de liste
                                        // fermée ; 1 à 4 tags pertinents, jamais un par phrase
+  "langue": <"nl"|null>         // "nl" UNIQUEMENT si le document n'a AUCUNE version française
+                                 // (titre/question/réponse ci-dessus sont alors en néerlandais) ;
+                                 // null dans le cas normal (contenu en français)
 }
 
 RÈGLES :
 - Ne DEVINE JAMAIS une valeur absente — mets null plutôt qu'une valeur plausible mais fausse.
-- N'extrais QUE le texte français ; ignore complètement la version néerlandaise, y compris
-  dans le titre bilingue de l'en-tête ("... -=- Vraag van de heer ...").
+- Si une version française existe, n'extrais QU'elle ; ignore complètement la version
+  néerlandaise, y compris dans le titre bilingue de l'en-tête ("... -=- Vraag van de heer ...").
+  Bascule sur le néerlandais (voir "langue" ci-dessus) SEULEMENT si aucun français n'existe.
 - "auteur" et "repondant" : nom propre normalisé (Prénom Nom), casse standard, sans
   civilité/fonction/date (ex. "Bernard Clerfayt", pas "M. Bernard Clerfayt, Bourgmestre").
 - Conserve la mise en forme du texte (listes numérotées, paragraphes) sous forme de texte
   brut lisible, pas de markdown.
 
 RÉPONDS UNIQUEMENT en JSON valide, sans markdown, sans texte avant/après :
-{"numero": ..., "date": ..., "auteur": ..., "titre": ..., "question": ..., "reponse": ..., "repondant": ..., "thematiques": [...]}
+{"numero": ..., "date": ..., "auteur": ..., "titre": ..., "question": ..., "reponse": ..., "repondant": ..., "thematiques": [...], "langue": ...}
 """
 
 
@@ -302,6 +318,11 @@ def normalize_question(data: dict, filename: str) -> Optional[dict]:
         "reponse": _clean_str(data.get("reponse")) or None,
         "repondant": _clean_str(data.get("repondant")) or None,
         "thematiques": _clean_str_list(data.get("thematiques")),
+        # "nl" si le document n'avait AUCUNE version française (voir
+        # SYSTEM_PROMPT) : titre/question/reponse ci-dessus sont alors le
+        # texte néerlandais tel quel, jamais une traduction. None (défaut) le
+        # reste des cas — pas de valeur plausible mais fausse en cas de doute.
+        "langue": data.get("langue") if data.get("langue") == "nl" else None,
         "source_file": filename,
         "extracted_at": datetime.now().isoformat(),
     }
