@@ -449,12 +449,13 @@ def test_role_of_college_even_with_few_answers_and_no_deposits():
 
 
 def test_college_member_with_few_answers_counted_correctly_in_list():
-    # Régression : Bertrand Dhuyvetter (0 dépôt, 3 réponses) était classé
-    # « conseiller » (seuil de 8 non atteint), ce qui faisait aussi
-    # afficher "(0)" dans le sélecteur côté frontend (n = depose pour un
-    # rôle non-college). Doit être « college » avec 3 interventions.
+    # Régression : un membre du Collège avec très peu de réponses (Afaf
+    # Hemamou : 0 dépôt, 3 réponses) était classé « conseiller » (seuil de 8
+    # non atteint), ce qui faisait aussi afficher "(0)" dans le sélecteur
+    # côté frontend (n = depose pour un rôle non-college). Doit être
+    # « college » avec 3 interventions.
     lst = elus.elus_list()
-    d = next((e for e in lst if e["key"] == "dhuyvetter"), None)
+    d = next((e for e in lst if e["key"] == "hemamou"), None)
     assert d is not None
     assert d["role"] == "college"
     assert d["depose"] == 0
@@ -475,7 +476,7 @@ def test_elu_detail_mandats_none_when_absent_from_declarative_data():
     # Une personne du registre PV absente du fichier déclaratif
     # (elus_mandats.json) : mandats=None (le frontend retombe alors sur le
     # libellé "role" simple, voir elus.js/renderElu), jamais d'exception.
-    d = elus.elu_detail("dhuyvetter")
+    d = elus.elu_detail("hemamou")
     assert d is not None
     assert d["mandats"] is None
 
@@ -568,6 +569,34 @@ def test_ouazrhari_merged_and_org_authors_absent_from_index():
     assert "ouazrhari" in idx
     for org_key in ("clad", "greentech vzw", "gemeente schaarbeek"):
         assert org_key not in idx
+
+
+def test_non_elu_repondants_excluded():
+    # Le 24/02/2016, une série de points « Correspondance » (rubriques
+    # RH/Infrastructure/Enseignement — accusés de réception administratifs)
+    # porte le nom d'un·e AGENT·E COMMUNAL·E comme répondant, jamais un
+    # membre du Collège répondant politiquement (voir _NON_ELU_REPONDANTS).
+    # Sans exclusion, ces 9 personnes obtenaient chacune·e une fiche « élu·e »
+    # fictive avec un rôle « Collège » inventé.
+    keys = {e["key"] for e in elus.elus_list()}
+    assert not keys & elus._NON_ELU_REPONDANTS
+    idx = elus._index()
+    # "martin" reste dans l'index pour une activité réelle SANS rapport
+    # (voir test_non_elu_repondant_exclusion_does_not_remove_unrelated_activity)
+    # — seul·e·s les agent·e·s sans AUCUNE autre activité disparaissent.
+    assert not set(idx) & (elus._NON_ELU_REPONDANTS - {"martin"})
+
+
+def test_non_elu_repondant_exclusion_does_not_remove_unrelated_activity():
+    # « Philippe Martin » (clé "martin") cumule à tort l'agent communal
+    # ci-dessus (4 réponses de pure correspondance, exclues) ET un·e vrai
+    # citoyen déposant une demande d'habitant — l'exclusion ne doit retirer
+    # QUE l'activité de répondant, jamais l'activité réelle non liée.
+    d = elus.elu_detail("martin")
+    assert d is not None
+    assert d["repond"] == []
+    assert len(d["depose"]) == 1
+    assert d["depose"][0]["date"] == "2020-01-22"
 
 
 # ── Fusion PV/vidéo du même point ────────────────────────────────────────────

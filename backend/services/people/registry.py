@@ -24,8 +24,8 @@ from services.people.attribution import (
 )
 from services.people.mandats import current_role
 from services.people.names import (
-    _DISPLAY_NAME_OVERRIDES, _best_display_variant, _clean, _is_non_person_video_author,
-    _is_role_token, _key, _norm_tok, _split_person_names, _titlecase,
+    _DISPLAY_NAME_OVERRIDES, _NON_ELU_REPONDANTS, _best_display_variant, _clean,
+    _is_non_person_video_author, _is_role_token, _key, _norm_tok, _split_person_names, _titlecase,
 )
 from services.video_merge import _match_pv_point
 
@@ -226,8 +226,18 @@ def _build_all():
             # affichés ci-dessous, pas seulement celui/celle dont on
             # construit la fiche.
             resp_raw = p.get("repondant")
-            resp_names = _respondents(resp_raw, meta)
-            resp_keys_all = [_key(name, pairs) for name in resp_names]
+            # Agent·e·s communaux·ales cité·e·s à tort comme répondant sur des
+            # points de pure correspondance (voir _NON_ELU_REPONDANTS) —
+            # jamais un·e élu·e : exclu·e·s ici, en amont de tout usage de
+            # resp_keys/resp_names (fiche propre ET affichage "répondu par"
+            # ailleurs), pas seulement de la boucle qui crée leur entrée.
+            resp_names, resp_keys_all = [], []
+            for name in _respondents(resp_raw, meta):
+                k = _key(name, pairs)
+                if k in _NON_ELU_REPONDANTS:
+                    continue
+                resp_names.append(name)
+                resp_keys_all.append(k)
             resp_keys_ordonnes = [k for k in resp_keys_all if k]
             resp_keys_connus = set(resp_keys_ordonnes)
 

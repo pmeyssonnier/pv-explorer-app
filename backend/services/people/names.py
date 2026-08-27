@@ -91,6 +91,19 @@ def _homonym_override(cleaned: str) -> str | None:
 # intervenant·e) : jamais une personne, à exclure de l'agrégation.
 _NON_PERSON_VIDEO_AUTHORS = {"clad", "greentech vzw", "gemeente schaarbeek"}
 
+# Agent·e·s communaux·ales (services administratifs) cité·e·s comme
+# « répondant » sur des points de pure correspondance/routine (accusés de
+# réception, transmission de documents RH…) — jamais un membre élu du
+# Collège répondant politiquement. Repéré en audit : le 24/02/2016, une
+# série de points « Correspondance » (rubriques Human Resources/
+# Infrastructuur/Openbaar onderwijs…) porte le nom de l'agent·e traitant·e
+# comme répondant, ce qui leur créait à tort une fiche « élu·e » (rôle
+# Collège inventé) dans l'onglet Par élu·e. Clé = _key() du nom complet.
+_NON_ELU_REPONDANTS = {
+    "laurence", "pire", "steinbach", "reepingen", "velghe",
+    "chantraine", "dhuyvetter", "luc", "martin",
+}
+
 
 def _strip_accents(s: str) -> str:
     return "".join(c for c in unicodedata.normalize("NFD", s)
