@@ -267,6 +267,7 @@ def _build_all():
                 people[k]["repond"].append({
                     "date": date,
                     "sp": p.get("sp") or 0,
+                    "page": p.get("page"),
                     # Type du POINT auquel on répond (pas de l'acte de
                     # répondre, qui n'a pas de type propre) — permet de
                     # filtrer les réponses par puce, comme les dépôts.
@@ -292,6 +293,7 @@ def _build_all():
                 entry = {
                     "date": date,
                     "sp": p.get("sp") or 0,
+                    "page": p.get("page"),
                     "type": p.get("type"),
                     "titre": p.get("titre") or "",
                     "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],

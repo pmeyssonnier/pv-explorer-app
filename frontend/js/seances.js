@@ -3,7 +3,7 @@
 import { API_URL } from './config.js';
 import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, renderThemeTags,
-  renderTypeBadge, renderStatutBadge, renderDecision, renderMontant,
+  renderTypeBadge, renderStatutBadge, renderDecision, renderMontant, renderSpBadge,
   renderPvPdfLink, renderVideoLink, renderPersonLine, hasDebateLink,
   renderLoadingReveil,
 } from './utils.js';
@@ -168,21 +168,27 @@ export function jumpToSeance(date) {
 function seancePointRow(it) {
   const badge = renderTypeBadge(it.type_label);
   const statutBadge = renderStatutBadge(it);
-  const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
+  const sp = renderSpBadge(it);
   // Vue agrégée "Toutes les séances" uniquement : rappelle de quelle séance
   // vient ce point, et permet d'y revenir directement (voir jumpToSeance).
   const seanceDateBadge = it._seanceDate
     ? `<button type="button" class="elu-sp elu-sp-link" data-click="jumpToSeance" data-arg="${escapeHtml(it._seanceDate)}" title="Voir cette séance">${escapeHtml(formatDate(it._seanceDate))}</button>`
     : '';
-  // Pas de lien "PV (PDF)" par point : c'est le même PDF de séance pour tous
-  // les points (pas d'ancre par SP), déjà proposé une fois au-dessus de la
-  // liste (voir renderSeance) — le répéter à chaque point suggérerait à tort
-  // un accès direct à ce point précis dans le PDF. Même raisonnement pour la
-  // vidéo générique (video_precise=false) : lien vers le DÉBUT de la séance,
-  // pas ce point précis — déjà proposé une fois au-dessus (vidéo complète).
-  const links = hasDebateLink(it)
+  // Pas de lien "PV (PDF)" générique par point : c'est le même PDF de séance
+  // pour tous les points, déjà proposé une fois au-dessus de la liste (voir
+  // renderSeance) — le répéter partout suggérerait à tort un accès direct à
+  // CE point précis. Seule exception : quand la page d'extraction est connue
+  // (voir it.page, ~27% du corpus), un lien SUPPLÉMENTAIRE pointe dessus via
+  // l'ancre #page=N — un vrai accès direct, cette fois. Même raisonnement
+  // pour la vidéo générique (video_precise=false) : lien vers le DÉBUT de la
+  // séance, pas ce point précis — déjà proposé une fois au-dessus (vidéo complète).
+  let links = hasDebateLink(it)
     ? renderVideoLink(it.type === 'video' ? it.url : it.video_url, '▶ Voir le débat', 'Voir le débat sur YouTube (au bon moment)')
     : '';
+  if (it.page !== null && it.page !== undefined) {
+    links += renderPvPdfLink(it.url, it.page, `PV (PDF) — page ${it.page}`,
+      `Ouvrir le PV à la page ${it.page} sur 1030.be`);
+  }
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, it.demandeur);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
