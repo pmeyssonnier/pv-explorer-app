@@ -108,10 +108,16 @@ export const TYPE_COUNT_LABEL = {
   'Question orale': n => `${n} question${n > 1 ? 's' : ''} orale${n > 1 ? 's' : ''}`,
   'Demande': n => `${n} demande${n > 1 ? 's' : ''}`,
   'Motion': n => `${n} motion${n > 1 ? 's' : ''}`,
-  // « dont » : cette puce est une FACETTE qui chevauche les autres types
-  // (voir elus.js, hasDebateLink), pas une catégorie de plus — sa somme avec
-  // les autres puces ne doit jamais paraître égale au total d'actions.
-  'Débat filmé': n => `dont ${n} débat${n > 1 ? 's' : ''} filmé${n > 1 ? 's' : ''}`,
+  // « Débat filmé » ne désigne ICI que les chapitres vidéo qu'on n'a pas su
+  // apparier à un point de PV (voir elus.js, TYPE_FILTER_ORDER) — une vraie
+  // catégorie, pas une facette : d'où « hors PV » dans le texte, pour ne pas
+  // se confondre avec la puce-facette « dont N débats filmés » (le lien
+  // vidéo tous types confondus, gérée séparément par elus.js).
+  'Débat filmé': n => `${n} débat${n > 1 ? 's' : ''} filmé${n > 1 ? 's' : ''} hors PV`,
+  // Même libellé, pour la légende du graphe Statistiques (« Activité
+  // citoyenne ») dont la série backend porte ce nom en toutes lettres — voir
+  // ACTIVITY_TYPE_ORDER.
+  'Débat filmé hors PV': n => `${n} débat${n > 1 ? 's' : ''} filmé${n > 1 ? 's' : ''} hors PV`,
   'Question écrite': n => `${n} question${n > 1 ? 's' : ''} écrite${n > 1 ? 's' : ''}`,
 };
 
