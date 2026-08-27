@@ -480,6 +480,9 @@ function eluDeposeRow(it, nom) {
 }
 
 function eluRepondRow(it, nom) {
+  // Badge = type du POINT auquel on répond (voir registry.py) : montre à
+  // quel filtre de puce cette réponse correspond, comme pour un dépôt.
+  const badge = renderTypeBadge(it.type_label);
   const sp = it.sp ? `<span class="elu-sp">SP ${it.sp}</span>` : '';
   const link = renderPvPdfLink(it.url);
   const demandeur = renderPersonLine('elu-demandeur', 'Demandé par', it.demandeur);
@@ -488,7 +491,7 @@ function eluRepondRow(it, nom) {
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
-      ${sp}
+      ${badge}${sp}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
       ${demandeur}
       ${rep}
@@ -546,18 +549,19 @@ function renderElu(d) {
   const repondForYear = filterByYear(d.repond || [], eluYearFilter);
   // Une sélection devenue vide de sens en changeant d'élu·e/d'année (sa puce
   // n'est alors plus affichée) laisserait un filtre actif sans interrupteur
-  // pour le défaire : on la nettoie.
-  eluTypeSel.forEach(t => { if (!countOfType(deposeForYear, t)) eluTypeSel.delete(t); });
+  // pour le défaire : on la nettoie. Une réponse en séance porte le type du
+  // POINT auquel elle répond (voir registry.py) : comptée au même titre
+  // qu'un dépôt de ce type.
+  eluTypeSel.forEach(t => {
+    if (!countOfType(deposeForYear, t) && !countOfType(repondForYear, t)) eluTypeSel.delete(t);
+  });
 
   // Comptages CROISÉS : chaque groupe de puces compte dans le périmètre défini
   // par l'AUTRE groupe (et non par lui-même), sinon cocher une puce ferait
   // tomber à 0 toutes les autres de sa rangée et le filtre deviendrait un
   // cul-de-sac. Chaque puce annonce donc ce qu'elle ajoute réellement.
-  const deposeParType = filterByType(deposeForYear, eluTypeSel);
   const roleCounts = eluRoleCounts(d.mandats,
-    // Une réponse en séance n'a pas de type : dès qu'un type est coché, elle
-    // sort du périmètre.
-    eluTypeSel.size ? deposeParType : [...deposeForYear, ...repondForYear]);
+    filterByType([...deposeForYear, ...repondForYear], eluTypeSel));
   renderEluRoleChips(roleCounts);
   eluRoleSel.forEach(r => { if (!roleCounts[r]) eluRoleSel.delete(r); });
 
@@ -566,7 +570,7 @@ function renderElu(d) {
   const typeFilterChips = document.getElementById('eluTypeFilterChips');
   if (typeFilterChips) {
     const chipsHtml = TYPE_FILTER_ORDER
-      .map(t => eluTypeChip(t, countOfType(deposeForRole, t))).join('');
+      .map(t => eluTypeChip(t, countOfType(deposeForRole, t) + countOfType(repondForRole, t))).join('');
     typeFilterChips.innerHTML = chipsHtml;
     typeFilterChips.hidden = !chipsHtml;
   }
@@ -576,8 +580,7 @@ function renderElu(d) {
   populateEluThemeSelect(eluThemes(deposeForRole, repondForRole));
   syncEluMoreFilters();
   const depose = filterByType(filterByTheme(deposeForRole, eluThemeFilter), eluTypeSel);
-  // Une réponse en séance n'a aucun type : cocher un type l'exclut.
-  const repond = eluTypeSel.size ? [] : filterByTheme(repondForRole, eluThemeFilter);
+  const repond = filterByType(filterByTheme(repondForRole, eluThemeFilter), eluTypeSel);
   const roleLabel = formatMandats(d.mandats) || (d.role === 'college'
     ? 'Collège (échevin·e / bourgmestre)'
     : 'Conseiller·ère');
