@@ -29,6 +29,22 @@ let pendingQuestion = null;
 let pendingQeSourceUrl = null;
 let lastQePublishResult = null;
 
+// Sous-onglet actif du panneau Admin : 'seances' | 'qe' | 'mandats' — voir
+// renderAdminSubTabs. Indépendant des onglets principaux (#tab-*/#panel-*,
+// voir app.js switchTab) : ce panneau se rend entièrement lui-même.
+let adminSubTab = 'seances';
+// Cache de GET /admin/mandats (voir services/people/mandats.py côté
+// backend) — null tant que non chargé (chargement paresseux, seulement à la
+// première visite du sous-onglet Mandats). Liste brute d'objets
+// {nom, conseiller_communal, echevin, bourgmestre, statut}.
+let mandatsData = null;
+let mandatsFilter = '';
+// Entrée en cours d'édition (copie modifiable, voir onMandatEditClick) —
+// null si aucun formulaire affiché. {nom: '', ...} vide = nouvelle personne
+// (voir onMandatNewClick) : nom_original n'est envoyé que si non vide, pour
+// distinguer création et modification côté backend (voir save_mandat).
+let editingMandat = null;
+
 // Session vérifiée via cookie httpOnly (jamais lu par ce script — juste
 // renvoyé automatiquement par le navigateur, `credentials: 'include'`) : on
 // interroge /admin/me pour savoir si une session valide existe déjà.
@@ -59,16 +75,46 @@ function renderAdminPanel() {
   if (!box) return;
   if (!adminUsername) { box.innerHTML = ''; return; }
   const head = `<p class="yc-note">Connecté·e en tant que <strong>${escapeHtml(adminUsername)}</strong>.</p>
-    <button type="button" class="drill-reset" data-click="adminLogout">Se déconnecter</button>`;
-  box.innerHTML = head
-    + (pendingSeance ? renderPreview() : renderUploadForm())
-    + (pendingQuestion ? renderQePreview() : renderQeUploadForm());
+    <button type="button" class="drill-reset" data-click="adminLogout">Se déconnecter</button>
+    ${renderAdminSubTabs()}`;
+  let body;
+  if (adminSubTab === 'mandats') {
+    body = renderMandatsSection();
+  } else if (adminSubTab === 'qe') {
+    body = pendingQuestion ? renderQePreview() : renderQeUploadForm();
+  } else {
+    body = pendingSeance ? renderPreview() : renderUploadForm();
+  }
+  box.innerHTML = head + body;
   const form = document.getElementById('adminUploadForm');
   if (form) form.addEventListener('submit', submitAdminExtract);
   const fileEl = document.getElementById('adminPdfFile');
   if (fileEl) fileEl.addEventListener('change', prefillSourceUrl);
   const qeForm = document.getElementById('qeUploadForm');
   if (qeForm) qeForm.addEventListener('submit', submitQeExtract);
+  const mandatFilterEl = document.getElementById('mandatFilter');
+  if (mandatFilterEl) mandatFilterEl.addEventListener('input', onMandatFilterInput);
+  const mandatForm = document.getElementById('mandatEditForm');
+  if (mandatForm) mandatForm.addEventListener('submit', submitMandat);
+}
+
+function renderAdminSubTabs() {
+  const tabs = [
+    ['seances', 'Séances'],
+    ['qe', 'Questions écrites'],
+    ['mandats', 'Mandats élu·e·s'],
+  ];
+  return `<div class="admin-subtabs">${tabs.map(([key, label]) =>
+    `<button type="button" class="admin-subtab${adminSubTab === key ? ' active' : ''}" data-click="switchAdminSubTab" data-arg="${key}">${escapeHtml(label)}</button>`
+  ).join('')}</div>`;
+}
+
+export function switchAdminSubTab(tab) {
+  if (adminSubTab === tab) return;
+  adminSubTab = tab;
+  editingMandat = null;
+  if (tab === 'mandats' && mandatsData === null) { loadMandats(); return; }
+  renderAdminPanel();
 }
 
 // Le lien "PDF officiel" (frontend/js/stats.js) ne s'affiche que si
@@ -195,6 +241,160 @@ function renderQePreview() {
       <button type="button" class="ask-btn" id="qePublishBtn" data-click="confirmQePublish">Confirmer et publier</button>
     </div>
   </section>`;
+}
+
+// ── Sous-onglet Mandats élu·e·s : voir/corriger les plages de dates
+// (conseiller·ère communal·e/échevin·e/bourgmestre) déclarées dans
+// backend/elus_mandats.json (voir services/people/mandats.py) — remplace
+// l'édition manuelle du JSON par commit direct. Chargement paresseux (une
+// seule fois par session admin, mandatsData sert de cache) ; l'écriture
+// (submitMandat) met à jour ce cache localement plutôt que de tout
+// recharger, pour ne pas perdre le filtre en cours.
+async function loadMandats() {
+  try {
+    const res = await fetch(API_URL + '/admin/mandats', { credentials: 'include' });
+    if (!res.ok) throw new Error(await _errorDetail(res));
+    mandatsData = (await res.json()).mandats || [];
+  } catch {
+    mandatsData = [];
+  }
+  renderAdminPanel();
+}
+
+function renderMandatsSection() {
+  if (mandatsData === null) {
+    return `<section class="admin-mandats"><h4>Mandats élu·e·s</h4><p class="yc-note">Chargement…</p></section>`;
+  }
+  const table = `<div class="md-tablewrap"><table class="md-table admin-mandats-table">
+    <thead><tr><th>Nom</th><th>Conseiller·ère</th><th>Échevin·e</th><th>Bourgmestre</th><th>Statut</th><th></th></tr></thead>
+    <tbody id="mandatsTableBody">${renderMandatsRows()}</tbody>
+  </table></div>`;
+  return `<section class="admin-mandats">
+    <h4>Mandats élu·e·s</h4>
+    <p class="yc-note">Rôle par plage de dates (voir aussi la fiche d'un·e élu·e dans l'onglet « Par élu·e »). Format attendu pour chaque champ : « AAAA-AAAA » (mandat clos) ou « AAAA-présent » (en cours), plusieurs plages séparées par une virgule.</p>
+    <div class="admin-mandats-toolbar">
+      <input type="search" id="mandatFilter" placeholder="Filtrer par nom…" value="${escapeHtml(mandatsFilter)}">
+      <button type="button" class="ask-btn" data-click="onMandatNewClick">+ Ajouter une personne</button>
+    </div>
+    ${table}
+    ${editingMandat ? renderMandatEditForm() : ''}
+  </section>`;
+}
+
+// Rendu isolé des lignes du tableau (voir onMandatFilterInput) : ne remplace
+// QUE le <tbody>, jamais tout le panneau — sinon retaper dans #mandatFilter
+// perdrait le focus à chaque frappe (innerHTML détruit et recrée l'input).
+function renderMandatsRows() {
+  const filter = mandatsFilter.trim().toLowerCase();
+  const rows = (mandatsData || [])
+    .filter(e => !filter || (e.nom || '').toLowerCase().includes(filter))
+    .map(e => `<tr>
+      <td>${escapeHtml(e.nom || '')}</td>
+      <td>${escapeHtml(e.conseiller_communal || '—')}</td>
+      <td>${escapeHtml(e.echevin || '—')}</td>
+      <td>${escapeHtml(e.bourgmestre || '—')}</td>
+      <td>${escapeHtml(e.statut || '—')}</td>
+      <td><button type="button" class="drill-reset" data-click="onMandatEditClick" data-arg="${escapeHtml(e.nom || '')}">Modifier</button></td>
+    </tr>`).join('');
+  return rows || `<tr><td colspan="6">Aucun résultat.</td></tr>`;
+}
+
+function onMandatFilterInput(ev) {
+  mandatsFilter = ev.target.value;
+  const tbody = document.getElementById('mandatsTableBody');
+  if (tbody) tbody.innerHTML = renderMandatsRows();
+}
+
+function renderMandatEditForm() {
+  const e = editingMandat;
+  const isNew = !e.nom;
+  return `<section class="admin-mandat-form-wrap">
+    <h4>${isNew ? 'Nouvelle personne' : `Modifier — ${escapeHtml(e.nom)}`}</h4>
+    <form id="mandatEditForm" class="admin-login-form">
+      <label for="mandatNom">Nom complet</label>
+      <input type="text" id="mandatNom" value="${escapeHtml(e.nom || '')}" required>
+      <label for="mandatConseiller">Conseiller·ère communal·e</label>
+      <input type="text" id="mandatConseiller" value="${escapeHtml(e.conseiller_communal || '')}" placeholder="ex. 2012-présent">
+      <label for="mandatEchevin">Échevin·e</label>
+      <input type="text" id="mandatEchevin" value="${escapeHtml(e.echevin || '')}" placeholder="ex. 2018-2024">
+      <label for="mandatBourgmestre">Bourgmestre</label>
+      <input type="text" id="mandatBourgmestre" value="${escapeHtml(e.bourgmestre || '')}" placeholder="ex. 2001-présent">
+      <label for="mandatStatut">Statut (libellé affiché sur la fiche)</label>
+      <input type="text" id="mandatStatut" value="${escapeHtml(e.statut || '')}" placeholder="ex. Échevine">
+      <p class="admin-login-error" id="mandatFormError" role="alert"></p>
+      <div class="admin-preview-actions">
+        <button type="button" class="drill-reset" data-click="cancelMandatEdit">Annuler</button>
+        <button type="submit" class="ask-btn admin-login-submit" id="mandatFormSubmit">Enregistrer</button>
+      </div>
+    </form>
+  </section>`;
+}
+
+export function onMandatEditClick(nom) {
+  const entry = (mandatsData || []).find(e => e.nom === nom);
+  if (!entry) return;
+  editingMandat = { ...entry };
+  renderAdminPanel();
+  document.getElementById('mandatNom')?.focus();
+}
+
+export function onMandatNewClick() {
+  editingMandat = { nom: '', conseiller_communal: '', echevin: '', bourgmestre: '', statut: '' };
+  renderAdminPanel();
+  document.getElementById('mandatNom')?.focus();
+}
+
+export function cancelMandatEdit() {
+  editingMandat = null;
+  renderAdminPanel();
+}
+
+// nom_original : nom AVANT modification (voir save_mandat côté backend) —
+// permet de renommer une entrée sans en créer une seconde à côté de
+// l'ancienne. Absent (undefined→null) pour une nouvelle personne.
+export async function submitMandat(ev) {
+  ev.preventDefault();
+  const nomEl = document.getElementById('mandatNom');
+  const conseillerEl = document.getElementById('mandatConseiller');
+  const echevinEl = document.getElementById('mandatEchevin');
+  const bourgmestreEl = document.getElementById('mandatBourgmestre');
+  const statutEl = document.getElementById('mandatStatut');
+  const errBox = document.getElementById('mandatFormError');
+  const btn = document.getElementById('mandatFormSubmit');
+  const nom = nomEl.value.trim();
+  if (!nom) return;
+  errBox.textContent = '';
+  btn.disabled = true;
+  try {
+    const res = await fetch(API_URL + '/admin/mandats', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nom,
+        conseiller_communal: conseillerEl.value.trim() || null,
+        echevin: echevinEl.value.trim() || null,
+        bourgmestre: bourgmestreEl.value.trim() || null,
+        statut: statutEl.value.trim() || null,
+        nom_original: (editingMandat && editingMandat.nom) || null,
+      }),
+    });
+    if (!res.ok) {
+      errBox.textContent = await _errorDetail(res);
+      return;
+    }
+    const { mandat } = await res.json();
+    const idx = (mandatsData || []).findIndex(e => e.nom === (editingMandat && editingMandat.nom));
+    if (idx >= 0) mandatsData[idx] = mandat;
+    else (mandatsData || (mandatsData = [])).push(mandat);
+    mandatsData.sort((a, b) => (a.nom || '').localeCompare(b.nom || '', 'fr'));
+    editingMandat = null;
+    renderAdminPanel();
+  } catch (err) {
+    errBox.textContent = err.message || 'Enregistrement impossible — réessayez.';
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 export function openAdminLogin() {
@@ -511,5 +711,9 @@ export async function adminLogout() {
   pendingQuestion = null;
   pendingQeSourceUrl = null;
   lastQePublishResult = null;
+  adminSubTab = 'seances';
+  mandatsData = null;
+  mandatsFilter = '';
+  editingMandat = null;
   updateAdminUI();
 }

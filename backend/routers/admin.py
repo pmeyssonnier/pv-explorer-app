@@ -10,9 +10,10 @@ from pydantic import BaseModel
 
 import lexique_store
 from limiter import limiter
-from models.api import AdminLoginRequest, QuestionEcritePublishRequest, SeancePublishRequest
+from models.api import AdminLoginRequest, MandatSaveRequest, QuestionEcritePublishRequest, SeancePublishRequest
 from services import github_publish, jobs, pv_integration, questions_ecrites_integration
 from services.auth import SESSION_TTL_S, create_session_token, verify_admin_credentials, verify_session_token
+from services.people import mandats as mandats_store
 
 
 class LexiqueEntryRequest(BaseModel):
@@ -214,3 +215,37 @@ def add_lexique_entry(request: Request, body: LexiqueEntryRequest, username: str
         # échoué : on le signale sans perdre l'ajout côté instance courante.
         committed = False
     return {"status": "done", "kind": body.kind, "committed": committed, "lexique": data}
+
+
+# ── MANDATS déclaratifs éditables (conseiller·ère/échevin·e/bourgmestre par
+# plage de dates — voir services/people/mandats.py) ──────────────────────────
+# Même mécanique que le lexique ci-dessus : écriture locale (effet immédiat
+# sur l'instance, via le cache par mtime de services.people.mandats) puis
+# commit dans le dépôt (persistance + redéploiement — voir render.yaml,
+# buildFilter backend/**).
+@router.get("/mandats")
+def get_mandats(username: str = Depends(require_admin)):
+    return {"mandats": mandats_store.list_mandats()}
+
+
+@router.post("/mandats")
+@limiter.limit("60/hour")
+def save_mandat(request: Request, body: MandatSaveRequest, username: str = Depends(require_admin)):
+    try:
+        entry = mandats_store.save_mandat(
+            body.nom, body.conseiller_communal, body.echevin, body.bourgmestre, body.statut,
+            nom_original=body.nom_original,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    try:
+        github_publish.commit_file(
+            "backend/elus_mandats.json", mandats_store.as_json(),
+            f"data: mandat de {entry['nom']} (via panneau admin)",
+        )
+        committed = True
+    except Exception:
+        # L'écriture locale a réussi (effet immédiat) mais le commit distant a
+        # échoué : on le signale sans perdre la modification côté instance courante.
+        committed = False
+    return {"status": "done", "committed": committed, "mandat": entry}

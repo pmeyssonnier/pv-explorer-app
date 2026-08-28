@@ -143,3 +143,18 @@ class QuestionEcritePublishRequest(BaseModel):
         default=None, max_length=500,
         description="URL de la question écrite sur 1030.be, si connue.",
     )
+
+
+class MandatSaveRequest(BaseModel):
+    # Plages "AAAA-AAAA" / "AAAA-présent" (validées côté serveur, voir
+    # services.people.mandats.save_mandat) — jamais de jour/mois, le fichier
+    # source n'a que la granularité année.
+    nom: str = Field(min_length=1, max_length=100, description="Nom complet affiché.")
+    conseiller_communal: Optional[str] = Field(default=None, max_length=200)
+    echevin: Optional[str] = Field(default=None, max_length=200)
+    bourgmestre: Optional[str] = Field(default=None, max_length=200)
+    statut: Optional[str] = Field(default=None, max_length=200)
+    nom_original: Optional[str] = Field(
+        default=None, max_length=100,
+        description="Nom AVANT modification (retrouve l'entrée même si le nom lui-même est corrigé).",
+    )
