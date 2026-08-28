@@ -68,6 +68,12 @@ let mandatSort = { col: 'nom', dir: 'asc' };
 // (voir onMandatNewClick) : nom_original n'est envoyé que si non vide, pour
 // distinguer création et modification côté backend (voir save_mandat).
 let editingMandat = null;
+// Bascule la fiche d'édition vers un écran de confirmation avant suppression
+// (voir onMandatDeleteClick) — jamais de fenêtre confirm() native, hors
+// style du reste du panneau (même logique que l'aperçu avant publication
+// d'un PV : une action qui modifie le dépôt se confirme dans l'UI, jamais
+// en un clic).
+let mandatDeleteConfirm = false;
 
 // Session vérifiée via cookie httpOnly (jamais lu par ce script — juste
 // renvoyé automatiquement par le navigateur, `credentials: 'include'`) : on
@@ -137,6 +143,7 @@ export function switchAdminSubTab(tab) {
   adminSubTab = tab;
   editingMandat = null;
   mandatComboSelected = null;
+  mandatDeleteConfirm = false;
   if (tab === 'mandats' && mandatsData === null) { loadMandats(); return; }
   renderAdminPanel();
 }
@@ -588,6 +595,9 @@ function initMandatCombo() {
 function renderMandatEditForm() {
   const e = editingMandat;
   const isNew = !e.nom;
+  if (mandatDeleteConfirm) return renderMandatDeleteConfirm(e);
+  const deleteBtn = isNew ? '' :
+    `<button type="button" class="admin-mandat-danger" data-click="onMandatDeleteClick">Supprimer</button>`;
   return `<section class="admin-mandat-form-wrap">
     <h4>${isNew ? 'Nouvelle personne' : `Modifier — ${escapeHtml(e.nom)}`}</h4>
     <form id="mandatEditForm" class="admin-login-form">
@@ -604,9 +614,25 @@ function renderMandatEditForm() {
       <p class="admin-login-error" id="mandatFormError" role="alert"></p>
       <div class="admin-preview-actions">
         <button type="button" class="drill-reset" data-click="cancelMandatEdit">Annuler</button>
+        ${deleteBtn}
         <button type="submit" class="ask-btn admin-login-submit" id="mandatFormSubmit">Enregistrer</button>
       </div>
     </form>
+  </section>`;
+}
+
+// Écran de confirmation avant suppression — jamais un simple clic : la
+// suppression commite dans le dépôt (voir confirmMandatDelete), même degré
+// de prudence que la publication d'un PV (aperçu, confirmation explicite).
+function renderMandatDeleteConfirm(e) {
+  return `<section class="admin-mandat-form-wrap">
+    <h4>Supprimer — ${escapeHtml(e.nom)}</h4>
+    <p class="admin-check-warn">⚠️ Êtes-vous sûr·e de vouloir supprimer le mandat de <strong>${escapeHtml(e.nom)}</strong> ? Cette action est irréversible.</p>
+    <p class="admin-login-error" id="mandatDeleteError" role="alert"></p>
+    <div class="admin-preview-actions">
+      <button type="button" class="drill-reset" data-click="cancelMandatDelete">Annuler</button>
+      <button type="button" class="admin-mandat-danger" id="mandatDeleteConfirmBtn" data-click="confirmMandatDelete">Oui, supprimer</button>
+    </div>
   </section>`;
 }
 
@@ -615,6 +641,7 @@ export function onMandatEditClick(nom) {
   if (!entry) return;
   editingMandat = { ...entry };
   mandatComboSelected = nom;
+  mandatDeleteConfirm = false;
   renderAdminPanel();
   document.getElementById('mandatNom')?.focus();
 }
@@ -622,6 +649,7 @@ export function onMandatEditClick(nom) {
 export function onMandatNewClick() {
   editingMandat = { nom: '', conseiller_communal: '', echevin: '', bourgmestre: '', statut: '' };
   mandatComboSelected = null;
+  mandatDeleteConfirm = false;
   renderAdminPanel();
   document.getElementById('mandatNom')?.focus();
 }
@@ -629,7 +657,46 @@ export function onMandatNewClick() {
 export function cancelMandatEdit() {
   editingMandat = null;
   mandatComboSelected = null;
+  mandatDeleteConfirm = false;
   renderAdminPanel();
+}
+
+export function onMandatDeleteClick() {
+  mandatDeleteConfirm = true;
+  renderAdminPanel();
+}
+
+export function cancelMandatDelete() {
+  mandatDeleteConfirm = false;
+  renderAdminPanel();
+}
+
+export async function confirmMandatDelete() {
+  if (!editingMandat || !editingMandat.nom) return;
+  const errBox = document.getElementById('mandatDeleteError');
+  const btn = document.getElementById('mandatDeleteConfirmBtn');
+  errBox.textContent = '';
+  btn.disabled = true;
+  try {
+    const res = await fetch(API_URL + '/admin/mandats?nom=' + encodeURIComponent(editingMandat.nom), {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      errBox.textContent = await _errorDetail(res);
+      return;
+    }
+    const nom = editingMandat.nom;
+    mandatsData = (mandatsData || []).filter(e => e.nom !== nom);
+    editingMandat = null;
+    mandatComboSelected = null;
+    mandatDeleteConfirm = false;
+    renderAdminPanel();
+  } catch (err) {
+    errBox.textContent = err.message || 'Suppression impossible — réessayez.';
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 // nom_original : nom AVANT modification (voir save_mandat côté backend) —
@@ -1002,5 +1069,6 @@ export async function adminLogout() {
   mandatLegislature = 'all';
   mandatSort = { col: 'nom', dir: 'asc' };
   editingMandat = null;
+  mandatDeleteConfirm = false;
   updateAdminUI();
 }

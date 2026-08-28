@@ -249,3 +249,21 @@ def save_mandat(request: Request, body: MandatSaveRequest, username: str = Depen
         # échoué : on le signale sans perdre la modification côté instance courante.
         committed = False
     return {"status": "done", "committed": committed, "mandat": entry}
+
+
+@router.delete("/mandats")
+@limiter.limit("60/hour")
+def delete_mandat(request: Request, nom: str, username: str = Depends(require_admin)):
+    try:
+        entry = mandats_store.delete_mandat(nom)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    try:
+        github_publish.commit_file(
+            "backend/elus_mandats.json", mandats_store.as_json(),
+            f"data: suppression du mandat de {entry['nom']} (via panneau admin)",
+        )
+        committed = True
+    except Exception:
+        committed = False
+    return {"status": "done", "committed": committed, "mandat": entry}

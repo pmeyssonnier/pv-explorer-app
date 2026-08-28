@@ -32,6 +32,7 @@ import {
   cancelQeExtract, confirmQePublish, switchAdminSubTab,
   onMandatEditClick, onMandatNewClick, cancelMandatEdit, onMandatRoleChipClick,
   onMandatLegislatureChipClick, onMandatSortClick,
+  onMandatDeleteClick, cancelMandatDelete, confirmMandatDelete,
 } from './admin.js';
 
 // ── ONGLETS ──
@@ -87,6 +88,7 @@ registerActions({
   cancelQeExtract, confirmQePublish, switchAdminSubTab,
   onMandatEditClick, onMandatNewClick, cancelMandatEdit, onMandatRoleChipClick,
   onMandatLegislatureChipClick, onMandatSortClick,
+  onMandatDeleteClick, cancelMandatDelete, confirmMandatDelete,
 });
 
 // ── Écouteurs directs pour les éléments statiques qui portaient un

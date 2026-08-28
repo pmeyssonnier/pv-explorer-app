@@ -280,6 +280,18 @@ body {
 .admin-mandats-sort.active { text-decoration: underline; text-decoration-color: var(--or); text-underline-offset: 3px; }
 .admin-mandat-form-wrap { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--ligne); }
 .admin-mandat-form-wrap h4 { font-family: var(--display); font-size: 16px; margin-bottom: 6px; }
+/* Bouton « Supprimer » / confirmation (voir admin.js onMandatDeleteClick) —
+   liseré dans l'accent plutôt que rempli (comme .settings-reset) : se
+   distingue visuellement d'Enregistrer (.ask-btn, rempli) sans introduire un
+   rouge séparé — l'accent unique du thème (--bordeaux) suffit à signaler une
+   action différente, son remplissage au survol la rend franchement engageante. */
+.admin-mandat-danger {
+  border: 1px solid var(--bordeaux); background: none; color: var(--bordeaux);
+  border-radius: 18px; padding: 8px 16px; font-family: var(--corps); font-size: 14px;
+  font-weight: 600; cursor: pointer;
+}
+.admin-mandat-danger:hover { background: var(--bordeaux); color: #f7f3ec; }
+.admin-mandat-danger:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Mobile : on garde le panneau confortable sur tablette/PC mais on COMPACTE
    tout (marges, titres, contrôles, texte) pour que ça tienne sans déborder. */
