@@ -5477,13 +5477,15 @@
       "question": "Pourriez-vous me brosser un tableau général des bâtiments et terrains que la commune de Schaerbeek possède encore en dehors du territoire communal lui-même? Quels sont les bénéfices au sens large que la commune en retire, qu'ils soient utilisés par nos habitants, ou loués à des tiers?",
       "reponse": "La commune de Schaerbeek est propriétaire des biens immobiliers suivants : • Ittre - Route de Clabecq 72 - 1460 Ittre Classes vertes pour les écoles communales • Ohain - Rue aux Fleurs 35 - 1380 Ohain Classes vertes pour les écoles communales • Bruxelles-Ville - rue F.-J. Navez 110 (en copropriété avec Sibelga) ancien magasin scolaire rez : mis à disposition de la maison de Quartier durant les travaux effectués au 43 rue F.J. Navez. Logement de fonction donné en location à un agent communal assurant la surveillance de l'immeuble et l'interface avec le service Gestion Immobilière • Bruxelles-Ville - rue Stephenson 78-80 Mis à disposition de locaux de plusieurs organismes : RenovaS, Sport Jeunes, Cre Actions • Bousval - Verger tenant à une propriété vendue à une Institution pour personnes Agées (Château de la Roche) • Zaventem - Everseweg 4 Cimetière",
       "repondant": null,
-      "source_file": "question-ecrite-09-2010.pdf",
-      "extracted_at": "2026-08-24T07:48:24.488702",
       "thematiques": [
-        "patrimoine_immobilier",
-        "gestion_des_biens_communaux",
-        "locations_et_locations_immobilieres"
-      ]
+        "patrimoine_communal",
+        "immobilier",
+        "gestion_proprietes"
+      ],
+      "question_langue": null,
+      "reponse_langue": null,
+      "source_file": "question-ecrite-09-2010.pdf",
+      "extracted_at": "2026-08-28T11:12:17.553542"
     },
     {
       "id": "QE-2010-005",
