@@ -1146,7 +1146,14 @@ def process_pdf(pdf_path: Path, progress_cb: Optional[Callable[[dict], None]] = 
 
 
 def _clean_name(raw: str) -> str:
-    return re.sub(r"\s+", " ", raw).strip(" :-\t")
+    # Même recasage que _titlecase_name (auteurs/intervenants/repondants) :
+    # ces 4 noms sont capturés par regex depuis le texte brut du PV, pas
+    # depuis le JSON de Claude, mais le PV les imprime tout aussi souvent en
+    # majuscules (« Cécile JODOGNE, Bourgmestre »). bourgmestre_ff en
+    # particulier sert de repli d'affichage quand le nom résolu ne matche
+    # aucun·e élu·e du registre (voir attribution._respondents) — sans ce
+    # recasage, ce repli resterait tout en majuscules.
+    return _titlecase_name(re.sub(r"\s+", " ", raw).strip(" :-\t"))
 
 
 def enrich_seance_meta(seance_struct: dict, first_pages: list[dict]):
