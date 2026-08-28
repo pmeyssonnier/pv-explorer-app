@@ -9,7 +9,7 @@ import { doShare, shareBaseUrl } from './share.js';
 // résumé compact par séance (s.seances_resume). Navigation 100 % côté client :
 // un clic = un niveau plus bas, aucun nouvel appel serveur.
 let statsLoaded = false;
-let seancesResume = [];                       // [{date, points, votes, montant, themes:[[t,n]]}]
+let seancesResume = [];                       // [{date, points, votes, montant, themes:[[t,n]], type_stats:{type:{points,votes,montant}}}]
 let drill = { level: 'year', year: null, month: null };
 let drillMetric = 'points';
 let drillTypeFilter = 'all';      // type isolé dans le graphe d'activité (clic sur sa puce)
@@ -54,10 +54,27 @@ function activeScope() {
 // extraThemeCounts (optionnel) : Map<thème, nombre> à fusionner avant le
 // top 12 — sert à intégrer les questions écrites (jamais rattachées à une
 // séance, donc absentes de `list`), voir qeThemesInScope().
-function aggregate(list, extraThemeCounts) {
-  const th = {}; let points = 0, votes = 0, montant = 0;
+// typeFilter (optionnel, ex. 'Question orale') : au lieu des totaux tous
+// types confondus de la séance, ne compte que le sous-total de CE type (voir
+// s.type_stats, backend/services/statistics.py) — les puces DRILL_TYPES sous
+// le graphe « Activité par année » isolent déjà ce même type dans le graphe ;
+// sans ce filtre les KPI resteraient figés sur le total pendant que le
+// graphe juste en dessous change. « Séances » compte alors les séances où ce
+// type est apparu au moins une fois, pas le total de séances du périmètre.
+// Thématiques non affectées : rester sur celles de la séance entière évite
+// d'introduire une 2e dimension de filtrage dans un tableau qui n'en montre
+// qu'une (voir renderThemes, indépendant du chip).
+function aggregate(list, extraThemeCounts, typeFilter) {
+  const th = {}; let nb = 0, points = 0, votes = 0, montant = 0;
+  const isole = typeFilter && typeFilter !== 'all';
   list.forEach(s => {
-    points += s.points; votes += s.votes; montant += s.montant;
+    if (isole) {
+      const t = (s.type_stats && s.type_stats[typeFilter]) || null;
+      if (!t || !t.points) return;   // absent de ce type : hors périmètre du KPI
+      nb++; points += t.points; votes += t.votes; montant += t.montant;
+    } else {
+      nb++; points += s.points; votes += s.votes; montant += s.montant;
+    }
     (s.themes || []).forEach(([t, n, m]) => {
       const e = th[t] || (th[t] = { n: 0, m: 0 });
       e.n += n; e.m += (m || 0);
@@ -71,7 +88,7 @@ function aggregate(list, extraThemeCounts) {
   }
   const top = Object.entries(th).sort((a, b) => b[1].n - a[1].n).slice(0, 12)
     .map(([t, e]) => [t, e.n, e.m]);
-  return { nb: list.length, points, votes, montant, themes: top };
+  return { nb, points, votes, montant, themes: top };
 }
 
 // Libellé lisible du périmètre courant.
@@ -81,22 +98,31 @@ function scopeLabel() {
   return drill.year;
 }
 
-// KPI (séances / points / votes / montant) recalculés pour le périmètre.
+// KPI (séances / points / votes / montant) recalculés pour le périmètre —
+// et pour le seul type isolé quand une puce du graphe « Activité par année »
+// l'isole (voir aggregate, onDrillTypeChipClick) : les 4 tuiles suivent alors
+// la même puce que le graphe juste en dessous, au lieu de rester sur le total
+// tous types confondus pendant que lui change de titre et de valeurs.
 function renderKPIs() {
   const box = document.getElementById('statsKPIs');
   if (!box) return;
-  const a = aggregate(activeScope());
+  const isole = drillTypeFilter !== 'all';
+  const a = aggregate(activeScope(), null, drillTypeFilter);
+  const seancesLbl = isole ? 'Séances concernées' : 'Séances';
   const card = (ico, num, lbl, small) =>
     `<div class="stat-card"><svg class="stat-ico" aria-hidden="true"><use href="#${ico}"/></svg>`
     + `<div class="stat-num"${small ? ' style="font-size:22px"' : ''}>${num}</div>`
     + `<div class="stat-label">${lbl}</div></div>`;
   box.innerHTML =
-    card('ico-date', fmtInt(a.nb), 'Séances') +
+    card('ico-date', fmtInt(a.nb), seancesLbl) +
     card('ico-pv', fmtInt(a.points), 'Points traités') +
     card('ico-vote', fmtInt(a.votes), 'Votes disputés') +
     card('ico-montant', fmtMontantCompact(a.montant), 'Montants engagés', true);
   const lbl = document.getElementById('scopeLabel');
-  if (lbl) lbl.textContent = selectedSeance ? 'Séance du ' + formatDate(selectedSeance) : scopeLabel();
+  if (lbl) {
+    const base = selectedSeance ? 'Séance du ' + formatDate(selectedSeance) : scopeLabel();
+    lbl.textContent = isole ? `${base} · ${drillType(drillTypeFilter)[1]}` : base;
+  }
   const reset = document.getElementById('drillReset');
   if (reset) reset.hidden = (drill.level === 'year' && !selectedSeance);
 }
@@ -509,6 +535,7 @@ export function onDrillTypeChipClick(type) {
   drillTypeFilter = drillTypeFilter === type ? 'all' : type;
   renderDrill();
   renderStatuts();   // le graphe des issues suit : « que devient ce type ? »
+  renderKPIs();      // les 4 tuiles du haut suivent la même puce
 }
 
 // Reclique sur la puce déjà active → retour à la vue empilée (toutes les

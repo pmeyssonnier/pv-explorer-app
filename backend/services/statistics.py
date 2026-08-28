@@ -14,6 +14,7 @@ from config import PV_JSON_PATH
 from utils.statut import mot_issue
 from utils.text import _strip_accents, _canon_theme
 from utils.video import video_session_map
+from services.people.attribution import _TYPE_LABEL
 from services.questions_ecrites import load_qe_db
 
 
@@ -273,6 +274,12 @@ def compute_stats(db: dict, hors_pv_par_date: dict = None) -> dict:
         tc = Counter()                 # thème -> nb de points
         tm = defaultdict(float)        # thème -> montant engagé (même filtre que le KPI)
         ac = Counter()                 # type d'activité citoyenne (voir ACTIVITY_TYPE_ORDER) -> nb
+        # Points/votes/montant PAR TYPE (Point/Motion/Question orale/Demande —
+        # voir _TYPE_LABEL, mêmes 4 groupes que les puces DRILL_TYPES du
+        # frontend) : alimente les KPI du haut quand une puce isole un type,
+        # sans quoi ils resteraient figés sur le total tous types confondus
+        # pendant que le graphe juste en dessous change de titre et de valeurs.
+        ts = defaultdict(lambda: {"points": 0, "votes": 0, "montant": 0.0})
         for p in pts:
             mp = p["montant_eur"] if (p.get("montant_eur") and not _is_excluded_amount(p)) else 0
             for t in (p.get("thematiques") or []):
@@ -283,6 +290,12 @@ def compute_stats(db: dict, hors_pv_par_date: dict = None) -> dict:
             label = _ACTIVITY_PV_TYPE_LABEL.get(p.get("type"))
             if label:
                 ac[label] += 1
+            tl = ts[_TYPE_LABEL.get(p.get("type"), "Point")]
+            tl["points"] += 1
+            if (p.get("vote") or {}).get("type") == "vote_nominal":
+                tl["votes"] += 1
+            if mp:
+                tl["montant"] += mp
         # [thème, nb_points, montant] — trié par nb de points décroissant
         th_list = [[t, n, round(tm.get(t, 0.0), 2)] for t, n in tc.most_common()]
         seances_resume.append({
@@ -295,6 +308,8 @@ def compute_stats(db: dict, hors_pv_par_date: dict = None) -> dict:
             # de CETTE séance — alimente le drill-down Année → Mois du graphe
             # « Activité citoyenne », calculé côté client comme les thématiques.
             "activite": dict(ac),
+            "type_stats": {k: {"points": v2["points"], "votes": v2["votes"],
+                                "montant": round(v2["montant"], 2)} for k, v2 in ts.items()},
             "file": meta.get("source_file"),
             # URL publique du PDF : pass-through (à renseigner plus tard dans le JSON
             # source via un champ url/source_url) → le lien apparaît dès qu'elle existe.
