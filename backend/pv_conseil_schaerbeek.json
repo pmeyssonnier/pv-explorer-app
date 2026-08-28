@@ -215675,7 +215675,7 @@
         "heure_cloture": null,
         "president": null,
         "bourgmestre": null,
-        "bourgmestre_ff": "De werking van de burgerinterpellaties-Vraag van Mevrouw Houaria Ouazrhari Madame Ouazrhari expose son point Madame la",
+        "bourgmestre_ff": "Cécile Jodogne",
         "secretaire_communal": "David Neuprez",
         "presents_count": 18,
         "excuses": [],
@@ -215749,7 +215749,9 @@
           ],
           "statut_traitement": "traité",
           "debat": false,
-          "repondants": []
+          "repondants": [
+            "Cécile Jodogne"
+          ]
         },
         {
           "sp": 3,
@@ -215830,7 +215832,9 @@
           ],
           "statut_traitement": "traité",
           "debat": false,
-          "repondants": []
+          "repondants": [
+            "Cécile Jodogne"
+          ]
         },
         {
           "sp": 6,
@@ -215930,7 +215934,8 @@
           "statut_traitement": "traité",
           "debat": false,
           "repondants": [
-            "Nimal"
+            "Nimal",
+            "Cécile Jodogne"
           ]
         },
         {
@@ -216054,6 +216059,7 @@
           "statut_traitement": "traité",
           "debat": false,
           "repondants": [
+            "Cécile Jodogne",
             "Nimal"
           ]
         },
@@ -216090,6 +216096,7 @@
           "statut_traitement": "traité",
           "debat": false,
           "repondants": [
+            "Cécile Jodogne",
             "Nimal"
           ]
         },
@@ -216275,7 +216282,9 @@
           ],
           "statut_traitement": "traité",
           "debat": false,
-          "repondants": []
+          "repondants": [
+            "Cécile Jodogne"
+          ]
         },
         {
           "sp": 20,
@@ -216554,7 +216563,9 @@
           ],
           "statut_traitement": "traité",
           "debat": false,
-          "repondants": []
+          "repondants": [
+            "Cécile Jodogne"
+          ]
         },
         {
           "sp": 30,
@@ -216797,7 +216808,9 @@
           ],
           "statut_traitement": "traité",
           "debat": false,
-          "repondants": []
+          "repondants": [
+            "Cécile Jodogne"
+          ]
         },
         {
           "sp": 39,
@@ -216826,7 +216839,9 @@
           ],
           "statut_traitement": "traité",
           "debat": false,
-          "repondants": []
+          "repondants": [
+            "Cécile Jodogne"
+          ]
         },
         {
           "sp": 40,
