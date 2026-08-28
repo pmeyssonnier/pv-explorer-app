@@ -775,5 +775,12 @@
     "echevin": null,
     "bourgmestre": null,
     "statut": "Conseiller communal"
+  },
+  {
+    "nom": "Mohamed El Arnouki",
+    "conseiller_communal": "2010-2018",
+    "echevin": "2013-2018",
+    "bourgmestre": null,
+    "statut": "Ancien échevin / Conseiller communal"
   }
 ]
