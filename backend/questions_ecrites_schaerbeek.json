@@ -5471,22 +5471,21 @@
       "id": "QE-2010-001",
       "annee": 2010,
       "numero": 1,
-      "date": "2010-03-09",
-      "auteur": "Jean-Pierre Van Gorp",
-      "titre": "La décision du Collège du 2 mars 2010 concernant le processus de médiation au sein de la DSD",
-      "question": "Faisant suite à la déicsion reprise ci-dessous, je souhaiterais obtenir les éléments de précision et de réponse suivants : 43/B/35 FORMATION Approuvé Poursuite du processus de médiation au sein du Département DSD. Propositions : 1. autoriser la participation des membres du Département à ce processus et imputer la somme de € 3000 à l'art. 133/124DS-48/28 de 2010. Crédit disponible selon 3/12èmes provisoires : € 10745, 2. charger le Service Equipement d'établir un bon de commande. Rmq : il s'agit d'une dépense prise en charge à 100% dans le cadre de la subvention IRIS21. - Peut-on me préciser la nature du problème qui a conduit à débuter un processus de médiation au sein du département DSD? - En quoi consiste concrètement cette médiation? - Quand est-ce que cette médiation a débuté? - Quelle est la période envisagée pour la médiation? - Combien d'agents du Département suivent ce processus? - Existe-t-il d'autres cas de médiation au sen des autres services communaux? - Le montant de 3.000 € couvrira-t-il l'ensemble du processus? - A quels autres types de dépenses est affectée la subvention IRIS 21?",
-      "reponse": "Vous nous interrogiez sur l'analyse 43/B/35 présentée au Collège en date du 02 mars 2010 concernant la poursuite du processus de médiation au sein du département DSD. Ce processus de médiation a débuté au mois de novembre 2009, suite à des problèmes relationnels entre des agents du service Eco-Conseil. Une fois les causes du malaise entre les agents du service identifiées, le processus s'est mué en un travail plus classique de supervision d'équipe, destiné à assurer dans la durée le bon fonctionnement du service Eco-Conseil. Pour plus de détails quant au contenu exact de la mission et des délais de réalisation, nous vous invitons à consulter en annexe l'offre de l'ASBL Ipso Facto. Le montant de 3.000€ doit couvrir l'ensemble du processus. Ce travail concerne donc principalement les agents du service Eco-Conseil, même si d'autres agents du département, dont notamment la direction, y sont associés ponctuellement. Ce type de processus est inhérent à une gestion moderne des ressources humaines. De nombreux services communaux ont actuellement ou par le passé bénéficié de ce genre de service, sous forme de gestion des conflits ou plus largement d'amélioration du fonctionnement et de la communication interne au sein des équipes. C'est ou ce fut le cas pour le service des gardiens de la paix, le projet SepSud, le service propreté ou les services bâtiments de la commune par exemple. Enfin, quant au financement, le montant de 3.000€ est prévu sur les subsides obtenu par la commune pour la réalisation de l'Agenda local 21. En accord avec les autorités subsidiantes, sachant que c'est le service Eco-Conseil qui doit pouvoir porter et accompagner la réalisation de l'Agenda dans le temps. Vous trouverez ci-dessous l'affectation du subside IRIS21 pour les années 2008, 2009 et 2010. Recettes Dépenses Subsides Fonds propres Etudes Fonctionnement Personnel 2008 50.000 € 5.000 € 55.000 € 0 € 0 € 2009 50.000 € 5.000 € 0 € 15.000 € 40.000 € 2010 50.000 € 5.000 € 0 € 15.000 € 40.000 €",
+      "date": "2010-12-15",
+      "auteur": "Colienne Lejeune de Schiervel",
+      "titre": "Les propriétés communales en dehors de la commune.",
+      "question": "Pourriez-vous me brosser un tableau général des bâtiments et terrains que la commune de Schaerbeek possède encore en dehors du territoire communal lui-même? Quels sont les bénéfices au sens large que la commune en retire, qu'ils soient utilisés par nos habitants, ou loués à des tiers?",
+      "reponse": "La commune de Schaerbeek est propriétaire des biens immobiliers suivants : • Ittre - Route de Clabecq 72 - 1460 Ittre Classes vertes pour les écoles communales • Ohain - Rue aux Fleurs 35 - 1380 Ohain Classes vertes pour les écoles communales • Bruxelles-Ville - rue F.-J. Navez 110 (en copropriété avec Sibelga) ancien magasin scolaire rez : mis à disposition de la maison de Quartier durant les travaux effectués au 43 rue F.J. Navez. Logement de fonction donné en location à un agent communal assurant la surveillance de l'immeuble et l'interface avec le service Gestion Immobilière • Bruxelles-Ville - rue Stephenson 78-80 Mis à disposition de locaux de plusieurs organismes : RenovaS, Sport Jeunes, Cre Actions • Bousval - Verger tenant à une propriété vendue à une Institution pour personnes Agées (Château de la Roche) • Zaventem - Everseweg 4 Cimetière",
       "repondant": null,
       "thematiques": [
-        "mediation",
-        "ressources_humaines",
-        "departement_dsd",
-        "financement_iris21"
+        "patrimoine_communal",
+        "immobilier",
+        "gestion_proprietes"
       ],
       "question_langue": null,
       "reponse_langue": null,
-      "source_file": "Question_ecrite_03-2010.pdf",
-      "extracted_at": "2026-08-28T11:00:06.514541"
+      "source_file": "question-ecrite-09-2010.pdf",
+      "extracted_at": "2026-08-28T11:12:17.553542"
     }
   ]
 }
