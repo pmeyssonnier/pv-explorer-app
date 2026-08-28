@@ -44,7 +44,7 @@ import pdfplumber
 import anthropic
 from tqdm import tqdm
 
-from pv_extraction_pipeline import _clean_str, _clean_str_list, _coerce_int_or_none  # noqa: E402
+from pv_extraction_pipeline import _clean_str, _clean_str_list, _coerce_int_or_none, _titlecase_name  # noqa: E402
 
 # ══════════════════════════════════════════════════════════════════════════
 # CONFIGURATION
@@ -353,7 +353,11 @@ def normalize_question(data: dict, filename: str) -> Optional[dict]:
     if numero is None:
         numero = _numero_from_filename(filename)
     date = _valid_iso_date(_clean_str(data.get("date")))
-    auteur = _clean_str(data.get("auteur"))
+    # Recasé même si le prompt demande déjà une « casse standard » à Claude
+    # (voir SYSTEM_PROMPT) : instruction non garantie côté code, un document
+    # source tout en majuscules la contourne parfois — même repli déterministe
+    # que pour auteurs/intervenants/repondants côté PV (voir pv_extraction_pipeline).
+    auteur = _titlecase_name(_clean_str(data.get("auteur")))
     if numero is None or not date or not auteur:
         return None
     annee = int(date[:4])
@@ -366,7 +370,7 @@ def normalize_question(data: dict, filename: str) -> Optional[dict]:
         "titre": _clean_str(data.get("titre")),
         "question": _clean_str(data.get("question")),
         "reponse": _clean_str(data.get("reponse")) or None,
-        "repondant": _clean_str(data.get("repondant")) or None,
+        "repondant": _titlecase_name(_clean_str(data.get("repondant"))) or None,
         "thematiques": _clean_str_list(data.get("thematiques")),
         # "nl" si le document n'avait AUCUNE version française pour cette
         # partie précise (voir SYSTEM_PROMPT) : le texte ci-dessus est alors

@@ -16,7 +16,7 @@ from utils.text import _thematique_label, liste_fr
 from utils.video import video_session_map
 
 from services.people.attribution import (
-    _decision_label, _decision_summary, _point_author, _respondents, _TYPE_LABEL,
+    _decision_label, _decision_summary, _point_author, _point_respondents, _TYPE_LABEL,
 )
 from services.people.mandats import role_at
 from services.people.names import (
@@ -184,10 +184,14 @@ def seance_detail(date: str):
         if not author_names and _TYPE_LABEL.get(p.get("type"), "Point") == "Point":
             author_names = [n for mention in (p.get("intervenants") or [])
                             for n in _split_person_names(mention)]
-        resp_names = _respondents(p.get("repondant"), meta)
+        resp_names = _point_respondents(p, meta)
         resp_keys = [_key(n, pairs) for n in resp_names]
-        repondants = _people_list(resp_names, pairs, date, idx, resolve,
-                                  fallback=_titlecase(_clean(p.get("repondant") or "")) or None)
+        # Repli si aucun nom ne résout dans le registre : le texte brut du
+        # champ `repondant` (ancien schéma), sinon les noms de `repondants`
+        # recollés (nouveau schéma — voir _point_respondents).
+        fallback = (_titlecase(_clean(p.get("repondant"))) if p.get("repondant")
+                    else liste_fr(resp_names)) or None
+        repondants = _people_list(resp_names, pairs, date, idx, resolve, fallback=fallback)
         repondant = liste_fr([x["nom"] for x in repondants]) or None
         demandeurs = _people_list(author_names, pairs, date, idx, resolve)
         # Un point délibératif n'a pas d'auteur·e : ce que l'attribution y

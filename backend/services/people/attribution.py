@@ -226,6 +226,29 @@ def _respondents(raw: str, seance: dict) -> list:
     return names
 
 
+def _point_respondents(point: dict, seance: dict) -> list:
+    """Répondant·e·s d'un POINT, quelle que soit l'ÈRE du schéma d'extraction.
+
+    Ancien schéma (tous les points publiés jusqu'ici) : un seul champ texte
+    `repondant`, parfois composé (« X et Y »), parfois une simple mention de
+    rôle (« Bourgmestre ff ») que _respondents() résout via les métadonnées
+    de séance. Nouveau schéma (pipeline/pv_extraction_pipeline.py, depuis le
+    passage à trois listes distinctes — voir normalize_point) : Claude
+    extrait directement `repondants`, une LISTE de noms déjà individualisés
+    — plus aucun rôle à résoudre, rien à reparse.
+
+    Sans ce repli, un PV publié depuis le panneau admin (qui ne produit plus
+    `repondant` du tout, seulement `repondants`) n'afficherait plus aucun·e
+    répondant·e dans les onglets Séances/Par élu·e, alors que le chat et
+    Pinecone (qui lisent `repondants` directement) le montreraient
+    correctement — un point resterait alors introuvable par son/sa
+    répondant·e dans deux vues sur trois."""
+    raw = point.get("repondant")
+    if raw:
+        return _respondents(raw, seance)
+    return list(point.get("repondants") or [])
+
+
 # ── Issue d'un point (décision + vote) ──────────────────────────────────────
 # Partagé entre l'agrégation par personne (registry._build_all, pour le champ
 # « decision » d'une réponse en séance) et la vue par séance (seance_detail) —

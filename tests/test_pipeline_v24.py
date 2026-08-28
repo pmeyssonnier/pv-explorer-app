@@ -10,7 +10,7 @@ from pv_extraction_pipeline import (
     _coerce_amount, normalize_point, _fix_point_pages,
     expected_sp_from_pages, verify_completeness, extract_seance_date_from_text,
     _synthesize_deferred_points, _extract_anchor_title, RE_RETIRE, RE_REPORTE,
-    _recover_missing_decisions, _loosen, _with_lex,
+    _recover_missing_decisions, _loosen, _with_lex, _titlecase_name,
 )
 from reextract_targeted import targets_from_audit
 from audit_completeness import audit_decisions, TYPES_SANS_DECISION
@@ -59,6 +59,39 @@ def test_normalize_point_preserve_page_and_normalize():
 @pytest.mark.parametrize("bad", [{"titre": "sans sp"}, "pas un dict", None])
 def test_normalize_point_rejette_sans_sp(bad):
     assert normalize_point(bad) is None
+
+
+# ── normalize_point recase les listes de personnes (le PV source imprime
+# parfois les patronymes tout en majuscules, que Claude reproduit sinon tel
+# quel — voir _titlecase_name/_clean_person_list) ──────────────────────────
+@pytest.mark.parametrize("brut, attendu", [
+    ("Cécile JODOGNE", "Cécile Jodogne"),
+    ("BERNARD CLERFAYT", "Bernard Clerfayt"),
+    ("Jean-Pierre VAN GORP", "Jean-Pierre van Gorp"),
+    ("YVAN DE BEAUFFORT", "Yvan de Beauffort"),
+    ("Cécile Jodogne", "Cécile Jodogne"),   # déjà bien casé : inchangé
+])
+def test_titlecase_name(brut, attendu):
+    assert _titlecase_name(brut) == attendu
+
+
+def test_normalize_point_recase_auteurs_intervenants_repondants():
+    p = normalize_point({
+        "sp": 1, "titre": "Objet",
+        "auteurs": ["BERNARD CLERFAYT"],
+        "intervenants": ["Cécile JODOGNE", "Denis GRIMBERGHS"],
+        "repondants": ["JEAN-PIERRE VAN GORP"],
+    })
+    assert p["auteurs"] == ["Bernard Clerfayt"]
+    assert p["intervenants"] == ["Cécile Jodogne", "Denis Grimberghs"]
+    assert p["repondants"] == ["Jean-Pierre van Gorp"]
+
+
+def test_normalize_point_ne_recase_pas_les_thematiques():
+    # Les thématiques ne sont pas des noms de personnes : _clean_str_list
+    # (pas _clean_person_list) doit continuer à s'y appliquer, sans casse imposée.
+    p = normalize_point({"sp": 1, "titre": "Objet", "thematiques": ["mobilite", "PARC_JOSAPHAT"]})
+    assert p["thematiques"] == ["mobilite", "PARC_JOSAPHAT"]
 
 
 # ── _fix_point_pages : bornage à l'intervalle réel du chunk ─────────────────
