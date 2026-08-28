@@ -5,7 +5,7 @@ import {
   escapeHtml, formatDate, TYPE_ACTOR_LABEL, renderThemeTags,
   renderTypeBadge, renderStatutBadge, renderDecision, renderMontant, renderSpBadge,
   renderPvPdfLink, renderVideoLink, renderPersonLine, hasDebateLink,
-  renderLoadingReveil,
+  renderLoadingReveil, renderRubrique, renderResume,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 import { createCombobox } from './combobox.js';
@@ -205,6 +205,8 @@ function seancePointRow(it) {
       `Ouvrir le PV à la page ${it.page} sur 1030.be`);
   }
   const actorLabel = TYPE_ACTOR_LABEL[it.type_label] || 'Auteur·e';
+  const rubrique = renderRubrique(it);
+  const resume = renderResume(it);
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, it.demandeur);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
   const decision = renderDecision(it);
@@ -213,7 +215,9 @@ function seancePointRow(it) {
   return `<div class="elu-item">
     <div class="elu-body">
       ${seanceDateBadge}${badge}${statutBadge}${sp}
+      ${rubrique}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
+      ${resume}
       ${demandeur}
       ${rep}
       ${decision}

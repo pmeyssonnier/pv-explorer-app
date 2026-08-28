@@ -216,6 +216,12 @@ def seance_detail(date: str):
             "type": p.get("type"),
             "type_label": _TYPE_LABEL.get(p.get("type"), "Point"),
             "titre": p.get("titre") or "",
+            # Classement administratif d'origine et résumé en une phrase —
+            # déjà dans la base pour chaque point de PV, jamais affichés
+            # jusqu'ici (voir frontend seances.js/elus.js).
+            "rubrique": p.get("rubrique"),
+            "sous_rubrique": p.get("sous_rubrique"),
+            "resume": p.get("resume"),
             "demandeur": demandeur,
             # Liste INDIVIDUELLE (voir _people_list) : ce que consomme le
             # filtre par intervenant·e de l'onglet Séances, pour qu'un point
