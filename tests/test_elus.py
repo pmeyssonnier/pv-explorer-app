@@ -553,6 +553,17 @@ def test_key_normalizes_erlay_typo_to_eraly():
     assert "erlay" not in elus._index()
 
 
+def test_key_normalizes_en_nashi_alias_to_haddioui():
+    # Sihame Haddioui (échevine 2018-2024) est aussi connue sous le nom
+    # « Sihame En-Nashi »/« Sihame Haddioui En-Nashi » (déclarations de
+    # mandats officielles) — jamais rencontré dans ce corpus à ce jour, mais
+    # posé par précaution pour qu'une future mention ne crée pas de fiche
+    # dupliquée (voir _KEY_ALIASES).
+    assert elus._key("En-Nashi") == "haddioui"
+    assert elus._key("Sihame En-Nashi") == "haddioui"
+    assert elus._key("Sihame Haddioui En-Nashi") == "haddioui"
+
+
 def test_non_person_video_authors_excluded():
     # Ces « auteur·e·s » de chapitrage vidéo sont en réalité des organismes
     # (contre-signataires de points de convention/partenariat), jamais des
@@ -847,15 +858,16 @@ def test_deliberative_point_intervenants_do_not_become_depositions():
 
 
 def test_seance_point_respondents_keep_their_own_role():
-    # 03/03/2010 SP 12 : Frédéric Nimal (conseiller à cette date) répond aux
-    # côtés de Cécile Jodogne (Collège). Le rôle COMBINÉ du point vaut
-    # "college" (voir _combined_role) — c'est ce qui masquait Nimal au filtre
+    # 24/04/2013 SP 12 : Dominique Decoux (présidente du CPAS — jamais
+    # échevine, voir elus_mandats.json) répond aux côtés de Denis Grimberghs
+    # (Collège). Le rôle COMBINÉ du point vaut "college" (voir
+    # _combined_role) — c'est ce qui masquait Decoux au filtre
     # « Conseiller·ère ». Chaque personne porte donc désormais SON rôle.
-    p = next(x for x in elus.seance_detail("2010-03-03")["points"] if x["sp"] == 12)
+    p = next(x for x in elus.seance_detail("2013-04-24")["points"] if x["sp"] == 12)
     assert p["repondant_role"] == "college"          # résumé du point, inchangé
     assert p["repondants"] == [
-        {"nom": "Frédéric Nimal", "role": "conseiller"},
-        {"nom": "Cécile Jodogne", "role": "college"},
+        {"nom": "Dominique Decoux", "role": "conseiller"},
+        {"nom": "Denis Grimberghs", "role": "college"},
     ]
 
 
@@ -869,19 +881,19 @@ def test_seance_point_respondent_not_resolved_as_person_kept_as_single_entry():
 
 
 def test_seance_detail_role_reflects_mandate_at_seance_date_not_a_fixed_label():
-    # Frédéric Nimal (clé "nimal") n'est devenu échevin qu'en 2012 (mandats
-    # déclaratifs, voir elus_mandats.json) : un point de 2010 où il répond
+    # Quentin van den Hove (clé "hove") a quitté le Collège en 2024 (mandats
+    # déclaratifs, voir elus_mandats.json) : un point de 2025 où il répond
     # doit le classer "conseiller", pas "college" — contrairement à un rôle
     # unique figé par personne (ce que fait la vue Par élu·e, elus.role, pour
     # le sélecteur "Tous les rôles" — voir test_echevin_has_college_role_and_answers
     # qui le classe "college" comme rôle DOMINANT sur toute sa carrière).
-    before = elus.seance_detail("2010-03-03")
-    pt = next(p for p in before["points"] if p["repondant"] == "Frédéric Nimal")
-    assert pt["repondant_role"] == "conseiller"
+    before = elus.seance_detail("2022-01-26")
+    pt = next(p for p in before["points"] if p["repondant"] == "Quentin van den Hove")
+    assert pt["repondant_role"] == "college"
 
-    after = elus.seance_detail("2025-10-15")
-    pt2 = next(p for p in after["points"] if p["repondant"] == "Frédéric Nimal")
-    assert pt2["repondant_role"] == "college"
+    after = elus.seance_detail("2025-03-26")
+    pt2 = next(p for p in after["points"] if p["repondant"] == "Quentin van den Hove")
+    assert pt2["repondant_role"] == "conseiller"
 
 
 def test_seance_detail_resolves_demandeur_named_only_in_resume():
