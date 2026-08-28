@@ -3,7 +3,7 @@
     "nom": "Base des questions écrites - Conseil communal de Schaerbeek",
     "version": "1.0",
     "date_creation": "2026-08-23T10:08:06.704034",
-    "total_questions": 295,
+    "total_questions": 300,
     "last_updated": "2026-08-24T07:59:13.367150"
   },
   "questions": [
@@ -5468,9 +5468,9 @@
       ]
     },
     {
-      "id": "QE-2010-001",
+      "id": "QE-2010-009",
       "annee": 2010,
-      "numero": 1,
+      "numero": 9,
       "date": "2010-12-15",
       "auteur": "Colienne Lejeune de Schiervel",
       "titre": "Les propriétés communales en dehors de la commune.",
@@ -5484,6 +5484,107 @@
         "gestion_des_biens_communaux",
         "locations_et_locations_immobilieres"
       ]
+    },
+    {
+      "id": "QE-2010-005",
+      "annee": 2010,
+      "numero": 5,
+      "date": "2010-03-09",
+      "auteur": "Jean-Pierre Van Gorp",
+      "titre": "Le placement de panneaux d'interdiction de stationnement rue général Gratry.",
+      "question": "J'ai été interpellé par plusieurs habitants de la rue Général Gratry qui se plaignaient du placement de panneaux d'interdiction de stationnement entre le 09/02/2010 et le 15/03/2010, ne constatant pas au final de travaux sur ce tronçon ou la présence d'engins. Pourriez-vous me préciser pourquoi ces panneaux ont été installés? Dans l'hypothèse de travaux, de quelle nature étaient-ils puisqu'ils n'ont pas été remarqués par le voisinage?",
+      "reponse": "Comme suite à votre question écrite du 16 mars 2010, veuillez trouver ci-après les renseignements communiqués à ce sujet par le Département Infrastructures. Les services de l'administration communale n'ont pas placé de signalisation de stationnement interdit dans la rue Général Gratry entre 09/02/2010 et le 15/03/2010. D'après les renseignements obtenus de la police, il s'agit d'un chantier privé, -dans un bâtiment - sur lequel le service des travaux voirie n'a aucun pouvoir de contrôle, et pour lequel la police a délivré une autorisation pour la période du 09/02/2010 au 19/03/2010. La société concernée est G&M Home Entreprises, Keelstraat 90 à 1800 Vilvoorde. Personne de contact : Marias Georgios. Tel/fax : 02/267.39.47, GSM : 0474/64.56.20. Il est cependant à noter que Sibelga a effectué des travaux à hauteur du n°1 de la rue Général Gratry, et ce entre le 06/03/2010 et le 19/03/2010, et que ces travaux ont exigé l'utilisation des deux places de parking.",
+      "repondant": null,
+      "thematiques": [
+        "stationnement",
+        "voirie",
+        "signalisation"
+      ],
+      "question_langue": null,
+      "reponse_langue": null,
+      "source_file": "Question_ecrite_05-2010.pdf",
+      "extracted_at": "2026-08-28T11:15:49.742107"
+    },
+    {
+      "id": "QE-2010-004",
+      "annee": 2010,
+      "numero": 4,
+      "date": "2010-03-09",
+      "auteur": "Jean-Pierre Van Gorp",
+      "titre": "L'installation d'écrans plats d'ordinateurs dans tous les services communaux.",
+      "question": "Voici déjà quelques années que de nombreux services ont pu bénéficier d'écrans plats d'ordinateurs, ce qui rend assurément le travail quotidien bien plus confortable. Toutefois, cette installation n'a pas visé l'ensemble des services communaux. Il est à ce propos assez regrettable de constater que certains services sont même à présent dotés d'ordinateurs portables alors que d'autres sont encore avec de vieux écrans. Il me semblait pourtant que l'achat d'un stock important d'écrans plats avait été prévu. Pourriez-vous me préciser si tel est le cas? Dans l'affirmative, quels seront les délais de livraison et combien d'agents sont encore dans l'attente de cette amélioration?",
+      "reponse": "Vous nous interrogiez sur l'installation d'écrans plats et de postes de travail spécifiques dans l'administration. Les normes actuelles pour le poste de travail et le matériel spécifique sont diffusés sur l'Intranet communal. Elles sont inchangées depuis 2007. Les écrans plats étaient alors réservés aux guichets d'accueil de la population. Leur usage a cependant été élargi en 2008, pour des raisons d'ergonomies bien sûr, mais surtout dans le souci de réduire la consommation électrique de l'administration. Chaque année, environ 150 écrans plats sont acquis et remplacent des anciens écrans cathodiques. Le cycle de renouvellement devrait donc s'étendre sur six ans. Le déploiement a commencé principalement à la maison communale où la surconsommation électrique était à l'origine de pannes d'alimentation. Ce bâtiment sera terminé cette année. Quelques écrans plats ont déjà été volés, d'autres ont été transportés ou échangés par le personnel y compris vers d'autres bâtiments. Ces déplacements de matériel sont normalement interdits mais difficiles à contrôler pour le service informatique. L'attribution des ordinateurs portables respecte également es règles prévues. Leur diffusion est limitée pour de nombreuses raisons dont le coût très élevé (achat, amortissement et maintenance), le risque de vol, mais surtout leur inconfort d'usage. Ce qui explique le retour fréquent des utilisateurs à un poste fixe plus rapide et plus convivial.",
+      "repondant": null,
+      "thematiques": [
+        "informatique",
+        "materiel_informatique",
+        "administration_communale"
+      ],
+      "question_langue": null,
+      "reponse_langue": null,
+      "source_file": "Question_ecrite_04-2010.pdf",
+      "extracted_at": "2026-08-28T11:15:49.742107"
+    },
+    {
+      "id": "QE-2010-003",
+      "annee": 2010,
+      "numero": 3,
+      "date": "2010-03-09",
+      "auteur": "Jean-Pierre Van Gorp",
+      "titre": "La décision du Collège du 2 mars 2010 concernant le processus de médiation au sein de la DSD",
+      "question": "Faisant suite à la déicsion reprise ci-dessous, je souhaiterais obtenir les éléments de précision et de réponse suivants : 43/B/35 FORMATION Approuvé Poursuite du processus de médiation au sein du Département DSD. Propositions : 1. autoriser la participation des membres du Département à ce processus et imputer la somme de € 3000 à l'art. 133/124DS-48/28 de 2010. Crédit disponible selon 3/12èmes provisoires : € 10745, 2. charger le Service Equipement d'établir un bon de commande. Rmq : il s'agit d'une dépense prise en charge à 100% dans le cadre de la subvention IRIS21. - Peut-on me préciser la nature du problème qui a conduit à débuter un processus de médiation au sein du département DSD? - En quoi consiste concrètement cette médiation? - Quand est-ce que cette médiation a débuté? - Quelle est la période envisagée pour la médiation? - Combien d'agents du Département suivent ce processus? - Existe-t-il d'autres cas de médiation au sen des autres services communaux? - Le montant de 3.000 € couvrira-t-il l'ensemble du processus? - A quels autres types de dépenses est affectée la subvention IRIS 21?",
+      "reponse": "Vous nous interrogiez sur l'analyse 43/B/35 présentée au Collège en date du 02 mars 2010 concernant la poursuite du processus de médiation au sein du département DSD. Ce processus de médiation a débuté au mois de novembre 2009, suite à des problèmes relationnels entre des agents du service Eco-Conseil. Une fois les causes du malaise entre les agents du service identifiées, le processus s'est mué en un travail plus classique de supervision d'équipe, destiné à assurer dans la durée le bon fonctionnement du service Eco-Conseil. Pour plus de détails quant au contenu exact de la mission et des délais de réalisation, nous vous invitons à consulter en annexe l'offre de l'ASBL Ipso Facto. Le montant de 3.000€ doit couvrir l'ensemble du processus. Ce travail concerne donc principalement les agents du service Eco-Conseil, même si d'autres agents du département, dont notamment la direction, y sont associés ponctuellement. Ce type de processus est inhérent à une gestion moderne des ressources humaines. De nombreux services communaux ont actuellement ou par le passé bénéficié de ce genre de service, sous forme de gestion des conflits ou plus largement d'amélioration du fonctionnement et de la communication interne au sein des équipes. C'est ou ce fut le cas pour le service des gardiens de la paix, le projet SepSud, le service propreté ou les services bâtiments de la commune par exemple. Enfin, quant au financement, le montant de 3.000€ est prévu sur les subsides obtenu par la commune pour la réalisation de l'Agenda local 21. En accord avec les autorités subsidiantes, sachant que c'est le service Eco-Conseil qui doit pouvoir porter et accompagner la réalisation de l'Agenda dans le temps. Vous trouverez ci-dessous l'affectation du subside IRIS21 pour les années 2008, 2009 et 2010. Recettes Dépenses Subsides Fonds propres Etudes Fonctionnement Personnel 2008 50.000 € 5.000 € 55.000 € 0 € 0 € 2009 50.000 € 5.000 € 0 € 15.000 € 40.000 € 2010 50.000 € 5.000 € 0 € 15.000 € 40.000 €",
+      "repondant": null,
+      "thematiques": [
+        "mediation",
+        "ressources_humaines",
+        "departement_dsd",
+        "financement_iris21"
+      ],
+      "question_langue": null,
+      "reponse_langue": null,
+      "source_file": "Question_ecrite_03-2010.pdf",
+      "extracted_at": "2026-08-28T11:15:49.742107"
+    },
+    {
+      "id": "QE-2010-002",
+      "annee": 2010,
+      "numero": 2,
+      "date": "2010-03-09",
+      "auteur": "Jean-Pierre Van Gorp",
+      "titre": "Convention liant la commune de Schaerbeek au CIRB.",
+      "question": "Je souhaiterais obtenir la copie de la convention liant la commune de Schaerbeek au CIRB (Centre d'Informatique pour la Région Bruxelloise) ainsi que des courriers éventuellement adressés par notre administration au CIRB pour dénoncer d'éventuels problèmes ou manquements.",
+      "reponse": "Le service Développement Stratégique et Durable a fait parvenir à Monsieur Jean-Pierre VAN GORP, l'ensemble des documents relatifs à nos relations contractuelles avec le CIRB.",
+      "repondant": null,
+      "thematiques": [
+        "informatique",
+        "cirb",
+        "conventions"
+      ],
+      "question_langue": null,
+      "reponse_langue": null,
+      "source_file": "Question_ecrite_02-2010.pdf",
+      "extracted_at": "2026-08-28T11:15:49.742107"
+    },
+    {
+      "id": "QE-2010-001",
+      "annee": 2010,
+      "numero": 1,
+      "date": "2010-02-19",
+      "auteur": "Bernadette Vriamont",
+      "titre": "Toetreding tot RSZPPO/ONSSAPL vanaf 2010 voor de pensioenen van het statutaire personeel.",
+      "question": "Naar aanleiding van mijn vraag op de vorige gemeenteraad (3 februari 2010) vernam ik graag of de gemeente wel of niet toetreed tot de Pool 2 van RSZPPO/ONSSAPL voor de pensioenen van haar statutair personeel. Is het mogelijk om de argumentatie van het College voor en tegen een toetreding te krijgen en een vergelijkende nota (zoals reeds gevraagd op de gemeenteraad) met een analyse van de gevolgen van al dan niet toetreding tot het systeem?",
+      "reponse": null,
+      "repondant": null,
+      "thematiques": [
+        "pensions",
+        "personnel_statutaire",
+        "rszppo"
+      ],
+      "question_langue": "nl",
+      "reponse_langue": null,
+      "source_file": "Question_ecrite_01-2010.pdf",
+      "extracted_at": "2026-08-28T11:15:49.742107"
     }
   ]
 }
