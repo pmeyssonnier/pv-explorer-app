@@ -146,3 +146,71 @@ def mandats_for(key: str) -> dict | None:
         kind: [{"debut": start, "fin": end} for start, end in ranges]
         for kind, ranges in m.items() if ranges
     } or None
+
+
+# ── Édition (panneau admin) ─────────────────────────────────────────────────
+# Session #hfkq92 : sous-onglet admin pour visualiser/corriger les mandats
+# déclaratifs sans passer par un commit manuel — ce module ne servait jusqu'ici
+# qu'en lecture (voir docstring en tête de fichier).
+def list_mandats() -> list:
+    """Liste brute des entrées (voir _load_mandats_raw) pour l'admin — pas de
+    cache mtime ici, fichier de quelques dizaines de Ko, toujours à jour."""
+    return _load_mandats_raw()
+
+
+def _validate_range(raw, champ: str) -> None:
+    """Lève ValueError si `raw` contient un segment qui ne matche pas
+    _RANGE_RE — un segment mal formé est sinon silencieusement ignoré par
+    _parse_ranges, ce qui masquerait une faute de frappe de l'admin plutôt
+    que de la signaler tout de suite."""
+    if not raw:
+        return
+    for part in raw.split(","):
+        if not _RANGE_RE.match(part):
+            raise ValueError(
+                f"{champ} : segment invalide « {part.strip()} » "
+                "(attendu « AAAA-AAAA » ou « AAAA-présent », virgule pour plusieurs plages)"
+            )
+
+
+def save_mandat(nom: str, conseiller_communal, echevin, bourgmestre, statut,
+                 nom_original: str | None = None) -> dict:
+    """Ajoute ou met à jour (par nom) une entrée de elus_mandats.json, l'écrit
+    sur le disque local (effet immédiat sur l'instance courante — même
+    mécanique que lexique_store.add_entry) et retourne l'entrée sauvegardée.
+    `nom_original` : nom AVANT modification, pour retrouver l'entrée même si
+    l'admin corrige aussi le nom lui-même (sinon une simple correspondance
+    sur `nom` créerait un doublon au lieu de renommer). Le commit dans le
+    dépôt (persistance/redéploiement) est fait par l'appelant (endpoint
+    admin, via services.github_publish). Lève ValueError si le nom est vide
+    ou une plage mal formée."""
+    nom = (nom or "").strip()
+    if not nom:
+        raise ValueError("nom requis")
+    _validate_range(conseiller_communal, "conseiller_communal")
+    _validate_range(echevin, "echevin")
+    _validate_range(bourgmestre, "bourgmestre")
+
+    data = _load_mandats_raw()
+    entry = {
+        "nom": nom,
+        "conseiller_communal": (conseiller_communal or "").strip() or None,
+        "echevin": (echevin or "").strip() or None,
+        "bourgmestre": (bourgmestre or "").strip() or None,
+        "statut": (statut or "").strip() or None,
+    }
+    cherche = (nom_original or nom).strip()
+    idx = next((i for i, e in enumerate(data) if e.get("nom") == cherche), None)
+    if idx is not None:
+        data[idx] = entry
+    else:
+        data.append(entry)
+
+    with open(_MANDATS_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    return entry
+
+
+def as_json(data: list | None = None) -> str:
+    return json.dumps(data if data is not None else _load_mandats_raw(), ensure_ascii=False, indent=2) + "\n"

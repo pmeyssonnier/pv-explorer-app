@@ -29,7 +29,8 @@ import {
 import {
   checkAdminSession, openAdminLogin, closeAdminLogin, initAdminLoginOverlay,
   submitAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
-  cancelQeExtract, confirmQePublish,
+  cancelQeExtract, confirmQePublish, switchAdminSubTab,
+  onMandatEditClick, onMandatNewClick, cancelMandatEdit,
 } from './admin.js';
 
 // ── ONGLETS ──
@@ -82,7 +83,8 @@ registerActions({
   shareElu, onEluChipClick, onEluRoleChipClick, onEluFacetChipClick,
   shareSeance, jumpToSeance, onSeanceTypeChipClick, onSeanceFacetChipClick,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
-  cancelQeExtract, confirmQePublish,
+  cancelQeExtract, confirmQePublish, switchAdminSubTab,
+  onMandatEditClick, onMandatNewClick, cancelMandatEdit,
 });
 
 // ── Écouteurs directs pour les éléments statiques qui portaient un

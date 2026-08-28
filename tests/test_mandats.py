@@ -5,8 +5,24 @@ role_at/mandats_for testées via un jeu de données monkeypatché (bypasse le
 cache par mtime du vrai fichier, indépendant de son contenu réel). Les
 vérifications sur les VRAIES données (élu·e·s réel·le·s, /elu/{key}) vivent
 dans test_elus.py, à côté des autres tests utilisant la base réelle.
+
+Édition (list_mandats/save_mandat + endpoints /admin/mandats) testée en fin
+de fichier — même schéma que test_lexique.py : _MANDATS_PATH redirigé vers
+un fichier temporaire, jamais le vrai elus_mandats.json.
 """
+import json
+
+import pytest
+from fastapi.testclient import TestClient
+
+import app
 import services.people.mandats as mandats
+from services import github_publish
+from services.auth import hash_password
+
+client = TestClient(app.app)
+USERNAME = "pierre"
+PASSWORD = "un-mot-de-passe-suffisamment-long"
 
 
 # ── _parse_ranges : "AAAA-AAAA" / "AAAA-présent", virgules, annotations ─────
@@ -109,3 +125,117 @@ def test_mandats_for_shapes_ranges_as_debut_fin_dicts(monkeypatch):
         "conseiller": [{"debut": 2012, "fin": 2019}, {"debut": 2024, "fin": None}],
         "echevin": [{"debut": 2025, "fin": None}],
     }
+
+
+# ── Édition (panneau admin) : list_mandats/save_mandat ──────────────────────
+# Le fichier réel n'est jamais touché : _MANDATS_PATH redirigé vers un
+# fichier temporaire, même schéma que tmp_lexique dans test_lexique.py.
+@pytest.fixture
+def tmp_mandats(tmp_path, monkeypatch):
+    p = tmp_path / "elus_mandats.json"
+    p.write_text(json.dumps([
+        {"nom": "Alice Dupont", "conseiller_communal": "2012-présent",
+         "echevin": None, "bourgmestre": None, "statut": "Conseillère communale"},
+    ], ensure_ascii=False), encoding="utf-8")
+    monkeypatch.setattr(mandats, "_MANDATS_PATH", str(p))
+    monkeypatch.setattr(mandats, "_cache", {"mtime": None, "by_key": None})
+    return p
+
+
+def test_list_mandats_returns_raw_entries(tmp_mandats):
+    got = mandats.list_mandats()
+    assert len(got) == 1
+    assert got[0]["nom"] == "Alice Dupont"
+
+
+def test_save_mandat_updates_existing_entry_by_name(tmp_mandats):
+    entry = mandats.save_mandat("Alice Dupont", "2012-présent", "2020-présent", None, "Échevine")
+    assert entry == {
+        "nom": "Alice Dupont", "conseiller_communal": "2012-présent",
+        "echevin": "2020-présent", "bourgmestre": None, "statut": "Échevine",
+    }
+    got = mandats.list_mandats()
+    assert len(got) == 1   # mise à jour, pas un doublon
+    assert got[0]["echevin"] == "2020-présent"
+
+
+def test_save_mandat_creates_new_entry_when_name_unknown(tmp_mandats):
+    mandats.save_mandat("Bob Martin", "2024-présent", None, None, "Conseiller communal")
+    got = mandats.list_mandats()
+    assert len(got) == 2
+    assert {e["nom"] for e in got} == {"Alice Dupont", "Bob Martin"}
+
+
+def test_save_mandat_renames_entry_via_nom_original(tmp_mandats):
+    # L'admin corrige le nom lui-même (coquille) : doit RENOMMER l'entrée
+    # existante, pas en créer une seconde à côté de l'ancienne.
+    mandats.save_mandat("Alice Duponnt", "2012-présent", None, None, None,
+                         nom_original="Alice Dupont")
+    got = mandats.list_mandats()
+    assert len(got) == 1
+    assert got[0]["nom"] == "Alice Duponnt"
+
+
+def test_save_mandat_rejects_empty_name(tmp_mandats):
+    with pytest.raises(ValueError):
+        mandats.save_mandat("", "2012-présent", None, None, None)
+
+
+def test_save_mandat_rejects_malformed_range(tmp_mandats):
+    with pytest.raises(ValueError):
+        mandats.save_mandat("Alice Dupont", "pas une date", None, None, None)
+
+
+def test_save_mandat_takes_effect_immediately_on_role_at(tmp_mandats):
+    # Écriture locale (pas seulement le commit distant, monkeypatché par
+    # l'appelant HTTP) : role_at() doit refléter le changement tout de suite,
+    # via le cache par mtime de _mandats_by_key — pas seulement conseillère
+    # (donnée de départ de la fixture), déjà "college" après l'ajout échevin.
+    assert mandats.role_at("dupont", "2021-01-01") == "conseiller"
+    mandats.save_mandat("Alice Dupont", "2012-présent", "2020-présent", None, "Échevine")
+    assert mandats.role_at("dupont", "2021-01-01") == "college"
+
+
+# ── Endpoints /admin/mandats (auth + commit monkeypatché) ───────────────────
+def _login(monkeypatch):
+    monkeypatch.setenv("ADMIN_USERNAME", USERNAME)
+    monkeypatch.setenv("ADMIN_PASSWORD_HASH", hash_password(PASSWORD))
+    monkeypatch.setenv("ADMIN_JWT_SECRET", "test-secret-key")
+    monkeypatch.setenv("ADMIN_COOKIE_SECURE", "false")
+    r = client.post("/admin/login", json={"username": USERNAME, "password": PASSWORD})
+    assert r.status_code == 200
+
+
+def test_mandats_endpoints_require_admin():
+    assert client.get("/admin/mandats").status_code == 401
+    assert client.post("/admin/mandats", json={"nom": "Alice Dupont"}).status_code == 401
+
+
+def test_post_mandats_saves_and_commits(tmp_mandats, monkeypatch):
+    commits = []
+    monkeypatch.setattr(github_publish, "commit_file",
+                        lambda path, content, message: commits.append((path, json.loads(content), message)) or "sha123")
+    _login(monkeypatch)
+    r = client.post("/admin/mandats", json={
+        "nom": "Alice Dupont", "conseiller_communal": "2012-présent",
+        "echevin": "2020-présent", "statut": "Échevine",
+    })
+    assert r.status_code == 200
+    body = r.json()
+    assert body["committed"] is True
+    assert body["mandat"]["echevin"] == "2020-présent"
+    # Le commit a reçu le fichier complet à jour, au bon chemin.
+    assert commits and commits[0][0] == "backend/elus_mandats.json"
+    assert commits[0][1][0]["echevin"] == "2020-présent"
+    g = client.get("/admin/mandats")
+    assert g.status_code == 200
+    assert g.json()["mandats"][0]["echevin"] == "2020-présent"
+    client.post("/admin/logout")
+
+
+def test_post_mandats_bad_range_is_400(tmp_mandats, monkeypatch):
+    monkeypatch.setattr(github_publish, "commit_file", lambda *a, **k: "sha")
+    _login(monkeypatch)
+    r = client.post("/admin/mandats", json={"nom": "Alice Dupont", "echevin": "pas une date"})
+    assert r.status_code == 400
+    client.post("/admin/logout")
