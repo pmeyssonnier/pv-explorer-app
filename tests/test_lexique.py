@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 
 import app
 import lexique_store
+from limiter import limiter
 from services import github_publish
 from services.auth import hash_password
 from services.rag import _glossaire_block
@@ -18,6 +19,15 @@ client = TestClient(app.app)
 
 USERNAME = "pierre"
 PASSWORD = "un-mot-de-passe-suffisamment-long"
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limits():
+    # État process-global partagé entre tous les tests de la session pytest
+    # (même mécanique que test_admin_seances.py/test_admin_questions_ecrites.py)
+    # — sans reset, les logins des tests précédents (ici et dans les autres
+    # fichiers admin) épuisent le quota 5/minute de /admin/login.
+    limiter.reset()
 
 
 @pytest.fixture
