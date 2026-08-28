@@ -319,48 +319,22 @@ function renderMandatsSection() {
   </section>`;
 }
 
-// ── Puces de rôle : filtrent le tableau (voir mandatRoleSel) ────────────────
+// ── Rôle « au sens du Collège » et législatures ─────────────────────────────
 const MANDAT_ROLE_LABEL = { conseiller: 'Conseiller·ère', echevin: 'Échevin·e', bourgmestre: 'Bourgmestre' };
 const MANDAT_ROLE_FIELD = { conseiller: 'conseiller_communal', echevin: 'echevin', bourgmestre: 'bourgmestre' };
+// Ordre = précédence de classement (voir personRoleInPeriod), PAS l'ordre
+// d'affichage des puces (rendu dans cet ordre aussi, du plus courant au plus
+// rare, ce qui coïncide ici).
 const MANDAT_ROLE_ORDER = ['conseiller', 'echevin', 'bourgmestre'];
 
-// Compte pour une puce = personnes qui la vérifient PARMI CELLES déjà
-// retenues par l'AUTRE filtre (législature pour les puces de rôle, rôle pour
-// les puces de législature) — jamais parmi le tableau final, sinon cocher une
-// puce ferait chuter le compte des autres à zéro (même convention que
-// eluRoleCounts/seanceThemeFilterOptions).
-function renderMandatRoleChips() {
-  const base = (mandatsData || []).filter(matchesMandatLegislature);
-  const chips = MANDAT_ROLE_ORDER.map(role => {
-    const n = base.filter(e => e[MANDAT_ROLE_FIELD[role]]).length;
-    const on = mandatRoleSel.has(role);
-    return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"
-      data-click="onMandatRoleChipClick" data-arg="${role}">
-      <strong>${escapeHtml(MANDAT_ROLE_LABEL[role])}</strong> · ${n} personne${n > 1 ? 's' : ''}</button>`;
-  }).join('');
-  return `<div class="elu-chips" id="mandatRoleChips" aria-label="Filtrer par rôle">${chips}</div>`;
-}
-
-export function onMandatRoleChipClick(role) {
-  if (mandatRoleSel.has(role)) mandatRoleSel.delete(role); else mandatRoleSel.add(role);
-  renderAdminPanel();
-}
-
-// Une personne « a » un rôle si le champ correspondant est renseigné, qu'il
-// soit clos ou en cours — sert à RETROUVER qui a un jour été échevin·e/
-// conseiller·ère/bourgmestre, pas seulement qui l'est actuellement (le
-// statut actuel se lit dans la colonne Statut, voir le fix data précédent).
-function matchesMandatRole(e) {
-  if (!mandatRoleSel.size) return true;
-  return MANDAT_ROLE_ORDER.some(role => mandatRoleSel.has(role) && e[MANDAT_ROLE_FIELD[role]]);
-}
-
-// ── Puce de législature : fourchettes de 6 ans, élection en octobre, conseil
-// installé en novembre (calendrier électoral communal belge — voir la
-// discussion avec l'admin sur les dates précises des échevin·e·s Nimal,
-// Decoux, Eraly, Haddioui, Bilge, Querton plus tôt cette session). Générées
-// dynamiquement (aucune liste à maintenir à la main d'une législature à
-// l'autre) depuis 1976 (repère électoral) jusqu'à l'année courante.
+// Fourchettes de 6 ans, élection en octobre, conseil installé en novembre
+// (calendrier électoral communal belge — voir la discussion avec l'admin sur
+// les dates précises des échevin·e·s Nimal, Decoux, Eraly, Haddioui, Bilge,
+// Querton plus tôt cette session). Générées dynamiquement (aucune liste à
+// maintenir à la main d'une législature à l'autre) depuis 1976 (repère
+// électoral) jusqu'à l'année courante. `end` est EXCLU (voir
+// rangesOverlapPeriod) : la législature « 2018-2024 » couvre les années
+// 2018 à 2023, 2024 étant déjà l'année d'installation de la suivante.
 const LEGISLATURE_ANCHOR = 1976;
 
 function mandatLegislatures() {
@@ -377,12 +351,26 @@ function legislatureLabel(p) {
   return p.actuel ? `nov. ${p.start} – aujourd'hui (actuel)` : `nov. ${p.start} – oct. ${p.end}`;
 }
 
-// Chevauchement plage de mandat / législature, en années (granularité du
-// fichier source — aucune date exacte de jour/mois n'y est stockée, voir
-// services/people/mandats.py côté backend) : une plage close sur l'année
-// charnière (ex. « …-2018 ») chevauche À LA FOIS la législature sortante et
-// entrante, ambiguïté inévitable sans le mois exact — mieux vaut inclure une
-// personne à la marge que la manquer dans un outil d'audit.
+// Période de référence pour classer les rôles (voir personRoleInPeriod) :
+// la législature sélectionnée, sinon l'année courante (rôle « à ce jour ») —
+// même demi-intervalle [début, fin[ que mandatLegislatures.
+function activeMandatPeriod() {
+  if (mandatLegislature !== 'all') {
+    const p = mandatLegislatures().find(x => x.key === mandatLegislature);
+    if (p) return p;
+  }
+  const y = new Date().getFullYear();
+  return { start: y, end: y + 1 };
+}
+
+// Chevauchement plage de mandat / période, en DEMI-INTERVALLES [début, fin[
+// (granularité du fichier source — aucune date exacte de jour/mois n'y est
+// stockée, voir services/people/mandats.py côté backend) : une plage close
+// sur l'année charnière (ex. « …-2024 ») appartient à la législature qui
+// FINIT en 2024, jamais à celle qui commence cette même année (élu·e jusqu'à
+// l'élection d'octobre, remplacé·e par le conseil installé en novembre) —
+// et symétriquement, une plage qui COMMENCE en 2024 n'appartient qu'à la
+// nouvelle législature, jamais à celle qui vient de s'achever.
 function rangesOverlapPeriod(raw, period) {
   if (!raw) return false;
   return raw.split(',').some(part => {
@@ -390,14 +378,69 @@ function rangesOverlapPeriod(raw, period) {
     if (!m) return false;
     const start = parseInt(m[1], 10);
     const end = /pr[ée]sent/i.test(m[2]) ? null : parseInt(m[2], 10);
-    return start <= period.end && (end === null || end >= period.start);
+    return start < period.end && (end === null || end > period.start);
   });
 }
 
+// Rôle EFFECTIF d'une personne sur une période donnée : le Collège
+// (bourgmestre puis échevin·e) l'emporte sur conseiller·ère — un échevin·e
+// est conseiller·ère par défaut (son mandat de conseiller·ère la/le couvre
+// toujours) mais son rôle affiché est le plus haut des deux, comme
+// role_at() côté backend (services/people/mandats.py, même précédence).
+// null si la personne n'a aucun mandat couvrant cette période.
+function personRoleInPeriod(e, period) {
+  if (rangesOverlapPeriod(e.bourgmestre, period)) return 'bourgmestre';
+  if (rangesOverlapPeriod(e.echevin, period)) return 'echevin';
+  if (rangesOverlapPeriod(e.conseiller_communal, period)) return 'conseiller';
+  return null;
+}
+
+// ── Puces de rôle : partition (chaque personne comptée dans SON rôle le
+// plus haut sur la période active, jamais deux fois) — voir mandatRoleSel.
+// Compte parmi les personnes déjà retenues par la puce de législature
+// (même convention que eluRoleCounts/seanceThemeFilterOptions : les compteurs
+// reflètent l'AUTRE filtre, jamais le tableau final déjà réduit par celui-ci).
+function renderMandatRoleChips() {
+  const period = activeMandatPeriod();
+  const base = (mandatsData || []).filter(matchesMandatLegislature);
+  const chips = MANDAT_ROLE_ORDER.map(role => {
+    const n = base.filter(e => personRoleInPeriod(e, period) === role).length;
+    const on = mandatRoleSel.has(role);
+    return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"
+      data-click="onMandatRoleChipClick" data-arg="${role}">
+      <strong>${escapeHtml(MANDAT_ROLE_LABEL[role])}</strong> · ${n} personne${n > 1 ? 's' : ''}</button>`;
+  }).join('');
+  return `<div class="elu-chips" id="mandatRoleChips" aria-label="Filtrer par rôle">${chips}</div>`;
+}
+
+export function onMandatRoleChipClick(role) {
+  if (mandatRoleSel.has(role)) mandatRoleSel.delete(role); else mandatRoleSel.add(role);
+  renderAdminPanel();
+}
+
+// Rôle le plus haut sur la période active (législature sélectionnée, ou
+// aujourd'hui) — PAS « a un jour occupé ce rôle » : un·e ancien·ne échevin·e
+// devenu·e simple conseiller·ère aujourd'hui n'apparaît plus dans « Échevin·e »
+// une fois qu'aucune législature passée n'est sélectionnée.
+function matchesMandatRole(e) {
+  if (!mandatRoleSel.size) return true;
+  const role = personRoleInPeriod(e, activeMandatPeriod());
+  return role !== null && mandatRoleSel.has(role);
+}
+
+// Puces de législature : compte, pour CHAQUE législature candidate (pas
+// seulement celle sélectionnée), qui était conseiller·ère (donc membre du
+// conseil, quel que soit son rôle exact) PENDANT CETTE période précise —
+// et, si des puces de rôle sont cochées, dont le rôle sur CETTE MÊME période
+// correspond (jamais celui d'une autre période, y compris la sélectionnée).
 function renderMandatLegislatureChips() {
-  const base = (mandatsData || []).filter(matchesMandatRole);
   const chips = mandatLegislatures().map(p => {
-    const n = base.filter(e => rangesOverlapPeriod(e.conseiller_communal, p)).length;
+    const n = (mandatsData || []).filter(e => {
+      if (!rangesOverlapPeriod(e.conseiller_communal, p)) return false;
+      if (!mandatRoleSel.size) return true;
+      const role = personRoleInPeriod(e, p);
+      return role !== null && mandatRoleSel.has(role);
+    }).length;
     const on = mandatLegislature === p.key;
     return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"
       data-click="onMandatLegislatureChipClick" data-arg="${p.key}">
@@ -480,29 +523,42 @@ function renderMandatsTableHead() {
   return `<tr>${cells}<th></th></tr>`;
 }
 
+// Pastille de rôle affichée à côté d'un nom — regroupe bourgmestre/échevin·e
+// sous « Collège » (voir personRoleInPeriod, même précédence), 'Ancien·ne'
+// quand la personne n'a aucun mandat couvrant la période donnée.
+function mandatRoleBadge(e, period) {
+  const role = personRoleInPeriod(e, period);
+  if (role === 'bourgmestre' || role === 'echevin') return { cls: 'college', texte: 'Collège' };
+  if (role === 'conseiller') return { cls: 'conseiller', texte: 'Conseil' };
+  return { cls: 'ancien', texte: 'Ancien·ne' };
+}
+
 function renderMandatsRows() {
-  const rows = filteredMandats().map(e => `<tr>
-      <td>${escapeHtml(e.nom || '')}</td>
+  const period = activeMandatPeriod();
+  const rows = filteredMandats().map(e => {
+    const badge = mandatRoleBadge(e, period);
+    return `<tr>
+      <td>${escapeHtml(e.nom || '')} <span class="elu-opt-role elu-opt-role-${badge.cls}">${badge.texte}</span></td>
       <td>${escapeHtml(e.conseiller_communal || '—')}</td>
       <td>${escapeHtml(e.echevin || '—')}</td>
       <td>${escapeHtml(e.bourgmestre || '—')}</td>
       <td>${escapeHtml(e.statut || '—')}</td>
       <td><button type="button" class="drill-reset" data-click="onMandatEditClick" data-arg="${escapeHtml(e.nom || '')}">Modifier</button></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
   return rows || `<tr><td colspan="6">Aucun résultat.</td></tr>`;
 }
 
 // ── Recherche : même combobox que le sélecteur d'élu·e (voir combobox.js) —
 // une option choisie ouvre directement sa fiche d'édition, comme la
 // sélection y ouvre la fiche d'activité (pas un filtre du tableau, qui reste
-// géré par les puces de rôle ci-dessus, indépendamment).
+// géré par les puces de rôle ci-dessus, indépendamment). Rôle toujours À CE
+// JOUR (pas la période active) : ce champ sert à retrouver une personne,
+// indépendamment de la législature éventuellement sélectionnée pour filtrer
+// le tableau.
 function mandatOptionHtml(e, { id, active, selected, label }) {
-  const isOuvert = v => !!v && /pr[ée]sent/i.test(v);
-  const college = isOuvert(e.echevin) || isOuvert(e.bourgmestre);
-  const conseil = isOuvert(e.conseiller_communal);
-  const badge = college ? { cls: 'college', texte: 'Collège' }
-    : conseil ? { cls: 'conseiller', texte: 'Conseil' }
-    : { cls: 'ancien', texte: 'Ancien·ne' };
+  const y = new Date().getFullYear();
+  const badge = mandatRoleBadge(e, { start: y, end: y + 1 });
   return `<li class="elu-opt${active ? ' elu-opt-active' : ''}" role="option" id="${id}"
       data-key="${escapeHtml(e.nom)}" aria-selected="${selected}">
     <span class="elu-opt-name">${label}</span>
