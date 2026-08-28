@@ -283,6 +283,9 @@ def _build_all():
                     # filtrer les réponses par puce, comme les dépôts.
                     "type": p.get("type"),
                     "titre": p.get("titre") or "",
+                    "rubrique": p.get("rubrique"),
+                    "sous_rubrique": p.get("sous_rubrique"),
+                    "resume": p.get("resume"),
                     "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
                     "url": meta.get("source_url"),
                     "demandeur_keys": [author_key] if author_key else [],
@@ -306,6 +309,9 @@ def _build_all():
                     "page": p.get("page"),
                     "type": p.get("type"),
                     "titre": p.get("titre") or "",
+                    "rubrique": p.get("rubrique"),
+                    "sous_rubrique": p.get("sous_rubrique"),
+                    "resume": p.get("resume"),
                     "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
                     "repondant_keys": resp_keys,
                     # Repli si le rôle mentionné n'a pas pu être résolu en

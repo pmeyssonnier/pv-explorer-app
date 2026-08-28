@@ -820,7 +820,25 @@ body {
   text-decoration: underline; text-underline-offset: 2px;
 }
 .elu-sp-link:hover, .elu-sp-link:focus-visible { color: var(--bordeaux); }
+/* Rubrique/sous-rubrique du PV (classement administratif d'origine) : repère
+   AU-DESSUS du titre qu'il précède, pas un fait du point — donc placé avant
+   .elu-titre. Un seul accent dans toute l'app (voir --or ci-dessus : « un
+   seul ton, pas un rouge + un or séparés ») : les deux niveaux se distinguent
+   par la FORCE du même ton (pleine puis teintée), pas par deux couleurs. */
+.elu-rubrique { margin-top: 4px; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+.rub-chip {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+  padding: 2px 7px; border-radius: 5px; line-height: 1.5;
+}
+.rub-chip.rub-main { background: var(--bordeaux); color: var(--papier); }
+.rub-chip.rub-sous { background: color-mix(in srgb, var(--bordeaux) 15%, transparent); color: var(--bordeaux); font-weight: 600; }
 .elu-titre { font-size: 14px; color: var(--encre); margin-top: 3px; }
+/* Résumé en une phrase (reformulation du même point que .elu-titre) : collé
+   au titre qu'il paraphrase, jamais mélangé aux faits qui suivent. */
+.elu-resume {
+  font-size: 13px; color: var(--encre-soft); margin-top: 4px; line-height: 1.45;
+  padding-left: 9px; border-left: 2px solid var(--ligne);
+}
 .elu-demandeur { font-size: 12.5px; color: var(--encre-soft); margin-top: 2px; }
 .elu-decision { font-size: 12.5px; color: var(--encre-soft); margin-top: 2px; font-style: italic; }
 .elu-montant { font-size: 12.5px; color: var(--encre-soft); margin-top: 2px; font-variant-numeric: tabular-nums; }

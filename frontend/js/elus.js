@@ -7,6 +7,7 @@ import {
   renderTypeBadge, renderStatutBadge, renderDecision, renderMontant, renderSpBadge,
   renderPvPdfLink, renderVideoLink, renderPersonLine, renderReponseDetails,
   renderLangueBadge, hasDebateLink, listeFr, REVEIL_DELAI_MS,
+  renderRubrique, renderResume,
 } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 import { createCombobox } from './combobox.js';
@@ -478,6 +479,8 @@ function eluDeposeRow(it, nom) {
   const co = Array.isArray(it.co_auteurs) ? it.co_auteurs
     : (it.co_auteurs ? [it.co_auteurs] : []);
   const auteurs = listeFr([nom, ...co]);
+  const rubrique = renderRubrique(it);
+  const resume = renderResume(it);
   const demandeur = renderPersonLine('elu-demandeur', actorLabel, auteurs);
   const rep = renderPersonLine('elu-rep', 'Répondant·e', it.repondant);
   const decision = renderDecision(it);
@@ -489,7 +492,9 @@ function eluDeposeRow(it, nom) {
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
       ${badge}${statutBadge}${sp}${langue}
+      ${rubrique}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
+      ${resume}
       ${demandeur}
       ${rep}
       ${decision}
@@ -522,11 +527,15 @@ function eluRepondRow(it, nom) {
   const decision = renderDecision(it);
   const montant = renderMontant(it);
   const tags = renderThemeTags(it.thematiques);
+  const rubrique = renderRubrique(it);
+  const resume = renderResume(it);
   return `<div class="elu-item">
     <div class="elu-date">${formatDate(it.date)}</div>
     <div class="elu-body">
       ${badge}${statutBadge}${sp}
+      ${rubrique}
       <div class="elu-titre">${escapeHtml(it.titre)}</div>
+      ${resume}
       ${demandeur}
       ${intervenants}
       ${rep}

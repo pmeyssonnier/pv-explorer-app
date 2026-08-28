@@ -141,6 +141,26 @@ export function hasDebateLink(it) {
     || !!(it.video_url && it.video_precise && !it.reporte && !it.retire);
 }
 
+// Classement administratif d'origine du point (rubrique/sous-rubrique du PV,
+// ex. « Contrats de quartier › Contrat de quartier Jérusalem ») : un repère
+// de contexte AU-DESSUS du titre qu'il précède, pas un fait du point — d'où
+// deux puces au même accent que .elu-badge (rubrique pleine, sous-rubrique
+// teintée) plutôt qu'une couleur distincte, l'app n'en a qu'une seule (voir
+// --or dans styles.css). Absent pour un débat filmé/une question écrite, qui
+// n'ont pas de classement de PV : '' dans ce cas, jamais de puce vide.
+export function renderRubrique(it) {
+  if (!it.rubrique) return '';
+  const sous = it.sous_rubrique ? `<span class="rub-chip rub-sous">${escapeHtml(it.sous_rubrique)}</span>` : '';
+  return `<div class="elu-rubrique"><span class="rub-chip rub-main">${escapeHtml(it.rubrique)}</span>${sous}</div>`;
+}
+
+// Résumé en une phrase du point (reformulation en langage courant du même
+// contenu que le titre) : collé au titre qu'il paraphrase, jamais mélangé aux
+// faits (répondant·e, décision) qui suivent. '' si absent.
+export function renderResume(it) {
+  return it.resume ? `<div class="elu-resume">${escapeHtml(it.resume)}</div>` : '';
+}
+
 // Bloc de tags « thématiques » — même rendu partout où un point est affiché
 // (Séances, Par élu·e, sources des réponses) : avant ce correctif, seule la
 // vue Séances les montrait. '' si aucune thématique (jamais de bloc vide).
