@@ -110,6 +110,43 @@ def test_seances_resume_carries_per_seance_activite_breakdown(monkeypatch):
     assert resume["activite"] == {"Question orale": 2, "Demande": 1}
 
 
+def test_seances_resume_carries_per_type_points_votes_montant(monkeypatch):
+    # Alimente les KPI du haut de l'onglet Statistiques quand une puce du
+    # graphe « Activité par année » isole un type (voir frontend/js/stats.js
+    # aggregate(), qui lit ce champ) : point_normal/point_urgent se
+    # regroupent tous deux sous "Point", comme _TYPE_LABEL le fait déjà
+    # ailleurs (voir services/people/attribution.py).
+    monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": []})
+    db = _db(("2025-03-10", [
+        {"type": "point_normal", "sp": 1, "montant_eur": 1000,
+         "vote": {"type": "vote_nominal"}},
+        {"type": "point_urgent", "sp": 2, "montant_eur": 500},
+        {"type": "question_orale", "sp": 3, "vote": {"type": "vote_nominal"}},
+        {"type": "question_orale", "sp": 4},
+        {"type": "motion", "sp": 5},
+    ]))
+    s = statistics.compute_stats(db)
+    resume = next(r for r in s["seances_resume"] if r["date"] == "2025-03-10")
+    assert resume["type_stats"] == {
+        "Point": {"points": 2, "votes": 1, "montant": 1500.0},
+        "Question orale": {"points": 2, "votes": 1, "montant": 0.0},
+        "Motion": {"points": 1, "votes": 0, "montant": 0.0},
+    }
+
+
+def test_type_stats_montant_excludes_non_discretionary_amounts(monkeypatch):
+    # Même filtre que le KPI global (_is_excluded_amount) : un montant de
+    # motion (jamais dépensier) n'est jamais compté, pour cette séance non
+    # plus qu'ailleurs.
+    monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": []})
+    db = _db(("2025-03-10", [
+        {"type": "motion", "sp": 1, "montant_eur": 500_000_000, "titre": "Survol aérien"},
+    ]))
+    s = statistics.compute_stats(db)
+    resume = next(r for r in s["seances_resume"] if r["date"] == "2025-03-10")
+    assert resume["type_stats"]["Motion"]["montant"] == 0.0
+
+
 def test_qe_resume_lists_written_question_dates_and_thematiques(monkeypatch):
     # Bucketage par mois côté client (les questions écrites n'ont pas de séance).
     monkeypatch.setattr(statistics, "load_qe_db", lambda: {"questions": [
