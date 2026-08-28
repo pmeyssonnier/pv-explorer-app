@@ -553,6 +553,17 @@ def test_key_normalizes_erlay_typo_to_eraly():
     assert "erlay" not in elus._index()
 
 
+def test_key_normalizes_en_nashi_alias_to_haddioui():
+    # Sihame Haddioui (échevine 2018-2024) est aussi connue sous le nom
+    # « Sihame En-Nashi »/« Sihame Haddioui En-Nashi » (déclarations de
+    # mandats officielles) — jamais rencontré dans ce corpus à ce jour, mais
+    # posé par précaution pour qu'une future mention ne crée pas de fiche
+    # dupliquée (voir _KEY_ALIASES).
+    assert elus._key("En-Nashi") == "haddioui"
+    assert elus._key("Sihame En-Nashi") == "haddioui"
+    assert elus._key("Sihame Haddioui En-Nashi") == "haddioui"
+
+
 def test_non_person_video_authors_excluded():
     # Ces « auteur·e·s » de chapitrage vidéo sont en réalité des organismes
     # (contre-signataires de points de convention/partenariat), jamais des

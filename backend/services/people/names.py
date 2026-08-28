@@ -44,7 +44,15 @@ _RESP_SPLIT = re.compile(r"\s+et\s+|\s+en\s+|\s+puis\s+|\s+ensuite\s+|&|,|;|/|\+
 # avant la particule minuscule « de », et aucun intervenant du point ne
 # commence par « Yvan » pour permettre le repli habituel vers la forme
 # complète, voir _author_from_text) : même clé finale que le nom complet.
-_KEY_ALIASES = {"ouazrhrari": "ouazrhari", "erlay": "eraly", "yvan": "beauffort"}
+# « en-nashi » : Sihame Haddioui (échevine 2018-2024) est aussi connue sous
+# le nom « Sihame En-Nashi »/« Sihame Haddioui En-Nashi » (déclarations de
+# mandats officielles) — jamais rencontré dans ce corpus à ce jour (toujours
+# « Haddioui »), mais alias posé par précaution pour qu'une future mention
+# sous ce nom ne crée pas une fiche dupliquée.
+_KEY_ALIASES = {
+    "ouazrhrari": "ouazrhari", "erlay": "eraly", "yvan": "beauffort",
+    "en-nashi": "haddioui",
+}
 
 # Prénoms connus mais absents de toutes les sources PV/vidéo (la personne
 # n'y est jamais mentionnée que par son seul nom de famille) : complétés
