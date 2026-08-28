@@ -3,7 +3,7 @@
     "nom": "Base des questions écrites - Conseil communal de Schaerbeek",
     "version": "1.0",
     "date_creation": "2026-08-23T10:08:06.704034",
-    "total_questions": 300,
+    "total_questions": 302,
     "last_updated": "2026-08-24T07:59:13.367150"
   },
   "questions": [
@@ -5486,6 +5486,47 @@
       "reponse_langue": null,
       "source_file": "question-ecrite-09-2010.pdf",
       "extracted_at": "2026-08-28T11:12:17.553542"
+    },
+    {
+      "id": "QE-2010-008",
+      "annee": 2010,
+      "numero": 8,
+      "date": "2010-05-31",
+      "auteur": "Denis Grimberghs",
+      "titre": "Les interpelaltions citoyennes.",
+      "question": "Je souhaiterais disposer d'un inventaire des interpellations citoyennes depuis de début de la législature idéalement avec le nom du porte parole et le thème évoqué dans le cadre de l'interpellation. Disposerait-tu d'un pareil relevé?",
+      "reponse": "Suite à votre question écrite du 31 mai relative aux interpellations citoyennes, je vous prie de trouver ci-dessous l'inventaire demandé : 29/05/2007 : Le permis d'environnement octroyé par l'IBGE à la commune de Schaerbeek concernant le dépôt de déchets communaux et de matériaux de construction rue Waelhem 65 (M. Rotchild). 21/11/2007 : Le Kinetix (M. Linard). 21/11/2007 : Le Plan Communal de Mobilité (M. Deliège). 19/12/2007 : Le tram 55 (M. Vekemans). 20/02/2008 : Le parc Josaphat (M. Doutrelepont). 20/02/2008 : Le plan communal de mobilité (M. Guisset). 20/02/2008 : Le plan communal de mobilité - Rue Wauters (M. Huwaert). 17/09/2008 : La construction d'une crèche avenue Plasky, 40 (Mme De Moor). 17/09/2008 : Le parc Brigadines (M. Boucher, Mme Tackels). 18/02/2009 : Remplacement des cerisiers du Japon rue des Mimosas (Mme Dom). 24/06/2009 : Les problèmes liés à la rue Vandeweyer (M. Compère). 30/09/2009 : Demande d'adaptation du règlement de police - Distribution des tracts (M. Woydt). 25/11/2009 : Les travaux au stade du Crossing (M. Bakkali). 03/03/2010 : Les problèmes liés à la rue Vandeweyer (M. Nihoul). 26/05/2010 : Amélioration de la sécurité routière de la rue A. Lambiotte (section entre la chaussée de Louvain et l'avenue Chazal) (Mme Martou).",
+      "repondant": null,
+      "thematiques": [
+        "interpellations_citoyennes",
+        "participation_citoyenne",
+        "conseil_communal"
+      ],
+      "question_langue": null,
+      "reponse_langue": null,
+      "source_file": "Question_ecrite_08-2010.pdf",
+      "extracted_at": "2026-08-28T12:01:55.914448"
+    },
+    {
+      "id": "QE-2010-007",
+      "annee": 2010,
+      "numero": 7,
+      "date": "2010-05-20",
+      "auteur": "Angelina Chan",
+      "titre": "Le revendication d'un accélération de l'étude d'un (pre)métro de l'axe dit Nord-Sud.",
+      "question": "J'avais posé une question qui a reçu de la part de l'Echevin Smeysters une réponse qui ne peut me satisfaire. Elle insinue que je demande l'accélération du processus d'étude par ignorance des procédures administratives ou par inconscience de la complexité d'une telle ampleur. C'est précisément au vu de cette complexité qui entraîne des délais dommageablement longs pour notre mobilité que j'ai proposé qu'on étudie évidemment \"tout ce qu'il faut\" mais pour un objet limité géographiquement à Bordet dans une première phase. Le but est d'empêcher que l'ignorance des données sur l'au-delà de Bordet freine l'achèvement d'une étude correcte sur le tronçon dont Schaerbeek et Evere ont un besoin immédiat. Une deuxième mesure sur laquelle nous devrions pouvoir soutenir est que Schaerbeek prenne MAINTENANT formellement position en faveur de la technique du bouclier et le fasse savoir par lettre à la Région? Il s'agit donc de proposition de limitation de l'objet de l'étude et nullement de simplification dangereuse. Faute d'un tel document officiel de Schaerbeek, les personnes en charge de l'étude seraient certainement conduites à mener deux études : d'une part, une étude selon la technique du bouclier et d'autre part, une étude par tranchées ouvertes, et à faire encore des comparaisons qui causent des ralentissements.",
+      "reponse": "Je suis désolée que ma réponse précédente, orale, au conseil communal, n'ait pu vous satisfaire car c'est pourtant la seule bonne réponse à vos questions. Les investissements liés à des grosses infrastructures régionales de métro ou pré-métro sont à ce point importants qu'il est tout à fait indispensable d'étudier l'ensemble des incidences d'un tel projet avant de se lancer dans des travaux partiels qui risqueraient bien de ne jamais pouvoir se poursuivre, faute d'avoir pu sécuriser les engagements budgétaires nécessaires liés à un prêt global. Pour ce qui est de la technique des travaux, soyez assurée que la technique de la tranchée ouverte n'est plus d'actualité aujourd'hui. Ceci nous a été confirmé par la STIB et la Région lors de réunions d'information en comité d'accompagnement. Sur la forme, vos questions relèvent davantage d'une proposition de motion que des questions relevant de mes compétences en tant qu'Echevine des Travaux, de la Mobilité et du Développement Durable. A ce titre, je ne peux que vous répondre sur les projets communaux qui dépendent de mes compétences. Dans ce cadre, vous vous souviendrez que Schaerbeek avait formalisé dans son PCM sa demande auprès de la Région d'étudier une liaison métro ou pré-métro Nord-Sud, ainsi qu'une liaison souterraine sous la place Meiser pour les transports en communs. Ces études sont en cours. Enfin, concernant les grands projets d'infrastructures métro et pré-métro, l'interlocuteur communal de première ligne est le ou la Bourgmestre et l'Echevine de l'Urbanisme. Je suis invitée aux réunions du comité d'accompagnement, mais vos questions portant sur la durée et l'objet des études d'incidence ainsi que sur les techniques de chantier relèvent du processus de permis et non de mes compétences propres.",
+      "repondant": null,
+      "thematiques": [
+        "mobilite",
+        "premetro",
+        "transports_en_commun",
+        "axe_nord_sud"
+      ],
+      "question_langue": null,
+      "reponse_langue": null,
+      "source_file": "Question_ecrite_07-2010.pdf",
+      "extracted_at": "2026-08-28T12:01:55.914448"
     },
     {
       "id": "QE-2010-005",
