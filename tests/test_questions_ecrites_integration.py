@@ -199,6 +199,21 @@ def test_publish_question_indexes_via_index_qe(fake_qe_db_path, monkeypatch):
     assert chunks[0]["metadata"]["source_type"] == "question_ecrite"
 
 
+def test_publish_question_rejects_conflicting_overwrite(fake_qe_db_path, monkeypatch):
+    # Même id (année+numéro) que l'entrée déjà en base (QE-2024-003,
+    # auteur·e "Ancien·ne" — voir fake_qe_db_path) mais une AUTRE personne,
+    # une autre date : numéro très probablement erroné (absent du document,
+    # deviné à tort) — jamais un écrasement silencieux (voir
+    # QuestionConflictError). Cas vécu avec 3 questions écrites de 2010.
+    monkeypatch.setattr(qe_integration, "commit_file", lambda *a, **k: "sha")
+    monkeypatch.setattr(qe_integration, "_index_question", lambda question: None)
+    with pytest.raises(ValueError, match="Ancien·ne"):
+        qe_integration.publish_question(_fake_question(numero=3, annee=2024, auteur="Quelqu'un d'autre"))
+    # La base sur disque n'a pas été touchée par la tentative refusée.
+    db = qe_service.load_qe_db()
+    assert db["questions"][0]["auteur"] == "Ancien·ne"
+
+
 def test_publish_question_leaves_source_url_none_when_not_provided(fake_qe_db_path, monkeypatch):
     monkeypatch.setattr(qe_integration, "_index_question", lambda question: None)
     captured = {}

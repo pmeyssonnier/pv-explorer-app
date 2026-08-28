@@ -193,6 +193,47 @@ def test_normalize_question_rejects_missing_numero():
     assert qe.normalize_question(_raw(numero=None), "x.pdf") is None
 
 
+# ── _numero_from_filename : repli quand le document n'imprime aucun numéro ──
+# (cas vécu : plusieurs questions écrites de 2010 n'ont RIEN d'autre que
+# "Question de M. X, du <date>" — Claude renvoie alors numero=None, comme
+# demandé par SYSTEM_PROMPT quand rien n'est visible dans le texte).
+def test_numero_from_filename_dash_separated():
+    assert qe._numero_from_filename("question-ecrite-09-2010.pdf") == 9
+    assert qe._numero_from_filename("Question_ecrite_01-2010.pdf") == 1
+
+
+def test_numero_from_filename_no_separator_before_year():
+    # Nommage réellement rencontré à l'upload (pas de tiret entre le numéro
+    # et l'année) : "012010" -> numéro 1, année 2010 (les 4 derniers
+    # chiffres), jamais l'inverse.
+    assert qe._numero_from_filename("Question_ecrite_012010.pdf") == 1
+    assert qe._numero_from_filename("Question_ecrite_052010.pdf") == 5
+
+
+def test_numero_from_filename_none_when_no_convention_match():
+    assert qe._numero_from_filename("scan_du_conseil.pdf") is None
+    assert qe._numero_from_filename("") is None
+    assert qe._numero_from_filename(None) is None
+
+
+def test_normalize_question_falls_back_to_filename_numero_when_absent_from_text():
+    q = qe.normalize_question(_raw(numero=None), "question-ecrite-05-2010.pdf")
+    assert q is not None
+    assert q["numero"] == 5
+    assert q["id"] == "QE-2025-005"
+
+
+def test_normalize_question_prefers_text_numero_over_filename():
+    # Le texte du document (Claude) prime toujours sur le nom de fichier,
+    # simple repli — jamais l'inverse.
+    q = qe.normalize_question(_raw(numero=15), "question-ecrite-09-2010.pdf")
+    assert q["numero"] == 15
+
+
+def test_normalize_question_still_rejects_when_neither_text_nor_filename_has_numero():
+    assert qe.normalize_question(_raw(numero=None), "upload.pdf") is None
+
+
 def test_normalize_question_rejects_invalid_date():
     assert qe.normalize_question(_raw(date="pas une date"), "x.pdf") is None
     assert qe.normalize_question(_raw(date=None), "x.pdf") is None
@@ -241,6 +282,47 @@ def test_merge_question_into_db_sorts_by_year_then_number_descending():
 
 def test_merge_question_into_db_rejects_entry_without_id():
     assert qe.merge_question_into_db(_db(), {"annee": 2025}) is False
+
+
+# ── Garde-fou contre l'écrasement silencieux (voir QuestionConflictError) ──
+# Cas vécu : trois questions écrites de 2010 sans numéro imprimé (Vriamont,
+# Van Gorp, Lejeune de Schiervel), chacune extraite séparément avec
+# "numero": 1 — la 2e et la 3e ont silencieusement écrasé la précédente sous
+# le même id QE-2010-001 avant l'ajout de ce garde-fou.
+def test_merge_question_into_db_raises_on_conflicting_author():
+    q1 = qe.normalize_question(_raw(auteur="Georges Verzin"), "x.pdf")
+    db = _db(q1)
+    q2 = qe.normalize_question(_raw(auteur="Bernadette Vriamont"), "y.pdf")
+    assert q1["id"] == q2["id"]  # même année+numéro -> même id, à tort
+    try:
+        qe.merge_question_into_db(db, q2)
+        assert False, "aurait dû lever QuestionConflictError"
+    except qe.QuestionConflictError as e:
+        assert "Georges Verzin" in str(e) and "Bernadette Vriamont" in str(e)
+    # La base n'a PAS été modifiée par la tentative en conflit.
+    assert db["questions"][0]["auteur"] == "Georges Verzin"
+
+
+def test_merge_question_into_db_raises_on_conflicting_date_same_author():
+    q1 = qe.normalize_question(_raw(date="2025-11-10"), "x.pdf")
+    db = _db(q1)
+    q2 = qe.normalize_question(_raw(date="2025-01-05"), "y.pdf")
+    try:
+        qe.merge_question_into_db(db, q2)
+        assert False, "aurait dû lever QuestionConflictError"
+    except qe.QuestionConflictError:
+        pass
+
+
+def test_merge_question_into_db_allows_correction_same_author_and_date():
+    # Même auteur·e ET même date : une vraie correction (titre/texte
+    # retravaillé), jamais un conflit — voir aussi le test historique
+    # test_merge_question_into_db_replaces_same_id_not_duplicates.
+    q1 = qe.normalize_question(_raw(reponse=None), "x.pdf")
+    db = _db(q1)
+    q2 = qe.normalize_question(_raw(reponse="La réponse est arrivée."), "y.pdf")
+    assert qe.merge_question_into_db(db, q2) is True
+    assert db["questions"][0]["reponse"] == "La réponse est arrivée."
 
 
 # ── process_pdf (orchestration, extraction/appel Claude monkeypatchés) ──────
