@@ -5471,19 +5471,21 @@
       "id": "QE-2010-001",
       "annee": 2010,
       "numero": 1,
-      "date": "2010-12-15",
-      "auteur": "Colienne Lejeune de Schiervel",
-      "titre": "Les propriétés communales en dehors de la commune.",
-      "question": "Pourriez-vous me brosser un tableau général des bâtiments et terrains que la commune de Schaerbeek possède encore en dehors du territoire communal lui-même? Quels sont les bénéfices au sens large que la commune en retire, qu'ils soient utilisés par nos habitants, ou loués à des tiers?",
-      "reponse": "La commune de Schaerbeek est propriétaire des biens immobiliers suivants : • Ittre - Route de Clabecq 72 - 1460 Ittre Classes vertes pour les écoles communales • Ohain - Rue aux Fleurs 35 - 1380 Ohain Classes vertes pour les écoles communales • Bruxelles-Ville - rue F.-J. Navez 110 (en copropriété avec Sibelga) ancien magasin scolaire rez : mis à disposition de la maison de Quartier durant les travaux effectués au 43 rue F.J. Navez. Logement de fonction donné en location à un agent communal assurant la surveillance de l'immeuble et l'interface avec le service Gestion Immobilière • Bruxelles-Ville - rue Stephenson 78-80 Mis à disposition de locaux de plusieurs organismes : RenovaS, Sport Jeunes, Cre Actions • Bousval - Verger tenant à une propriété vendue à une Institution pour personnes Agées (Château de la Roche) • Zaventem - Everseweg 4 Cimetière",
+      "date": "2010-02-19",
+      "auteur": "Bernadette Vriamont",
+      "titre": "Toetreding tot RSZPPO/ONSSAPL vanaf 2010 voor de pensioenen van het statutaire personeel.",
+      "question": "Naar aanleiding van mijn vraag op de vorige gemeenteraad (3 februari 2010) vernam ik graag of de gemeente wel of niet toetreed tot de Pool 2 van RSZPPO/ONSSAPL voor de pensioenen van haar statutair personeel. Is het mogelijk om de argumentatie van het College voor en tegen een toetreding te krijgen en een vergelijkende nota (zoals reeds gevraagd op de gemeenteraad) met een analyse van de gevolgen van al dan niet toetreding tot het systeem?",
+      "reponse": null,
       "repondant": null,
-      "source_file": "question-ecrite-09-2010.pdf",
-      "extracted_at": "2026-08-24T07:48:24.488702",
       "thematiques": [
-        "patrimoine_immobilier",
-        "gestion_des_biens_communaux",
-        "locations_et_locations_immobilieres"
-      ]
+        "pensions",
+        "personnel_statutaire",
+        "rszppo"
+      ],
+      "question_langue": "nl",
+      "reponse_langue": null,
+      "source_file": "Question_ecrite_01-2010.pdf",
+      "extracted_at": "2026-08-28T10:58:40.169044"
     }
   ]
 }
