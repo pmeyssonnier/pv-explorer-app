@@ -212,5 +212,26 @@ def save_mandat(nom: str, conseiller_communal, echevin, bourgmestre, statut,
     return entry
 
 
+def delete_mandat(nom: str) -> dict:
+    """Supprime l'entrée nommée `nom` de elus_mandats.json, écrit sur le
+    disque local (effet immédiat — même mécanique que save_mandat) et
+    retourne l'entrée supprimée. Le commit dans le dépôt reste à la charge
+    de l'appelant (endpoint admin). Lève ValueError si le nom est vide ou
+    si aucune entrée ne lui correspond."""
+    nom = (nom or "").strip()
+    if not nom:
+        raise ValueError("nom requis")
+    data = _load_mandats_raw()
+    idx = next((i for i, e in enumerate(data) if e.get("nom") == nom), None)
+    if idx is None:
+        raise ValueError(f"aucune entrée pour « {nom} »")
+    removed = data.pop(idx)
+
+    with open(_MANDATS_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    return removed
+
+
 def as_json(data: list | None = None) -> str:
     return json.dumps(data if data is not None else _load_mandats_raw(), ensure_ascii=False, indent=2) + "\n"

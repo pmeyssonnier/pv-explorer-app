@@ -17,12 +17,22 @@ from fastapi.testclient import TestClient
 
 import app
 import services.people.mandats as mandats
+from limiter import limiter
 from services import github_publish
 from services.auth import hash_password
 
 client = TestClient(app.app)
 USERNAME = "pierre"
 PASSWORD = "un-mot-de-passe-suffisamment-long"
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limits():
+    # État process-global partagé entre tous les tests de la session pytest
+    # (même mécanique que test_admin_seances.py/test_admin_questions_ecrites.py)
+    # — sans reset, les logins des tests précédents (ici et dans les autres
+    # fichiers admin) épuisent le quota 5/minute de /admin/login.
+    limiter.reset()
 
 
 # ── _parse_ranges : "AAAA-AAAA" / "AAAA-présent", virgules, annotations ─────
@@ -102,6 +112,28 @@ def test_role_at_bourgmestre_also_counts_as_college(monkeypatch):
     })
     assert mandats.role_at("x", "2020-01-01") == "college"
     assert mandats.role_at("x", "2025-01-01") == "conseiller"
+
+
+# ── Intégrité des VRAIES données : chaque segment doit être reconnu ────────
+# Cas vécu : une annotation entre parenthèses contenant elle-même une virgule
+# (ex. « 2001-2024 (empêché 2008-2011 et 2019-2024, remplacé par ... ) »)
+# coupe le split(",") de _parse_ranges en plein milieu de la parenthèse — le
+# segment ne matche plus _RANGE_RE et disparaît SILENCIEUSEMENT (Bernard
+# Clerfayt n'était alors jamais classé « college », toute sa carrière de
+# bourgmestre invisible pour role_at()). Un test sur les vraies données,
+# jamais une virgule interdite dans une annotation.
+def test_real_mandats_every_range_segment_is_recognized():
+    for e in mandats._load_mandats_raw():
+        for champ in ("conseiller_communal", "echevin", "bourgmestre"):
+            raw = e.get(champ)
+            if not raw:
+                continue
+            for part in raw.split(","):
+                assert mandats._RANGE_RE.match(part), (
+                    f"{e.get('nom')} / {champ} : segment non reconnu « {part.strip()} » "
+                    f"dans « {raw} » — une virgule dans une annotation entre parenthèses "
+                    "casse le split(\",\") (utiliser un point-virgule à la place)"
+                )
 
 
 # ── mandats_for : structure exposée pour l'affichage détaillé ──────────────
@@ -196,6 +228,30 @@ def test_save_mandat_takes_effect_immediately_on_role_at(tmp_mandats):
     assert mandats.role_at("dupont", "2021-01-01") == "college"
 
 
+def test_delete_mandat_removes_entry_and_returns_it(tmp_mandats):
+    removed = mandats.delete_mandat("Alice Dupont")
+    assert removed["nom"] == "Alice Dupont"
+    assert mandats.list_mandats() == []
+
+
+def test_delete_mandat_takes_effect_immediately_on_role_at(tmp_mandats):
+    assert mandats.role_at("dupont", "2021-01-01") == "conseiller"
+    mandats.delete_mandat("Alice Dupont")
+    assert mandats.role_at("dupont", "2021-01-01") is None
+
+
+def test_delete_mandat_rejects_empty_name(tmp_mandats):
+    with pytest.raises(ValueError):
+        mandats.delete_mandat("")
+
+
+def test_delete_mandat_rejects_unknown_name(tmp_mandats):
+    with pytest.raises(ValueError):
+        mandats.delete_mandat("Personne Inconnue")
+    # Le fichier n'a pas été touché par la tentative infructueuse.
+    assert len(mandats.list_mandats()) == 1
+
+
 # ── Endpoints /admin/mandats (auth + commit monkeypatché) ───────────────────
 def _login(monkeypatch):
     monkeypatch.setenv("ADMIN_USERNAME", USERNAME)
@@ -237,5 +293,35 @@ def test_post_mandats_bad_range_is_400(tmp_mandats, monkeypatch):
     monkeypatch.setattr(github_publish, "commit_file", lambda *a, **k: "sha")
     _login(monkeypatch)
     r = client.post("/admin/mandats", json={"nom": "Alice Dupont", "echevin": "pas une date"})
+    assert r.status_code == 400
+    client.post("/admin/logout")
+
+
+def test_delete_mandats_requires_admin():
+    assert client.request("DELETE", "/admin/mandats", params={"nom": "Alice Dupont"}).status_code == 401
+
+
+def test_delete_mandats_removes_and_commits(tmp_mandats, monkeypatch):
+    commits = []
+    monkeypatch.setattr(github_publish, "commit_file",
+                        lambda path, content, message: commits.append((path, json.loads(content), message)) or "sha123")
+    _login(monkeypatch)
+    r = client.request("DELETE", "/admin/mandats", params={"nom": "Alice Dupont"})
+    assert r.status_code == 200
+    body = r.json()
+    assert body["committed"] is True
+    assert body["mandat"]["nom"] == "Alice Dupont"
+    # Le commit a reçu le fichier complet à jour (sans l'entrée supprimée).
+    assert commits and commits[0][0] == "backend/elus_mandats.json"
+    assert commits[0][1] == []
+    g = client.get("/admin/mandats")
+    assert g.json()["mandats"] == []
+    client.post("/admin/logout")
+
+
+def test_delete_mandats_unknown_name_is_400(tmp_mandats, monkeypatch):
+    monkeypatch.setattr(github_publish, "commit_file", lambda *a, **k: "sha")
+    _login(monkeypatch)
+    r = client.request("DELETE", "/admin/mandats", params={"nom": "Personne Inconnue"})
     assert r.status_code == 400
     client.post("/admin/logout")

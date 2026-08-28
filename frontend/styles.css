@@ -260,16 +260,38 @@ body {
 /* ── Sous-onglet Mandats élu·e·s (voir admin.js renderMandatsSection) ── */
 .admin-mandats { margin-top: 14px; }
 .admin-mandats h4 { font-family: var(--display); font-size: 18px; margin-bottom: 6px; }
+/* La recherche (combobox, voir admin.js initMandatCombo) et les puces de rôle
+   réutilisent .elu-combo/.elu-chips (voir la section « Interventions par
+   élu·e » plus haut) — aucun style dédié à redéfinir ici, seule la mise en
+   page de la barre l'est. */
 .admin-mandats-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 10px 0; }
-.admin-mandats-toolbar input[type="search"] {
-  flex: 1 1 200px; min-width: 0; padding: 8px 10px; border: 1px solid var(--ligne);
-  border-radius: 8px; font-family: var(--corps); font-size: 13.5px; background: var(--papier);
-}
-.admin-mandats-toolbar input[type="search"]:focus { outline: none; border-color: var(--or); }
 .admin-mandats-table td:last-child, .admin-mandats-table th:last-child { white-space: nowrap; }
 .admin-mandats-table .drill-reset { padding: 4px 10px; font-size: 12.5px; }
+/* En-têtes de colonnes triables (voir admin.js onMandatSortClick) : le
+   bouton reprend le style .md-table th (couleur, poids), sans fond ni
+   bordure propres — l'en-tête garde son apparence habituelle au repos, le
+   curseur pointer et la flèche de tri signalent l'interactivité. */
+.admin-mandats-table th { padding: 0; }
+.admin-mandats-sort {
+  display: block; width: 100%; padding: 7px 10px; border: none; background: none;
+  font: inherit; font-weight: 600; color: var(--bordeaux); text-align: left; cursor: pointer;
+}
+.admin-mandats-sort:hover { background: var(--ligne); }
+.admin-mandats-sort.active { text-decoration: underline; text-decoration-color: var(--or); text-underline-offset: 3px; }
 .admin-mandat-form-wrap { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--ligne); }
 .admin-mandat-form-wrap h4 { font-family: var(--display); font-size: 16px; margin-bottom: 6px; }
+/* Bouton « Supprimer » / confirmation (voir admin.js onMandatDeleteClick) —
+   liseré dans l'accent plutôt que rempli (comme .settings-reset) : se
+   distingue visuellement d'Enregistrer (.ask-btn, rempli) sans introduire un
+   rouge séparé — l'accent unique du thème (--bordeaux) suffit à signaler une
+   action différente, son remplissage au survol la rend franchement engageante. */
+.admin-mandat-danger {
+  border: 1px solid var(--bordeaux); background: none; color: var(--bordeaux);
+  border-radius: 18px; padding: 8px 16px; font-family: var(--corps); font-size: 14px;
+  font-weight: 600; cursor: pointer;
+}
+.admin-mandat-danger:hover { background: var(--bordeaux); color: #f7f3ec; }
+.admin-mandat-danger:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Mobile : on garde le panneau confortable sur tablette/PC mais on COMPACTE
    tout (marges, titres, contrôles, texte) pour que ça tienne sans déborder. */

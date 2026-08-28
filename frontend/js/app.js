@@ -30,7 +30,9 @@ import {
   checkAdminSession, openAdminLogin, closeAdminLogin, initAdminLoginOverlay,
   submitAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
   cancelQeExtract, confirmQePublish, switchAdminSubTab,
-  onMandatEditClick, onMandatNewClick, cancelMandatEdit,
+  onMandatEditClick, onMandatNewClick, cancelMandatEdit, onMandatRoleChipClick,
+  onMandatLegislatureChipClick, onMandatSortClick,
+  onMandatDeleteClick, cancelMandatDelete, confirmMandatDelete,
 } from './admin.js';
 
 // ── ONGLETS ──
@@ -84,7 +86,9 @@ registerActions({
   shareSeance, jumpToSeance, onSeanceTypeChipClick, onSeanceFacetChipClick,
   openAdminLogin, closeAdminLogin, adminLogout, cancelAdminExtract, confirmAdminPublish,
   cancelQeExtract, confirmQePublish, switchAdminSubTab,
-  onMandatEditClick, onMandatNewClick, cancelMandatEdit,
+  onMandatEditClick, onMandatNewClick, cancelMandatEdit, onMandatRoleChipClick,
+  onMandatLegislatureChipClick, onMandatSortClick,
+  onMandatDeleteClick, cancelMandatDelete, confirmMandatDelete,
 });
 
 // ── Écouteurs directs pour les éléments statiques qui portaient un

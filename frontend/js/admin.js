@@ -8,6 +8,7 @@
 // publication automatique sur simple upload.
 import { API_URL } from './config.js';
 import { escapeHtml } from './utils.js';
+import { createCombobox } from './combobox.js';
 
 let adminUsername = null;
 // Résultat de /admin/seances/extract en attente de confirmation (voir
@@ -38,12 +39,41 @@ let adminSubTab = 'seances';
 // première visite du sous-onglet Mandats). Liste brute d'objets
 // {nom, conseiller_communal, echevin, bourgmestre, statut}.
 let mandatsData = null;
-let mandatsFilter = '';
+// Recherche d'une personne — même composant que le sélecteur d'élu·e de
+// l'onglet « Par élu·e » (voir combobox.js/elus.js initEluCombo) : choisir
+// une option ouvre directement sa fiche d'édition (onMandatEditClick), comme
+// la sélection y ouvre la fiche d'activité. Recréé à chaque rendu du panneau
+// (mêmes éléments DOM détruits/reconstruits — voir renderAdminPanel), donc
+// resynchronisé via mandatComboSelected plutôt que par un état interne.
+let mandatCombo = null;
+let mandatComboSelected = null;
+// Puces de rôle (voir onMandatRoleChipClick) : filtrent le TABLEAU, ensemble
+// cumulable comme eluRoleSel côté « Par élu·e » — vide = tous les rôles. Un
+// rôle correspond ici à « a un jour occupé ce mandat » (champ renseigné),
+// pas au rôle actuel (contrairement aux puces de la fiche Par élu·e, qui
+// filtrent par rôle À LA DATE d'une action).
+let mandatRoleSel = new Set();
+// Puce de législature (voir onMandatLegislatureChipClick) : sélection UNIQUE
+// (comme seanceTypeFilter), 'all' = aucun filtre. Une législature belge dure
+// 6 ans, élection en octobre, nouveau conseil installé en novembre (voir
+// mandatLegislatures ci-dessous).
+let mandatLegislature = 'all';
+// Tri des colonnes (voir onMandatSortClick) — 'nom'/'statut' triés comme du
+// texte, les 3 colonnes de mandat par ANNÉE DE DÉBUT la plus ancienne
+// (mandatSortKey), une entrée sans plage pour la colonne triée finissant
+// toujours en dernier quel que soit le sens.
+let mandatSort = { col: 'nom', dir: 'asc' };
 // Entrée en cours d'édition (copie modifiable, voir onMandatEditClick) —
 // null si aucun formulaire affiché. {nom: '', ...} vide = nouvelle personne
 // (voir onMandatNewClick) : nom_original n'est envoyé que si non vide, pour
 // distinguer création et modification côté backend (voir save_mandat).
 let editingMandat = null;
+// Bascule la fiche d'édition vers un écran de confirmation avant suppression
+// (voir onMandatDeleteClick) — jamais de fenêtre confirm() native, hors
+// style du reste du panneau (même logique que l'aperçu avant publication
+// d'un PV : une action qui modifie le dépôt se confirme dans l'UI, jamais
+// en un clic).
+let mandatDeleteConfirm = false;
 
 // Session vérifiée via cookie httpOnly (jamais lu par ce script — juste
 // renvoyé automatiquement par le navigateur, `credentials: 'include'`) : on
@@ -92,8 +122,7 @@ function renderAdminPanel() {
   if (fileEl) fileEl.addEventListener('change', prefillSourceUrl);
   const qeForm = document.getElementById('qeUploadForm');
   if (qeForm) qeForm.addEventListener('submit', submitQeExtract);
-  const mandatFilterEl = document.getElementById('mandatFilter');
-  if (mandatFilterEl) mandatFilterEl.addEventListener('input', onMandatFilterInput);
+  if (adminSubTab === 'mandats' && mandatsData !== null) initMandatCombo();
   const mandatForm = document.getElementById('mandatEditForm');
   if (mandatForm) mandatForm.addEventListener('submit', submitMandat);
 }
@@ -113,6 +142,8 @@ export function switchAdminSubTab(tab) {
   if (adminSubTab === tab) return;
   adminSubTab = tab;
   editingMandat = null;
+  mandatComboSelected = null;
+  mandatDeleteConfirm = false;
   if (tab === 'mandats' && mandatsData === null) { loadMandats(); return; }
   renderAdminPanel();
 }
@@ -266,48 +297,307 @@ function renderMandatsSection() {
     return `<section class="admin-mandats"><h4>Mandats élu·e·s</h4><p class="yc-note">Chargement…</p></section>`;
   }
   const table = `<div class="md-tablewrap"><table class="md-table admin-mandats-table">
-    <thead><tr><th>Nom</th><th>Conseiller·ère</th><th>Échevin·e</th><th>Bourgmestre</th><th>Statut</th><th></th></tr></thead>
-    <tbody id="mandatsTableBody">${renderMandatsRows()}</tbody>
+    <thead>${renderMandatsTableHead()}</thead>
+    <tbody>${renderMandatsRows()}</tbody>
   </table></div>`;
   return `<section class="admin-mandats">
     <h4>Mandats élu·e·s</h4>
-    <p class="yc-note">Rôle par plage de dates (voir aussi la fiche d'un·e élu·e dans l'onglet « Par élu·e »). Format attendu pour chaque champ : « AAAA-AAAA » (mandat clos) ou « AAAA-présent » (en cours), plusieurs plages séparées par une virgule.</p>
+    <p class="yc-note">Rôle par plage de dates (voir aussi la fiche d'un·e élu·e dans l'onglet « Par élu·e »). Format attendu pour chaque champ : « AAAA-AAAA » (mandat clos) ou « AAAA-présent » (en cours), plusieurs plages séparées par une virgule. Colonnes triables (cliquer l'en-tête) ; puces pour retrouver un rôle ou une législature.</p>
     <div class="admin-mandats-toolbar">
-      <input type="search" id="mandatFilter" placeholder="Filtrer par nom…" value="${escapeHtml(mandatsFilter)}">
+      <div class="elu-combo" id="mandatSearchCombo">
+        <svg class="icon elu-combo-icon" aria-hidden="true"><use href="#ico-search"/></svg>
+        <input type="text" id="mandatSearch" class="elu-select elu-combo-input"
+               role="combobox" aria-expanded="false" aria-controls="mandatSearchOptions"
+               aria-autocomplete="list" aria-label="Rechercher une personne"
+               placeholder="Rechercher une personne…" autocomplete="off"
+               autocapitalize="off" spellcheck="false" enterkeyhint="search"
+               data-form-type="other" data-lpignore="true" data-1p-ignore>
+        <button type="button" class="elu-combo-clear" id="mandatSearchClear"
+                aria-label="Effacer la recherche" title="Effacer la recherche" hidden>✕</button>
+        <ul class="elu-combo-list" id="mandatSearchOptions" role="listbox" aria-label="Personnes" hidden></ul>
+      </div>
       <button type="button" class="ask-btn" data-click="onMandatNewClick">+ Ajouter une personne</button>
     </div>
+    <p class="sr-only" id="mandatSearchStatus" role="status" aria-live="polite"></p>
+    ${renderMandatRoleChips()}
+    ${renderMandatLegislatureChips()}
     ${table}
     ${editingMandat ? renderMandatEditForm() : ''}
   </section>`;
 }
 
-// Rendu isolé des lignes du tableau (voir onMandatFilterInput) : ne remplace
-// QUE le <tbody>, jamais tout le panneau — sinon retaper dans #mandatFilter
-// perdrait le focus à chaque frappe (innerHTML détruit et recrée l'input).
+// ── Rôle « au sens du Collège » et législatures ─────────────────────────────
+const MANDAT_ROLE_LABEL = { conseiller: 'Conseiller·ère', echevin: 'Échevin·e', bourgmestre: 'Bourgmestre' };
+const MANDAT_ROLE_FIELD = { conseiller: 'conseiller_communal', echevin: 'echevin', bourgmestre: 'bourgmestre' };
+// Ordre = précédence de classement (voir personRoleInPeriod), PAS l'ordre
+// d'affichage des puces (rendu dans cet ordre aussi, du plus courant au plus
+// rare, ce qui coïncide ici).
+const MANDAT_ROLE_ORDER = ['conseiller', 'echevin', 'bourgmestre'];
+
+// Fourchettes de 6 ans, élection en octobre, conseil installé en novembre
+// (calendrier électoral communal belge — voir la discussion avec l'admin sur
+// les dates précises des échevin·e·s Nimal, Decoux, Eraly, Haddioui, Bilge,
+// Querton plus tôt cette session). Générées dynamiquement (aucune liste à
+// maintenir à la main d'une législature à l'autre) depuis 1976 (repère
+// électoral) jusqu'à l'année courante. `end` est EXCLU (voir
+// rangesOverlapPeriod) : la législature « 2018-2024 » couvre les années
+// 2018 à 2023, 2024 étant déjà l'année d'installation de la suivante.
+const LEGISLATURE_ANCHOR = 1976;
+
+function mandatLegislatures() {
+  const nowYear = new Date().getFullYear();
+  const periods = [];
+  for (let start = LEGISLATURE_ANCHOR; start <= nowYear; start += 6) {
+    const end = start + 6;
+    periods.push({ key: `${start}-${end}`, start, end, actuel: start <= nowYear && nowYear < end });
+  }
+  return periods;
+}
+
+function legislatureLabel(p) {
+  return p.actuel ? `nov. ${p.start} – aujourd'hui (actuel)` : `nov. ${p.start} – oct. ${p.end}`;
+}
+
+// Période de référence pour classer les rôles (voir personRoleInPeriod) :
+// la législature sélectionnée, sinon l'année courante (rôle « à ce jour ») —
+// même demi-intervalle [début, fin[ que mandatLegislatures.
+function activeMandatPeriod() {
+  if (mandatLegislature !== 'all') {
+    const p = mandatLegislatures().find(x => x.key === mandatLegislature);
+    if (p) return p;
+  }
+  const y = new Date().getFullYear();
+  return { start: y, end: y + 1 };
+}
+
+// Chevauchement plage de mandat / période, en DEMI-INTERVALLES [début, fin[
+// (granularité du fichier source — aucune date exacte de jour/mois n'y est
+// stockée, voir services/people/mandats.py côté backend) : une plage close
+// sur l'année charnière (ex. « …-2024 ») appartient à la législature qui
+// FINIT en 2024, jamais à celle qui commence cette même année (élu·e jusqu'à
+// l'élection d'octobre, remplacé·e par le conseil installé en novembre) —
+// et symétriquement, une plage qui COMMENCE en 2024 n'appartient qu'à la
+// nouvelle législature, jamais à celle qui vient de s'achever.
+function rangesOverlapPeriod(raw, period) {
+  if (!raw) return false;
+  return raw.split(',').some(part => {
+    const m = /^\s*(\d{4})\s*-\s*(\d{4}|pr[ée]sent)\s*(?:\(.*\))?\s*$/i.exec(part);
+    if (!m) return false;
+    const start = parseInt(m[1], 10);
+    const end = /pr[ée]sent/i.test(m[2]) ? null : parseInt(m[2], 10);
+    return start < period.end && (end === null || end > period.start);
+  });
+}
+
+// Rôle EFFECTIF d'une personne sur une période donnée : le Collège
+// (bourgmestre puis échevin·e) l'emporte sur conseiller·ère — un échevin·e
+// est conseiller·ère par défaut (son mandat de conseiller·ère la/le couvre
+// toujours) mais son rôle affiché est le plus haut des deux, comme
+// role_at() côté backend (services/people/mandats.py, même précédence).
+// null si la personne n'a aucun mandat couvrant cette période.
+function personRoleInPeriod(e, period) {
+  if (rangesOverlapPeriod(e.bourgmestre, period)) return 'bourgmestre';
+  if (rangesOverlapPeriod(e.echevin, period)) return 'echevin';
+  if (rangesOverlapPeriod(e.conseiller_communal, period)) return 'conseiller';
+  return null;
+}
+
+// ── Puces de rôle : partition (chaque personne comptée dans SON rôle le
+// plus haut sur la période active, jamais deux fois) — voir mandatRoleSel.
+// Compte parmi les personnes déjà retenues par la puce de législature
+// (même convention que eluRoleCounts/seanceThemeFilterOptions : les compteurs
+// reflètent l'AUTRE filtre, jamais le tableau final déjà réduit par celui-ci).
+function renderMandatRoleChips() {
+  const period = activeMandatPeriod();
+  const base = (mandatsData || []).filter(matchesMandatLegislature);
+  const chips = MANDAT_ROLE_ORDER.map(role => {
+    const n = base.filter(e => personRoleInPeriod(e, period) === role).length;
+    const on = mandatRoleSel.has(role);
+    return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"
+      data-click="onMandatRoleChipClick" data-arg="${role}">
+      <strong>${escapeHtml(MANDAT_ROLE_LABEL[role])}</strong> · ${n} personne${n > 1 ? 's' : ''}</button>`;
+  }).join('');
+  return `<div class="elu-chips" id="mandatRoleChips" aria-label="Filtrer par rôle">${chips}</div>`;
+}
+
+export function onMandatRoleChipClick(role) {
+  if (mandatRoleSel.has(role)) mandatRoleSel.delete(role); else mandatRoleSel.add(role);
+  renderAdminPanel();
+}
+
+// Rôle le plus haut sur la période active (législature sélectionnée, ou
+// aujourd'hui) — PAS « a un jour occupé ce rôle » : un·e ancien·ne échevin·e
+// devenu·e simple conseiller·ère aujourd'hui n'apparaît plus dans « Échevin·e »
+// une fois qu'aucune législature passée n'est sélectionnée.
+function matchesMandatRole(e) {
+  if (!mandatRoleSel.size) return true;
+  const role = personRoleInPeriod(e, activeMandatPeriod());
+  return role !== null && mandatRoleSel.has(role);
+}
+
+// Puces de législature : compte, pour CHAQUE législature candidate (pas
+// seulement celle sélectionnée), qui était conseiller·ère (donc membre du
+// conseil, quel que soit son rôle exact) PENDANT CETTE période précise —
+// et, si des puces de rôle sont cochées, dont le rôle sur CETTE MÊME période
+// correspond (jamais celui d'une autre période, y compris la sélectionnée).
+function renderMandatLegislatureChips() {
+  const chips = mandatLegislatures().map(p => {
+    const n = (mandatsData || []).filter(e => {
+      if (!rangesOverlapPeriod(e.conseiller_communal, p)) return false;
+      if (!mandatRoleSel.size) return true;
+      const role = personRoleInPeriod(e, p);
+      return role !== null && mandatRoleSel.has(role);
+    }).length;
+    const on = mandatLegislature === p.key;
+    return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"
+      data-click="onMandatLegislatureChipClick" data-arg="${p.key}">
+      ${escapeHtml(legislatureLabel(p))} · ${n} personne${n > 1 ? 's' : ''}</button>`;
+  }).join('');
+  return `<div class="elu-chips" id="mandatLegislatureChips" aria-label="Filtrer par législature">${chips}</div>`;
+}
+
+export function onMandatLegislatureChipClick(key) {
+  mandatLegislature = mandatLegislature === key ? 'all' : key;
+  renderAdminPanel();
+}
+
+// Chevauchement sur le mandat de CONSEILLER·ÈRE uniquement, jamais échevin/
+// bourgmestre : en droit communal belge, on doit d'abord être conseiller·ère
+// pour accéder au Collège — un mandat échevinal/de bourgmestre est donc
+// toujours couvert par le mandat de conseiller·ère de la même personne
+// (sauf trou dans les données, voir Isabelle Durant 2006-2009 — signalé, pas
+// corrigé ici faute de source). Vérifier aussi échevin/bourgmestre compterait
+// deux fois la même législature pour une personne déjà comptée via son
+// mandat de conseiller·ère.
+function matchesMandatLegislature(e) {
+  if (mandatLegislature === 'all') return true;
+  const period = mandatLegislatures().find(p => p.key === mandatLegislature);
+  if (!period) return true;
+  return rangesOverlapPeriod(e.conseiller_communal, period);
+}
+
+function filteredMandats() {
+  return (mandatsData || []).filter(e => matchesMandatRole(e) && matchesMandatLegislature(e)).sort(mandatComparator);
+}
+
+// ── Colonnes triables ────────────────────────────────────────────────────
+const MANDAT_COLUMNS = [
+  ['nom', 'Nom'],
+  ['conseiller_communal', 'Conseiller·ère'],
+  ['echevin', 'Échevin·e'],
+  ['bourgmestre', 'Bourgmestre'],
+  ['statut', 'Statut'],
+];
+
+// Clé de tri : texte pour nom/statut, ANNÉE DE DÉBUT LA PLUS ANCIENNE pour
+// une colonne de mandat (« 2012-2018, 2024-présent » -> 2012) — null si le
+// champ est vide, toujours relégué en fin de tri quel qu'en soit le sens.
+function mandatSortKey(e, col) {
+  if (col === 'nom' || col === 'statut') return (e[col] || '').toLowerCase() || null;
+  const raw = e[col];
+  if (!raw) return null;
+  const starts = raw.split(',')
+    .map(part => /^\s*(\d{4})\s*-/.exec(part))
+    .filter(Boolean)
+    .map(m => parseInt(m[1], 10));
+  return starts.length ? Math.min(...starts) : null;
+}
+
+function mandatComparator(a, b) {
+  const { col, dir } = mandatSort;
+  const ka = mandatSortKey(a, col);
+  const kb = mandatSortKey(b, col);
+  if (ka === null && kb === null) return 0;
+  if (ka === null) return 1;
+  if (kb === null) return -1;
+  const cmp = typeof ka === 'string' ? ka.localeCompare(kb, 'fr') : ka - kb;
+  return dir === 'asc' ? cmp : -cmp;
+}
+
+export function onMandatSortClick(col) {
+  if (mandatSort.col === col) mandatSort.dir = mandatSort.dir === 'asc' ? 'desc' : 'asc';
+  else mandatSort = { col, dir: 'asc' };
+  renderAdminPanel();
+}
+
+function renderMandatsTableHead() {
+  const cells = MANDAT_COLUMNS.map(([col, label]) => {
+    const active = mandatSort.col === col;
+    const arrow = active ? (mandatSort.dir === 'asc' ? ' ▲' : ' ▼') : '';
+    return `<th><button type="button" class="admin-mandats-sort${active ? ' active' : ''}"
+      data-click="onMandatSortClick" data-arg="${col}">${escapeHtml(label)}${arrow}</button></th>`;
+  }).join('');
+  return `<tr>${cells}<th></th></tr>`;
+}
+
+// Pastille de rôle affichée à côté d'un nom — regroupe bourgmestre/échevin·e
+// sous « Collège » (voir personRoleInPeriod, même précédence), 'Ancien·ne'
+// quand la personne n'a aucun mandat couvrant la période donnée.
+function mandatRoleBadge(e, period) {
+  const role = personRoleInPeriod(e, period);
+  if (role === 'bourgmestre' || role === 'echevin') return { cls: 'college', texte: 'Collège' };
+  if (role === 'conseiller') return { cls: 'conseiller', texte: 'Conseil' };
+  return { cls: 'ancien', texte: 'Ancien·ne' };
+}
+
 function renderMandatsRows() {
-  const filter = mandatsFilter.trim().toLowerCase();
-  const rows = (mandatsData || [])
-    .filter(e => !filter || (e.nom || '').toLowerCase().includes(filter))
-    .map(e => `<tr>
-      <td>${escapeHtml(e.nom || '')}</td>
+  const period = activeMandatPeriod();
+  const rows = filteredMandats().map(e => {
+    const badge = mandatRoleBadge(e, period);
+    return `<tr>
+      <td>${escapeHtml(e.nom || '')} <span class="elu-opt-role elu-opt-role-${badge.cls}">${badge.texte}</span></td>
       <td>${escapeHtml(e.conseiller_communal || '—')}</td>
       <td>${escapeHtml(e.echevin || '—')}</td>
       <td>${escapeHtml(e.bourgmestre || '—')}</td>
       <td>${escapeHtml(e.statut || '—')}</td>
       <td><button type="button" class="drill-reset" data-click="onMandatEditClick" data-arg="${escapeHtml(e.nom || '')}">Modifier</button></td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
   return rows || `<tr><td colspan="6">Aucun résultat.</td></tr>`;
 }
 
-function onMandatFilterInput(ev) {
-  mandatsFilter = ev.target.value;
-  const tbody = document.getElementById('mandatsTableBody');
-  if (tbody) tbody.innerHTML = renderMandatsRows();
+// ── Recherche : même combobox que le sélecteur d'élu·e (voir combobox.js) —
+// une option choisie ouvre directement sa fiche d'édition, comme la
+// sélection y ouvre la fiche d'activité (pas un filtre du tableau, qui reste
+// géré par les puces de rôle ci-dessus, indépendamment). Rôle toujours À CE
+// JOUR (pas la période active) : ce champ sert à retrouver une personne,
+// indépendamment de la législature éventuellement sélectionnée pour filtrer
+// le tableau.
+function mandatOptionHtml(e, { id, active, selected, label }) {
+  const y = new Date().getFullYear();
+  const badge = mandatRoleBadge(e, { start: y, end: y + 1 });
+  return `<li class="elu-opt${active ? ' elu-opt-active' : ''}" role="option" id="${id}"
+      data-key="${escapeHtml(e.nom)}" aria-selected="${selected}">
+    <span class="elu-opt-name">${label}</span>
+    <span class="elu-opt-meta"><span class="elu-opt-role elu-opt-role-${badge.cls}">${badge.texte}</span></span>
+  </li>`;
+}
+
+function initMandatCombo() {
+  mandatCombo = createCombobox({
+    input: document.getElementById('mandatSearch'),
+    list: document.getElementById('mandatSearchOptions'),
+    clear: document.getElementById('mandatSearchClear'),
+    status: document.getElementById('mandatSearchStatus'),
+    idPrefix: 'mandat-opt',
+    itemKey: e => e.nom,
+    itemLabel: e => e.nom,
+    renderItem: mandatOptionHtml,
+    emptyText: q => `Aucune personne ne correspond à « ${q} ».`,
+    statusText: n => (n ? `${n} personne${n > 1 ? 's' : ''} — utilisez les flèches puis Entrée` : 'Aucun résultat'),
+    placeholder: n => (n ? `Rechercher parmi ${n} personnes…` : 'Rechercher une personne…'),
+    onSelect: key => { if (key) onMandatEditClick(key); },
+  });
+  mandatCombo.setItems((mandatsData || []).slice().sort((a, b) => (a.nom || '').localeCompare(b.nom || '', 'fr')));
+  mandatCombo.setSelected(mandatComboSelected);
 }
 
 function renderMandatEditForm() {
   const e = editingMandat;
   const isNew = !e.nom;
+  if (mandatDeleteConfirm) return renderMandatDeleteConfirm(e);
+  const deleteBtn = isNew ? '' :
+    `<button type="button" class="admin-mandat-danger" data-click="onMandatDeleteClick">Supprimer</button>`;
   return `<section class="admin-mandat-form-wrap">
     <h4>${isNew ? 'Nouvelle personne' : `Modifier — ${escapeHtml(e.nom)}`}</h4>
     <form id="mandatEditForm" class="admin-login-form">
@@ -324,9 +614,25 @@ function renderMandatEditForm() {
       <p class="admin-login-error" id="mandatFormError" role="alert"></p>
       <div class="admin-preview-actions">
         <button type="button" class="drill-reset" data-click="cancelMandatEdit">Annuler</button>
+        ${deleteBtn}
         <button type="submit" class="ask-btn admin-login-submit" id="mandatFormSubmit">Enregistrer</button>
       </div>
     </form>
+  </section>`;
+}
+
+// Écran de confirmation avant suppression — jamais un simple clic : la
+// suppression commite dans le dépôt (voir confirmMandatDelete), même degré
+// de prudence que la publication d'un PV (aperçu, confirmation explicite).
+function renderMandatDeleteConfirm(e) {
+  return `<section class="admin-mandat-form-wrap">
+    <h4>Supprimer — ${escapeHtml(e.nom)}</h4>
+    <p class="admin-check-warn">⚠️ Êtes-vous sûr·e de vouloir supprimer le mandat de <strong>${escapeHtml(e.nom)}</strong> ? Cette action est irréversible.</p>
+    <p class="admin-login-error" id="mandatDeleteError" role="alert"></p>
+    <div class="admin-preview-actions">
+      <button type="button" class="drill-reset" data-click="cancelMandatDelete">Annuler</button>
+      <button type="button" class="admin-mandat-danger" id="mandatDeleteConfirmBtn" data-click="confirmMandatDelete">Oui, supprimer</button>
+    </div>
   </section>`;
 }
 
@@ -334,19 +640,63 @@ export function onMandatEditClick(nom) {
   const entry = (mandatsData || []).find(e => e.nom === nom);
   if (!entry) return;
   editingMandat = { ...entry };
+  mandatComboSelected = nom;
+  mandatDeleteConfirm = false;
   renderAdminPanel();
   document.getElementById('mandatNom')?.focus();
 }
 
 export function onMandatNewClick() {
   editingMandat = { nom: '', conseiller_communal: '', echevin: '', bourgmestre: '', statut: '' };
+  mandatComboSelected = null;
+  mandatDeleteConfirm = false;
   renderAdminPanel();
   document.getElementById('mandatNom')?.focus();
 }
 
 export function cancelMandatEdit() {
   editingMandat = null;
+  mandatComboSelected = null;
+  mandatDeleteConfirm = false;
   renderAdminPanel();
+}
+
+export function onMandatDeleteClick() {
+  mandatDeleteConfirm = true;
+  renderAdminPanel();
+}
+
+export function cancelMandatDelete() {
+  mandatDeleteConfirm = false;
+  renderAdminPanel();
+}
+
+export async function confirmMandatDelete() {
+  if (!editingMandat || !editingMandat.nom) return;
+  const errBox = document.getElementById('mandatDeleteError');
+  const btn = document.getElementById('mandatDeleteConfirmBtn');
+  errBox.textContent = '';
+  btn.disabled = true;
+  try {
+    const res = await fetch(API_URL + '/admin/mandats?nom=' + encodeURIComponent(editingMandat.nom), {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+    if (!res.ok) {
+      errBox.textContent = await _errorDetail(res);
+      return;
+    }
+    const nom = editingMandat.nom;
+    mandatsData = (mandatsData || []).filter(e => e.nom !== nom);
+    editingMandat = null;
+    mandatComboSelected = null;
+    mandatDeleteConfirm = false;
+    renderAdminPanel();
+  } catch (err) {
+    errBox.textContent = err.message || 'Suppression impossible — réessayez.';
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 // nom_original : nom AVANT modification (voir save_mandat côté backend) —
@@ -389,6 +739,7 @@ export async function submitMandat(ev) {
     else (mandatsData || (mandatsData = [])).push(mandat);
     mandatsData.sort((a, b) => (a.nom || '').localeCompare(b.nom || '', 'fr'));
     editingMandat = null;
+    mandatComboSelected = null;
     renderAdminPanel();
   } catch (err) {
     errBox.textContent = err.message || 'Enregistrement impossible — réessayez.';
@@ -713,7 +1064,11 @@ export async function adminLogout() {
   lastQePublishResult = null;
   adminSubTab = 'seances';
   mandatsData = null;
-  mandatsFilter = '';
+  mandatComboSelected = null;
+  mandatRoleSel = new Set();
+  mandatLegislature = 'all';
+  mandatSort = { col: 'nom', dir: 'asc' };
   editingMandat = null;
+  mandatDeleteConfirm = false;
   updateAdminUI();
 }
