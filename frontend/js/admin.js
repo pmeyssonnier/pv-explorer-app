@@ -397,7 +397,7 @@ function rangesOverlapPeriod(raw, period) {
 function renderMandatLegislatureChips() {
   const base = (mandatsData || []).filter(matchesMandatRole);
   const chips = mandatLegislatures().map(p => {
-    const n = base.filter(e => MANDAT_ROLE_ORDER.some(role => rangesOverlapPeriod(e[MANDAT_ROLE_FIELD[role]], p))).length;
+    const n = base.filter(e => rangesOverlapPeriod(e.conseiller_communal, p)).length;
     const on = mandatLegislature === p.key;
     return `<button type="button" class="elu-chip${on ? ' elu-chip-active' : ''}" aria-pressed="${on}"
       data-click="onMandatLegislatureChipClick" data-arg="${p.key}">
@@ -411,11 +411,19 @@ export function onMandatLegislatureChipClick(key) {
   renderAdminPanel();
 }
 
+// Chevauchement sur le mandat de CONSEILLER·ÈRE uniquement, jamais échevin/
+// bourgmestre : en droit communal belge, on doit d'abord être conseiller·ère
+// pour accéder au Collège — un mandat échevinal/de bourgmestre est donc
+// toujours couvert par le mandat de conseiller·ère de la même personne
+// (sauf trou dans les données, voir Isabelle Durant 2006-2009 — signalé, pas
+// corrigé ici faute de source). Vérifier aussi échevin/bourgmestre compterait
+// deux fois la même législature pour une personne déjà comptée via son
+// mandat de conseiller·ère.
 function matchesMandatLegislature(e) {
   if (mandatLegislature === 'all') return true;
   const period = mandatLegislatures().find(p => p.key === mandatLegislature);
   if (!period) return true;
-  return MANDAT_ROLE_ORDER.some(role => rangesOverlapPeriod(e[MANDAT_ROLE_FIELD[role]], period));
+  return rangesOverlapPeriod(e.conseiller_communal, period);
 }
 
 function filteredMandats() {
