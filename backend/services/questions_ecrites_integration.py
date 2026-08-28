@@ -87,7 +87,13 @@ def publish_question(question: dict, source_url: Optional[str] = None, progress_
         progress_cb({"stage": "commit"})
 
     db = load_qe_db()
-    qe_pipeline.merge_question_into_db(db, question)
+    try:
+        qe_pipeline.merge_question_into_db(db, question)
+    except qe_pipeline.QuestionConflictError as e:
+        # Numéro probablement erroné (absent du document, deviné à tort) :
+        # jamais d'écrasement silencieux d'une AUTRE question déjà publiée
+        # sous le même id — voir la docstring de QuestionConflictError.
+        raise ValueError(str(e)) from e
     db["meta"]["total_questions"] = len(db["questions"])
 
     content = json.dumps(db, ensure_ascii=False, indent=2)

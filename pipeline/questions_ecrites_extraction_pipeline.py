@@ -301,13 +301,57 @@ def _valid_iso_date(s: str) -> Optional[str]:
     return s
 
 
+# Repli déterministe pour le numéro quand le document lui-même n'en imprime
+# aucun (constaté sur plusieurs questions écrites de 2010 : seule QE-2010-001
+# porte un "1." en tête, les suivantes n'ont RIEN — Claude renvoie alors
+# numero=null pour chacune, comme demandé par SYSTEM_PROMPT... sauf qu'un
+# modèle peut aussi, de temps en temps, DEVINER un numéro au lieu de null
+# malgré la consigne — observé concrètement : trois questions différentes
+# (Vriamont, Van Gorp, Lejeune de Schiervel) extraites séparément se sont
+# vues attribuer le même "numero": 1, chacune écrasant silencieusement la
+# précédente sous le même id QE-2010-001 lors de la publication (voir
+# _conflicts_with_existing ci-dessous pour le filet de sécurité côté
+# publication). Le nom de fichier suit une convention stable côté 1030.be
+# (« question-ecrite-N-AAAA.pdf ») : un repli déterministe dessus vaut mieux
+# qu'un numéro deviné par le modèle — jamais utilisé si le texte du document
+# en fournit déjà un.
+_FILENAME_NUMERO_RE = re.compile(r"(?i)e?crite[_-]?(\d+)(?:[-_](\d{4}))?")
+
+
+def _numero_from_filename(filename: str) -> Optional[int]:
+    m = _FILENAME_NUMERO_RE.search(filename or "")
+    if not m:
+        return None
+    if m.group(2):
+        # Numéro et année séparés par un tiret/underscore (ex. "…-09-2010") :
+        # le premier groupe capturé EST déjà le numéro isolé.
+        try:
+            return int(m.group(1))
+        except ValueError:
+            return None
+    # Pas de séparateur (ex. "…_012010.pdf") : les 4 derniers chiffres sont
+    # l'année, le reste le numéro — seulement si ça ressemble à une vraie
+    # année (19xx/20xx) ; sinon on ne devine pas plutôt que de mal découper.
+    digits = m.group(1)
+    if len(digits) > 4 and digits[-4:-2] in ("19", "20"):
+        try:
+            return int(digits[:-4])
+        except ValueError:
+            return None
+    return None
+
+
 def normalize_question(data: dict, filename: str) -> Optional[dict]:
     """Valide la forme minimale exploitable (numéro + date + auteur·e) —
     sans ces 3 champs, l'entrée ne peut pas être identifiée/classée de façon
-    fiable, mieux vaut échouer explicitement que publier une entrée orpheline."""
+    fiable, mieux vaut échouer explicitement que publier une entrée orpheline.
+    `numero` : celui trouvé par Claude dans le texte en priorité, sinon
+    repli déterministe sur le nom de fichier (voir _numero_from_filename)."""
     if not isinstance(data, dict):
         return None
     numero = _coerce_int_or_none(data.get("numero"))
+    if numero is None:
+        numero = _numero_from_filename(filename)
     date = _valid_iso_date(_clean_str(data.get("date")))
     auteur = _clean_str(data.get("auteur"))
     if numero is None or not date or not auteur:
@@ -391,13 +435,42 @@ def load_database() -> dict:
     }
 
 
+class QuestionConflictError(Exception):
+    """Le numéro (année+numéro -> id) attribué à `question` désigne déjà, dans
+    la base, une question d'une autre personne ou d'une autre date — signe
+    quasi certain que ce numéro est erroné (absent du document, un modèle
+    ayant deviné une valeur malgré la consigne de ne jamais le faire — voir
+    _numero_from_filename) plutôt qu'une vraie correction du même
+    enregistrement. Cas vécu : Vriamont puis Van Gorp puis Lejeune de
+    Schiervel, trois questions sans numéro imprimé, toutes extraites avec
+    "numero": 1 — chacune a silencieusement écrasé la précédente sous
+    QE-2010-001 avant que ce garde-fou n'existe."""
+
+
+def _conflicts_with_existing(existing: dict, question: dict) -> bool:
+    return (
+        (existing.get("auteur") or "").strip().lower() != (question.get("auteur") or "").strip().lower()
+        or existing.get("date") != question.get("date")
+    )
+
+
 def merge_question_into_db(db: dict, question: dict) -> bool:
     """Remplace l'entrée existante (même id = même année+numéro — un
-    re-upload est une correction, pas un doublon) ou l'ajoute, puis retrie."""
+    re-upload est une correction, pas un doublon) ou l'ajoute, puis retrie.
+    Lève QuestionConflictError si l'id existant appartient de toute évidence
+    à une AUTRE question (auteur·e et/ou date différents) — jamais d'écrasement
+    silencieux dans ce cas, voir la docstring de l'exception."""
     if not question.get("id"):
         return False
     idx = next((i for i, q in enumerate(db["questions"]) if q.get("id") == question["id"]), None)
     if idx is not None:
+        if _conflicts_with_existing(db["questions"][idx], question):
+            raise QuestionConflictError(
+                f"{question['id']} désigne déjà « {db['questions'][idx].get('titre') or '(sans titre)'} » "
+                f"de {db['questions'][idx].get('auteur')} ({db['questions'][idx].get('date')}) — "
+                f"numéro probablement erroné pour « {question.get('titre') or '(sans titre)'} » "
+                f"de {question.get('auteur')} ({question.get('date')})."
+            )
         db["questions"][idx] = question
     else:
         db["questions"].append(question)
@@ -517,7 +590,18 @@ def run_pipeline(max_files: Optional[int] = None, dry_run: bool = False,
         with open(q_out, "w", encoding="utf-8") as f:
             json.dump(question, f, ensure_ascii=False, indent=2)
         log.info(f"  Question sauvegardée : {q_out.name}")
-        merge_question_into_db(db, question)
+        try:
+            merge_question_into_db(db, question)
+        except QuestionConflictError as e:
+            # Un numéro erroné (probablement deviné faute d'être imprimé dans
+            # le document — voir _numero_from_filename) ne doit JAMAIS écraser
+            # silencieusement une autre question déjà en base : on saute ce
+            # fichier plutôt que de faire planter tout le lot restant.
+            log.error(f"  ⚠️  Conflit : {e}")
+            stats["failed"] += 1
+            (Path(CONFIG["OUTPUT_DIR"]) / f"FAILED_{fname}.txt").write_text(
+                f"Conflit de numéro : {fname}\n{e}\n{datetime.now().isoformat()}")
+            continue
         save_database(db)
         done.add(fname)
         save_progress(done)
