@@ -1,10 +1,10 @@
 [
   {
     "nom": "Mohammed Abkoui",
-    "conseiller_communal": null,
+    "conseiller_communal": "2018-2024",
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élu / Candidat"
+    "statut": "Conseiller du CPAS / Ancien conseiller communal"
   },
   {
     "nom": "Taoufik Ben Addi",
@@ -35,18 +35,11 @@
     "statut": "Ancienne conseillère communale"
   },
   {
-    "nom": "Mohamed el Arnouki",
-    "conseiller_communal": null,
-    "echevin": null,
-    "bourgmestre": null,
-    "statut": "Non élu / Candidat"
-  },
-  {
     "nom": "Mamadou Bah",
-    "conseiller_communal": null,
+    "conseiller_communal": "2018-2024",
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élu / Candidat"
+    "statut": "Ancien conseiller communal"
   },
   {
     "nom": "Abdourahmane Balde",
@@ -228,7 +221,7 @@
     "conseiller_communal": null,
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élue / Candidate"
+    "statut": "Conseillère de l'action sociale (CPAS)"
   },
   {
     "nom": "Thomas Eraly",
@@ -309,10 +302,10 @@
   },
   {
     "nom": "Youssef Hammouti",
-    "conseiller_communal": null,
+    "conseiller_communal": "2018-2024",
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élu / Candidat"
+    "statut": "Ancien conseiller communal"
   },
   {
     "nom": "Justine Harzé",
@@ -365,10 +358,10 @@
   },
   {
     "nom": "Larbi Kaddour",
-    "conseiller_communal": null,
+    "conseiller_communal": "2006-2012",
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élu / Candidat"
+    "statut": "Ancien conseiller communal"
   },
   {
     "nom": "Abdallah Kanfaoui",
@@ -435,10 +428,10 @@
   },
   {
     "nom": "Kevin Likaj",
-    "conseiller_communal": null,
+    "conseiller_communal": "2018-2024",
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élu / Candidat"
+    "statut": "Ancien conseiller communal"
   },
   {
     "nom": "Laure Lita",
@@ -554,10 +547,10 @@
   },
   {
     "nom": "Lucie Petre",
-    "conseiller_communal": null,
+    "conseiller_communal": "2018-2024",
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élue / Candidate"
+    "statut": "Ancienne conseillère communale"
   },
   {
     "nom": "Stéphane Pire",
@@ -603,10 +596,10 @@
   },
   {
     "nom": "Leticia Sere",
-    "conseiller_communal": null,
+    "conseiller_communal": "2018-2024",
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élue / Candidate"
+    "statut": "Ancienne conseillère communale"
   },
   {
     "nom": "Christine Smeysters",
@@ -621,13 +614,6 @@
     "echevin": null,
     "bourgmestre": null,
     "statut": "Ancienne conseillère communale"
-  },
-  {
-    "nom": "Donia Sönmez",
-    "conseiller_communal": null,
-    "echevin": null,
-    "bourgmestre": null,
-    "statut": "Non élue / Candidate"
   },
   {
     "nom": "Marie Speeckaert",
@@ -708,10 +694,10 @@
   },
   {
     "nom": "Elyass el Yakoubi",
-    "conseiller_communal": null,
+    "conseiller_communal": "2018-2024",
     "echevin": null,
     "bourgmestre": null,
-    "statut": "Non élu / Candidat"
+    "statut": "Ancien conseiller communal"
   },
   {
     "nom": "Yusuf Yildiz",
@@ -779,7 +765,7 @@
   {
     "nom": "Mohamed El Arnouki",
     "conseiller_communal": "2010-2018",
-    "echevin": "2013-2018",
+    "echevin": "2012-2018",
     "bourgmestre": null,
     "statut": "Ancien échevin / Ancien conseiller communal"
   }
