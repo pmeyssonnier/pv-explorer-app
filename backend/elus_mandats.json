@@ -93,9 +93,9 @@
   {
     "nom": "Mehmet Bilge",
     "conseiller_communal": "2018-2024",
-    "echevin": null,
+    "echevin": "2018-2024",
     "bourgmestre": null,
-    "statut": "Conseiller communal"
+    "statut": "Ancien échevin / Ancien conseiller communal"
   },
   {
     "nom": "Jacques Bouché",
@@ -148,10 +148,10 @@
   },
   {
     "nom": "Dominique Decoux",
-    "conseiller_communal": "2006-2018",
-    "echevin": "2012-2018",
+    "conseiller_communal": "2000-2007, 2012-2013, 2018-2019",
+    "echevin": null,
     "bourgmestre": null,
-    "statut": "Échevine / Conseillère communale"
+    "statut": "Présidente du CPAS / Ancienne conseillère communale"
   },
   {
     "nom": "Luc Degraer",
@@ -232,8 +232,8 @@
   },
   {
     "nom": "Thomas Eraly",
-    "conseiller_communal": "2018-présent",
-    "echevin": "2020-2024, 2025-présent",
+    "conseiller_communal": "2013-présent",
+    "echevin": "2018-présent",
     "bourgmestre": null,
     "statut": "Échevin(e) / Conseiller communal"
   },
@@ -303,9 +303,9 @@
   {
     "nom": "Sihame Haddioui",
     "conseiller_communal": "2018-2024",
-    "echevin": "2020-2024",
+    "echevin": "2018-2024",
     "bourgmestre": null,
-    "statut": "Échevine / Conseillère communale"
+    "statut": "Ancienne échevine / Ancienne conseillère communale"
   },
   {
     "nom": "Youssef Hammouti",
@@ -505,8 +505,8 @@
   },
   {
     "nom": "Frédéric Nimal",
-    "conseiller_communal": "2000-présent",
-    "echevin": "2012-2024, 2025-présent",
+    "conseiller_communal": "2006-présent",
+    "echevin": "2008-2011, 2012-2024, 2025-présent",
     "bourgmestre": "2024-2025 (faisant fonction)",
     "statut": "Ancien bourgmestre f.f. / Échevin / Conseiller communal"
   },
@@ -575,10 +575,10 @@
   },
   {
     "nom": "Sophie Querton",
-    "conseiller_communal": "2018-2024",
-    "echevin": "2018-2020",
+    "conseiller_communal": "2012-2019",
+    "echevin": null,
     "bourgmestre": null,
-    "statut": "Échevine / Conseillère communale"
+    "statut": "Présidente du CPAS / Ancienne conseillère communale"
   },
   {
     "nom": "Seydi Sag",
