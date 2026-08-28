@@ -104,6 +104,28 @@ def test_role_at_bourgmestre_also_counts_as_college(monkeypatch):
     assert mandats.role_at("x", "2025-01-01") == "conseiller"
 
 
+# ── Intégrité des VRAIES données : chaque segment doit être reconnu ────────
+# Cas vécu : une annotation entre parenthèses contenant elle-même une virgule
+# (ex. « 2001-2024 (empêché 2008-2011 et 2019-2024, remplacé par ... ) »)
+# coupe le split(",") de _parse_ranges en plein milieu de la parenthèse — le
+# segment ne matche plus _RANGE_RE et disparaît SILENCIEUSEMENT (Bernard
+# Clerfayt n'était alors jamais classé « college », toute sa carrière de
+# bourgmestre invisible pour role_at()). Un test sur les vraies données,
+# jamais une virgule interdite dans une annotation.
+def test_real_mandats_every_range_segment_is_recognized():
+    for e in mandats._load_mandats_raw():
+        for champ in ("conseiller_communal", "echevin", "bourgmestre"):
+            raw = e.get(champ)
+            if not raw:
+                continue
+            for part in raw.split(","):
+                assert mandats._RANGE_RE.match(part), (
+                    f"{e.get('nom')} / {champ} : segment non reconnu « {part.strip()} » "
+                    f"dans « {raw} » — une virgule dans une annotation entre parenthèses "
+                    "casse le split(\",\") (utiliser un point-virgule à la place)"
+                )
+
+
 # ── mandats_for : structure exposée pour l'affichage détaillé ──────────────
 def test_mandats_for_returns_none_when_person_absent():
     assert mandats.mandats_for("inconnu") is None
