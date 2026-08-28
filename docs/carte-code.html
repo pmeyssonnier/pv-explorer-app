@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>Carte du code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────── */
+:root{
+  --bg:#f1f3ee;
+  --surface:#ffffff;
+  --surface-2:#e7e9e0;
+  --surface-3:#dde0d5;
+  --border:#d2d6c9;
+  --border-strong:#b7bcac;
+  --ink:#1b201c;
+  --ink-muted:#5b6459;
+  --ink-faint:#8a9186;
+  --accent:#1f6f5c;
+  --accent-strong:#123a30;
+  --accent-soft:#e2ede8;
+  --accent-ink:#0e2b23;
+
+  --fam-backend-bg:#dde6f3;   --fam-backend-fg:#28456d;
+  --fam-frontend-bg:#f5e3d0;  --fam-frontend-fg:#7a4a12;
+  --fam-pipeline-bg:#e9e0f4;  --fam-pipeline-fg:#54318a;
+  --fam-scraping-bg:#dcedef;  --fam-scraping-fg:#1c5a60;
+  --fam-tests-bg:#f5dde6;     --fam-tests-fg:#7a2c48;
+  --fam-data-bg:#e8edd6;      --fam-data-fg:#51661c;
+  --fam-racine-bg:#e6e6e1;    --fam-racine-fg:#54564d;
+
+  --shadow-sm: 0 1px 2px rgba(30,35,25,0.06);
+  --shadow-md: 0 4px 16px rgba(30,35,25,0.10);
+  --radius: 8px;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141813;
+    --surface:#1b201a;
+    --surface-2:#232921;
+    --surface-3:#2c332a;
+    --border:#39412f;
+    --border-strong:#4a5540;
+    --ink:#e9ece3;
+    --ink-muted:#a6ad9c;
+    --ink-faint:#767e6f;
+    --accent:#5fbfa2;
+    --accent-strong:#8fd6bd;
+    --accent-soft:#20342c;
+    --accent-ink:#c8ece0;
+
+    --fam-backend-bg:#233650;  --fam-backend-fg:#a9c3ea;
+    --fam-frontend-bg:#4a3418; --fam-frontend-fg:#eec38f;
+    --fam-pipeline-bg:#392a52; --fam-pipeline-fg:#cbb3ec;
+    --fam-scraping-bg:#1e3c40; --fam-scraping-fg:#9adde3;
+    --fam-tests-bg:#432334;    --fam-tests-fg:#eba9c4;
+    --fam-data-bg:#3a4420;     --fam-data-fg:#c7db8f;
+    --fam-racine-bg:#33352e;   --fam-racine-fg:#c2c4b8;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141813;
+  --surface:#1b201a;
+  --surface-2:#232921;
+  --surface-3:#2c332a;
+  --border:#39412f;
+  --border-strong:#4a5540;
+  --ink:#e9ece3;
+  --ink-muted:#a6ad9c;
+  --ink-faint:#767e6f;
+  --accent:#5fbfa2;
+  --accent-strong:#8fd6bd;
+  --accent-soft:#20342c;
+  --accent-ink:#c8ece0;
+
+  --fam-backend-bg:#233650;  --fam-backend-fg:#a9c3ea;
+  --fam-frontend-bg:#4a3418; --fam-frontend-fg:#eec38f;
+  --fam-pipeline-bg:#392a52; --fam-pipeline-fg:#cbb3ec;
+  --fam-scraping-bg:#1e3c40; --fam-scraping-fg:#9adde3;
+  --fam-tests-bg:#432334;    --fam-tests-fg:#eba9c4;
+  --fam-data-bg:#3a4420;     --fam-data-fg:#c7db8f;
+  --fam-racine-bg:#33352e;   --fam-racine-fg:#c2c4b8;
+}
+
+*{ box-sizing:border-box; }
+::selection{ background:var(--accent); color:var(--surface); }
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size:14px;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+.mono{ font-family:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace; }
+.tnum{ font-variant-numeric: tabular-nums; }
+
+a{ color:var(--accent-strong); }
+:root[data-theme="dark"] a, @media (prefers-color-scheme: dark){ a{ color:var(--accent-strong); } }
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+header.top{
+  position:sticky; top:0; z-index:30;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  box-shadow:var(--shadow-sm);
+}
+.top-inner{
+  max-width:1400px; margin:0 auto;
+  padding:20px 28px 16px;
+  display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+  gap:20px 32px;
+}
+.brand{ display:flex; flex-direction:column; gap:4px; min-width:280px; }
+.eyebrow{
+  font-family:"IBM Plex Mono", monospace;
+  font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent-strong);
+}
+h1{
+  margin:0; font-size:22px; font-weight:700; letter-spacing:-.01em;
+  text-wrap:balance;
+}
+.tagline{ color:var(--ink-muted); font-size:13.5px; max-width:56ch; }
+
+.statline{ display:flex; gap:0; flex-wrap:wrap; border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.stat{
+  padding:8px 16px; min-width:104px;
+  display:flex; flex-direction:column; gap:2px;
+  border-left:1px solid var(--border);
+}
+.stat:first-child{ border-left:none; }
+.stat b{ font-size:18px; font-family:"IBM Plex Mono", monospace; font-weight:600; }
+.stat b em{ font-size:12px; font-style:normal; font-weight:500; color:var(--ink-faint); }
+.stat span{ font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); }
+
+nav.tabs{
+  max-width:1400px; margin:0 auto; padding:0 28px;
+  display:flex; gap:4px;
+}
+nav.tabs button{
+  appearance:none; border:none; background:none; cursor:pointer;
+  font:inherit; font-weight:600; font-size:13px; color:var(--ink-muted);
+  padding:10px 6px; margin-bottom:-1px;
+  border-bottom:2px solid transparent;
+}
+nav.tabs button.active{ color:var(--accent-strong); border-bottom-color:var(--accent); }
+nav.tabs button:hover:not(.active){ color:var(--ink); }
+
+main{ max-width:1400px; margin:0 auto; padding:24px 28px 64px; }
+section.view{ display:none; }
+section.view.active{ display:block; }
+
+/* ── Controls ───────────────────────────────────────────────────────── */
+.controls{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px;
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:12px 14px; margin-bottom:14px;
+}
+.search-box{
+  position:relative; flex:1 1 240px; min-width:200px;
+}
+.search-box input{
+  width:100%; font:inherit; font-size:13.5px;
+  padding:8px 10px 8px 30px;
+  border:1px solid var(--border-strong); border-radius:6px;
+  background:var(--bg); color:var(--ink);
+}
+.search-box input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+.search-box svg{ position:absolute; left:9px; top:50%; transform:translateY(-50%); opacity:.55; pointer-events:none; }
+
+.chipset{ display:flex; flex-wrap:wrap; gap:6px; }
+.chip{
+  appearance:none; cursor:pointer; font:inherit; font-size:12px; font-weight:600;
+  padding:5px 10px; border-radius:999px; border:1px solid var(--border-strong);
+  background:var(--surface); color:var(--ink-muted);
+  display:inline-flex; align-items:center; gap:6px;
+}
+.chip .dot{ width:8px; height:8px; border-radius:50%; background:currentColor; opacity:.7; }
+.chip.active{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent-strong); }
+.chip:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
+.chip .n{ opacity:.6; font-weight:500; }
+
+.controls .sep{ width:1px; align-self:stretch; background:var(--border); }
+.reset-btn{
+  appearance:none; cursor:pointer; font:inherit; font-size:12px; font-weight:600;
+  color:var(--ink-muted); background:none; border:1px solid transparent; border-radius:6px;
+  padding:5px 8px;
+}
+.reset-btn:hover{ color:var(--ink); border-color:var(--border-strong); }
+.result-count{ font-size:12px; color:var(--ink-faint); margin-left:auto; white-space:nowrap; }
+
+/* ── Table ──────────────────────────────────────────────────────────── */
+.table-wrap{
+  border:1px solid var(--border); border-radius:var(--radius);
+  overflow:auto; background:var(--surface);
+  max-height:74vh;
+}
+table{ width:100%; border-collapse:collapse; font-size:13px; min-width:1420px; }
+thead th{
+  position:sticky; top:0; z-index:2;
+  background:var(--surface-2); text-align:left;
+  padding:9px 12px; font-size:11px; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--ink-muted); border-bottom:1px solid var(--border);
+  cursor:pointer; user-select:none; white-space:nowrap;
+}
+thead th:hover{ color:var(--ink); }
+thead th .arrow{ display:inline-block; width:10px; opacity:.5; }
+thead th.sorted .arrow{ opacity:1; color:var(--accent-strong); }
+thead th.num{ text-align:right; }
+
+tbody td{ padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+tbody tr:hover{ background:var(--surface-2); }
+tbody td.num{ text-align:right; white-space:nowrap; }
+tbody td.path{ white-space:nowrap; }
+tbody td.date-cell{ white-space:nowrap; color:var(--ink-muted); }
+tbody td.desc{ color:var(--ink-muted); min-width:280px; max-width:440px; }
+tbody td.deps{ min-width:180px; max-width:260px; }
+
+.filename{ font-weight:500; }
+.dirpath{ color:var(--ink-faint); }
+
+.badge{
+  display:inline-flex; align-items:center; padding:2px 8px; border-radius:999px;
+  font-size:11px; font-weight:600; white-space:nowrap;
+}
+.badge.ext{
+  font-family:"IBM Plex Mono", monospace; background:var(--surface-3); color:var(--ink-muted);
+  border-radius:4px; padding:1px 6px;
+}
+.badge.cat-badge{
+  background:var(--surface-2); color:var(--ink-muted); border:1px solid var(--border);
+  font-weight:500;
+}
+.deplist{ display:flex; flex-wrap:wrap; gap:4px; }
+.deplist .tag{
+  font-family:"IBM Plex Mono", monospace; font-size:11px;
+  background:var(--surface-2); border:1px solid var(--border); border-radius:4px;
+  padding:1px 5px; color:var(--ink-muted);
+}
+.deplist .tag.ext-dep{ background:transparent; border-style:dashed; }
+.deplist .none{ color:var(--ink-faint); font-size:11.5px; }
+
+/* ── Data structures ────────────────────────────────────────────────── */
+.ds-intro{ max-width:74ch; color:var(--ink-muted); margin:0 0 20px; }
+.ds-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(420px,1fr)); gap:18px; margin-bottom:28px; }
+.ds-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  box-shadow:var(--shadow-sm); overflow:hidden; display:flex; flex-direction:column;
+}
+.ds-head{ padding:14px 16px 12px; border-bottom:1px solid var(--border); background:var(--surface-2); }
+.ds-head .src{ font-family:"IBM Plex Mono", monospace; font-size:11px; color:var(--ink-faint); }
+.ds-head h3{ margin:2px 0 4px; font-size:15.5px; }
+.ds-head p{ margin:0; font-size:12.5px; color:var(--ink-muted); }
+.ds-body{ padding:0; }
+.ds-body table{ min-width:0; width:100%; font-size:12.5px; table-layout:fixed; }
+.ds-body thead th{ position:static; cursor:default; }
+.ds-body thead th:hover{ color:var(--ink-muted); }
+.ds-body th:nth-child(1), .ds-body td.field{ width:30%; }
+.ds-body th:nth-child(2), .ds-body td.type{ width:20%; }
+.ds-body td.field{ font-family:"IBM Plex Mono", monospace; font-weight:600; color:var(--accent-strong); word-break:break-word; }
+.ds-body td.type{ font-family:"IBM Plex Mono", monospace; font-size:11.5px; color:var(--ink-faint); word-break:break-word; }
+.ds-body td{ word-wrap:break-word; overflow-wrap:break-word; }
+
+.enum-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:14px; }
+.enum-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+  padding:12px 14px;
+}
+.enum-card h4{ margin:0 0 3px; font-size:13px; }
+.enum-card .field-ref{ font-family:"IBM Plex Mono", monospace; font-size:11px; color:var(--ink-faint); margin-bottom:8px; }
+.enum-card ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px; }
+.enum-card li{ display:flex; justify-content:space-between; gap:10px; font-size:12.5px; }
+.enum-card li code{ font-family:"IBM Plex Mono", monospace; background:var(--surface-2); border-radius:4px; padding:0 5px; color:var(--ink); }
+.enum-card li .cnt{ color:var(--ink-faint); font-family:"IBM Plex Mono", monospace; font-size:11px; white-space:nowrap; }
+
+h2.section-title{ font-size:18px; margin:0 0 4px; }
+.section-sub{ color:var(--ink-muted); font-size:13px; margin:0 0 18px; }
+
+footer{
+  max-width:1400px; margin:0 auto; padding:0 28px 40px;
+  color:var(--ink-faint); font-size:11.5px;
+}
+
+@media (max-width: 720px){
+  .top-inner{ padding:16px 16px 12px; }
+  main{ padding:16px 16px 48px; }
+  nav.tabs{ padding:0 16px; }
+  .statline{ display:none; }
+}
+</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <span class="eyebrow">PV Explorer · référence technique</span>
+      <h1>Carte du code</h1>
+      <p class="tagline">Inventaire des 120 fichiers du dépôt — module par module — et structure des données qui les traversent : séances, points de l'ordre du jour, questions écrites, élu·e·s.</p>
+    </div>
+    <div class="statline" id="statline"></div>
+  </div>
+  <nav class="tabs">
+    <button class="active" data-view="files">Inventaire des fichiers</button>
+    <button data-view="data">Structures de données</button>
+  </nav>
+</header>
+
+<main>
+
+  <section class="view active" id="view-files">
+    <div class="controls">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="search" placeholder="Chercher un fichier, une description, une dépendance…" />
+      </div>
+      <div class="chipset" id="zone-chips" aria-label="Filtrer par zone"></div>
+      <div class="sep"></div>
+      <div class="chipset" id="ext-chips" aria-label="Filtrer par extension"></div>
+      <button class="reset-btn" id="reset-filters">Réinitialiser</button>
+      <span class="result-count" id="result-count"></span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="file-table">
+        <thead>
+          <tr>
+            <th data-key="zone" data-type="str">Zone <span class="arrow"></span></th>
+            <th data-key="relpath" data-type="str">Fichier <span class="arrow"></span></th>
+            <th data-key="ext" data-type="str">Ext. <span class="arrow"></span></th>
+            <th data-key="category" data-type="str">Catégorie <span class="arrow"></span></th>
+            <th data-key="desc" data-type="str">Description <span class="arrow"></span></th>
+            <th data-key="size_kb" data-type="num" class="num">Taille <span class="arrow"></span></th>
+            <th data-key="lines" data-type="num" class="num">Lignes <span class="arrow"></span></th>
+            <th data-key="last_modified" data-type="str">Dernière modif. <span class="arrow"></span></th>
+            <th data-key="deps_internal" data-type="str">Dépend de (interne) <span class="arrow"></span></th>
+            <th data-key="deps_external" data-type="str">Bibliothèques <span class="arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="file-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="view" id="view-data">
+    <h2 class="section-title">Structures de données</h2>
+    <p class="ds-intro">Les quatre objets métier que l'app manipule. Les deux premiers sont écrits par les pipelines d'extraction (<code class="mono">pipeline/*_extraction_pipeline.py</code>) et committés tels quels dans <code class="mono">backend/*.json</code> ; les deux derniers sur l'élu·e coexistent : une fiche déclarative éditée à la main, et une fiche calculée à la volée depuis les PV.</p>
+
+    <div class="ds-grid" id="ds-grid"></div>
+
+    <h2 class="section-title">Attributs partagés &amp; valeurs possibles</h2>
+    <p class="section-sub">Les champs à vocabulaire fermé qui structurent le filtrage et l'affichage dans toute l'app — comptages calculés sur les 10&nbsp;062 points de la base actuelle.</p>
+    <div class="enum-grid" id="enum-grid"></div>
+  </section>
+
+</main>
+
+<footer>Généré le 28 août 2026 à partir du dépôt <span class="mono">pv-explorer-app</span> (branche <span class="mono">main</span>) — tailles et comptes de lignes mesurés sur les fichiers sources, dépendances résolues par analyse statique des imports.</footer>
+
+<script>
+const INVENTORY = [{"path":"backend/app.py","ext":"py","size_kb":3.4,"lines":62,"desc":"BACKEND API — PV EXPLORER (Q&R PV Schaerbeek) v0.2 (durci) FastAPI : RAG (recherche + Claude) + statistiques Les clés API restent CÔTÉ SERVEUR (jamais exposées au navigateur) Durcissements : CORS restreint…","category":"Backend · Scripts","deps_internal":["config","limiter","routers"],"deps_external":["fastapi","slowapi"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/backfill_repondants.py","ext":"py","size_kb":6.06,"lines":117,"desc":"BACKFILL DE `repondants` — REFORMATÉ, PAS DÉRIVÉ, DEPUIS `repondant`","category":"Backend · Scripts","deps_internal":["services.people.attribution"],"deps_external":["argparse","json","os","sys"],"last_modified":"2026-08-26T09:13:02+00:00"},{"path":"backend/config.py","ext":"py","size_kb":4.43,"lines":78,"desc":"Configuration centrale du backend PV Explorer.","category":"Backend · Scripts","deps_internal":[],"deps_external":["dotenv","logging","os"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/elus_mandats.json","ext":"json","size_kb":19.28,"lines":772,"desc":"Base déclarative des mandats électifs par élu·e (conseiller·ère communal·e / échevin·e / bourgmestre) avec plages de dates — alimente le rôle affiché et le sous-onglet admin « Mandats ».","category":"Données","deps_internal":[],"deps_external":[],"last_modified":"2026-08-28T12:19:09+00:00"},{"path":"backend/eval_rag.py","ext":"py","size_kb":7.97,"lines":184,"desc":"CALIBRAGE DU SEUIL DE PERTINENCE RAG (SCORE_MIN) Mesure la distribution des scores de similarité sur un jeu de questions de référence — pour choisir SCORE_MIN sur des DONNÉES, pas au hasard.","category":"Backend · Scripts","deps_internal":["config","services.pinecone_service","services.rag","statistics","utils.dates"],"deps_external":["os","sys"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/index_pv.py","ext":"py","size_kb":21.78,"lines":476,"desc":"INDEXATION DES PV → PINECONE PROTOTYPE v0.1 Découpe la base JSON des PV en chunks et les indexe dans Pinecone Embeddings intégrés Pinecone (multilingual-e5-large) — 1 seule clé API","category":"Backend · Scripts","deps_internal":["utils.statut"],"deps_external":["argparse","json","os","pathlib","pinecone","sys","time"],"last_modified":"2026-08-25T20:46:08+00:00"},{"path":"backend/index_qe.py","ext":"py","size_kb":7.64,"lines":169,"desc":"INDEXATION DES QUESTIONS ÉCRITES → PINECONE","category":"Backend · Scripts","deps_internal":["index_pv"],"deps_external":["argparse","json","pathlib","sys"],"last_modified":"2026-08-24T12:06:34+02:00"},{"path":"backend/lexique.json","ext":"json","size_kb":0.35,"lines":17,"desc":"Lexique éditable (synonymes/associations + glossaire) enrichissable à chaud via l'admin, pour améliorer la recherche RAG.","category":"Données","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T21:45:47+00:00"},{"path":"backend/lexique_store.py","ext":"py","size_kb":5.64,"lines":142,"desc":"Lexique éditable : synonymes/associations + glossaire, stockés dans `backend/lexique.json` et enrichissables à chaud (voir routers/admin.py, commande « //lex … » réservée à l'admin — écrit le fichier localement pour…","category":"Backend · Scripts","deps_internal":[],"deps_external":["json","os"],"last_modified":"2026-08-24T21:45:47+00:00"},{"path":"backend/limiter.py","ext":"py","size_kb":0.57,"lines":12,"desc":"Rate limiter slowapi partagé.","category":"Backend · Scripts","deps_internal":[],"deps_external":["slowapi"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/models/__init__.py","ext":"py","size_kb":0.0,"lines":0,"desc":"Marqueur de package Python (vide).","category":"Backend · Modèles","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/models/api.py","ext":"py","size_kb":8.01,"lines":160,"desc":"Schémas Pydantic de l'API (requêtes/réponses). Contrat HTTP du backend.","category":"Backend · Modèles","deps_internal":["config"],"deps_external":["pydantic","typing"],"last_modified":"2026-08-28T06:42:03+00:00"},{"path":"backend/prompts/__init__.py","ext":"py","size_kb":0.0,"lines":0,"desc":"Marqueur de package Python (vide).","category":"Backend · Prompts","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/prompts/rag.py","ext":"py","size_kb":5.49,"lines":80,"desc":"Prompt système des réponses citoyennes (RAG). Isolé pour itérer sur le ton et les garde-fous sans toucher à la logique applicative.","category":"Backend · Prompts","deps_internal":[],"deps_external":[],"last_modified":"2026-08-25T22:58:44+00:00"},{"path":"backend/pv_conseil_schaerbeek.json","ext":"json","size_kb":10935.52,"lines":292805,"desc":"Base JSON centrale : tous les procès-verbaux du Conseil communal (séances → points de l'ordre du jour), produite par pipeline/pv_extraction_pipeline.py.","category":"Données","deps_internal":[],"deps_external":[],"last_modified":"2026-08-28T15:53:30+00:00"},{"path":"backend/questions_ecrites_schaerbeek.json","ext":"json","size_kb":1574.91,"lines":5633,"desc":"Base JSON des questions écrites (Q/R entre élu·e·s et le collège), produite par pipeline/questions_ecrites_extraction_pipeline.py.","category":"Données","deps_internal":[],"deps_external":[],"last_modified":"2026-08-28T12:08:12+00:00"},{"path":"backend/railway.json","ext":"json","size_kb":0.3,"lines":11,"desc":"Configuration de déploiement Railway du backend.","category":"Données","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/reindex_points.py","ext":"py","size_kb":9.85,"lines":217,"desc":"RÉINDEXATION CIBLÉE — QUELQUES POINTS, PAS TOUT L'INDEX","category":"Backend · Scripts","deps_internal":["index_pv"],"deps_external":["argparse","os","pathlib","subprocess","sys","tempfile"],"last_modified":"2026-08-27T12:26:33+00:00"},{"path":"backend/routers/__init__.py","ext":"py","size_kb":0.0,"lines":0,"desc":"Marqueur de package Python (vide).","category":"Backend · Routes","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/routers/admin.py","ext":"py","size_kb":11.51,"lines":269,"desc":"Routes /admin/* : authentification administrateur (un seul compte, voir services/auth.py) + intégration d'un nouveau PV uploadé (voir services/pv_integration.py).","category":"Backend · Routes","deps_internal":["lexique_store","limiter","models.api","services","services.auth","services.people"],"deps_external":["fastapi","os","pydantic"],"last_modified":"2026-08-28T10:14:56+00:00"},{"path":"backend/routers/ask.py","ext":"py","size_kb":0.87,"lines":26,"desc":"Route /ask : question ouverte → recherche RAG + réponse Claude citée.","category":"Backend · Routes","deps_internal":["limiter","models.api","services"],"deps_external":["fastapi"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/routers/health.py","ext":"py","size_kb":1.8,"lines":48,"desc":"Routes de service : racine et /health (état des clés + accès à l'index).","category":"Backend · Routes","deps_internal":["config","services.pinecone_service"],"deps_external":["fastapi","os"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/routers/stats.py","ext":"py","size_kb":4.09,"lines":102,"desc":"Routes /stats et /trend : agrégations lues depuis la base JSON des PV.","category":"Backend · Routes","deps_internal":["limiter","services"],"deps_external":["fastapi"],"last_modified":"2026-08-25T18:20:34+00:00"},{"path":"backend/services/__init__.py","ext":"py","size_kb":0.0,"lines":0,"desc":"Marqueur de package Python (vide).","category":"Backend · Services","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/services/auth.py","ext":"py","size_kb":4.59,"lines":101,"desc":"Authentification administrateur — un seul compte (voir la décision : pas plusieurs admins pour l'instant), identifiants dans les variables d'environnement plutôt qu'une base de données (qui n'existe pas dans ce backend…","category":"Backend · Services","deps_internal":[],"deps_external":["base64","hashlib","hmac","json","os","time"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/services/elus.py","ext":"py","size_kb":6.72,"lines":152,"desc":"Agrégation « Interventions par élu·e » : recherche STRUCTURÉE et exhaustive, lue depuis la base JSON des PV (+ chapitrage vidéo), sans embedding ni Pinecone.","category":"Backend · Services","deps_internal":["services.people.attribution","services.people.mandats","services.people.names","services.people.registry","services.seances","services.statistics","services.video_merge"],"deps_external":[],"last_modified":"2026-08-28T14:26:44+00:00"},{"path":"backend/services/github_publish.py","ext":"py","size_kb":3.01,"lines":79,"desc":"Publie un fichier mis à jour sur GitHub via l'API Git Data (blobs/trees/ commits), pas l'API Contents (PUT .../contents/{path}) : cette dernière a une limite pratique autour de 1 Mo pour le contenu manipulé côté API,…","category":"Backend · Services","deps_internal":[],"deps_external":["base64","httpx","os"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/services/jobs.py","ext":"py","size_kb":3.3,"lines":77,"desc":"File de tâches en mémoire, ultra-légère (in-process, aucune dépendance externe) — pour les opérations admin trop longues pour tenir dans UNE seule requête HTTP synchrone : une extraction dense (plusieurs appels Claude…","category":"Backend · Services","deps_internal":[],"deps_external":["inspect","threading","typing","uuid"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/services/people/__init__.py","ext":"py","size_kb":0.0,"lines":0,"desc":"Marqueur de package Python (vide).","category":"Backend · Services (personnes)","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/services/people/attribution.py","ext":"py","size_kb":22.54,"lines":441,"desc":"Attribution auteur·e / répondant·e d'un point de PV : qui a déposé une question/demande/motion, qui y a répondu en séance — à partir des champs bruts du PV (« intervenants », « repondant », titre, résumé, type de point).","category":"Backend · Services (personnes)","deps_internal":["lexique_store","services.people.names","utils.statut","utils.text"],"deps_external":["re"],"last_modified":"2026-08-27T10:25:54+00:00"},{"path":"backend/services/people/mandats.py","ext":"py","size_kb":9.81,"lines":237,"desc":"Mandats électifs déclaratifs (conseiller·ère communal·e / échevin·e / bourgmestre) par élu·e, avec dates — pour classer le rôle EXACT à la date d'un point de PV/d'une question écrite.","category":"Backend · Services (personnes)","deps_internal":["services.people.names"],"deps_external":["datetime","json","os","re"],"last_modified":"2026-08-28T10:14:56+00:00"},{"path":"backend/services/people/names.py","ext":"py","size_kb":12.39,"lines":261,"desc":"Normalisation des noms de personnes : civilités, casse, clé d'identité (rapproche les variantes d'une même personne), alias/coquilles connus, découpage d'une mention composée en noms individuels.","category":"Backend · Services (personnes)","deps_internal":["lexique_store"],"deps_external":["re","unicodedata"],"last_modified":"2026-08-28T06:06:48+00:00"},{"path":"backend/services/people/registry.py","ext":"py","size_kb":26.93,"lines":568,"desc":"Registre par personne : construit, à partir des PV et du chapitrage vidéo, l'index de toutes les interventions déposées/réponses par personne, le registre de résolution de noms (paires prénom/nom) et la map clé→nom…","category":"Backend · Services (personnes)","deps_internal":["config","lexique_store","services.people.attribution","services.people.mandats","services.people.names","services.questions_ecrites","services.statistics","services.video_merge","utils.statut","utils.text","utils.video"],"deps_external":["collections","datetime","json","os"],"last_modified":"2026-08-28T14:26:44+00:00"},{"path":"backend/services/pinecone_service.py","ext":"py","size_kb":0.65,"lines":25,"desc":"Accès à l'index Pinecone (client paresseux). La clé API reste côté serveur ; le client n'est instancié qu'au premier appel réel (démarrage rapide, tests sans clé).","category":"Backend · Services","deps_internal":["config"],"deps_external":["os","pinecone","typing"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/services/pv_integration.py","ext":"py","size_kb":7.04,"lines":155,"desc":"Intègre un nouveau PV uploadé par l'admin : extraction (réutilise le pipeline `pipeline/pv_extraction_pipeline.py`, le même qui a produit pv_conseil_schaerbeek.json — voir son historique git), fusion en mémoire,…","category":"Backend · Services","deps_internal":["config","index_pv","pv_extraction_pipeline","services","services.github_publish"],"deps_external":["json","pathlib","sys","tempfile","typing"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/services/questions_ecrites.py","ext":"py","size_kb":1.0,"lines":30,"desc":"Chargement + cache (mtime) de la base des questions écrites — même mécanique que services.statistics.load_db pour pv_conseil_schaerbeek.json.","category":"Backend · Services","deps_internal":[],"deps_external":["json","os"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/services/questions_ecrites_integration.py","ext":"py","size_kb":5.24,"lines":119,"desc":"Intègre une nouvelle question écrite uploadée par l'admin : extraction (réutilise pipeline/questions_ecrites_extraction_pipeline.py, le même module qui traite les lots depuis Google Drive/Colab — voir son docstring),…","category":"Backend · Services","deps_internal":["index_qe","questions_ecrites_extraction_pipeline","services.github_publish","services.pinecone_service","services.questions_ecrites"],"deps_external":["json","pathlib","sys","tempfile","typing"],"last_modified":"2026-08-28T11:26:17+00:00"},{"path":"backend/services/rag.py","ext":"py","size_kb":23.02,"lines":511,"desc":"Service RAG : recherche vectorielle Pinecone + réponse Claude citée.","category":"Backend · Services","deps_internal":["config","lexique_store","models.api","prompts.rag","services.people.attribution","services.pinecone_service","services.seances","services.statistics","utils.dates","utils.statut","utils.text","utils.video"],"deps_external":["anthropic","fastapi","os","re","typing"],"last_modified":"2026-08-25T22:58:44+00:00"},{"path":"backend/services/seances.py","ext":"py","size_kb":27.15,"lines":558,"desc":"Agrégation par séance (onglet « Séances ») : complémentaire à la vue par élu·e (services.elus) — au lieu d'agréger toutes les interventions d'UNE personne, liste TOUS les points d'UN PV donné (y compris les points…","category":"Backend · Services","deps_internal":["services.people.attribution","services.people.mandats","services.people.names","services.people.registry","services.statistics","services.video_merge","utils.statut","utils.text","utils.video"],"deps_external":["threading"],"last_modified":"2026-08-28T14:26:44+00:00"},{"path":"backend/services/statistics.py","ext":"py","size_kb":18.99,"lines":394,"desc":"Agrégations statistiques lues depuis la base JSON des PV (aucun embedding, donc non soumis au quota Pinecone). Alimente les endpoints /stats et /trend.","category":"Backend · Services","deps_internal":["config","services.questions_ecrites","utils.statut","utils.text","utils.video"],"deps_external":["collections","json","os","re"],"last_modified":"2026-08-25T20:46:08+00:00"},{"path":"backend/services/video_merge.py","ext":"py","size_kb":2.14,"lines":44,"desc":"Fusion PV ↔ chapitrage vidéo : retrouve, pour un chapitre vidéo donné, le point PV correspondant (même sujet), pour n'afficher qu'UNE intervention avec le lien vidéo précis plutôt que deux entrées séparées pour le même…","category":"Backend · Services","deps_internal":["services.people.names"],"deps_external":["difflib","re"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/utils/__init__.py","ext":"py","size_kb":0.0,"lines":0,"desc":"Marqueur de package Python (vide).","category":"Backend · Utilitaires","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/utils/dates.py","ext":"py","size_kb":4.22,"lines":94,"desc":"Détection d'intention temporelle dans les questions citoyennes → filtre Pinecone sur la métadonnée `year`. Cœur sensible : une mauvaise borne renvoie des sources d'une autre période (réponse « crédible mais fausse »).","category":"Backend · Utilitaires","deps_internal":["utils.text"],"deps_external":["re"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/utils/statut.py","ext":"py","size_kb":4.45,"lines":91,"desc":"Lecture des trois dimensions d'un point, quelle que soit l'ÈRE de la base.","category":"Backend · Utilitaires","deps_internal":["utils.text","utils_statut"],"deps_external":["pathlib","re","sys"],"last_modified":"2026-08-25T22:18:10+00:00"},{"path":"backend/utils/text.py","ext":"py","size_kb":5.0,"lines":113,"desc":"Normalisation de texte réutilisable : suppression des accents et canonisation des tags de thématiques (fusion des doublons singulier/pluriel).","category":"Backend · Utilitaires","deps_internal":["lexique_store"],"deps_external":["re","unicodedata"],"last_modified":"2026-08-25T21:29:05+00:00"},{"path":"backend/utils/video.py","ext":"py","size_kb":2.59,"lines":65,"desc":"Cartes lues depuis les fichiers vidéo committés dans backend/ : - date ISO → URL de la vidéo de séance (video_sessions.json) - clé de point → nombre d'extraits de transcript indexés (video_conseil_schaerbeek.json)","category":"Backend · Utilitaires","deps_internal":[],"deps_external":["json","os"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/video_conseil_schaerbeek.json","ext":"json","size_kb":3022.78,"lines":12306,"desc":"Chapitrage vidéo des séances filmées (YouTube) : liste de points avec deep-links, produit par pipeline/extract_video_chapters.py.","category":"Données","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"backend/video_sessions.json","ext":"json","size_kb":4.43,"lines":74,"desc":"Table date de séance → URL de la vidéo YouTube correspondante.","category":"Données","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"e2e/package-lock.json","ext":"json","size_kb":2.14,"lines":76,"desc":"Verrou des dépendances npm de la suite Playwright (e2e).","category":"Tests · E2E","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"e2e/package.json","ext":"json","size_kb":0.18,"lines":11,"desc":"Manifeste npm de la suite de tests Playwright (e2e).","category":"Tests · E2E","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"e2e/playwright.config.js","ext":"js","size_kb":2.46,"lines":55,"desc":"Config du smoke test frontend : démarre le backend FastAPI (données locales uniquement — /stats /elus /seances /health ne nécessitent aucune clé API) et le frontend statique (avec la CSP de production), puis lance…","category":"Tests · E2E","deps_internal":[],"deps_external":["@playwright/test"],"last_modified":"2026-08-25T23:11:48+00:00"},{"path":"e2e/serve-frontend.js","ext":"js","size_kb":2.12,"lines":46,"desc":"Sert frontend/ en statique avec les mêmes en-têtes que vercel.json (surtout la CSP), pour que le smoke test s'exécute dans les mêmes conditions qu'en production (script-src 'self' sans 'unsafe-inline', etc.).","category":"Tests · E2E","deps_internal":[],"deps_external":["node:fs","node:http","node:path","node:url"],"last_modified":"2026-08-27T10:48:29+02:00"},{"path":"e2e/smoke.spec.js","ext":"js","size_kb":41.78,"lines":832,"desc":"Smoke test frontend (Chromium headless) — ne teste pas les données, juste que l'app se charge et réagit sans erreur JS/console/CSP.","category":"Tests · E2E","deps_internal":[],"deps_external":["@playwright/test"],"last_modified":"2026-08-27T09:35:57+00:00"},{"path":"frontend/index.html","ext":"html","size_kb":25.95,"lines":386,"desc":"Page unique de l'app (SPA) : structure de tous les onglets (Chat, Stats, Élu·e·s, Séances, Admin, Options) chargée par les modules frontend/js/*.","category":"Frontend · Assets","deps_internal":[],"deps_external":[],"last_modified":"2026-08-27T11:38:13+02:00"},{"path":"frontend/js/admin.js","ext":"js","size_kb":49.74,"lines":1074,"desc":"ADMIN (authentification + intégration d'un PV) Compte unique (voir backend/services/auth.py) : le cadenas dans l'en-tête ouvre une modale de connexion (même mécanique que le panneau Options — voir settings.js) ; une…","category":"Frontend · JS","deps_internal":["./combobox.js","./config.js","./utils.js"],"deps_external":[],"last_modified":"2026-08-28T10:14:56+00:00"},{"path":"frontend/js/app.js","ext":"js","size_kb":5.9,"lines":126,"desc":"POINT D'ENTRÉE — initialisation + câblage des gestionnaires d'événements (délégation \"data-click\" pour le contenu généré dynamiquement, écouteurs directs pour les éléments statiques).","category":"Frontend · JS","deps_internal":["./admin.js","./chat.js","./config.js","./delegate.js","./elus.js","./seances.js","./settings.js","./stats.js"],"deps_external":[],"last_modified":"2026-08-28T10:14:56+00:00"},{"path":"frontend/js/chat.js","ext":"js","size_kb":27.7,"lines":610,"desc":"CHAT : saisie, historique, cache de réponses, conversation persistée, rendu des échanges, dictée vocale, envoi de la question","category":"Frontend · JS","deps_internal":["./config.js","./lexique.js","./settings.js","./share.js","./utils.js"],"deps_external":[],"last_modified":"2026-08-25T20:15:51+00:00"},{"path":"frontend/js/combobox.js","ext":"js","size_kb":11.82,"lines":310,"desc":"COMBOBOX AVEC RECHERCHE (composant partagé) Un menu déroulant natif ne tient pas au-delà de quelques dizaines d'entrées : sa frappe rapide ne cherche que le DÉBUT du libellé affiché — donc le PRÉNOM d'une personne —…","category":"Frontend · JS","deps_internal":["./utils.js"],"deps_external":[],"last_modified":"2026-08-25T16:19:13+00:00"},{"path":"frontend/js/config.js","ext":"js","size_kb":1.84,"lines":34,"desc":"CONFIGURATION — À MODIFIER APRÈS DÉPLOIEMENT DU BACKEND","category":"Frontend · JS","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"frontend/js/delegate.js","ext":"js","size_kb":1.7,"lines":37,"desc":"DÉLÉGATION D'ÉVÉNEMENTS Remplace les attributs onclick inline (interdits par script-src sans 'unsafe-inline' : un attribut onXXX est traité comme du script inline par la CSP au même titre qu'une balise <script>).","category":"Frontend · JS","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"frontend/js/elus.js","ext":"js","size_kb":32.77,"lines":695,"desc":"INTERVENTIONS PAR ÉLU·E (agrégation structurée via /elus, /elu/{key}) La recherche sémantique du chat est sensible à la formulation et non exhaustive ; cette vue liste TOUTES les interventions d'une personne.","category":"Frontend · JS","deps_internal":["./combobox.js","./config.js","./share.js","./utils.js"],"deps_external":[],"last_modified":"2026-08-28T14:26:44+00:00"},{"path":"frontend/js/lexique.js","ext":"js","size_kb":4.88,"lines":94,"desc":"Commande « //lex … » du chat : enrichit le lexique (synonymes/associations + glossaire) via l'endpoint admin /admin/lexique — RÉSERVÉE à une session admin connectée (le cookie de session part avec credentials:'include'…","category":"Frontend · JS","deps_internal":["./config.js","./utils.js"],"deps_external":[],"last_modified":"2026-08-24T22:02:48+00:00"},{"path":"frontend/js/seances.js","ext":"js","size_kb":39.26,"lines":708,"desc":"SÉANCES (vue complémentaire à « Par élu·e » : par PV, tous les points, pas seulement ceux d'une personne)","category":"Frontend · JS","deps_internal":["./combobox.js","./config.js","./share.js","./utils.js"],"deps_external":[],"last_modified":"2026-08-28T14:26:44+00:00"},{"path":"frontend/js/settings.js","ext":"js","size_kb":6.53,"lines":139,"desc":"OPTIONS (menu ⚙️) — préférences par navigateur (localStorage)","category":"Frontend · JS","deps_internal":["./chat.js","./config.js"],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"frontend/js/share.js","ext":"js","size_kb":1.54,"lines":29,"desc":"PARTAGE (primitives génériques) URL de l'app sans query/fragment (repère de base pour les liens partagés).","category":"Frontend · JS","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"frontend/js/stats.js","ext":"js","size_kb":45.55,"lines":893,"desc":"STATISTIQUES — drill-down Année → Mois → Séance, thématiques, évolution d'un thème (budget)","category":"Frontend · JS","deps_internal":["./config.js","./share.js","./utils.js"],"deps_external":[],"last_modified":"2026-08-25T18:20:34+00:00"},{"path":"frontend/js/theme-init.js","ext":"js","size_kb":0.82,"lines":13,"desc":"Applique le thème choisi AVANT le premier rendu (évite le flash clair→ sombre).","category":"Frontend · JS","deps_internal":[],"deps_external":[],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"frontend/js/utils.js","ext":"js","size_kb":15.82,"lines":295,"desc":"HELPERS GÉNÉRIQUES (formatage, échappement, Markdown minimal)","category":"Frontend · JS","deps_internal":[],"deps_external":[],"last_modified":"2026-08-28T14:26:44+00:00"},{"path":"frontend/styles.css","ext":"css","size_kb":67.27,"lines":1411,"desc":"Feuille de style unique de l'app : thèmes clair/sombre, mise en page responsive, composants (puces, combobox, cartes, modales).","category":"Frontend · Assets","deps_internal":[],"deps_external":[],"last_modified":"2026-08-28T14:26:44+00:00"},{"path":"frontend/vercel.json","ext":"json","size_kb":1.11,"lines":25,"desc":"Configuration de déploiement Vercel du frontend (en-têtes dont la CSP, réécriture d'URL).","category":"Frontend · Assets","deps_internal":[],"deps_external":[],"last_modified":"2026-08-27T10:41:39+02:00"},{"path":"pipeline/audit_completeness.py","ext":"py","size_kb":8.65,"lines":176,"desc":"AUDIT DE COMPLÉTUDE HORS-LIGNE — SANS APPEL LLM (donc GRATUIT)","category":"Pipeline (extraction)","deps_internal":["audit_completeness","pv_extraction_pipeline","utils_statut"],"deps_external":["pathlib","typing"],"last_modified":"2026-08-25T20:46:08+00:00"},{"path":"pipeline/backfill_decisions.py","ext":"py","size_kb":5.6,"lines":119,"desc":"BACKFILL DÉTERMINISTE DES DÉCISIONS — SANS PDF NI LLM (donc GRATUIT)","category":"Pipeline (extraction)","deps_internal":["audit_completeness","backfill_decisions","pv_extraction_pipeline","utils_statut"],"deps_external":["argparse","json","os"],"last_modified":"2026-08-25T20:46:08+00:00"},{"path":"pipeline/backfill_qe_thematiques.py","ext":"py","size_kb":5.81,"lines":131,"desc":"BACKFILL THÉMATIQUES — QUESTIONS ÉCRITES DÉJÀ PUBLIÉES","category":"Pipeline (extraction)","deps_internal":["pv_extraction_pipeline","questions_ecrites_extraction_pipeline"],"deps_external":["argparse","json","pathlib","re","sys","time"],"last_modified":"2026-08-24T12:06:34+02:00"},{"path":"pipeline/backfill_rejets.py","ext":"py","size_kb":7.34,"lines":160,"desc":"LES MOTIONS BATTUES — DÉRIVÉES DU VOTE DÉJÀ STOCKÉ, SANS PDF NI LLM","category":"Pipeline (extraction)","deps_internal":[],"deps_external":["argparse","json","os"],"last_modified":"2026-08-25T21:29:05+00:00"},{"path":"pipeline/extract_transcripts.py","ext":"py","size_kb":5.97,"lines":105,"desc":"ENRICHISSEMENT DES SÉANCES CHAPITRÉES AVEC LE TRANSCRIPT (sous-titres auto) Suite du prototype (pipeline/prototype_transcript.py, validé sur un extrait réel) : traite un LOT de séances déjà chapitrées, ajoute à chaque…","category":"Pipeline (extraction)","deps_internal":[],"deps_external":["json","urllib"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"pipeline/extract_video_chapters.py","ext":"py","size_kb":14.09,"lines":335,"desc":"EXTRACTION DU CHAPITRAGE DES CONSEILS COMMUNAUX (YouTube @1030be) → JSON Couche « ordre du jour filmé » : pour chaque séance filmée et chapitrée, la liste des points débattus avec leur type, leur auteur et un DEEP-LINK…","category":"Pipeline (extraction)","deps_internal":[],"deps_external":["json","re","time","yt_dlp"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"pipeline/patch_multi_communes.py","ext":"py","size_kb":6.6,"lines":163,"desc":"============================================================================== PATCH MULTI-COMMUNES v2 (IDEMPOTENT) pour pv_extraction_pipeline.py Python 3.10+ - concu pour Google Colab…","category":"Pipeline (extraction)","deps_internal":["pv_extraction_pipeline"],"deps_external":["google","os","pathlib","sys"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"pipeline/prototype_transcript.py","ext":"py","size_kb":5.88,"lines":119,"desc":"PROTOTYPE — Alignement transcript ↔ chapitrage (UNE séance) Teste la faisabilité d'enrichir chaque point chapitré avec un extrait du DÉBAT RÉEL, à partir des sous-titres AUTOMATIQUES YouTube (ASR, ex. \"fr-orig\").","category":"Pipeline (extraction)","deps_internal":[],"deps_external":["json","re","urllib"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"pipeline/pv_extraction_pipeline.py","ext":"py","size_kb":72.08,"lines":1485,"desc":"PIPELINE EXTRACTION PV CONSEIL COMMUNAL SCHAERBEEK → JSON Google Colab - Python 3.10+ VERSION 2.4","category":"Pipeline (extraction)","deps_internal":["utils_statut"],"deps_external":["anthropic","collections","csv","datetime","hashlib","json","logging","math","os","pathlib","pdfplumber","re","shutil","time","tqdm","typing","unicodedata"],"last_modified":"2026-08-25T21:29:05+00:00"},{"path":"pipeline/questions_ecrites_extraction_pipeline.py","ext":"py","size_kb":32.56,"lines":622,"desc":"PIPELINE EXTRACTION QUESTIONS ÉCRITES — CONSEIL COMMUNAL SCHAERBEEK Google Colab - Python 3.10+ VERSION 1.0","category":"Pipeline (extraction)","deps_internal":["pv_extraction_pipeline"],"deps_external":["anthropic","datetime","json","logging","os","pathlib","pdfplumber","re","shutil","time","tqdm","typing"],"last_modified":"2026-08-28T11:26:17+00:00"},{"path":"pipeline/reextract_targeted.py","ext":"py","size_kb":5.21,"lines":122,"desc":"RE-EXTRACTION CIBLÉE — ne re-traite QUE les séances désignées","category":"Pipeline (extraction)","deps_internal":["audit_completeness","pv_extraction_pipeline","reextract_targeted"],"deps_external":["pathlib","typing"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"pipeline/split_statut_decision.py","ext":"py","size_kb":6.81,"lines":144,"desc":"SÉPARATION STATUT / DÉCISION / DÉBAT — DÉRIVÉE, SANS PDF NI LLM","category":"Pipeline (extraction)","deps_internal":["utils_statut"],"deps_external":["argparse","collections","json","os"],"last_modified":"2026-08-25T20:24:10+00:00"},{"path":"pipeline/utils_statut.py","ext":"py","size_kb":9.14,"lines":188,"desc":"LES TROIS DIMENSIONS D'UN POINT — TYPE / TRAITEMENT / DÉCISION","category":"Pipeline (extraction)","deps_internal":[],"deps_external":["re","unicodedata"],"last_modified":"2026-08-25T21:29:05+00:00"},{"path":"scraping/pv_scraper_1030.py","ext":"py","size_kb":41.76,"lines":889,"desc":"SCRAPER PV CONSEIL COMMUNAL SCHAERBEEK (1030.be) → GOOGLE DRIVE Google Colab - Python 3.10+ VERSION 2.3 Scrape https://www.1030.be/fr/proces-verbaux et copie tous les PDF dans Google Drive","category":"Scraping","deps_internal":["pv_extraction_pipeline","pv_scraper_1030"],"deps_external":["bs4","calendar","datetime","google","hashlib","json","logging","pathlib","re","requests","selenium","sys","time","tqdm","typing","urllib"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"scraping/pv_scraper_evere.py","ext":"py","size_kb":8.79,"lines":230,"desc":"============================================================================== SCRAPER EVERE - publi.irisnet.be (plateforme regionale Editoria) -> Drive Version 3 (finale) - Python 3.10+ - concu pour Google Colab…","category":"Scraping","deps_internal":[],"deps_external":["bs4","google","pathlib","re","requests","time","urllib"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/conftest.py","ext":"py","size_kb":2.29,"lines":52,"desc":"Configuration commune aux tests.","category":"Tests","deps_internal":[],"deps_external":["os","pathlib","pdfplumber","sys","tqdm","types"],"last_modified":"2026-08-25T11:19:22+00:00"},{"path":"tests/test_admin_auth.py","ext":"py","size_kb":3.91,"lines":106,"desc":"Tests du flux d'authentification admin (/admin/login, /admin/me, /admin/logout) : login correct/incorrect, session persistée via cookie, expiration/altération du jeton, et absence de configuration côté serveur.","category":"Tests","deps_internal":["app","services.auth"],"deps_external":["fastapi"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_admin_questions_ecrites.py","ext":"py","size_kb":7.17,"lines":183,"desc":"Tests des routes /admin/questions-ecrites/{extract,publish} — même approche que test_admin_seances.py : gating par require_admin, mapping d'erreurs, forme de la réponse.","category":"Tests","deps_internal":["app","limiter","routers.admin","services.auth"],"deps_external":["fastapi","pytest","threading","time"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_admin_seances.py","ext":"py","size_kb":7.95,"lines":201,"desc":"Tests des routes /admin/seances/{extract,publish} (démarrage + statut de tâche de fond, voir services/jobs.py) : gating par require_admin, mapping d'erreurs, forme de la réponse.","category":"Tests","deps_internal":["app","limiter","routers.admin","services.auth"],"deps_external":["fastapi","pytest","threading","time"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_ask_questions_ecrites.py","ext":"py","size_kb":6.49,"lines":178,"desc":"Test de services.rag.answer() pour une source question écrite (source_type=\"question_ecrite\") : pas de repli sur le PDF du PV par date, pas de lien vidéo de séance, decision passée telle quelle (précalculée à…","category":"Tests","deps_internal":["services.rag"],"deps_external":["unittest"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_ask_thematiques.py","ext":"py","size_kb":5.0,"lines":132,"desc":"Test de services.rag.answer() : les thématiques ET le statut de décision du point (métadonnées Pinecone) doivent apparaître, normalisés, dans chaque Source renvoyée par /ask — même normalisation d'affichage que…","category":"Tests","deps_internal":["services.rag"],"deps_external":["unittest"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_backfill_qe_thematiques.py","ext":"py","size_kb":3.62,"lines":100,"desc":"Tests de pipeline/backfill_qe_thematiques.py — backfill_thematiques (orchestration pure sur un dict en mémoire), avec classify_thematiques monkeypatché (aucun appel réel).","category":"Tests","deps_internal":["backfill_qe_thematiques"],"deps_external":[],"last_modified":"2026-08-24T12:06:34+02:00"},{"path":"tests/test_backfill_repondants.py","ext":"py","size_kb":4.18,"lines":91,"desc":"Backfill de `repondants` (liste) depuis `repondant` (singulier) — sans PDF ni LLM.","category":"Tests","deps_internal":["backfill_repondants","services.people.attribution"],"deps_external":[],"last_modified":"2026-08-26T09:13:02+00:00"},{"path":"tests/test_data_integrity.py","ext":"py","size_kb":2.99,"lines":80,"desc":"Validation de la base JSON des PV : structure attendue et cohérence des métadonnées dont dépend l'app (dates, années, montants plausibles).","category":"Tests","deps_internal":["services.statistics"],"deps_external":["json","math","pathlib","pytest"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_elus.py","ext":"py","size_kb":71.36,"lines":1446,"desc":"Tests de l'agrégation « Interventions par élu·e » (services.elus) et de ses endpoints /elus et /elu/{key}.","category":"Tests","deps_internal":["app","services","services.people.attribution","services.questions_ecrites","utils.text"],"deps_external":["fastapi","json","pathlib"],"last_modified":"2026-08-28T06:06:48+00:00"},{"path":"tests/test_excluded_amount.py","ext":"py","size_kb":2.8,"lines":66,"desc":"Tests de `_is_excluded_amount` : distingue une VRAIE dépense discrétionnaire de la commune d'un montant à écarter (budget global, transfert/dotation, litige, opération d'intercommunale, acte non dépensier).","category":"Tests","deps_internal":["services.statistics"],"deps_external":["pytest"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_index_pv.py","ext":"py","size_kb":5.92,"lines":133,"desc":"Tests des transformations d'indexation (`index_pv.py`) : mise en forme du vote et construction d'un chunk (texte vectorisé + métadonnées + ID stable).","category":"Tests","deps_internal":["index_pv"],"deps_external":["pytest"],"last_modified":"2026-08-25T20:15:51+00:00"},{"path":"tests/test_index_qe.py","ext":"py","size_kb":4.88,"lines":113,"desc":"Tests de backend/index_qe.py — question_to_chunk (fonction pure, aucun appel réseau). Mêmes conventions que index_pv.point_to_chunk : id stable, métadonnées de filtrage (commune/year/source_type), chunk_text vectorisé.","category":"Tests","deps_internal":["index_qe"],"deps_external":["json"],"last_modified":"2026-08-24T12:06:34+02:00"},{"path":"tests/test_index_video.py","ext":"py","size_kb":4.55,"lines":107,"desc":"Tests de l'indexation du chapitrage vidéo (`index_pv.py`) : construction du chunk « video_conseil » (deep-link, source_type, ID stable), des chunks de transcript alignés (sous-titres auto), et détection du format vidéo…","category":"Tests","deps_internal":["index_pv"],"deps_external":["json"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_jobs.py","ext":"py","size_kb":3.39,"lines":98,"desc":"Tests de services/jobs.py en isolation (pas via les routes /admin/*, déjà couvertes par test_admin_seances.py) : statut pending→done/error, éviction FIFO au-delà de _MAX_JOBS.","category":"Tests","deps_internal":["services.jobs"],"deps_external":["threading","time"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_lexique.py","ext":"py","size_kb":6.49,"lines":144,"desc":"Tests du lexique éditable (lexique_store) et de ses endpoints admin (/admin/lexique).","category":"Tests","deps_internal":["app","lexique_store","limiter","services","services.auth","services.rag","utils.text"],"deps_external":["fastapi","json","pytest"],"last_modified":"2026-08-28T10:14:37+00:00"},{"path":"tests/test_mandats.py","ext":"py","size_kb":14.13,"lines":327,"desc":"Tests de services.people.mandats — parsing des plages de mandats déclaratives (elus_mandats.json) et classification du rôle par date.","category":"Tests","deps_internal":["app","limiter","services","services.auth","services.people.mandats"],"deps_external":["fastapi","json","pytest"],"last_modified":"2026-08-28T10:14:37+00:00"},{"path":"tests/test_pipeline.py","ext":"py","size_kb":3.53,"lines":89,"desc":"Tests des utilitaires du pipeline d'extraction (`pv_extraction_pipeline.py`) : déduction de date depuis le nom de fichier, normalisation du numéro de point (sp) que Claude renvoie tantôt en texte, tantôt en entier, et…","category":"Tests","deps_internal":["pv_extraction_pipeline"],"deps_external":["pathlib","pytest","unittest"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_pipeline_v24.py","ext":"py","size_kb":19.88,"lines":387,"desc":"Tests des greffes v2.4 du pipeline d'extraction (fonctions PURES, sans API) : normalisation, parsing montant, traçabilité page, complétude, date-repli.","category":"Tests","deps_internal":["audit_completeness","backfill_decisions","pv_extraction_pipeline","reextract_targeted"],"deps_external":["pytest","re"],"last_modified":"2026-08-25T21:29:05+00:00"},{"path":"tests/test_pv_integration.py","ext":"py","size_kb":7.66,"lines":194,"desc":"Tests de services/pv_integration.py et services/github_publish.py.","category":"Tests","deps_internal":["services.github_publish","services.pv_integration"],"deps_external":["httpx","json","pytest","unittest"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_questions_ecrites_integration.py","ext":"py","size_kb":10.25,"lines":228,"desc":"Tests de services/questions_ecrites_integration.py et services/questions_ecrites.py.","category":"Tests","deps_internal":["services.questions_ecrites","services.questions_ecrites_integration"],"deps_external":["json","os","pytest","time"],"last_modified":"2026-08-28T11:26:17+00:00"},{"path":"tests/test_questions_ecrites_pipeline.py","ext":"py","size_kb":15.31,"lines":361,"desc":"Tests de pipeline/questions_ecrites_extraction_pipeline.py — fonctions pures (normalisation, fusion en base) et process_pdf en orchestration, avec extraction PDF/appel Claude monkeypatchés (aucun appel réel).","category":"Tests","deps_internal":["questions_ecrites_extraction_pipeline"],"deps_external":["pathlib"],"last_modified":"2026-08-28T11:26:17+00:00"},{"path":"tests/test_questions_ecrites_registry.py","ext":"py","size_kb":15.25,"lines":296,"desc":"Test de l'intégration des questions écrites dans services/people/registry.py (l'index par personne alimenté par une 3e source, en plus des PV et de la vidéo — voir registry._build_all).","category":"Tests","deps_internal":["services","services.people.registry"],"deps_external":["os","time"],"last_modified":"2026-08-27T21:42:10+00:00"},{"path":"tests/test_rag_dedup.py","ext":"py","size_kb":4.53,"lines":110,"desc":"Tests du dédoublonnage des sources vidéo par POINT (`services/rag.py`).","category":"Tests","deps_internal":["models.api","services.rag"],"deps_external":[],"last_modified":"2026-08-25T20:15:51+00:00"},{"path":"tests/test_rag_issues_rares.py","ext":"py","size_kb":7.63,"lines":155,"desc":"Repêchage des issues RARES dans la recherche (`services/rag._renfort_issue`).","category":"Tests","deps_internal":["services","utils.statut"],"deps_external":["pytest"],"last_modified":"2026-08-25T22:58:44+00:00"},{"path":"tests/test_reindex_points.py","ext":"py","size_kb":4.89,"lines":127,"desc":"Réindexation ciblée : n'envoyer à Pinecone que ce qui a réellement changé.","category":"Tests","deps_internal":["index_pv","reindex_points"],"deps_external":["json","subprocess"],"last_modified":"2026-08-27T12:26:33+00:00"},{"path":"tests/test_rejets.py","ext":"py","size_kb":6.31,"lines":134,"desc":"Le conseil peut dire NON — et l'app doit le montrer.","category":"Tests","deps_internal":["backfill_rejets","pv_extraction_pipeline","services","utils_statut"],"deps_external":["copy"],"last_modified":"2026-08-25T21:29:05+00:00"},{"path":"tests/test_routes.py","ext":"py","size_kb":1.98,"lines":61,"desc":"Tests de câblage HTTP : montage des routers + traduction des erreurs par la couche endpoint.","category":"Tests","deps_internal":["app"],"deps_external":["fastapi"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_statistics.py","ext":"py","size_kb":8.31,"lines":174,"desc":"Tests de services.statistics.compute_stats — spécifiquement le graphe « Activité citoyenne par an » (activite_types_par_annee/activite_type_order), qui combine les points de PV (question orale/demande/motion) et les…","category":"Tests","deps_internal":["services.statistics"],"deps_external":[],"last_modified":"2026-08-25T12:13:45+00:00"},{"path":"tests/test_statut_decision.py","ext":"py","size_kb":4.66,"lines":104,"desc":"Séparation des trois dimensions d'un point : type / traitement / décision.","category":"Tests","deps_internal":["split_statut_decision","utils_statut"],"deps_external":[],"last_modified":"2026-08-25T20:24:10+00:00"},{"path":"tests/test_statut_dimensions.py","ext":"py","size_kb":6.69,"lines":145,"desc":"La séparation des dimensions ne doit RIEN changer à ce que l'app montre.","category":"Tests","deps_internal":["audit_completeness","index_pv","services","services.people.attribution","services.statistics","utils_statut"],"deps_external":["copy","pytest"],"last_modified":"2026-08-25T20:46:08+00:00"},{"path":"tests/test_text_utils.py","ext":"py","size_kb":1.46,"lines":44,"desc":"Tests de normalisation de texte : `_strip_accents` et `_canon_theme` (fusion des doublons singulier/pluriel des thématiques).","category":"Tests","deps_internal":["utils.text"],"deps_external":["pytest"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"tests/test_video_sessions.py","ext":"py","size_kb":4.96,"lines":109,"desc":"Tests du lien « voir la séance » (vidéo) : intégrité de `backend/video_sessions.json` et lecture par `_video_session_map` ; et du comptage d'extraits par point (`video_chunk_counts`, backend/video_conseil_…","category":"Tests","deps_internal":["services","services.people","services.people.registry","services.statistics","utils.video"],"deps_external":["datetime","json","pathlib","re"],"last_modified":"2026-08-25T16:31:58+00:00"},{"path":"tests/test_year_filter.py","ext":"py","size_kb":4.81,"lines":116,"desc":"Tests du filtre temporel `_year_filter` — la fonction la plus sensible : une mauvaise borne = des sources d'une autre année, donc une réponse « crédible mais fausse ». Inclut la régression du faux positif « des ».","category":"Tests","deps_internal":["utils.dates"],"deps_external":["pytest"],"last_modified":"2026-08-24T02:20:16+02:00"},{"path":"voir_audits.py","ext":"py","size_kb":2.38,"lines":60,"desc":"Lance les audits HORS-LIGNE de la base des PV en une commande, et affiche leurs résultats. Aucun PDF, aucune clé API : les deux audits ci-dessous ne lisent que le JSON déjà versionné.","category":"Racine","deps_internal":["audit_completeness","services.people.attribution"],"deps_external":["argparse","json","os","sys"],"last_modified":"2026-08-25T07:53:54+00:00"}];
+
+// Zone = premier segment du chemin (le dossier réel du dépôt) — distinct de
+// « Catégorie », qui classe par rôle et peut recouper plusieurs zones (ex.
+// les JSON de données vivent dans backend/ mais sont catégorisés « Données »).
+function zoneOf(path){
+  return path.includes('/') ? path.split('/')[0] : 'racine';
+}
+const ZONE_LABEL = {
+  backend:'backend/', frontend:'frontend/', pipeline:'pipeline/', scraping:'scraping/',
+  tests:'tests/', e2e:'e2e/', racine:'(racine)',
+};
+// Réutilise les 7 teintes déjà définies (--fam-*) : e2e reprend la teinte
+// « data », inutilisée ici puisque la zone ne distingue plus le contenu.
+const ZONE_KEY = {
+  backend:'backend', frontend:'frontend', pipeline:'pipeline', scraping:'scraping',
+  tests:'tests', e2e:'data', racine:'racine',
+};
+function familyOf(cat){
+  return cat.split(' · ')[0].split(' (')[0];
+}
+
+INVENTORY.forEach(d => {
+  d.zone = zoneOf(d.path);
+  d.relpath = d.zone === 'racine' ? d.path : d.path.slice(d.zone.length + 1);
+  d.family = familyOf(d.category);
+});
+
+const EXT_LABEL = { py:'.py', js:'.js', json:'.json', css:'.css', html:'.html' };
+
+let state = {
+  search: '',
+  zones: new Set(),
+  exts: new Set(),
+  sortKey: 'last_modified',
+  sortDir: -1,
+  view: 'files',
+};
+
+function fmtKb(kb){
+  if (kb >= 1000) return (kb/1024).toFixed(2) + ' Mo';
+  return kb.toFixed(kb < 10 ? 2 : 1) + ' Ko';
+}
+function fmtLines(n){ return n.toLocaleString('fr-BE'); }
+
+const DATE_FMT = new Intl.DateTimeFormat('fr-BE', { day:'2-digit', month:'short', year:'numeric' });
+function fmtDate(iso){
+  if (!iso) return '—';
+  return DATE_FMT.format(new Date(iso));
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function buildChips(){
+  const zoneCounts = {};
+  const extCounts = {};
+  INVENTORY.forEach(d => {
+    zoneCounts[d.zone] = (zoneCounts[d.zone]||0) + 1;
+    extCounts[d.ext] = (extCounts[d.ext]||0) + 1;
+  });
+  const zoneEl = document.getElementById('zone-chips');
+  Object.keys(ZONE_LABEL).filter(z => zoneCounts[z]).forEach(zone => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.dataset.zone = zone;
+    b.innerHTML = `<span class="dot"></span>${ZONE_LABEL[zone]} <span class="n">${zoneCounts[zone]}</span>`;
+    b.style.color = `var(--fam-${ZONE_KEY[zone]}-fg)`;
+    b.addEventListener('click', () => {
+      if (state.zones.has(zone)) state.zones.delete(zone); else state.zones.add(zone);
+      b.classList.toggle('active');
+      render();
+    });
+    zoneEl.appendChild(b);
+  });
+
+  const extEl = document.getElementById('ext-chips');
+  Object.keys(EXT_LABEL).filter(e => extCounts[e]).forEach(ext => {
+    const b = document.createElement('button');
+    b.className = 'chip';
+    b.innerHTML = `${EXT_LABEL[ext]} <span class="n">${extCounts[ext]}</span>`;
+    b.addEventListener('click', () => {
+      if (state.exts.has(ext)) state.exts.delete(ext); else state.exts.add(ext);
+      b.classList.toggle('active');
+      render();
+    });
+    extEl.appendChild(b);
+  });
+}
+
+function filtered(){
+  const q = state.search.trim().toLowerCase();
+  return INVENTORY.filter(d => {
+    if (state.zones.size && !state.zones.has(d.zone)) return false;
+    if (state.exts.size && !state.exts.has(d.ext)) return false;
+    if (!q) return true;
+    const hay = [d.path, d.desc, d.category, ...(d.deps_internal||[]), ...(d.deps_external||[])].join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+}
+
+function sortRows(rows){
+  const { sortKey, sortDir } = state;
+  const th = document.querySelector(`th[data-key="${sortKey}"]`);
+  const type = th ? th.dataset.type : 'str';
+  return rows.slice().sort((a,b) => {
+    let va = a[sortKey], vb = b[sortKey];
+    if (Array.isArray(va)) va = va.length;
+    if (Array.isArray(vb)) vb = vb.length;
+    if (type === 'num') return (va - vb) * sortDir;
+    va = String(va||'').toLowerCase(); vb = String(vb||'').toLowerCase();
+    if (va < vb) return -1 * sortDir;
+    if (va > vb) return 1 * sortDir;
+    return a.path.localeCompare(b.path) * sortDir;
+  });
+}
+
+function depTags(list, isExternal){
+  if (!list || !list.length) return '<span class="none">—</span>';
+  return `<span class="deplist">${list.map(x => `<span class="tag${isExternal?' ext-dep':''}">${escapeHtml(x)}</span>`).join('')}</span>`;
+}
+
+function renderTable(unsorted){
+  const rows = sortRows(unsorted);
+  const tbody = document.getElementById('file-tbody');
+  tbody.innerHTML = rows.map(d => {
+    const parts = d.relpath.split('/');
+    const fname = parts.pop();
+    const dir = parts.length ? parts.join('/') + '/' : '';
+    return `<tr>
+      <td><span class="badge" style="background:var(--fam-${ZONE_KEY[d.zone]}-bg); color:var(--fam-${ZONE_KEY[d.zone]}-fg)">${escapeHtml(ZONE_LABEL[d.zone])}</span></td>
+      <td class="path mono"><span class="dirpath">${escapeHtml(dir)}</span><span class="filename">${escapeHtml(fname)}</span></td>
+      <td class="mono"><span class="badge ext">.${d.ext}</span></td>
+      <td><span class="badge cat-badge">${escapeHtml(d.category)}</span></td>
+      <td class="desc">${escapeHtml(d.desc) || '<span class="none">—</span>'}</td>
+      <td class="num tnum mono">${fmtKb(d.size_kb)}</td>
+      <td class="num tnum mono">${fmtLines(d.lines)}</td>
+      <td class="tnum mono date-cell">${fmtDate(d.last_modified)}</td>
+      <td class="deps">${depTags(d.deps_internal, false)}</td>
+      <td class="deps">${depTags(d.deps_external, true)}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('result-count').textContent = `${rows.length} / ${INVENTORY.length} fichiers`;
+
+  document.querySelectorAll('thead th[data-key]').forEach(th => {
+    th.classList.toggle('sorted', th.dataset.key === state.sortKey);
+    const arrow = th.querySelector('.arrow');
+    if (arrow) arrow.textContent = th.dataset.key === state.sortKey ? (state.sortDir === 1 ? '▲' : '▼') : '';
+  });
+}
+
+// KPI liés aux filtres actifs : recalculés sur le sous-ensemble affiché, pas
+// sur l'inventaire complet — un compteur en petit rappelle le total quand un
+// filtre réduit la vue.
+function renderStatline(rows){
+  const isFiltered = rows.length !== INVENTORY.length;
+  const totalOf = (fn) => fn(INVENTORY);
+  const sub = (n, total) => isFiltered ? ` <em>/ ${n.toLocaleString('fr-BE')}</em>` : '';
+
+  const files = rows.length;
+  const filesTotal = INVENTORY.length;
+  const codeLines = rows.filter(d => d.family !== 'Données').reduce((s,d)=>s+d.lines,0);
+  const codeLinesTotal = INVENTORY.filter(d => d.family !== 'Données').reduce((s,d)=>s+d.lines,0);
+  const dataKb = rows.filter(d => d.family === 'Données').reduce((s,d)=>s+d.size_kb,0);
+  const dataKbTotal = INVENTORY.filter(d => d.family === 'Données').reduce((s,d)=>s+d.size_kb,0);
+  const zones = new Set(rows.map(d=>d.zone)).size;
+  const zonesTotal = new Set(INVENTORY.map(d=>d.zone)).size;
+
+  const el = document.getElementById('statline');
+  el.innerHTML = `
+    <div class="stat"><b>${files}${sub(filesTotal)}</b><span>Fichiers</span></div>
+    <div class="stat"><b>${fmtLines(codeLines)}${sub(codeLinesTotal)}</b><span>Lignes de code</span></div>
+    <div class="stat"><b>${(dataKb/1024).toFixed(1)} Mo${isFiltered ? ` <em>/ ${(dataKbTotal/1024).toFixed(1)}</em>` : ''}</b><span>Poids des données</span></div>
+    <div class="stat"><b>${zones}${isFiltered ? ` <em>/ ${zonesTotal}</em>` : ''}</b><span>Zones</span></div>
+  `;
+}
+
+function render(){
+  const rows = filtered();
+  renderStatline(rows);
+  renderTable(rows);
+}
+
+document.querySelectorAll('thead th[data-key]').forEach(th => {
+  th.addEventListener('click', () => {
+    if (state.sortKey === th.dataset.key){
+      state.sortDir *= -1;
+    } else {
+      state.sortKey = th.dataset.key;
+      state.sortDir = 1;
+    }
+    render();
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  state.search = e.target.value;
+  render();
+});
+
+document.getElementById('reset-filters').addEventListener('click', () => {
+  state.search = '';
+  state.zones.clear();
+  state.exts.clear();
+  document.getElementById('search').value = '';
+  document.querySelectorAll('.chip.active').forEach(c => c.classList.remove('active'));
+  render();
+});
+
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('section.view').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-' + btn.dataset.view).classList.add('active');
+  });
+});
+
+const DATA_STRUCTURES = [
+  {
+    source: 'backend/pv_conseil_schaerbeek.json → seances[].seance',
+    title: 'Séance',
+    note: "En-tête d'une réunion du Conseil communal. Chaque séance porte la liste de ses points (ci-dessous) — 154 séances, 2010 → 2026.",
+    fields: [
+      ['id', 'str', 'Identifiant stable, ex. "PV-2010-02-03".'],
+      ['date', 'str (ISO)', 'Date de la séance.'],
+      ['source_file / source_url', 'str', 'PDF officiel du PV, sur le site 1030.be.'],
+      ['president, bourgmestre, bourgmestre_ff', 'str | null', "Qui préside — souvent un·e échevin·e f.f. en l'absence du bourgmestre."],
+      ['secretaire_communal', 'str', 'Signataire du PV côté administration.'],
+      ['presents_count, excuses, absents', 'int | list', 'Présences en début de séance (rarement toutes renseignées selon les années).'],
+      ['extraction_check', 'objet', 'Contrôle qualité de l’extraction : nombre de points attendu vs extrait, numéros SP manquants.'],
+    ],
+  },
+  {
+    source: 'backend/pv_conseil_schaerbeek.json → seances[].points[]',
+    title: "Point de l'ordre du jour",
+    note: '10 062 points au total. Unité de base de toute l’app : chat, statistiques, séances et fiches élu·e s’y branchent tous.',
+    fields: [
+      ['sp', 'int', 'Numéro du point dans la séance ("SP" = sujet/point).'],
+      ['page', 'int', 'Page du PDF source — pour un lien direct vers le PV.'],
+      ['type', 'enum', 'point_normal · point_urgent · motion · demande_habitant · question_orale — voir Attributs partagés.'],
+      ['urgence', 'bool', "Point inscrit en urgence, hors ordre du jour initial."],
+      ['rubrique / sous_rubrique', 'str', "Classement administratif d'origine (ex. Finances → Budget)."],
+      ['titre / resume', 'str', "Intitulé complet du PV, puis un résumé en une phrase."],
+      ['thematiques', 'list[str]', 'Tags libres pour la recherche et les statistiques (ex. "mobilite", "parc_josaphat").'],
+      ['auteurs / intervenants', 'list[str]', "Qui a déposé le point (motion, demande, question) et qui a pris la parole en débat."],
+      ['repondant, repondants', 'str, list[str]', "Champ historique (singulier) puis sa forme liste — un point peut avoir plusieurs répondant·e·s du Collège."],
+      ['decision', 'str | null', 'Issue du point — voir dimensions() dans utils/statut.py : type / traitement / décision.'],
+      ['statut_traitement', 'enum', 'traité · reporté · retiré — dimension séparée de decision depuis le split v2.'],
+      ['debat', 'bool', 'Un débat filmé existe pour ce point (voir video_conseil_schaerbeek.json).'],
+      ['vote', 'objet', '{ type: unanimite | vote_nominal | reporte, pour, contre, abstentions }'],
+      ['montant_eur', 'float | null', 'Montant budgétaire, si le point porte une dépense chiffrée.'],
+    ],
+  },
+  {
+    source: 'backend/questions_ecrites_schaerbeek.json → questions[]',
+    title: 'Question écrite',
+    note: "Interpellations écrites hors séance, entre un·e élu·e et le Collège — 302 questions, produites par pipeline/questions_ecrites_extraction_pipeline.py.",
+    fields: [
+      ['id', 'str', 'Format "QE-AAAA-NNN" — la clé de fusion (voir QuestionConflictError, pipeline).'],
+      ['annee / numero', 'int', "Numéro réel dans l'année — souvent absent du document, déduit du nom de fichier en repli."],
+      ['date', 'str (ISO)', 'Date de la réponse publiée.'],
+      ['auteur', 'str', "Qui a posé la question."],
+      ['repondant', 'str | null', "Échevin·e/bourgmestre ayant répondu, quand nommé·e explicitement."],
+      ['titre / question / reponse', 'str', 'Intitulé, texte intégral de la question, texte intégral de la réponse du Collège.'],
+      ['thematiques', 'list[str]', 'Mêmes tags que les points de PV, pour une recherche croisée.'],
+      ['source_file / source_url', 'str', 'PDF source (nom de fichier, puis lien 1030.be une fois publié).'],
+      ['extracted_at', 'str (ISO)', "Horodatage de l'extraction (traçabilité, pas de sens métier)."],
+    ],
+  },
+  {
+    source: 'backend/elus_mandats.json',
+    title: 'Élu·e — mandat déclaratif',
+    note: "110 personnes. Base éditée à la main (sous-onglet admin « Mandats ») : plages d'années, pas de jour/mois — sert à classer le rôle EXACT à une date donnée.",
+    fields: [
+      ['nom', 'str', 'Nom complet affiché — clé de rapprochement avec les PV (voir services/people/names.py).'],
+      ['conseiller_communal', 'str | null', 'Plage "AAAA-AAAA" ou "AAAA-présent". Mandat de base : un échevin·e ou bourgmestre l’est toujours aussi.'],
+      ['echevin', 'str | null', 'Plage de mandat d’échevin·e, si applicable — peut coexister avec bourgmestre (ex. f.f.).'],
+      ['bourgmestre', 'str | null', 'Plage de mandat de bourgmestre (ou "… f.f." si faisant fonction).'],
+      ['statut', 'str', 'Libellé affiché tel quel (ex. "Bourgmestre f.f. / Échevin / Conseiller communal") — voir Attributs partagés.'],
+    ],
+  },
+  {
+    source: 'API /elus, /elu/{key} → services/elus.py + services/people/registry.py',
+    title: 'Élu·e — fiche agrégée',
+    note: "Calculée à la volée depuis les 10 062 points (pas stockée) : qui a déposé quoi, qui a répondu à quoi, tous liens croisés. Alimente l'onglet « Par élu·e ».",
+    fields: [
+      ['key', 'str', "Clé d'identité normalisée (accents/casse/civilité — voir services/people/names.py)."],
+      ['role', 'str', 'Rôle courant déduit des interventions (repli si absent de elus_mandats.json).'],
+      ['mandats', 'objet | null', "Historique déclaratif inséré tel quel (mandats_for) — null si la personne n'y figure pas."],
+      ['counts', 'objet', '{ depose, repond, questions, demandes, motions, videos } — totaux pour les puces de l’UI.'],
+      ['depose[]', 'list[objet]', 'Chaque point déposé : type, titre, thématiques, repondant, decision, montant_eur…'],
+      ['repond[]', 'list[objet]', 'Chaque point répondu : co_repondants (jamais soi-même), intervenants, decision…'],
+    ],
+  },
+];
+
+const ENUMS = [
+  {
+    title: 'Type de point',
+    field: 'point.type',
+    items: [
+      ['point_normal', '8 394'], ['demande_habitant', '573'], ['question_orale', '437'],
+      ['point_urgent', '436'], ['motion', '222'],
+    ],
+  },
+  {
+    title: 'Décision (issue)',
+    field: 'point.decision',
+    items: [
+      ['APPROUVÉ', '3 193'], ['PREND POUR INFORMATION', '2 527'], ['DÉCIDE', '1 912'],
+      ['PREND ACTE', '836'], ['REJETÉ', '10'], ['— (aucune, point non tranché)', '1 485'],
+    ],
+  },
+  {
+    title: 'Statut de traitement',
+    field: 'point.statut_traitement',
+    items: [ ['traité', '9 411'], ['reporté', '645'], ['retiré', '6'] ],
+  },
+  {
+    title: 'Vote',
+    field: 'point.vote.type',
+    items: [
+      ['unanimite', '6 645'], ['vote_nominal', '1 638'], ['reporte', '587'], ['— (non voté)', '1 192'],
+    ],
+  },
+  {
+    title: "Type de source (réponse citée)",
+    field: 'Source.source_type (API /ask)',
+    items: [ ['pv', 'délibération'], ['video_conseil', 'débat filmé'], ['question_ecrite', 'hors séance'] ],
+  },
+  {
+    title: 'Rôle / statut élu·e',
+    field: 'elus_mandats.json → statut',
+    items: [
+      ['Conseiller·ère communal·e', 'mandat de base'], ['Échevin·e', 'membre du Collège'],
+      ['Bourgmestre (f.f.)', 'préside le Collège'], ['Conseiller·ère CPAS', 'mandat distinct, hors Conseil communal'],
+    ],
+  },
+];
+
+function fieldRow([field, type, desc]){
+  return `<tr><td class="field">${escapeHtml(field)}</td><td class="type">${escapeHtml(type)}</td><td>${desc}</td></tr>`;
+}
+
+function renderDataStructures(){
+  const grid = document.getElementById('ds-grid');
+  grid.innerHTML = DATA_STRUCTURES.map(ds => `
+    <article class="ds-card">
+      <div class="ds-head">
+        <div class="src mono">${escapeHtml(ds.source)}</div>
+        <h3>${escapeHtml(ds.title)}</h3>
+        <p>${ds.note}</p>
+      </div>
+      <div class="ds-body">
+        <table>
+          <thead><tr><th>Champ</th><th>Type</th><th>Description</th></tr></thead>
+          <tbody>${ds.fields.map(fieldRow).join('')}</tbody>
+        </table>
+      </div>
+    </article>
+  `).join('');
+
+  const eg = document.getElementById('enum-grid');
+  eg.innerHTML = ENUMS.map(en => `
+    <div class="enum-card">
+      <h4>${escapeHtml(en.title)}</h4>
+      <div class="field-ref mono">${escapeHtml(en.field)}</div>
+      <ul>${en.items.map(([k,v]) => `<li><code>${escapeHtml(k)}</code><span class="cnt">${escapeHtml(v)}</span></li>`).join('')}</ul>
+    </div>
+  `).join('');
+}
+
+buildChips();
+render();
+renderDataStructures();
+</script>
+
+
+</body>
+</html>
