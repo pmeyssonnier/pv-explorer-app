@@ -308,6 +308,38 @@ def _clean_str_list(value) -> list[str]:
     return out
 
 
+# Casse d'affichage homogène pour les listes de PERSONNES (auteurs/
+# intervenants/repondants) — un PV imprime souvent les patronymes tout en
+# majuscules (« Cécile JODOGNE »), que Claude reproduit sinon tel quel.
+# Dupliquée depuis backend/services/people/names._titlecase plutôt
+# qu'importée : pipeline/ doit rester exécutable seule (Colab), sans
+# dépendance à backend/. Même règle : « DEGREZ » → « Degrez », particules en
+# minuscules (« Yvan de Beauffort », « Jean-Pierre van Gorp »).
+_NAME_PARTICLES = {"de", "du", "des", "van", "von", "den", "der", "ter", "ten",
+                    "la", "le", "el", "di", "da", "d'", "of"}
+
+
+def _titlecase_name(name: str) -> str:
+    out = []
+    for i, tok in enumerate(name.split()):
+        if not tok:
+            continue
+        low = tok.lower()
+        if i > 0 and low in _NAME_PARTICLES:
+            out.append(low)
+        elif "-" in tok:
+            out.append("-".join(w[:1].upper() + w[1:].lower() for w in tok.split("-") if w))
+        else:
+            out.append(tok[:1].upper() + tok[1:].lower())
+    return " ".join(out)
+
+
+def _clean_person_list(value) -> list[str]:
+    """Comme _clean_str_list, mais recase chaque nom — jamais appliqué aux
+    thématiques ou autres listes de texte libre, qui ne sont pas des noms."""
+    return [_titlecase_name(s) for s in _clean_str_list(value)]
+
+
 def _coerce_bool(value) -> bool:
     if isinstance(value, bool):
         return value
@@ -386,9 +418,9 @@ def normalize_point(point: dict) -> Optional[dict]:
         # particulier, `repondants` ne vient JAMAIS de l'ancien champ
         # `repondant` — un extracteur qui ne renseigne que celui-ci produit une
         # liste vide, ce qui se voit, plutôt qu'une donnée d'origine ambiguë.
-        "auteurs": _clean_str_list(point.get("auteurs")),
-        "intervenants": _clean_str_list(point.get("intervenants")),
-        "repondants": _clean_str_list(point.get("repondants")),
+        "auteurs": _clean_person_list(point.get("auteurs")),
+        "intervenants": _clean_person_list(point.get("intervenants")),
+        "repondants": _clean_person_list(point.get("repondants")),
         # Les trois dimensions, séparées dès l'entrée (voir utils_statut) :
         # ce que Claude écrit dans `decision` mêle ce que le point est DEVENU
         # (« APPROUVÉ ») à la façon dont il a été TRAITÉ (« REPORTÉ », renvoyé
@@ -1114,7 +1146,14 @@ def process_pdf(pdf_path: Path, progress_cb: Optional[Callable[[dict], None]] = 
 
 
 def _clean_name(raw: str) -> str:
-    return re.sub(r"\s+", " ", raw).strip(" :-\t")
+    # Même recasage que _titlecase_name (auteurs/intervenants/repondants) :
+    # ces 4 noms sont capturés par regex depuis le texte brut du PV, pas
+    # depuis le JSON de Claude, mais le PV les imprime tout aussi souvent en
+    # majuscules (« Cécile JODOGNE, Bourgmestre »). bourgmestre_ff en
+    # particulier sert de repli d'affichage quand le nom résolu ne matche
+    # aucun·e élu·e du registre (voir attribution._respondents) — sans ce
+    # recasage, ce repli resterait tout en majuscules.
+    return _titlecase_name(re.sub(r"\s+", " ", raw).strip(" :-\t"))
 
 
 def enrich_seance_meta(seance_struct: dict, first_pages: list[dict]):

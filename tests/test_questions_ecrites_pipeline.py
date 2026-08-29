@@ -130,6 +130,16 @@ def test_normalize_question_repondant_none_when_not_signed():
     assert q2["repondant"] is None
 
 
+def test_normalize_question_recase_auteur_et_repondant():
+    # Le prompt demande déjà une « casse standard » à Claude, mais ce n'est
+    # pas garanti côté code (un document source tout en majuscules la
+    # contourne parfois) — même repli déterministe que côté PV
+    # (pv_extraction_pipeline._titlecase_name).
+    q = qe.normalize_question(_raw(auteur="CÉCILE JODOGNE", repondant="BERNARD CLERFAYT"), "x.pdf")
+    assert q["auteur"] == "Cécile Jodogne"
+    assert q["repondant"] == "Bernard Clerfayt"
+
+
 def test_normalize_question_coerces_string_numero():
     # Claude peut renvoyer "015" (chaîne, zéro de tête conservé) — doit
     # devenir l'entier 15, pas rester une chaîne ni planter.

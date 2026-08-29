@@ -20,7 +20,7 @@ from utils.text import _thematique_label, liste_fr
 from utils.video import video_session_map
 
 from services.people.attribution import (
-    _author_of, _decision_summary, _point_author, _respondents, _TYPE_LABEL,
+    _author_of, _decision_summary, _point_author, _point_respondents, _TYPE_LABEL,
 )
 from services.people.mandats import current_role
 from services.people.names import (
@@ -168,7 +168,7 @@ def _build_name_registry(pv: list, video: list) -> set:
         for p in s.get("points", []):
             for interv in (p.get("intervenants") or []):
                 add_from(interv)
-            for name in _respondents(p.get("repondant") or "", meta):
+            for name in _point_respondents(p, meta):
                 add_from(name)
             author = _author_of(p)
             if author:
@@ -232,7 +232,7 @@ def _build_all():
             # resp_keys/resp_names (fiche propre ET affichage "répondu par"
             # ailleurs), pas seulement de la boucle qui crée leur entrée.
             resp_names, resp_keys_all = [], []
-            for name in _respondents(resp_raw, meta):
+            for name in _point_respondents(p, meta):
                 k = _key(name, pairs)
                 if k in _NON_ELU_REPONDANTS:
                     continue
@@ -314,10 +314,13 @@ def _build_all():
                     "resume": p.get("resume"),
                     "thematiques": [_thematique_label(t) for t in (p.get("thematiques") or [])],
                     "repondant_keys": resp_keys,
-                    # Repli si le rôle mentionné n'a pas pu être résolu en
-                    # nom de personne (ex. « Secrétaire communal », « Président ») :
-                    # au moins une casse homogène plutôt que le texte brut du PV.
-                    "repondant_fallback": None if resp_keys else (_titlecase(_clean(resp_raw or "")) or None),
+                    # Repli si le rôle mentionné n'a pas pu être résolu en nom
+                    # de personne (ex. « Secrétaire communal », « Président ») :
+                    # au moins une casse homogène plutôt que le texte brut du
+                    # PV (ancien schéma), ou les noms de `repondants` recollés
+                    # (nouveau schéma, resp_raw absent — voir _point_respondents).
+                    "repondant_fallback": None if resp_keys else (
+                        (_titlecase(_clean(resp_raw)) if resp_raw else liste_fr(resp_names)) or None),
                     "url": meta.get("source_url"),
                     "video_url": session_map.get(date),
                     "decision": decision,
