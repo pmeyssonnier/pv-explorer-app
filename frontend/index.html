@@ -42,6 +42,9 @@
   <symbol id="ico-video" class="ux" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M10 9.6l4.8 2.4L10 14.4z"/></symbol>
   <symbol id="ico-share" class="ux" viewBox="0 0 24 24"><circle cx="18" cy="6" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="18" r="2.6"/><line x1="8.3" y1="10.7" x2="15.7" y2="7.3"/><line x1="8.3" y1="13.3" x2="15.7" y2="16.7"/></symbol>
   <symbol id="ico-lock" class="ux" viewBox="0 0 24 24"><rect x="5.5" y="11" width="13" height="9.5" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></symbol>
+  <symbol id="ico-close" class="ux" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
+  <symbol id="ico-clock" class="ux" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="ico-refresh" class="ux" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4.5h-4.5"/></symbol>
 </svg>
 
 <header class="header">
@@ -67,31 +70,33 @@
       <line x1="48.2" y1="47" x2="54" y2="52.8" stroke="#fdf8f2" stroke-width="4.6" stroke-linecap="round"/>
     </svg>
     <div class="header-eyebrow">Commune de Schaerbeek · 1030</div>
-    <h1>Questions aux procès-verbaux<br>du Conseil communal</h1>
+    <h1>Questions aux procès-verbaux du Conseil communal</h1>
     <p>Posez une question sur les décisions du Conseil communal. Les réponses sont tirées des procès-verbaux officiels et citent leurs sources — extraits vidéo des débats filmés inclus.</p>
   </div>
 </header>
 
-<nav class="tabs">
-  <button class="tab active" data-click="switchTab" data-arg="chat" id="tab-chat"><svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg><span>Questions</span></button>
-  <button class="tab" data-click="switchTab" data-arg="seances" id="tab-seances"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg><span>Séances</span></button>
-  <button class="tab" data-click="switchTab" data-arg="elus" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
-  <button class="tab" data-click="switchTab" data-arg="stats" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
-  <button class="tab" data-click="switchTab" data-arg="admin" id="tab-admin" hidden><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg><span>Admin</span></button>
+<!-- Onglets : sémantique tablist/tab/tabpanel (comme les sous-onglets des
+     statistiques) — aria-selected suivi par switchTab (app.js). -->
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-chat" data-click="switchTab" data-arg="chat" id="tab-chat"><svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg><span>Questions</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-seances" data-click="switchTab" data-arg="seances" id="tab-seances"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg><span>Séances</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-elus" data-click="switchTab" data-arg="elus" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-stats" data-click="switchTab" data-arg="stats" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-admin" data-click="switchTab" data-arg="admin" id="tab-admin" hidden><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg><span>Admin</span></button>
 </nav>
 
 <main class="main">
 
   <!-- ── ONGLET CHAT ── -->
-  <section class="panel active" id="panel-chat">
+  <section class="panel active" id="panel-chat" role="tabpanel" aria-labelledby="tab-chat">
     <div class="intro-card" id="introCard">
       <h2>Que voulez-vous savoir&nbsp;?</h2>
       <p>Interrogez l'ensemble des délibérations : subventions, travaux, votes, taxes, motions…</p>
       <div class="suggestions">
-        <span class="suggestion" data-click="askSuggestion">Quels subsides aux ASBL sportives ?</span>
-        <span class="suggestion" data-click="askSuggestion">Quelles décisions sur le parc Josaphat ?</span>
-        <span class="suggestion" data-click="askSuggestion">Quels votes n'étaient pas unanimes ?</span>
-        <span class="suggestion" data-click="askSuggestion">Que dit le PV sur la propreté publique ?</span>
+        <button type="button" class="suggestion" data-click="askSuggestion">Quels subsides aux ASBL sportives ?</button>
+        <button type="button" class="suggestion" data-click="askSuggestion">Quelles décisions sur le parc Josaphat ?</button>
+        <button type="button" class="suggestion" data-click="askSuggestion">Quels votes n'étaient pas unanimes ?</button>
+        <button type="button" class="suggestion" data-click="askSuggestion">Que dit le PV sur la propreté publique ?</button>
       </div>
       <div class="history" id="historyBlock" style="display:none">
         <div class="history-head">
@@ -102,13 +107,15 @@
       </div>
     </div>
 
-    <button class="new-search" id="newSearchBtn" type="button" data-click="newSearch" style="display:none">↻ Nouvelle recherche</button>
+    <button class="new-search" id="newSearchBtn" type="button" data-click="newSearch" style="display:none"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg>Nouvelle recherche</button>
 
     <div class="conversation" id="conversation"></div>
+    <!-- Annonce aux lecteurs d'écran (réponse reçue, erreur) — voir chat.js. -->
+    <p class="sr-only" id="chatStatus" role="status" aria-live="polite"></p>
   </section>
 
   <!-- ── ONGLET SÉANCES ── -->
-  <section class="panel" id="panel-seances">
+  <section class="panel" id="panel-seances" role="tabpanel" aria-labelledby="tab-seances">
     <div class="elus-panel">
       <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séances du Conseil communal</h3>
       <p class="trend-intro">Parcourez les procès-verbaux <strong>séance par séance</strong> : pour chaque point à l'ordre du jour, l'objet, qui l'a déposé, qui y a répondu, et le débat filmé quand il existe.</p>
@@ -121,7 +128,7 @@
   </section>
 
   <!-- ── ONGLET INTERVENTIONS PAR ÉLU·E ── -->
-  <section class="panel" id="panel-elus">
+  <section class="panel" id="panel-elus" role="tabpanel" aria-labelledby="tab-elus">
     <div class="stats-toolbar">
       <button class="msg-act" type="button" data-click="shareElu" title="Partager le lien vers cette fiche">Partager</button>
     </div>
@@ -143,7 +150,7 @@
                  autocapitalize="off" spellcheck="false" enterkeyhint="search"
                  data-form-type="other" data-lpignore="true" data-1p-ignore>
           <button type="button" class="elu-combo-clear" id="eluClear"
-                  aria-label="Effacer la recherche" title="Effacer la recherche" hidden>✕</button>
+                  aria-label="Effacer la recherche" title="Effacer la recherche" hidden><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
           <ul class="elu-combo-list" id="eluOptions" role="listbox" aria-label="Élu·e·s" hidden></ul>
         </div>
         <p class="sr-only" id="eluComboStatus" role="status" aria-live="polite"></p>
@@ -173,7 +180,7 @@
                    autocapitalize="off" spellcheck="false" enterkeyhint="search"
                    data-form-type="other" data-lpignore="true" data-1p-ignore>
             <button type="button" class="elu-combo-clear" id="eluThemeClear"
-                    aria-label="Effacer le filtre" title="Effacer le filtre — revenir à toutes les thématiques" hidden>✕</button>
+                    aria-label="Effacer le filtre" title="Effacer le filtre — revenir à toutes les thématiques" hidden><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
             <ul class="elu-combo-list" id="eluThemeOptions" role="listbox" aria-label="Thématiques" hidden></ul>
           </div>
           <p class="sr-only" id="eluThemeStatus" role="status" aria-live="polite"></p>
@@ -184,7 +191,7 @@
   </section>
 
   <!-- ── ONGLET STATS ── -->
-  <section class="panel" id="panel-stats">
+  <section class="panel" id="panel-stats" role="tabpanel" aria-labelledby="tab-stats">
     <div class="stats-toolbar">
       <button class="msg-act" type="button" data-click="shareStats" title="Partager le lien vers la vue affichée">Partager</button>
     </div>
@@ -228,22 +235,22 @@
         <h3><svg class="icon" aria-hidden="true"><use href="#ico-montant"/></svg>Évolution d'un thème (budget)</h3>
         <p class="trend-intro">Additionne les montants cités <strong>par année</strong> sur <strong>tous</strong> les points liés à un thème — une vue exhaustive, complémentaire au chat.</p>
         <div class="trend-bar">
-          <input type="text" id="trendInput" class="trend-input"
+          <input type="text" id="trendInput" class="trend-input" aria-label="Thème à suivre"
                  placeholder="Ex. propreté, mobilité, écoles…">
           <button class="ask-btn" data-click="loadTrend"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Voir</span></button>
         </div>
         <div class="suggestions">
-          <span class="suggestion" data-click="trendSuggestion">propreté</span>
-          <span class="suggestion" data-click="trendSuggestion">mobilité</span>
-          <span class="suggestion" data-click="trendSuggestion">sécurité</span>
-          <span class="suggestion" data-click="trendSuggestion">CPAS</span>
-          <span class="suggestion" data-click="trendSuggestion">écoles</span>
-          <span class="suggestion" data-click="trendSuggestion">culture</span>
-          <span class="suggestion" data-click="trendSuggestion">sport</span>
-          <span class="suggestion" data-click="trendSuggestion">logement</span>
-          <span class="suggestion" data-click="trendSuggestion">voirie</span>
-          <span class="suggestion" data-click="trendSuggestion">environnement</span>
-          <span class="suggestion" data-click="trendSuggestion">finances</span>
+          <button type="button" class="suggestion" data-click="trendSuggestion">propreté</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">mobilité</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">sécurité</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">CPAS</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">écoles</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">culture</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">sport</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">logement</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">voirie</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">environnement</button>
+          <button type="button" class="suggestion" data-click="trendSuggestion">finances</button>
         </div>
         <div id="trendResult"></div>
       </div>
@@ -251,7 +258,7 @@
   </section>
 
   <!-- ── ONGLET ADMIN (visible seulement connecté·e — voir admin.js) ── -->
-  <section class="panel" id="panel-admin">
+  <section class="panel" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin">
     <div class="elus-panel">
       <h3><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg>Administration</h3>
       <div id="adminPanelBody"></div>
@@ -306,12 +313,14 @@
 </footer>
 
 <!-- ── PANNEAU ⚙️ OPTIONS ── -->
-<div class="settings-overlay" id="settingsOverlay">
+<!-- `inert` tant que la modale est fermée : ses contrôles (invisibles, opacité 0)
+     ne sont ni tabulables ni lus — levé à l'ouverture, voir modal.js. -->
+<div class="settings-overlay" id="settingsOverlay" inert>
   <div class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-label="Options">
     <div class="settings-handle-zone" id="settingsHandle"><div class="settings-handle-bar"></div></div>
     <div class="settings-head">
       <h2>Options</h2>
-      <button class="settings-close" type="button" data-click="closeSettings" aria-label="Fermer">✕</button>
+      <button class="settings-close" type="button" data-click="closeSettings" aria-label="Fermer"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
     </div>
 
     <div class="settings-scroll">
@@ -364,11 +373,11 @@
 </div>
 
 <!-- ── CONNEXION ADMINISTRATEUR ── -->
-<div class="settings-overlay" id="adminLoginOverlay">
+<div class="settings-overlay" id="adminLoginOverlay" inert>
   <div class="settings-panel admin-login-panel" role="dialog" aria-modal="true" aria-label="Connexion administrateur">
     <div class="settings-head">
       <h2>Connexion administrateur</h2>
-      <button class="settings-close" type="button" data-click="closeAdminLogin" aria-label="Fermer">✕</button>
+      <button class="settings-close" type="button" data-click="closeAdminLogin" aria-label="Fermer"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
     </div>
     <form id="adminLoginForm" class="admin-login-form">
       <label for="adminLoginUsername">Identifiant</label>

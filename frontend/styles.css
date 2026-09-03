@@ -8,12 +8,27 @@
    Corps   : Inter (lisibilité administrative)
    ═══════════════════════════════════════════════════════════════ */
 :root {
-  --brand: #c1653f;              /* accent « fond fort » (petits boutons/puces) — texte clair dessus */
-  --bordeaux: #c1653f;           /* accent texte/marques — s'éclaircit en thème sombre */
-  --bordeaux-dark: #96492c;
+  --brand: #c1653f;              /* accent « repère » : marque du logo, bouton d'envoi, jauges — jamais sous du texte courant */
+  --bordeaux: #9c4e2f;           /* accent TEXTE (liens, noms, onglet actif) : 5,4:1 sur --papier, 4,7:1 sur --papier-dark (AA) ; s'éclaircit en sombre */
+  --bordeaux-dark: #8f4529;
   --bordeaux-clair: #d9855f;
-  --or: #c1653f;                 /* unifié avec --bordeaux : un seul accent */
+  --or: #9c4e2f;                 /* unifié avec --bordeaux : un seul accent */
   --or-light: #e6b294;
+  /* Aplats accent qui PORTENT du texte clair (boutons pleins, bulle de
+     question) : même famille que --brand, assez sombre pour l'AA (5,4:1 avec
+     --sur-accent). Le #c1653f d'origine ne tenait qu'à 3,65:1 sous du texte de
+     13-16px — --brand reste réservé aux repères sans texte (voir ci-dessus). */
+  --accent-fill: #9c4e2f;
+  --accent-fill-hover: #8f4529;
+  --sur-accent: #f7f3ec;
+  /* États sémantiques en tokens (les aplats fixes d'avant restaient clairs en
+     thème sombre) : erreur, et « enregistrement » (micro) réutilisé pour les
+     liens vidéo, seule couleur hors accent — elle signale un autre média. */
+  --erreur-bg: #fdf0ed;
+  --erreur-ligne: #e5b3a8;
+  --erreur-fg: #8a2c1a;
+  --rec: #c0392b;
+  --sur-rec: #ffffff;
   --papier: #f7f3ec;
   --papier-dark: #ece5d8;
   --encre: #2a221f;
@@ -79,6 +94,14 @@
     --ligne: #3a3128;
     --blanc: #201a15;
     --vert: #7fb08d;
+    --accent-fill: #96492c;
+    --accent-fill-hover: #8f4529;
+    --sur-accent: #f7f3ec;
+    --erreur-bg: #3a1f1a;
+    --erreur-ligne: #5c2f27;
+    --erreur-fg: #f3a598;
+    --rec: #ff8a78;
+    --sur-rec: #17130f;
     --logo-line: var(--encre-soft);
     --chart-s0: #3987e5;
     --chart-s1: #199e70;
@@ -100,6 +123,14 @@
   --ligne: #3a3128;
   --blanc: #201a15;
   --vert: #7fb08d;
+  --accent-fill: #96492c;
+  --accent-fill-hover: #8f4529;
+  --sur-accent: #f7f3ec;
+  --erreur-bg: #3a1f1a;
+  --erreur-ligne: #5c2f27;
+  --erreur-fg: #f3a598;
+  --rec: #ff8a78;
+  --sur-rec: #17130f;
   --logo-line: var(--encre-soft);
   --chart-s0: #3987e5;
   --chart-s1: #199e70;
@@ -110,7 +141,22 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; caret-color: var(--bordeaux); scrollbar-color: var(--ligne) transparent; }
+/* Surfaces du navigateur (sélection, curseur, contrôles natifs) : prises dans
+   la palette plutôt que laissées aux défauts bleus du système. */
+:root { accent-color: var(--brand); }
+::selection { background: color-mix(in srgb, var(--bordeaux) 24%, transparent); }
+h1, h2, h3 { text-wrap: balance; }
+/* Un seul bloc pour toute l'app : animations et transitions coupées quand
+   l'utilisateur le demande (fondu des onglets, points du chargement, pulsation
+   du micro, remplissage des barres — plus de règles éparses à oublier). */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.001ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
 
 /* ── FOCUS CLAVIER — système global ──────────────────────────────────────
    :focus-visible (pas :focus) : l'anneau n'apparaît qu'à la navigation
@@ -182,9 +228,12 @@ body {
 }
 .settings-head h2 { font-family: var(--display); font-size: 24px; }
 .settings-close {
+  display: inline-flex; align-items: center; justify-content: center;
   border: none; background: var(--papier-dark); color: var(--encre);
-  width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 19px;
+  width: 38px; height: 38px; border-radius: 10px; cursor: pointer; padding: 0;
 }
+.settings-close .icon { width: 18px; height: 18px; }
+.settings-close:hover { background: var(--ligne); }
 .settings-scroll { overflow-y: auto; }
 .settings-sec { padding: 22px 26px; border-bottom: 1px solid var(--ligne); }
 .settings-sec h3 {
@@ -203,7 +252,7 @@ body {
 }
 .settings-about { display: flex; justify-content: space-between; align-items: center; font-size: 14.5px; color: var(--encre-soft); border-bottom: none; }
 .settings-reset { border: 1px solid var(--ligne); background: none; color: var(--bordeaux); border-radius: 18px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
-.settings-reset:hover { background: var(--brand); color: #f7f3ec; border-color: var(--brand); }
+.settings-reset:hover { background: var(--accent-fill); color: var(--sur-accent); border-color: var(--accent-fill); }
 
 /* ── CONNEXION ADMINISTRATEUR ── (réutilise .settings-overlay/.settings-panel
    pour le même comportement — voir openSettings/closeSettings — un panneau
@@ -290,7 +339,7 @@ body {
   border-radius: 18px; padding: 8px 16px; font-family: var(--corps); font-size: 14px;
   font-weight: 600; cursor: pointer;
 }
-.admin-mandat-danger:hover { background: var(--bordeaux); color: #f7f3ec; }
+.admin-mandat-danger:hover { background: var(--accent-fill); border-color: var(--accent-fill); color: var(--sur-accent); }
 .admin-mandat-danger:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Mobile : on garde le panneau confortable sur tablette/PC mais on COMPACTE
@@ -384,7 +433,15 @@ body {
   transition: all 0.15s;
 }
 .tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-@media (max-width: 480px) { .tab { padding: 12px 4px; font-size: 12px; gap: 4px; } }
+/* Quatre onglets sur 390px : l'icône passe AU-DESSUS du libellé (grammaire des
+   barres d'onglets mobiles) plutôt que de tronquer « Statis… » — le libellé
+   entier reste lisible et la cible tactile gagne en hauteur. Sélecteur
+   .tabs .tab : la règle « .tab { gap: 7px } » plus bas est déclarée après. */
+@media (max-width: 480px) {
+  .tabs .tab { flex-direction: column; padding: 8px 2px 9px; font-size: 11.5px; gap: 3px; }
+  .tabs .tab .icon { width: 18px; height: 18px; }
+  .tabs .tab span { overflow: visible; text-overflow: clip; }
+}
 .tab:hover { color: var(--bordeaux); }
 .tab.active { color: var(--bordeaux); border-bottom-color: var(--or); }
 /* .tab a aussi "display: inline-flex" plus bas (même spécificité qu'une
@@ -407,7 +464,6 @@ body {
 .intro-card {
   background: var(--blanc);
   border: 1px solid var(--ligne);
-  border-left: 4px solid var(--or);
   border-radius: 4px;
   padding: 20px 22px;
   margin-bottom: 24px;
@@ -425,34 +481,39 @@ body {
   gap: 8px;
   margin-top: 16px;
 }
+/* Des <button> (plus des <span>) : atteignables au clavier et annoncés comme
+   des commandes — le style reste celui d'une puce. */
 .suggestion {
   background: var(--papier-dark);
   border: 1px solid var(--ligne);
   border-radius: 20px;
   padding: 7px 14px;
+  font: inherit;
   font-size: 13px;
+  line-height: 1.4;
   color: var(--bordeaux);
   cursor: pointer;
-  transition: all 0.15s;
+  text-align: left;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.suggestion:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
-.suggestion-history { position: relative; padding-right: 30px; }
+.suggestion:hover { background: var(--accent-fill); color: var(--sur-accent); border-color: var(--accent-fill); }
+/* Puce d'historique = le texte (bouton) + la croix (bouton), côte à côte —
+   deux commandes distinctes, jamais un bouton dans un bouton. */
+.suggestion-history { display: inline-flex; align-items: center; padding: 0; overflow: hidden; }
+.suggestion-text {
+  background: none; border: 0; padding: 7px 6px 7px 14px;
+  font: inherit; color: inherit; cursor: pointer; text-align: left;
+}
+.suggestion-history:hover { background: var(--papier-dark); color: var(--bordeaux); border-color: var(--ligne); }
+.suggestion-text:hover { color: var(--accent-fill-hover); text-decoration: underline; text-underline-offset: 3px; }
 .suggestion-remove {
-  position: absolute;
-  top: 50%; right: 6px;
-  transform: translateY(-50%);
-  width: 18px; height: 18px;
-  line-height: 16px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: inherit;
-  opacity: 0.55;
-  cursor: pointer;
-  font-size: 15px;
-  padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; margin: 0 4px 0 0;
+  border: none; border-radius: 50%; background: transparent;
+  color: inherit; opacity: 0.6; cursor: pointer; padding: 0;
 }
-.suggestion-remove:hover { opacity: 1; background: rgba(0, 0, 0, 0.12); }
+.suggestion-remove .icon { width: 12px; height: 12px; }
+.suggestion-remove:hover { opacity: 1; background: color-mix(in srgb, var(--encre) 12%, transparent); }
 
 /* ── DRILL-DOWN STATS (Année → Mois → Séance) ── */
 /* ── SOUS-ONGLETS DES STATISTIQUES ────────────────────────────────────────
@@ -479,7 +540,12 @@ body {
 .subtab .icon { width: 15px; height: 15px; vertical-align: 0; }
 .subtab:hover { color: var(--bordeaux); }
 .subtab[aria-selected="true"] { color: var(--bordeaux); border-bottom-color: var(--or); }
-@media (max-width: 480px) { .subtab { padding: 9px 9px; font-size: 13px; gap: 5px; } }
+/* Mobile : les trois vues passent à la ligne plutôt que de laisser la
+   troisième hors écran, derrière un défilement horizontal sans indice. */
+@media (max-width: 480px) {
+  .subtabs { flex-wrap: wrap; overflow: visible; }
+  .subtab { padding: 9px 9px; font-size: 13px; gap: 5px; }
+}
 /* Combien de PV le périmètre courant contient, sans avoir à ouvrir la vue. */
 .subtab-count {
   font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums;
@@ -503,7 +569,7 @@ body {
   border: 1px solid var(--ligne); border-radius: 20px;
   padding: 5px 12px; cursor: pointer; transition: all 0.15s;
 }
-.drill-reset:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
+.drill-reset:hover { background: var(--accent-fill); color: var(--sur-accent); border-color: var(--accent-fill); }
 .drill-reset[hidden] { display: none; }
 .drill-crumb { font-size: 13px; color: var(--encre-soft); margin: 2px 0 14px; }
 .drill-crumb a {
@@ -531,10 +597,13 @@ body {
   font-size: 14px; font-weight: 500; color: var(--bordeaux); text-align: left;
 }
 .pv-pick:hover { text-decoration: underline; }
-.pv-pdf { display: inline-flex; color: var(--or); }
+/* Icônes-liens de 15px : zone de contact élargie à 25px (padding négatif
+   compensé) sans bouger l'alignement des colonnes. */
+.pv-pdf { display: inline-flex; color: var(--or); padding: 5px; margin: -5px 0; border-radius: 6px; }
 .pv-pdf .icon { width: 15px; height: 15px; }
-.pv-video { display: inline-flex; color: var(--bordeaux); margin-left: 2px; }
+.pv-video { display: inline-flex; color: var(--bordeaux); margin: -5px 0 -5px 2px; padding: 5px; border-radius: 6px; }
 .pv-video .icon { width: 15px; height: 15px; }
+.pv-pdf:hover, .pv-video:hover { background: var(--papier-dark); }
 /* Points/votes (ligne 1) et montant (ligne 2) toujours empilés — flex-direction
    column plutôt qu'un flux texte unique, dont le retour à la ligne dépendait
    de la largeur disponible (montant tantôt sur la 1re ligne, tantôt sur la
@@ -580,12 +649,14 @@ body {
 }
 .history-clear:hover { color: var(--bordeaux); }
 .new-search {
+  display: inline-flex; align-items: center; gap: 6px;
   background: none; border: 1px solid var(--ligne); color: var(--bordeaux);
-  border-radius: 20px; padding: 7px 15px; font-family: var(--corps);
+  border-radius: 20px; padding: 7px 15px 7px 12px; font-family: var(--corps);
   font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
-  transition: all 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.new-search:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
+.new-search .icon { width: 14px; height: 14px; }
+.new-search:hover { background: var(--accent-fill); color: var(--sur-accent); border-color: var(--accent-fill); }
 
 /* ── EXPLORATEUR D'ÉVOLUTION PAR THÈME ── */
 .trend-panel { margin-bottom: 30px; padding-bottom: 24px; border-bottom: 2px solid var(--papier-dark); }
@@ -690,9 +761,14 @@ body {
 }
 .elu-combo-clear {
   position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
-  font: inherit; font-size: 13px; line-height: 1; color: var(--encre-soft);
-  background: none; border: 0; border-radius: 999px; padding: 7px 9px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; color: var(--encre-soft);
+  background: none; border: 0; border-radius: 999px; padding: 0; cursor: pointer;
 }
+.elu-combo-clear .icon { width: 14px; height: 14px; }
+/* Même piège que .elus-bar[hidden] : `display` posé par la classe l'emporterait
+   sur la règle par défaut de [hidden] — la croix est cachée au repos. */
+.elu-combo-clear[hidden] { display: none; }
 .elu-combo-clear:hover { color: var(--bordeaux); background: var(--papier-dark); }
 .elu-combo-list {
   position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0;
@@ -797,7 +873,7 @@ body {
 .elu-badge.b-q { background: color-mix(in srgb, var(--bordeaux) 15%, transparent); color: var(--bordeaux); }
 .elu-badge.b-d { background: color-mix(in srgb, var(--or) 22%, transparent); color: var(--bordeaux-dark); }
 .elu-badge.b-m { background: color-mix(in srgb, var(--vert) 20%, transparent); color: var(--vert); }
-.elu-badge.b-v { background: color-mix(in srgb, var(--bordeaux-clair) 20%, transparent); color: var(--bordeaux-clair); }
+.elu-badge.b-v { background: color-mix(in srgb, var(--bordeaux-clair) 22%, transparent); color: var(--bordeaux); }
 .elu-badge.b-report { background: color-mix(in srgb, var(--encre-soft) 18%, transparent); color: var(--encre-soft); font-style: italic; }
 /* « Retiré » (ôté de l'ordre du jour) — statut distinct de « Reporté » : même
    famille sobre (point non débattu) mais contour tireté = « retiré », sans
@@ -861,13 +937,11 @@ body {
 .elu-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px; }
 .elu-link {
   display: inline-flex; align-items: center; gap: 4px; font-size: 12px;
-  color: var(--bordeaux); text-decoration: none;
+  color: var(--bordeaux); text-decoration: none; padding: 4px 0;   /* ≥ 24px de haut au toucher */
 }
 .elu-link:hover { text-decoration: underline; }
 .elu-link .icon { width: 13px; height: 13px; vertical-align: 0; }
-.elu-link-video { color: #c0392b; }
-:root[data-theme="dark"] .elu-link-video,
-:root:not([data-theme="light"]) .elu-link-video { color: var(--or); }
+.elu-link-video { color: var(--rec); }
 
 /* ── SÉANCES (choix par menu déroulant + en-tête de la séance affichée) ──── */
 .seance-filter-toggle-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
@@ -926,15 +1000,15 @@ body {
   white-space: pre-wrap;
 }
 .msg-question .msg-bubble {
-  background: var(--brand);
-  color: #f7f3ec;
-  border-color: var(--bordeaux);
+  background: var(--accent-fill);
+  color: var(--sur-accent);
+  border-color: var(--accent-fill);
   align-self: flex-start;
   max-width: 90%;
   cursor: pointer;
   transition: box-shadow 0.15s, transform 0.1s;
 }
-.msg-question .msg-bubble:hover { box-shadow: 0 3px 12px rgba(109,34,51,0.28); }
+.msg-question .msg-bubble:hover { box-shadow: 0 3px 12px color-mix(in srgb, var(--accent-fill) 30%, transparent); }
 .msg-question .msg-bubble:active { transform: translateY(1px); }
 .msg-question .msg-bubble:focus-visible { outline: 2px solid var(--or); outline-offset: 2px; }
 
@@ -972,7 +1046,7 @@ body {
   background: var(--papier-dark);
   border-radius: 4px;
   margin-bottom: 6px;
-  border-left: 3px solid var(--or);
+  border: 1px solid var(--ligne);
 }
 .source-ref {
   font-family: var(--display);
@@ -1074,8 +1148,8 @@ body {
   .main { padding-bottom: 168px; }   /* composer sur 2 lignes : marge basse */
 }
 .ask-btn {
-  background: var(--brand);
-  color: #f7f3ec;
+  background: var(--accent-fill);
+  color: var(--sur-accent);
   border: none;
   border-radius: 4px;
   padding: 0 24px;
@@ -1086,7 +1160,7 @@ body {
   transition: background 0.15s;
   white-space: nowrap;
 }
-.ask-btn:hover { background: var(--bordeaux-dark); }
+.ask-btn:hover { background: var(--accent-fill-hover); }
 .ask-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* Bouton micro (dictée vocale) — révélé par JS seulement si le navigateur gère
@@ -1101,15 +1175,14 @@ body {
 .mic-btn:hover { border-color: var(--bordeaux); }
 .mic-btn .icon { width: 20px; height: 20px; }
 .mic-btn.listening {
-  background: #c0392b; border-color: #c0392b; color: #fff;
+  background: var(--rec); border-color: var(--rec); color: var(--sur-rec);
   animation: micPulse 1.15s ease-out infinite;
 }
 @keyframes micPulse {
-  0%   { box-shadow: 0 0 0 0 rgba(192,57,43,.5); }
-  70%  { box-shadow: 0 0 0 11px rgba(192,57,43,0); }
-  100% { box-shadow: 0 0 0 0 rgba(192,57,43,0); }
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--rec) 50%, transparent); }
+  70%  { box-shadow: 0 0 0 11px color-mix(in srgb, var(--rec) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--rec) 0%, transparent); }
 }
-@media (prefers-reduced-motion: reduce) { .mic-btn.listening { animation: none; } }
 
 /* Indice de dictée sous la barre : écoute (live) ou erreur actionnable (err). */
 .mic-hint {
@@ -1117,12 +1190,12 @@ body {
   padding: 8px 12px; border-radius: 6px;
 }
 .mic-hint.live {
-  color: #c0392b; font-weight: 600;
-  background: color-mix(in srgb, #c0392b 8%, transparent);
+  color: var(--rec); font-weight: 600;
+  background: color-mix(in srgb, var(--rec) 10%, transparent);
 }
 .mic-hint.err {
-  color: var(--encre); background: var(--blanc);
-  border: 1px solid var(--ligne); border-left: 3px solid var(--bordeaux);
+  color: var(--erreur-fg); background: var(--erreur-bg);
+  border: 1px solid var(--erreur-ligne);
 }
 
 /* ── CHARGEMENT ──────────────────────────────────────────────── */
@@ -1284,7 +1357,7 @@ body {
   color: var(--encre-soft); padding: 6px 16px; transition: background 0.15s, color 0.15s;
 }
 .yc-toggle button:hover { color: var(--bordeaux); }
-.yc-toggle button.active { background: var(--brand); color: #fff; }
+.yc-toggle button.active { background: var(--accent-fill); color: var(--sur-accent); }
 .yc-col.yc-clic { cursor: pointer; }
 .yc-col.yc-clic:hover .yc-val { color: var(--bordeaux); }
 .th-year {
@@ -1312,14 +1385,19 @@ body {
 .bar-row.bar-clic:hover .bar-label { color: var(--bordeaux); }
 .bar-row.bar-sel { background: var(--papier-dark); }
 .bar-row.bar-sel .bar-label { color: var(--bordeaux); font-weight: 600; }
-.pv-clear { border: none; background: var(--brand); color: #fff; border-radius: 50%; width: 17px; height: 17px; font-size: 10px; line-height: 1; cursor: pointer; vertical-align: middle; }
+.pv-clear {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; background: var(--accent-fill); color: var(--sur-accent); border-radius: 50%;
+  width: 22px; height: 22px; padding: 0; cursor: pointer; vertical-align: middle;
+}
+.pv-clear .icon { width: 11px; height: 11px; }
 /* Lien date → PV (PDF) dans « Plus grosses dépenses » */
 .pv-pdf-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; }
 .pv-pdf-link:hover { text-decoration: underline; }
 .pv-pdf-link .icon { color: var(--or); }
 
 /* Source « débat filmé » : liseré distinct + lien vers l'instant de la vidéo. */
-.source-item.source-video { border-left-color: var(--bordeaux); }
+.source-item.source-video { border-color: color-mix(in srgb, var(--bordeaux) 40%, var(--ligne)); }
 .source-video .source-ref { white-space: normal; }
 .video-link { color: var(--bordeaux); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
 .video-link:hover { text-decoration: underline; }
@@ -1356,7 +1434,17 @@ body {
   border: 1px solid var(--ligne); background: var(--blanc); color: var(--bordeaux);
   border-radius: 16px; padding: 4px 12px; font-size: 12.5px; cursor: pointer; transition: all 0.15s;
 }
-.msg-act:hover { background: var(--brand); color: #f7f3ec; border-color: var(--bordeaux); }
+.msg-act:hover { background: var(--accent-fill); color: var(--sur-accent); border-color: var(--accent-fill); }
+/* Bouton de reprise dans un bloc d'erreur : la seule action proposée, donc pleine. */
+.error-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.retry-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--accent-fill); background: var(--accent-fill); color: var(--sur-accent);
+  border-radius: 16px; padding: 6px 14px 6px 11px; font: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: background 0.15s;
+}
+.retry-btn .icon { width: 14px; height: 14px; }
+.retry-btn:hover { background: var(--accent-fill-hover); border-color: var(--accent-fill-hover); }
 .bar-label { font-size: 13px; width: 150px; text-align: right; color: var(--encre-soft); }
 .bar-track { flex: 1; height: 22px; background: var(--papier-dark); border-radius: 3px; overflow: hidden; }
 .bar-fill { height: 100%; background: linear-gradient(90deg, var(--or), var(--or-light)); border-radius: 3px; transition: width 0.6s ease; }
@@ -1367,15 +1455,19 @@ body {
 }
 @media (max-width: 520px) { .bar-eur { width: 66px; font-size: 11.5px; } }
 
+/* Bloc d'erreur : tokens sémantiques (lisible dans les deux thèmes), et un
+   seul registre — ce qui n'a pas marché, puis quoi faire (voir .retry-btn). */
 .error-box {
-  background: #fdf0ed;
-  border: 1px solid #e5b3a8;
-  border-left: 4px solid #c0392b;
+  background: var(--erreur-bg);
+  border: 1px solid var(--erreur-ligne);
   border-radius: 4px;
   padding: 14px 18px;
-  color: #8a2c1a;
+  color: var(--erreur-fg);
   font-size: 14px;
 }
+.error-box p { margin: 0 0 6px; }
+.error-box p:last-of-type { margin-bottom: 0; }
+.error-box .error-detail { font-size: 12.5px; opacity: 0.8; }
 
 .footer {
   text-align: center;
@@ -1409,3 +1501,14 @@ body {
 .stat-ico { width: 20px; height: 20px; color: var(--or); display: block; margin-bottom: 10px; }
 .stat-section h3 { display: flex; align-items: center; gap: 8px; }
 .stat-section h3 .icon { width: 17px; height: 17px; color: var(--or); vertical-align: 0; }
+
+/* ── IMPRESSION ── ce qui sert à agir disparaît, ce qui se lit reste entier. */
+@media print {
+  .ask-bar, .tabs, .header-icons, .msg-actions, .stats-toolbar, .new-search,
+  .settings-overlay, .msg-time-live, .history { display: none !important; }
+  .main { padding-bottom: 0; }
+  .yc-scroll, .md-tablewrap { overflow: visible; }
+  .msg-bubble, .source-item, .stat-card, .intro-card { break-inside: avoid; }
+  body { background: #fff; color: #000; }
+  a { color: inherit; }
+}

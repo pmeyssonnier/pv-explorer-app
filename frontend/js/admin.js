@@ -9,6 +9,7 @@
 import { API_URL } from './config.js';
 import { escapeHtml } from './utils.js';
 import { createCombobox } from './combobox.js';
+import { openOverlay, closeOverlay } from './modal.js';
 
 let adminUsername = null;
 // Résultat de /admin/seances/extract en attente de confirmation (voir
@@ -313,7 +314,7 @@ function renderMandatsSection() {
                autocapitalize="off" spellcheck="false" enterkeyhint="search"
                data-form-type="other" data-lpignore="true" data-1p-ignore>
         <button type="button" class="elu-combo-clear" id="mandatSearchClear"
-                aria-label="Effacer la recherche" title="Effacer la recherche" hidden>✕</button>
+                aria-label="Effacer la recherche" title="Effacer la recherche" hidden><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
         <ul class="elu-combo-list" id="mandatSearchOptions" role="listbox" aria-label="Personnes" hidden></ul>
       </div>
       <button type="button" class="ask-btn" data-click="onMandatNewClick">+ Ajouter une personne</button>
@@ -749,12 +750,11 @@ export async function submitMandat(ev) {
 }
 
 export function openAdminLogin() {
-  document.getElementById('adminLoginOverlay').classList.add('open');
   document.getElementById('adminLoginError').textContent = '';
-  document.getElementById('adminLoginUsername').focus();
+  openOverlay('adminLoginOverlay', { initialFocus: '#adminLoginUsername' });   // inert levé, Échap, focus bouclé — voir modal.js
 }
 export function closeAdminLogin() {
-  document.getElementById('adminLoginOverlay').classList.remove('open');
+  closeOverlay('adminLoginOverlay');
 }
 // Clic sur le fond assombri (pas sur le panneau) → ferme, comme Options.
 export function initAdminLoginOverlay() {

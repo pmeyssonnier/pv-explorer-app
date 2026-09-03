@@ -100,6 +100,13 @@ export async function loadSeances() {
   } catch (err) {
     finReveil();   // idempotent — utile si le fetch lui-même a échoué (réseau) avant la ligne ci-dessus
     yearSel.innerHTML = '<option value="">Indisponible</option>';
+    // Sans ce bloc, le message de réveil restait affiché indéfiniment : le
+    // conteneur n'était réécrit qu'en cas de succès.
+    if (box) box.innerHTML = `<div class="error-box">
+      <p>Impossible de charger la liste des séances pour le moment.</p>
+      <p class="error-detail">${escapeHtml(err.message || 'Réseau indisponible')}</p>
+      <div class="error-actions"><button type="button" class="retry-btn" data-click="retrySeances"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg>Réessayer</button></div>
+    </div>`;
   }
 }
 
@@ -198,7 +205,7 @@ function seancePointRow(it) {
   // pour la vidéo générique (video_precise=false) : lien vers le DÉBUT de la
   // séance, pas ce point précis — déjà proposé une fois au-dessus (vidéo complète).
   let links = hasDebateLink(it)
-    ? renderVideoLink(it.type === 'video' ? it.url : it.video_url, '▶ Voir le débat', 'Voir le débat sur YouTube (au bon moment)')
+    ? renderVideoLink(it.type === 'video' ? it.url : it.video_url, 'Voir le débat', 'Voir le débat sur YouTube (au bon moment)')
     : '';
   if (it.page !== null && it.page !== undefined) {
     links += renderPvPdfLink(it.url, it.page, `PV (PDF) — page ${it.page}`,
@@ -578,7 +585,7 @@ function renderSeance(d, scroll) {
   let links = '';
   if (!d.isAggregate) {
     links += renderPvPdfLink(d.url);
-    links += renderVideoLink(d.video_url, '▶ vidéo (séance complète)', 'Voir la séance filmée sur YouTube');
+    links += renderVideoLink(d.video_url, 'Vidéo de la séance complète', 'Voir la séance filmée sur YouTube');
   }
   const titleLabel = d.isAggregate ? `Toutes les séances ${escapeHtml(d.year)}` : formatDate(d.date);
   const countLabel = d.isAggregate
@@ -609,7 +616,7 @@ function renderSeance(d, scroll) {
              autocapitalize="off" spellcheck="false" enterkeyhint="search"
              data-form-type="other" data-lpignore="true" data-1p-ignore>
       <button type="button" class="elu-combo-clear" id="seanceThemeClear"
-              aria-label="Effacer le filtre" title="Effacer le filtre — revenir à toutes les thématiques" hidden>✕</button>
+              aria-label="Effacer le filtre" title="Effacer le filtre — revenir à toutes les thématiques" hidden><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
       <ul class="elu-combo-list" id="seanceThemeOptions" role="listbox" aria-label="Thématiques" hidden></ul>
     </div>
     <p class="sr-only" id="seanceThemeStatus" role="status" aria-live="polite"></p>
@@ -622,7 +629,7 @@ function renderSeance(d, scroll) {
              autocapitalize="off" spellcheck="false" enterkeyhint="search"
              data-form-type="other" data-lpignore="true" data-1p-ignore>
       <button type="button" class="elu-combo-clear" id="seancePersonClear"
-              aria-label="Effacer le filtre" title="Effacer le filtre — revenir à tou·te·s les intervenant·e·s" hidden>✕</button>
+              aria-label="Effacer le filtre" title="Effacer le filtre — revenir à tou·te·s les intervenant·e·s" hidden><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
       <ul class="elu-combo-list" id="seancePersonOptions" role="listbox" aria-label="Intervenant·e·s" hidden></ul>
     </div>
     <p class="sr-only" id="seancePersonStatus" role="status" aria-live="polite"></p>
