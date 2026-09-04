@@ -3,393 +3,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conseil communal de Schaerbeek — Questions aux procès-verbaux</title>
-<!-- Couleur de chrome navigateur (barre d'état mobile, aperçu multitâche, fond
-     du splash screen à l'installation) : #fffdf9 par défaut (thème clair),
-     ajustée AVANT le premier rendu par le script ci-dessous si le thème
-     résolu (choix explicite ou préférence OS) est sombre — sinon elle
-     restait figée en clair même en thème sombre. -->
+<title>PV Explorer — Que décide le Conseil communal de Schaerbeek ?</title>
+<meta name="description" content="Posez une question en français sur les décisions du Conseil communal de Schaerbeek : la réponse cite le procès-verbal officiel, avec la date, le numéro de point, le PDF et le débat filmé. Outil citoyen non officiel.">
+<meta property="og:title" content="PV Explorer — Que décide le Conseil communal de Schaerbeek ?">
+<meta property="og:description" content="Une question en français, une réponse citée : date, numéro de point, PDF officiel, débat filmé. 171 séances depuis 2010.">
+<meta property="og:type" content="website">
 <meta name="theme-color" content="#fffdf9" id="themeColorMeta">
-<!-- Applique le thème choisi AVANT le premier rendu (évite le flash clair→sombre) -->
+<!-- Thème (choix mémorisé dans l'outil) appliqué avant la première peinture,
+     puis renvoi des anciens liens « /?tab=… » vers /app — voir js/landing.js. -->
 <script src="js/theme-init.js"></script>
+<script src="js/landing.js"></script>
 <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="landing.css">
 <script defer src="https://cdn.vercel-insights.com/v1/script.js"></script>
 </head>
-<body>
+<body class="lp">
 
-<!-- ── SPRITE D'ICÔNES (inline pour fiabilité offline/local ; source : assets/icons/icons.svg) ── -->
+<!-- Sprite d'icônes : sous-ensemble de celui de app.html, mêmes tracés. -->
 <svg style="display:none" aria-hidden="true">
-  <defs><style>
-    symbol.ux { fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
-  </style></defs>
+  <defs><style>symbol.ux { fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }</style></defs>
   <symbol id="ico-search" class="ux" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="20.5" y2="20.5"/></symbol>
   <symbol id="ico-stats" class="ux" viewBox="0 0 24 24"><line x1="3.5" y1="20.5" x2="20.5" y2="20.5"/><line x1="6.5" y1="20.5" x2="6.5" y2="13"/><line x1="12" y1="20.5" x2="12" y2="7.5"/><line x1="17.5" y1="20.5" x2="17.5" y2="15.5"/></symbol>
-  <symbol id="ico-commune" class="ux" viewBox="0 0 24 24"><path d="M3.5 9.5 12 4l8.5 5.5"/><line x1="4.5" y1="9.5" x2="19.5" y2="9.5"/><line x1="6.5" y1="10" x2="6.5" y2="18"/><line x1="10" y1="10" x2="10" y2="18"/><line x1="14" y1="10" x2="14" y2="18"/><line x1="17.5" y1="10" x2="17.5" y2="18"/><line x1="3.5" y1="20.5" x2="20.5" y2="20.5"/></symbol>
   <symbol id="ico-date" class="ux" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="3.2" x2="8" y2="6.5"/><line x1="16" y1="3.2" x2="16" y2="6.5"/><line x1="7.5" y1="13.5" x2="12" y2="13.5"/></symbol>
-  <symbol id="ico-pv" class="ux" viewBox="0 0 24 24"><path d="M7 3.5h6.5L18 8v12.5H7z"/><path d="M13.5 3.5V8H18"/><line x1="9.5" y1="12" x2="15.5" y2="12"/><line x1="9.5" y1="15" x2="15.5" y2="15"/><line x1="9.5" y1="18" x2="13" y2="18"/></symbol>
-  <symbol id="ico-decision" class="ux" viewBox="0 0 24 24"><rect x="10.6" y="3.4" width="7.5" height="4.4" rx="1.2" transform="rotate(45 14.35 5.6)"/><line x1="12.1" y1="8.2" x2="6.4" y2="13.9"/><line x1="9.6" y1="5.7" x2="14.9" y2="11"/><line x1="4.2" y1="20.4" x2="12.2" y2="20.4"/><line x1="8.2" y1="16.6" x2="8.2" y2="20.4"/></symbol>
-  <symbol id="ico-vote" class="ux" viewBox="0 0 24 24"><path d="M4 12.5v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"/><path d="M8 12.5 4 11l1.4-3.2 4 1.6"/><path d="M8.2 13.2 15 4.2l3.4 2.6L11.8 16z"/><line x1="9" y1="17.5" x2="15" y2="17.5"/></symbol>
-  <symbol id="ico-montant" class="ux" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15 8.7a4 4 0 1 0 0 6.6"/><line x1="7.5" y1="11" x2="13.5" y2="11"/><line x1="7.5" y1="13.4" x2="12.5" y2="13.4"/></symbol>
   <symbol id="ico-intervenant" class="ux" viewBox="0 0 24 24"><circle cx="10" cy="8.5" r="3.5"/><path d="M4.5 20c0-3.6 2.5-6 5.5-6s5.5 2.4 5.5 6"/><path d="M17.5 7.5a4 4 0 0 1 0 6"/><path d="M19.5 5.5a7 7 0 0 1 0 10"/></symbol>
-  <symbol id="ico-thematique" class="ux" viewBox="0 0 24 24"><path d="M4 4.5h7.2a2 2 0 0 1 1.42.59l6.3 6.3a2 2 0 0 1 0 2.83l-4.5 4.5a2 2 0 0 1-2.83 0l-6.3-6.3A2 2 0 0 1 4 10.98z"/><circle cx="8.2" cy="8.7" r="1.3"/></symbol>
-  <symbol id="ico-urgence" class="ux" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l9-11h-6z"/></symbol>
   <symbol id="ico-source" class="ux" viewBox="0 0 24 24"><path d="M9.5 6.5c-3 .8-4.5 3-4.5 6.5H8a1.5 1.5 0 0 1 1.5 1.5v2.5A1.5 1.5 0 0 1 8 18.5H5.5A1.5 1.5 0 0 1 4 17V13c0-4 2-6.6 5.5-7.5z"/><path d="M19.5 6.5c-3 .8-4.5 3-4.5 6.5H18a1.5 1.5 0 0 1 1.5 1.5v2.5A1.5 1.5 0 0 1 18 18.5h-2.5A1.5 1.5 0 0 1 14 17V13c0-4 2-6.6 5.5-7.5z"/></symbol>
-  <symbol id="ico-mic" class="ux" viewBox="0 0 24 24"><path d="M12 3.5a2.6 2.6 0 0 0-2.6 2.6v5a2.6 2.6 0 0 0 5.2 0v-5A2.6 2.6 0 0 0 12 3.5z"/><path d="M17.5 11v.6a5.5 5.5 0 0 1-11 0V11"/><line x1="12" y1="17.5" x2="12" y2="20.5"/><line x1="8.8" y1="20.5" x2="15.2" y2="20.5"/></symbol>
   <symbol id="ico-video" class="ux" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M10 9.6l4.8 2.4L10 14.4z"/></symbol>
-  <symbol id="ico-share" class="ux" viewBox="0 0 24 24"><circle cx="18" cy="6" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="18" r="2.6"/><line x1="8.3" y1="10.7" x2="15.7" y2="7.3"/><line x1="8.3" y1="13.3" x2="15.7" y2="16.7"/></symbol>
-  <symbol id="ico-lock" class="ux" viewBox="0 0 24 24"><rect x="5.5" y="11" width="13" height="9.5" rx="2.2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/></symbol>
-  <symbol id="ico-close" class="ux" viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></symbol>
-  <symbol id="ico-clock" class="ux" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
-  <symbol id="ico-refresh" class="ux" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4.5h-4.5"/></symbol>
 </svg>
 
-<header class="header">
-  <div class="header-icons">
-    <button class="icon-btn" type="button" id="themeBtn" data-click="cycleTheme" aria-label="Thème" title="Thème">
-      <svg class="icon" id="themeIcon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"></svg>
-    </button>
-    <button class="icon-btn" type="button" data-click="openSettings" aria-label="Options" title="Options">
-      <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
-    </button>
-    <button class="icon-btn" type="button" id="adminLoginBtn" data-click="openAdminLogin" aria-label="Connexion administrateur" title="Connexion administrateur">
-      <svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg>
-    </button>
-  </div>
-  <div class="header-inner">
-    <svg class="header-mark" viewBox="0 0 64 64" aria-hidden="true">
-      <rect x="15" y="12" width="26" height="33" rx="3.4" fill="var(--papier-dark)"/>
-      <rect x="20" y="19.2" width="16" height="3.2" rx="1.6" fill="var(--logo-line)"/>
-      <rect x="20" y="25.4" width="16" height="2.8" rx="1.4" fill="var(--logo-line)"/>
-      <rect x="20" y="30.8" width="11.2" height="2.8" rx="1.4" fill="var(--logo-line)"/>
-      <circle cx="41.2" cy="40" r="13.2" fill="var(--brand)"/>
-      <circle cx="41.2" cy="40" r="9" fill="none" stroke="#fdf8f2" stroke-width="4.6"/>
-      <line x1="48.2" y1="47" x2="54" y2="52.8" stroke="#fdf8f2" stroke-width="4.6" stroke-linecap="round"/>
-    </svg>
-    <div class="header-eyebrow">Commune de Schaerbeek · 1030</div>
-    <h1>Questions aux procès-verbaux du Conseil communal</h1>
-    <p>Posez une question sur les décisions du Conseil communal. Les réponses sont tirées des procès-verbaux officiels et citent leurs sources — extraits vidéo des débats filmés inclus.</p>
+<header class="lp-top">
+  <div class="lp-wrap">
+    <a class="lp-brand" href="/">
+      <svg class="header-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="15" y="12" width="26" height="33" rx="3.4" fill="var(--papier-dark)"/>
+        <rect x="20" y="19.2" width="16" height="3.2" rx="1.6" fill="var(--logo-line)"/>
+        <rect x="20" y="25.4" width="16" height="2.8" rx="1.4" fill="var(--logo-line)"/>
+        <rect x="20" y="30.8" width="11.2" height="2.8" rx="1.4" fill="var(--logo-line)"/>
+        <circle cx="41.2" cy="40" r="13.2" fill="var(--brand)"/>
+        <circle cx="41.2" cy="40" r="9" fill="none" stroke="#fdf8f2" stroke-width="4.6"/>
+        <line x1="48.2" y1="47" x2="54" y2="52.8" stroke="#fdf8f2" stroke-width="4.6" stroke-linecap="round"/>
+      </svg>
+      <span class="lp-brand-name"><strong>PV Explorer</strong><span>Schaerbeek · 1030</span></span>
+    </a>
+    <nav class="lp-nav" aria-label="Entrées de l'outil">
+      <a href="/app?tab=seances">Séances</a>
+      <a href="/app?tab=elus">Par élu·e</a>
+      <a href="/app?tab=stats">Statistiques</a>
+      <a class="lp-cta" href="/app">Ouvrir l'outil</a>
+    </nav>
   </div>
 </header>
 
-<!-- Onglets : sémantique tablist/tab/tabpanel (comme les sous-onglets des
-     statistiques) — aria-selected suivi par switchTab (app.js). -->
-<nav class="tabs" role="tablist" aria-label="Sections">
-  <button class="tab active" role="tab" aria-selected="true" aria-controls="panel-chat" data-click="switchTab" data-arg="chat" id="tab-chat"><svg class="icon" aria-hidden="true"><use href="#ico-search"/></svg><span>Questions</span></button>
-  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-seances" data-click="switchTab" data-arg="seances" id="tab-seances"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg><span>Séances</span></button>
-  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-elus" data-click="switchTab" data-arg="elus" id="tab-elus"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg><span>Par élu·e</span></button>
-  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-stats" data-click="switchTab" data-arg="stats" id="tab-stats"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Statistiques</span></button>
-  <button class="tab" role="tab" aria-selected="false" aria-controls="panel-admin" data-click="switchTab" data-arg="admin" id="tab-admin" hidden><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg><span>Admin</span></button>
-</nav>
+<main class="lp-main">
 
-<main class="main">
+  <section class="lp-wrap lp-hero">
+    <h1>Que décide le Conseil communal de Schaerbeek&nbsp;?</h1>
+    <p>Posez la question en français. La réponse cite le procès-verbal officiel : la date, le numéro de point, le lien vers le PDF et, quand il existe, vers le débat filmé.</p>
 
-  <!-- ── ONGLET CHAT ── -->
-  <section class="panel active" id="panel-chat" role="tabpanel" aria-labelledby="tab-chat">
-    <div class="intro-card" id="introCard">
-      <h2>Que voulez-vous savoir&nbsp;?</h2>
-      <p>Interrogez l'ensemble des délibérations : subventions, travaux, votes, taxes, motions…</p>
-      <div class="suggestions">
-        <button type="button" class="suggestion" data-click="askSuggestion">Quels subsides aux ASBL sportives ?</button>
-        <button type="button" class="suggestion" data-click="askSuggestion">Quelles décisions sur le parc Josaphat ?</button>
-        <button type="button" class="suggestion" data-click="askSuggestion">Quels votes n'étaient pas unanimes ?</button>
-        <button type="button" class="suggestion" data-click="askSuggestion">Que dit le PV sur la propreté publique ?</button>
-      </div>
-      <div class="history" id="historyBlock" style="display:none">
-        <div class="history-head">
-          <span>Vos questions récentes</span>
-          <button class="history-clear" type="button" data-click="clearHistory">Effacer</button>
-        </div>
-        <div class="suggestions" id="historyChips"></div>
-      </div>
-    </div>
+    <!-- Un vrai formulaire : sans JS, il ouvre l'outil avec ?q=…, que l'app
+         relance à l'arrivée (voir app.js/handleDeepLink). -->
+    <form class="lp-ask" action="/app" method="get" role="search">
+      <label class="sr-only" for="lpQuestion">Votre question sur les procès-verbaux</label>
+      <input type="text" id="lpQuestion" name="q" placeholder="Posez votre question sur les procès-verbaux…"
+             autocomplete="off" autocapitalize="sentences" spellcheck="true" enterkeyhint="search"
+             required minlength="3" maxlength="500">
+      <button type="submit" class="lp-send" aria-label="Poser la question" title="Poser la question">
+        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+      </button>
+    </form>
 
-    <button class="new-search" id="newSearchBtn" type="button" data-click="newSearch" style="display:none"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg>Nouvelle recherche</button>
-
-    <div class="conversation" id="conversation"></div>
-    <!-- Annonce aux lecteurs d'écran (réponse reçue, erreur) — voir chat.js. -->
-    <p class="sr-only" id="chatStatus" role="status" aria-live="polite"></p>
-  </section>
-
-  <!-- ── ONGLET SÉANCES ── -->
-  <section class="panel" id="panel-seances" role="tabpanel" aria-labelledby="tab-seances">
-    <div class="elus-panel">
-      <h3><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séances du Conseil communal</h3>
-      <p class="trend-intro">Parcourez les procès-verbaux <strong>séance par séance</strong> : pour chaque point à l'ordre du jour, l'objet, qui l'a déposé, qui y a répondu, et le débat filmé quand il existe.</p>
-      <div class="elus-bar">
-        <select id="seanceYear" class="elu-select" aria-label="Filtrer par année"></select>
-        <select id="seanceList" class="elu-select elu-select-date" aria-label="Choisir une séance"></select>
-      </div>
-      <div id="seanceResult"></div>
+    <div class="lp-chips">
+      <a class="suggestion" href="/app?q=Quels+subsides+aux+ASBL+sportives+%3F">Quels subsides aux ASBL sportives&nbsp;?</a>
+      <a class="suggestion" href="/app?q=Quelles+d%C3%A9cisions+sur+le+parc+Josaphat+%3F">Quelles décisions sur le parc Josaphat&nbsp;?</a>
+      <a class="suggestion" href="/app?q=Quels+votes+n%27%C3%A9taient+pas+unanimes+%3F">Quels votes n'étaient pas unanimes&nbsp;?</a>
+      <a class="suggestion" href="/app?q=Que+dit+le+PV+sur+la+propret%C3%A9+publique+%3F">Que dit le PV sur la propreté publique&nbsp;?</a>
     </div>
   </section>
 
-  <!-- ── ONGLET INTERVENTIONS PAR ÉLU·E ── -->
-  <section class="panel" id="panel-elus" role="tabpanel" aria-labelledby="tab-elus">
-    <div class="stats-toolbar">
-      <button class="msg-act" type="button" data-click="shareElu" title="Partager le lien vers cette fiche">Partager</button>
+  <!-- Chiffres du corpus (base au 27/05/2026) — à mettre à jour à la main
+       quand la base grandit nettement ; la page reste statique, sans appel
+       à l'API, pour que qui ne fait que regarder ne réveille pas le service. -->
+  <section class="lp-wrap" aria-label="Le corpus en chiffres">
+    <div class="lp-figures">
+      <div class="lp-figure"><strong>171</strong><span>séances du Conseil, de 2010 à 2026</span></div>
+      <div class="lp-figure"><strong>10&nbsp;062</strong><span>points à l'ordre du jour, chacun lié à son PDF</span></div>
+      <div class="lp-figure"><strong>302</strong><span>questions écrites au Collège, avec leur réponse</span></div>
+      <div class="lp-figure"><strong>490</strong><span>débats filmés, chapitrés à la minute</span></div>
     </div>
-    <div class="elus-panel">
-      <h3><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg>Interventions par élu·e</h3>
-      <p class="trend-intro">Recherche <strong>structurée et exhaustive</strong> : tapez le nom d'un·e élu·e → la liste complète de ses interventions, <strong>indépendante de la formulation</strong> (contrairement au chat). Les rôles diffèrent : les <strong>conseiller·ère·s</strong> déposent questions, demandes et motions ; les membres du <strong>Collège</strong> (échevin·e·s, bourgmestre) répondent en séance.</p>
-      <!-- Barre 1 — TROUVER la personne : le champ de recherche, seul sur sa
-           ligne (action principale de l'onglet). -->
-      <div class="elus-bar elus-bar-search">
-        <!-- Champ de recherche d'élu·e (combobox ARIA — voir elus.js) : remplace
-             le <select> natif, inutilisable à 105 élu·e·s (la frappe rapide du
-             navigateur ne cherche que dans le prénom affiché). -->
-        <div class="elu-combo" id="eluCombo">
-          <svg class="icon elu-combo-icon" aria-hidden="true"><use href="#ico-search"/></svg>
-          <input type="text" id="eluSearch" class="elu-select elu-combo-input"
-                 role="combobox" aria-expanded="false" aria-controls="eluOptions"
-                 aria-autocomplete="list" aria-label="Rechercher un·e élu·e"
-                 placeholder="Rechercher un·e élu·e…" autocomplete="off"
-                 autocapitalize="off" spellcheck="false" enterkeyhint="search"
-                 data-form-type="other" data-lpignore="true" data-1p-ignore>
-          <button type="button" class="elu-combo-clear" id="eluClear"
-                  aria-label="Effacer la recherche" title="Effacer la recherche" hidden><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
-          <ul class="elu-combo-list" id="eluOptions" role="listbox" aria-label="Élu·e·s" hidden></ul>
-        </div>
-        <p class="sr-only" id="eluComboStatus" role="status" aria-live="polite"></p>
-      </div>
-      <!-- Barre 2 — FILTRER la fiche affichée, à un clic : les rôles de la
-           personne (conseiller·ère → dépose · Collège → répond) puis le type
-           d'action, chacun avec son nombre d'actions. -->
-      <div class="elus-bar elus-bar-filters">
-        <div class="elu-chips" id="eluRoleChips" aria-label="Filtrer par rôle" hidden></div>
-        <div class="elu-chips" id="eluTypeFilterChips" aria-label="Filtrer par type d'action" hidden></div>
-        <div class="elu-chips" id="eluFacetChips" aria-label="Filtrer par particularité (se recoupe avec les types)" hidden></div>
-      </div>
-      <!-- Barre 3 — filtres SECONDAIRES, repliés : listes de valeurs propres à
-           la fiche (années où la personne est intervenue, thématiques de ses
-           actions). Dépliés d'office si un filtre y est actif, pour qu'un
-           résultat filtré ne paraisse jamais inexpliqué. -->
-      <details class="elu-more" id="eluMoreFilters" hidden>
-        <summary class="elu-more-summary">Plus de filtres<span class="elu-more-active" id="eluMoreActive"></span></summary>
-        <div class="elus-bar">
-          <select id="eluYear" class="elu-select elu-select-year" aria-label="Filtrer par année" hidden></select>
-          <div class="elu-combo elu-combo-theme" id="eluThemeCombo" hidden>
-            <svg class="icon elu-combo-icon" aria-hidden="true"><use href="#ico-thematique"/></svg>
-            <input type="text" id="eluTheme" class="elu-select elu-combo-input"
-                   role="combobox" aria-expanded="false" aria-controls="eluThemeOptions"
-                   aria-autocomplete="list" aria-label="Filtrer par thématique"
-                   placeholder="Filtrer par thématique…" autocomplete="off"
-                   autocapitalize="off" spellcheck="false" enterkeyhint="search"
-                   data-form-type="other" data-lpignore="true" data-1p-ignore>
-            <button type="button" class="elu-combo-clear" id="eluThemeClear"
-                    aria-label="Effacer le filtre" title="Effacer le filtre — revenir à toutes les thématiques" hidden><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
-            <ul class="elu-combo-list" id="eluThemeOptions" role="listbox" aria-label="Thématiques" hidden></ul>
+  </section>
+
+  <section class="lp-wrap lp-example">
+    <div class="lp-example-text">
+      <h2 class="lp-h2">Une réponse, ses sources, et le moyen de vérifier.</h2>
+      <p>Rien n'est affirmé sans le point du procès-verbal qui le dit. Chaque source ouvre le PDF officiel de la commune à la bonne page, ou la vidéo du Conseil à l'instant du débat.</p>
+      <p>Les réponses sont générées automatiquement : le procès-verbal original reste la référence, et il est toujours à un clic.</p>
+    </div>
+    <div class="lp-example-thread" aria-label="Exemple de réponse">
+      <div class="lp-eyebrow">Exemple de réponse</div>
+      <div class="lp-q">Que dit le Conseil sur l'avenir de l'hôpital de Schaerbeek&nbsp;?</div>
+      <div class="lp-a">Le 27/05/2026, le Conseil a adopté une <strong>motion</strong> (SP&nbsp;36) demandant le maintien d'une activité hospitalière générale, urgences comprises, sur le site de l'hôpital. Le point a été <strong>décidé</strong> en séance publique.</div>
+      <div class="lp-eyebrow"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · 1</div>
+      <div class="lp-source">
+        <div class="lp-source-ref">Séance 27/05/2026<br>Point SP 36</div>
+        <div class="lp-source-body">
+          <div>Motion visant au maintien d'une activité hospitalière générale, incluant les urgences, sur le site de l'hôpital</div>
+          <div class="lp-source-links">
+            <a href="https://www.1030.be/data/media/document/pv-conseil-2026.05.27-sp.pdf" target="_blank" rel="noopener noreferrer" title="Ouvrir le PV (PDF) sur 1030.be"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>PV (PDF)</a>
+            <a class="lp-video" href="/app?tab=seances&amp;seance=2026-05-27" title="Ouvrir la séance dans l'outil, avec le lien vers la vidéo"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Vidéo de la séance</a>
           </div>
-          <p class="sr-only" id="eluThemeStatus" role="status" aria-live="polite"></p>
         </div>
-      </details>
-      <div id="eluResult"></div>
-    </div>
-  </section>
-
-  <!-- ── ONGLET STATS ── -->
-  <section class="panel" id="panel-stats" role="tabpanel" aria-labelledby="tab-stats">
-    <div class="stats-toolbar">
-      <button class="msg-act" type="button" data-click="shareStats" title="Partager le lien vers la vue affichée">Partager</button>
-    </div>
-
-    <!-- Le périmètre (année → mois → PV) est un CONTEXTE, pas le contenu d'une
-         vue : il reste au-dessus des sous-onglets et survit au passage de l'un
-         à l'autre. Forer mars 2025 puis ouvrir « Procès-verbaux » y montre les
-         PV de mars 2025. Rempli par stats.js une fois /stats reçu. -->
-    <div id="statsScope"></div>
-
-    <div class="subtabs" role="tablist" aria-label="Vues des statistiques">
-      <button class="subtab" type="button" role="tab" id="statsvue-activite" aria-selected="true"
-              aria-controls="statsvue-panel-activite" data-click="showStatsVue" data-arg="activite">
-        <svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Activité par année</span>
-      </button>
-      <button class="subtab" type="button" role="tab" id="statsvue-pv" aria-selected="false"
-              aria-controls="statsvue-panel-pv" data-click="showStatsVue" data-arg="pv">
-        <svg class="icon" aria-hidden="true"><use href="#ico-pv"/></svg><span>Procès-verbaux</span>
-        <span class="subtab-count" id="statsPvCount" hidden></span>
-      </button>
-      <button class="subtab" type="button" role="tab" id="statsvue-theme" aria-selected="false"
-              aria-controls="statsvue-panel-theme" data-click="showStatsVue" data-arg="theme">
-        <svg class="icon" aria-hidden="true"><use href="#ico-montant"/></svg><span>Évolution d'un thème</span>
-      </button>
-    </div>
-
-    <div class="subpanel active" id="statsvue-panel-activite" role="tabpanel" aria-labelledby="statsvue-activite">
-      <div id="statsContent">
-        <div class="loading"><span>Chargement des statistiques</span><span class="dots"><span></span><span></span><span></span></span></div>
-      </div>
-    </div>
-
-    <div class="subpanel" id="statsvue-panel-pv" role="tabpanel" aria-labelledby="statsvue-pv">
-      <div id="statsPvContent">
-        <div class="loading"><span>Chargement des procès-verbaux</span><span class="dots"><span></span><span></span><span></span></span></div>
-      </div>
-    </div>
-
-    <div class="subpanel" id="statsvue-panel-theme" role="tabpanel" aria-labelledby="statsvue-theme">
-      <div class="trend-panel">
-        <h3><svg class="icon" aria-hidden="true"><use href="#ico-montant"/></svg>Évolution d'un thème (budget)</h3>
-        <p class="trend-intro">Additionne les montants cités <strong>par année</strong> sur <strong>tous</strong> les points liés à un thème — une vue exhaustive, complémentaire au chat.</p>
-        <div class="trend-bar">
-          <input type="text" id="trendInput" class="trend-input" aria-label="Thème à suivre"
-                 placeholder="Ex. propreté, mobilité, écoles…">
-          <button class="ask-btn" data-click="loadTrend"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg><span>Voir</span></button>
-        </div>
-        <div class="suggestions">
-          <button type="button" class="suggestion" data-click="trendSuggestion">propreté</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">mobilité</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">sécurité</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">CPAS</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">écoles</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">culture</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">sport</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">logement</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">voirie</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">environnement</button>
-          <button type="button" class="suggestion" data-click="trendSuggestion">finances</button>
-        </div>
-        <div id="trendResult"></div>
+        <span class="lp-decision">DÉCIDÉ</span>
       </div>
     </div>
   </section>
 
-  <!-- ── ONGLET ADMIN (visible seulement connecté·e — voir admin.js) ── -->
-  <section class="panel" id="panel-admin" role="tabpanel" aria-labelledby="tab-admin">
-    <div class="elus-panel">
-      <h3><svg class="icon" aria-hidden="true"><use href="#ico-lock"/></svg>Administration</h3>
-      <div id="adminPanelBody"></div>
+  <section class="lp-wrap lp-entries">
+    <div class="lp-entries-head">
+      <h2 class="lp-h2">Sans poser de question</h2>
+      <span>Trois vues exhaustives, indépendantes de la formulation.</span>
+    </div>
+    <div class="lp-entries-grid">
+
+      <a class="lp-entry" href="/app?tab=seances">
+        <div class="lp-preview" aria-hidden="true">
+          <div class="lp-preview-head"><b>27/05/2026</b><span class="lp-preview-pill">68 points</span></div>
+          <div class="lp-preview-row"><span class="elu-badge b-m">Motion</span><span>Maintien d'une activité hospitalière générale sur le site de l'hôpital</span></div>
+          <div class="lp-preview-row"><span class="elu-badge b-q">Question orale</span><span>Repas gratuits, réalité à Bruxelles</span></div>
+        </div>
+        <span class="lp-entry-title"><svg class="icon" aria-hidden="true"><use href="#ico-date"/></svg>Séances</span>
+        <p>Le procès-verbal séance par séance : chaque point, qui l'a déposé, qui a répondu, l'issue, le montant.</p>
+      </a>
+
+      <a class="lp-entry" href="/app?tab=elus">
+        <div class="lp-preview" aria-hidden="true">
+          <div class="lp-preview-search"><svg class="icon"><use href="#ico-search"/></svg>Cécile Jodogne</div>
+          <div class="lp-preview-chips"><span><strong>Bourgmestre</strong> · 473</span><span><strong>Échevin·e</strong> · 18</span></div>
+          <div class="lp-preview-lines"><i style="width:85%"></i><i style="width:70%"></i><i style="width:78%"></i></div>
+        </div>
+        <span class="lp-entry-title"><svg class="icon" aria-hidden="true"><use href="#ico-intervenant"/></svg>Par élu·e</span>
+        <p>Tout ce qu'une personne a déposé ou à quoi elle a répondu, avec son rôle à la date de chaque point.</p>
+      </a>
+
+      <a class="lp-entry" href="/app?tab=stats">
+        <div class="lp-preview lp-preview-chart" aria-hidden="true">
+          <div class="lp-bars"><i style="height:56%"></i><i style="height:60%"></i><i style="height:40%"></i><i style="height:69%"></i><i style="height:100%"></i><i style="height:63%"></i><i style="height:62%"></i><i style="height:30%"></i></div>
+          <div class="lp-years"><span>2019</span><span>2020</span><span>2021</span><span>2022</span><span>2023</span><span>2024</span><span>2025</span><span>2026</span></div>
+        </div>
+        <span class="lp-entry-title"><svg class="icon" aria-hidden="true"><use href="#ico-stats"/></svg>Statistiques</span>
+        <p>L'activité du Conseil par année et par mois, l'issue des points, les montants engagés par thème.</p>
+      </a>
     </div>
   </section>
 
 </main>
 
-<!-- ── BARRE DE SAISIE (visible en mode chat) ──
-     Composer en carte : ligne 1 = la question ; ligne 2 = mode d'interrogation
-     (Rapide / Réflexion) · commune · micro · bouton d'envoi (révélé dès qu'il y
-     a du texte). Pas de « + » : rien à joindre (fichier/photo). -->
-<div class="ask-bar" id="askBar">
-  <div class="ask-card" id="askCard">
-    <input type="text" class="ask-input" id="askInput"
-           placeholder="Posez votre question sur les procès-verbaux…"
-           autocomplete="off" autocapitalize="sentences" spellcheck="true"
-           enterkeyhint="send" data-form-type="other" data-lpignore="true" data-1p-ignore>
-    <div class="ask-controls">
-      <div class="mode-seg" id="modeSeg" role="tablist" aria-label="Mode de réponse">
-        <button type="button" data-mode="rapide" data-click="setMode" data-arg="rapide" role="tab"
-                title="Réponse rapide (modèle léger)">
-          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 11-13h-7z"/></svg>
-          <span>Rapide</span>
-        </button>
-        <button type="button" data-mode="reflexion" data-click="setMode" data-arg="reflexion" role="tab"
-                title="Analyse approfondie (modèle précis)">
-          <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12c.6.5 1 1.3 1 2h6c0-.7.4-1.5 1-2a7 7 0 0 0-4-12Z"/></svg>
-          <span>Réflexion</span>
-        </button>
-      </div>
-      <span class="ask-spacer"></span>
-      <button class="mic-btn" id="micBtn" type="button" data-click="toggleDictation"
-              aria-label="Dicter la question" title="Dicter la question" style="display:none">
-        <svg class="icon" aria-hidden="true"><use href="#ico-mic"/></svg>
-      </button>
-      <button class="send-btn" id="askBtn" type="button" data-click="submitQuestion"
-              aria-label="Envoyer la question" title="Envoyer">
-        <svg class="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-      </button>
-    </div>
-  </div>
-  <div class="mic-hint" id="micHint" role="status" aria-live="polite" hidden></div>
-</div>
-
-<footer class="footer">
-  Outil citoyen non officiel · Données issues des procès-verbaux publics, des séances filmées (disponibles sur YouTube) et des questions écrites du Conseil communal de Schaerbeek<br>
+<footer class="lp-footer">
+  Outil citoyen non officiel · Données issues des procès-verbaux publics de la commune (<a href="https://www.1030.be/fr/proces-verbaux" target="_blank" rel="noopener noreferrer">1030.be</a>), des séances filmées et des questions écrites du Conseil communal de Schaerbeek.<br>
   Les réponses sont générées automatiquement — vérifiez toujours le procès-verbal original en cas de doute.
 </footer>
 
-<!-- ── PANNEAU ⚙️ OPTIONS ── -->
-<!-- `inert` tant que la modale est fermée : ses contrôles (invisibles, opacité 0)
-     ne sont ni tabulables ni lus — levé à l'ouverture, voir modal.js. -->
-<div class="settings-overlay" id="settingsOverlay" inert>
-  <div class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-label="Options">
-    <div class="settings-handle-zone" id="settingsHandle"><div class="settings-handle-bar"></div></div>
-    <div class="settings-head">
-      <h2>Options</h2>
-      <button class="settings-close" type="button" data-click="closeSettings" aria-label="Fermer"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
-    </div>
-
-    <div class="settings-scroll">
-      <section class="settings-sec">
-        <h3>Recherche (chat)</h3>
-        <div class="set-row">
-          <div class="set-top"><span>Commune</span></div>
-          <select class="commune-select" id="communeSelect" aria-label="Filtrer par commune">
-            <option value="schaerbeek" selected>Schaerbeek</option>
-            <option value="">Toutes les communes</option>
-            <option value="evere" disabled>Evere (bientôt)</option>
-          </select>
-          <div class="set-hint">Périmètre de recherche des procès-verbaux.</div>
-        </div>
-        <div class="set-row">
-          <div class="set-top"><span>Sources affichées</span><b id="valMaxSources">15</b></div>
-          <input type="range" id="setMaxSources" min="5" max="30" step="1">
-          <div class="set-hint">Nombre de sources listées sous la réponse.</div>
-        </div>
-        <div class="set-row">
-          <div class="set-top"><span>Étendue de recherche</span><b id="valTopK">30</b></div>
-          <input type="range" id="setTopK" min="10" max="50" step="5">
-          <div class="set-hint">Passages lus par Claude. Plus = plus complet, plus lent.</div>
-        </div>
-        <div class="set-row">
-          <div class="set-top"><span>Seuil de pertinence</span><b id="valScoreMin">0.00</b></div>
-          <input type="range" id="setScoreMin" min="0" max="0.9" step="0.05">
-          <div class="set-hint">Masque les sources sous ce score (0 = désactivé).</div>
-        </div>
-        <div class="set-row">
-          <div class="set-top"><span>Ordre des sources</span></div>
-          <select id="setOrder">
-            <option value="relevance">Par pertinence</option>
-            <option value="date">Par date (récent d'abord)</option>
-          </select>
-        </div>
-        <div class="set-row">
-          <div class="set-top"><span>Questions en cache</span><b id="valCacheSize">15</b></div>
-          <input type="range" id="setCacheSize" min="3" max="30" step="1">
-          <div class="set-hint">Nombre de « questions récentes » gardées, avec leur réponse (pas de nouvel appel en recliquant dessus). Au-delà, la plus ancienne est retirée.</div>
-        </div>
-      </section>
-
-      <section class="settings-sec settings-about">
-        <span>PV Explorer — version <strong id="appVersion"></strong></span>
-        <button class="settings-reset" type="button" data-click="resetSettings">Réinitialiser</button>
-      </section>
-    </div>
-  </div>
-</div>
-
-<!-- ── CONNEXION ADMINISTRATEUR ── -->
-<div class="settings-overlay" id="adminLoginOverlay" inert>
-  <div class="settings-panel admin-login-panel" role="dialog" aria-modal="true" aria-label="Connexion administrateur">
-    <div class="settings-head">
-      <h2>Connexion administrateur</h2>
-      <button class="settings-close" type="button" data-click="closeAdminLogin" aria-label="Fermer"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
-    </div>
-    <form id="adminLoginForm" class="admin-login-form">
-      <label for="adminLoginUsername">Identifiant</label>
-      <input type="text" id="adminLoginUsername" autocomplete="username" required>
-      <label for="adminLoginPassword">Mot de passe</label>
-      <input type="password" id="adminLoginPassword" autocomplete="current-password" required>
-      <p class="admin-login-error" id="adminLoginError" role="alert"></p>
-      <button type="submit" class="ask-btn admin-login-submit" id="adminLoginSubmit">Se connecter</button>
-    </form>
-  </div>
-</div>
-
-<script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -19,7 +19,7 @@ communal en langage naturel, avec réponses sourcées et statistiques.
 ┌─────────────┐     ┌──────────────┐     ┌─────────────┐
 │  Frontend   │────▶│   Backend    │────▶│  Pinecone   │
 │  (Vercel)   │     │   (Render)   │     │ (vectoriel) │
-│  index.html │     │   app.py     │     │             │
+│  app.html   │     │   app.py     │     │             │
 └─────────────┘     └──────┬───────┘     └─────────────┘
                            │
                            ▼
@@ -84,12 +84,16 @@ L'app a cinq onglets — quatre publics (Questions, Séances, Par élu·e, Stati
 │                                   elus_mandats.json (mandats déclaratifs) · video_conseil_schaerbeek.json ·
 │                                   video_sessions.json · lexique.json
 ├── frontend/                    → interface citoyen (déployée sur Vercel)
-│   ├── index.html               → structure des 5 onglets (Questions, Séances, Par élu·e, Statistiques, Admin)
+│   ├── index.html               → page d'accueil (« / ») : présentation statique, sans le JS de l'app ;
+│   │                               le champ de question et les liens envoient vers /app
+│   ├── app.html                 → l'outil (« /app ») : structure des 5 onglets (Questions, Séances, Par élu·e, Statistiques, Admin)
+│   ├── landing.css              → styles propres à la page d'accueil (tokens de styles.css)
 │   ├── js/                      → un module par fonctionnalité — app.js (câblage), config.js (API_URL),
 │   │                               chat.js · seances.js · elus.js · stats.js · admin.js · lexique.js ·
 │   │                               combobox.js (recherche partagée) · settings.js · share.js · utils.js …
+│   │                               landing.js (page d'accueil : renvoie les anciens liens « /?tab=… » vers /app)
 │   ├── styles.css               → identité visuelle + thème clair / sombre
-│   └── vercel.json              → en-têtes de sécurité + CSP
+│   └── vercel.json              → en-têtes de sécurité + CSP, réécritures « / » → accueil et « /app » → outil
 ├── scraping/                    → téléchargement des PV (Google Colab) — voir son README
 │   ├── pv_scraper_1030.py       → Schaerbeek (1030.be)
 │   ├── pv_scraper_evere.py      → Evere (publi.irisnet.be / Editoria)

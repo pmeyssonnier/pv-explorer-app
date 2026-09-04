@@ -1,0 +1,150 @@
+/* ═══════════════════════════════════════════════════════════════
+   PAGE D'ACCUEIL (« / ») — présentation de l'outil, avant d'y entrer.
+   Aucun token ni police ici : tout vient de styles.css (identité « Épuré »,
+   thème clair/sombre). Préfixe lp- pour ne rien partager avec les classes de
+   l'app (app.html) hormis quelques puces/badges réutilisés tels quels.
+   Maquette de référence : canvas « Accueil PV Explorer » (piste A).
+   ═══════════════════════════════════════════════════════════════ */
+.lp { display: flex; flex-direction: column; min-height: 100vh; }
+.lp-wrap { max-width: 1040px; margin: 0 auto; padding: 0 var(--pad-x); width: 100%; box-sizing: border-box; }
+
+/* ── Barre haute ── */
+.lp-top { background: var(--blanc); border-bottom: 1px solid var(--ligne); }
+.lp-top .lp-wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 14px; padding-bottom: 14px; }
+.lp-brand { display: flex; align-items: center; gap: 10px; color: var(--encre); text-decoration: none; }
+.lp-brand .header-mark { width: 32px; height: 32px; margin: 0; }
+.lp-brand-name { display: flex; flex-direction: column; line-height: 1.15; }
+.lp-brand-name strong { font-family: var(--display); font-size: 17px; font-weight: 600; }
+.lp-brand-name span { font-size: 11px; color: var(--encre-soft); letter-spacing: 0.08em; text-transform: uppercase; }
+.lp-nav { display: flex; align-items: center; gap: 24px; }
+.lp-nav a { font-size: 14px; font-weight: 600; color: var(--encre-soft); text-decoration: none; }
+.lp-nav a:hover { color: var(--bordeaux); }
+.lp-cta {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--accent-fill); color: var(--sur-accent) !important; border-radius: 4px;
+  padding: 10px 18px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background 0.15s;
+}
+.lp-cta:hover { background: var(--accent-fill-hover); }
+@media (max-width: 640px) {
+  .lp-nav a:not(.lp-cta) { display: none; }   /* les trois entrées restent accessibles plus bas, en pleine largeur */
+}
+
+/* ── Héros : la question EST la page ── */
+.lp-hero { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 20px; padding-top: clamp(40px, 7vw, 84px); padding-bottom: 20px; }
+.lp-hero h1 {
+  font-family: var(--display); font-size: clamp(34px, 5.2vw, 56px); font-weight: 900;
+  line-height: 1.04; letter-spacing: -0.015em; max-width: 19ch; text-wrap: balance;
+}
+.lp-hero > p { font-size: clamp(15px, 1.6vw, 18px); color: var(--encre-soft); max-width: 54ch; line-height: 1.55; text-wrap: pretty; }
+.lp-ask {
+  width: 100%; max-width: 760px; margin-top: 12px;
+  background: var(--blanc); border: 1px solid var(--ligne); border-radius: 16px;
+  padding: 6px 8px 8px 8px; display: flex; align-items: flex-end; gap: 8px;
+  box-shadow: 0 6px 24px color-mix(in srgb, var(--encre) 6%, transparent);
+  transition: border-color 0.15s;
+}
+.lp-ask:focus-within { border-color: var(--or); }
+.lp-ask input {
+  flex: 1 1 auto; min-width: 0; border: none; background: none; outline: none;
+  padding: 14px 12px 12px; font-family: var(--corps); font-size: 17px; color: var(--encre);
+}
+.lp-ask input::placeholder { color: var(--encre-soft); }
+.lp-send {
+  flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; border: none;
+  background: var(--brand); color: var(--sur-accent); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; transition: background 0.15s, transform 0.1s;
+}
+.lp-send .icon { width: 20px; height: 20px; }
+.lp-send:hover { background: var(--accent-fill-hover); }
+.lp-send:active { transform: scale(.93); }
+.lp-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; max-width: 760px; }
+.lp-chips .suggestion { text-decoration: none; }
+@media (max-width: 640px) {
+  .lp-hero { align-items: stretch; text-align: left; }
+  .lp-hero h1 { max-width: none; }
+  .lp-chips { justify-content: flex-start; }
+}
+
+/* ── Le corpus, en chiffres ── */
+.lp-figures {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--ligne); border-bottom: 1px solid var(--ligne);
+  padding: 22px 0; margin-top: 20px;
+}
+.lp-figure { display: flex; flex-direction: column; gap: 3px; padding: 0 22px; border-right: 1px solid var(--ligne); }
+.lp-figure:last-child { border-right: none; }
+.lp-figure strong { font-family: var(--display); font-size: 32px; font-weight: 600; color: var(--bordeaux); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.lp-figure span { font-size: 12.5px; color: var(--encre-soft); line-height: 1.45; }
+@media (max-width: 640px) {
+  .lp-figures { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 0; }
+  .lp-figure { padding: 0 12px 0 0; border-right: none; }
+  .lp-figure strong { font-size: 30px; }
+}
+
+/* ── Une réponse, ses sources ── */
+.lp-example { display: grid; grid-template-columns: 5fr 7fr; gap: 48px; align-items: start; padding-top: 64px; }
+.lp-example-text { display: flex; flex-direction: column; gap: 12px; padding-top: 22px; }
+.lp-example-text p { color: var(--encre-soft); text-wrap: pretty; }
+.lp-h2 { font-family: var(--display); font-size: clamp(26px, 3vw, 32px); font-weight: 600; line-height: 1.15; text-wrap: balance; }
+.lp-example-thread { display: flex; flex-direction: column; gap: 10px; }
+.lp-eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--encre-soft); display: flex; align-items: center; gap: 6px; }
+.lp-eyebrow .icon { width: 13px; height: 13px; color: var(--bordeaux); }
+.lp-q { background: var(--accent-fill); color: var(--sur-accent); border-radius: 4px; padding: 12px 16px; font-size: 15px; align-self: flex-start; max-width: 90%; }
+.lp-a { background: var(--blanc); border: 1px solid var(--ligne); border-radius: 4px; padding: 16px 18px; font-size: 15px; line-height: 1.65; }
+.lp-source { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; background: var(--papier-dark); border: 1px solid var(--ligne); border-radius: 4px; }
+.lp-source-ref { font-family: var(--display); font-size: 13px; font-weight: 600; color: var(--bordeaux); white-space: nowrap; min-width: 130px; line-height: 1.5; }
+.lp-source-body { flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--encre-soft); }
+.lp-source-links { display: flex; gap: 14px; font-size: 12px; font-weight: 600; }
+.lp-source-links a { display: inline-flex; align-items: center; gap: 4px; color: var(--bordeaux); text-decoration: none; padding: 4px 0; }
+.lp-source-links a:hover { text-decoration: underline; }
+.lp-source-links a.lp-video { color: var(--rec); }
+.lp-source-links .icon { width: 13px; height: 13px; }
+.lp-decision { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--blanc); border: 1px solid var(--ligne); color: var(--encre-soft); white-space: nowrap; }
+@media (max-width: 760px) {
+  .lp-example { grid-template-columns: 1fr; gap: 20px; padding-top: 44px; }
+  .lp-example-text { padding-top: 0; }
+  .lp-source { flex-wrap: wrap; }
+  .lp-source-ref { min-width: 0; white-space: normal; flex: 1 1 100%; }
+  .lp-decision { order: -1; margin-left: auto; }
+}
+
+/* ── Trois autres entrées, avec un aperçu de chaque onglet ── */
+.lp-entries { padding-top: 72px; display: flex; flex-direction: column; gap: 20px; }
+.lp-entries-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--ligne); padding-bottom: 14px; }
+.lp-entries-head span { font-size: 14px; color: var(--encre-soft); }
+.lp-entries-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; padding-top: 8px; }
+.lp-entry { display: flex; flex-direction: column; gap: 12px; color: inherit; text-decoration: none; }
+.lp-entry-title { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--bordeaux); font-size: 15px; }
+.lp-entry-title .icon { width: 16px; height: 16px; }
+.lp-entry:hover .lp-entry-title { text-decoration: underline; text-underline-offset: 3px; }
+.lp-entry p { font-size: 14px; color: var(--encre-soft); text-wrap: pretty; }
+.lp-preview {
+  height: 150px; background: var(--blanc); border: 1px solid var(--ligne); border-radius: 4px;
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; overflow: hidden;
+}
+.lp-preview-head { display: flex; align-items: center; gap: 8px; }
+.lp-preview-head b { font-family: var(--display); font-size: 15px; font-weight: 600; color: var(--bordeaux); }
+.lp-preview-pill { font-size: 10px; background: var(--papier-dark); border-radius: 999px; padding: 2px 8px; color: var(--encre-soft); }
+.lp-preview-row { border-top: 1px solid var(--ligne); padding-top: 7px; display: flex; flex-direction: column; gap: 3px; font-size: 11px; line-height: 1.4; }
+.lp-preview-row .elu-badge { font-size: 8.5px; align-self: flex-start; margin: 0; }
+.lp-preview-search { display: flex; align-items: center; gap: 6px; border: 1px solid var(--bordeaux); border-radius: 4px; padding: 6px 8px; font-size: 11.5px; }
+.lp-preview-search .icon { width: 12px; height: 12px; color: var(--encre-soft); }
+.lp-preview-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.lp-preview-chips span { font-size: 9.5px; background: var(--papier-dark); border: 1px solid var(--ligne); border-radius: 999px; padding: 2px 7px; }
+.lp-preview-lines { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--ligne); padding-top: 6px; }
+.lp-preview-lines i { display: block; height: 6px; background: var(--papier-dark); border-radius: 2px; }
+.lp-preview-chart { justify-content: flex-end; gap: 6px; padding-bottom: 10px; }
+.lp-bars { display: flex; align-items: flex-end; gap: 6px; height: 88px; border-bottom: 2px solid var(--bordeaux); }
+.lp-bars i { flex: 1; background: var(--chart-autres); border-radius: 3px 3px 0 0; }
+.lp-years { display: flex; justify-content: space-between; font-size: 9px; color: var(--encre-soft); font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) {
+  .lp-entries { padding-top: 48px; }
+  .lp-entries-head { flex-direction: column; gap: 4px; }
+  .lp-entries-grid { grid-template-columns: 1fr; gap: 28px; }
+  .lp-preview { display: none; }   /* sur mobile, l'icône + le titre suffisent ; les aperçus tiennent mal en 358px */
+}
+
+/* ── Pied ── */
+.lp-footer { margin-top: auto; border-top: 1px solid var(--ligne); padding: 26px var(--pad-x); text-align: center; font-size: 12px; color: var(--encre-soft); line-height: 1.6; }
+.lp-footer a { color: var(--bordeaux); }
+.lp-main { padding-bottom: 72px; }

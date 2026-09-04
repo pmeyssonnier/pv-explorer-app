@@ -29,7 +29,7 @@ function trackErrors(page) {
 
 test('la page charge sans erreur console', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await expect(page.locator('#tab-chat')).toBeVisible();
   await expect(page.locator('#panel-chat')).toHaveClass(/active/);
   expect(errors).toEqual([]);
@@ -37,7 +37,7 @@ test('la page charge sans erreur console', async ({ page }) => {
 
 test('changement de thème', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   const html = page.locator('html');
   const before = await html.getAttribute('data-theme');
   await page.locator('#themeBtn').click();
@@ -50,7 +50,7 @@ test('changement de thème', async ({ page }) => {
 for (const tab of PUBLIC_TABS) {
   test(`onglet public « ${tab} » s'ouvre sans erreur`, async ({ page }) => {
     const errors = trackErrors(page);
-    await page.goto('/');
+    await page.goto('/app');
     await page.locator(`#tab-${tab}`).click();
     await expect(page.locator(`#panel-${tab}`)).toHaveClass(/active/);
     await expect(page.locator(`#tab-${tab}`)).toHaveClass(/active/);
@@ -60,7 +60,7 @@ for (const tab of PUBLIC_TABS) {
 
 test('la connexion admin ouvre le formulaire de login', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#adminLoginBtn').click();
   await expect(page.locator('#adminLoginOverlay')).toHaveClass(/open/);
   await page.locator('#adminLoginOverlay .settings-close').click();
@@ -70,7 +70,7 @@ test('la connexion admin ouvre le formulaire de login', async ({ page }) => {
 
 test('le panneau Options ouvre et ferme', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('[data-click="openSettings"]').click();
   await expect(page.locator('#settingsOverlay')).toHaveClass(/open/);
   await page.locator('#settingsOverlay .settings-close').click();
@@ -81,7 +81,7 @@ test('le panneau Options ouvre et ferme', async ({ page }) => {
 test('pas de débordement horizontal en 390px de large', async ({ page }) => {
   const errors = trackErrors(page);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
+  await page.goto('/app');
   for (const tab of PUBLIC_TABS) {
     await page.locator(`#tab-${tab}`).click();
     const { scrollWidth, clientWidth } = await page.evaluate(() => ({
@@ -116,7 +116,7 @@ const optionNames = page => page.$$eval('#eluOptions .elu-opt .elu-opt-name', el
 // cherche que dans le début du libellé affiché, donc le prénom.
 test('recherche d\'un·e élu·e par son nom de famille', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await openEluCombo(page);
   const noms = await optionNames(page);
   const cible = noms.find(n => n.split(/\s+/).length > 1);
@@ -131,7 +131,7 @@ test('recherche d\'un·e élu·e par son nom de famille', async ({ page }) => {
 
 test('recherche insensible aux accents', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await openEluCombo(page);
   const noms = await optionNames(page);
   // Un nom accentué, cherché sans son accent (« cecile » → « Cécile »).
@@ -148,7 +148,7 @@ test('recherche insensible aux accents', async ({ page }) => {
 
 test('sélection au clavier (flèches + Entrée) puis fermeture', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await openEluCombo(page);
 
   await page.keyboard.press('ArrowDown');
@@ -166,7 +166,7 @@ test('sélection au clavier (flèches + Entrée) puis fermeture', async ({ page 
 
 test('aucun résultat : la liste le dit', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await openEluCombo(page);
   await page.locator('#eluSearch').fill('zzzzq');
   await expect(page.locator('#eluOptions .elu-opt-empty')).toContainText('Aucun·e élu·e');
@@ -200,7 +200,7 @@ const totalAffiche = page => compte(page.locator('#eluResult .elu-summary'));
 // interrupteurs indépendants, pas un choix unique.
 test('les puces de rôle sont des interrupteurs cumulables, et le total suit', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   test.skip(!await ficheMultiRoles(page), 'aucun·e élu·e à plusieurs rôles dans la base');
 
   const [chip1, chip2] = [0, 1].map(i => page.locator('#eluRoleChips .elu-chip').nth(i));
@@ -227,7 +227,7 @@ test('les puces de rôle sont des interrupteurs cumulables, et le total suit', a
 
 test('les filtres année et thématique sont repliés au départ', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await openEluCombo(page);
   await page.locator('#eluOptions .elu-opt').first().click();
   await expect(page.locator('#eluResult .elu-name')).toBeVisible();
@@ -249,7 +249,7 @@ test('les filtres année et thématique sont repliés au départ', async ({ page
 // alphabétique : il invite à chercher, et ne charge que ce qu'on lui demande.
 test('l\'onglet s\'ouvre sur un écran d\'accueil, sans élu·e présélectionné·e', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-elus').click();
 
   await expect(page.locator('#eluResult .elu-accueil')).toBeVisible();
@@ -288,7 +288,7 @@ async function ficheAvecDebatFilme(page) {
 
 test('la puce « débat filmé » compte tous les points menant au débat', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   test.skip(!await ficheAvecDebatFilme(page), 'aucune fiche avec débat filmé dans les 12 premières');
 
   const chip = page.locator('#eluFacetChips .elu-chip', { hasText: 'filmé' });
@@ -321,7 +321,7 @@ async function ouvrirSeance(page, annee, date, libelle) {
 
 test('un point à plusieurs répondant·e·s se retrouve par chacun de leurs noms', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await ouvrirSeance(page, '2010', '2010-09-29', '29/09/2010');
   await page.locator('#seanceFilterToggle').click();
 
@@ -366,7 +366,7 @@ async function choisirIntervenant(page, nom) {
 
 test('le filtre par intervenant·e cherche sur le nom de famille, et se défait', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await ouvrirSeance(page, '2010', '2010-09-29', '29/09/2010');
   await page.locator('#seanceFilterToggle').click();
 
@@ -396,7 +396,7 @@ test('le filtre par intervenant·e cherche sur le nom de famille, et se défait'
 // pas : elles vivent dans une rangée à part.
 test('la somme des puces de type égale le nombre de points annoncé', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-seances').click();
   await page.locator('#seanceYear').selectOption('2025');
   await expect(page.locator('#seanceResult .elu-name')).toContainText('2025');
@@ -433,7 +433,7 @@ const STATS_FROID = { timeout: 45_000 };
 
 test('un KPI d\'activité par série, dans l\'ordre de la légende', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-stats').click();
   await expect(page.locator('#activityKPIs .act-kpi').first()).toBeVisible(STATS_FROID);
 
@@ -446,7 +446,7 @@ test('un KPI d\'activité par série, dans l\'ordre de la légende', async ({ pa
 
 test('le graphe des statuts totalise les mêmes points que celui d\'activité, et descend au mois', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-stats').click();
   await expect(page.locator('#statutLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
 
@@ -489,7 +489,7 @@ test('le graphe des statuts totalise les mêmes points que celui d\'activité, e
 
 test('le périmètre survit au changement de vue, et un lien rouvre la bonne', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-stats').click();
   await expect(page.locator('#statsPvCount')).toBeVisible(STATS_FROID);
 
@@ -517,7 +517,7 @@ test('le périmètre survit au changement de vue, et un lien rouvre la bonne', a
   await expect(page.locator('#scopeLabel')).toHaveText(annee);
 
   // 4. Le lien partagé rouvre la vue, pas seulement l'onglet.
-  await page.goto('/?tab=stats&vue=pv');
+  await page.goto('/app?tab=stats&vue=pv');
   await expect(page.locator('#statsvue-pv')).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('#statsvue-panel-pv')).toHaveClass(/active/);
   expect(errors).toEqual([]);
@@ -525,7 +525,7 @@ test('le périmètre survit au changement de vue, et un lien rouvre la bonne', a
 
 test('les KPI d\'activité suivent le périmètre, jusqu\'au mois', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-stats').click();
   await expect(page.locator('#activityKPIs .act-kpi').first()).toBeVisible(STATS_FROID);
 
@@ -555,7 +555,7 @@ test('les KPI d\'activité suivent le périmètre, jusqu\'au mois', async ({ pag
 
 test('le fil d\'Ariane est répété au-dessus des trois graphes', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-stats').click();
   await expect(page.locator('#statutLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
 
@@ -578,7 +578,7 @@ test('le fil d\'Ariane est répété au-dessus des trois graphes', async ({ page
 
 test('chaque puce de statut ramène exactement ses points, mention de vote comprise', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-seances').click();
   await page.locator('#seanceYear').selectOption('2026');
   await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
@@ -606,7 +606,7 @@ test('chaque puce de statut ramène exactement ses points, mention de vote compr
 
 test('type et statut se croisent : choisir l\'un recalcule les valeurs de l\'autre', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-seances').click();
   await page.locator('#seanceYear').selectOption('2022');
   await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
@@ -685,7 +685,7 @@ for (const cas of [
 ]) {
   test(`onglet ${cas.nom} : le filtre thématique se cherche et se défait`, async ({ page }) => {
     const errors = trackErrors(page);
-    await page.goto('/');
+    await page.goto('/app');
     await cas.ouvrir(page);
 
     const champ = page.locator(cas.champ);
@@ -728,7 +728,7 @@ for (const cas of [
 
 test('les puces d\'issue et de manque partitionnent les points de la séance', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-seances').click();
   await page.locator('#seanceYear').selectOption('2018');
   await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
@@ -768,7 +768,7 @@ test('les puces d\'issue et de manque partitionnent les points de la séance', a
 
 test('une liste de plusieurs personnes se lit « A, B et C »', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-seances').click();
   await page.locator('#seanceYear').selectOption('2025');
   await expect(page.locator('#seancePointsList .elu-item').first()).toBeVisible();
@@ -789,7 +789,7 @@ test('une liste de plusieurs personnes se lit « A, B et C »', async ({ page })
 
 test('le graphe d\'activité s\'empile par type et s\'isole à la puce', async ({ page }) => {
   const errors = trackErrors(page);
-  await page.goto('/');
+  await page.goto('/app');
   await page.locator('#tab-stats').click();
   await expect(page.locator('#drillLegend .yc-legend-chip').first()).toBeVisible(STATS_FROID);
 
@@ -829,4 +829,36 @@ test('le graphe d\'activité s\'empile par type et s\'isole à la puce', async (
   await page.locator('[data-metric="pv"]').click();
   await expect(page.locator('#drillLegend .yc-legend-chip')).toHaveCount(0);
   expect(errors).toEqual([]);
+});
+
+// ── PAGE D'ACCUEIL (« / ») : présentation statique, séparée de l'outil (/app) ──
+// Sans JS applicatif : le formulaire envoie ?q=… à /app (qui relance la
+// question), les entrées pointent vers les onglets, et js/landing.js renvoie
+// les anciens liens partagés « /?tab=… » vers /app.
+test('la page d\'accueil charge sans erreur et mène à l\'outil', async ({ page }) => {
+  const errors = trackErrors(page);
+  await page.goto('/');
+  await expect(page.locator('h1')).toContainText('Conseil communal de Schaerbeek');
+  await expect(page.locator('a.lp-cta')).toHaveAttribute('href', '/app');
+  await expect(page.locator('form.lp-ask')).toHaveAttribute('action', '/app');
+  await expect(page.locator('.lp-entries-grid a.lp-entry')).toHaveCount(3);
+  expect(errors).toEqual([]);
+  // Le champ de question ouvre l'outil avec la question dans l'URL.
+  await page.fill('#lpQuestion', 'test accueil');
+  await page.locator('form.lp-ask button[type=submit]').click();
+  await expect(page).toHaveURL(/\/app\?q=test\+accueil$/);
+});
+
+test('un ancien lien partagé « /?tab=… » arrive sur l\'outil', async ({ page }) => {
+  await page.goto('/?tab=stats&vue=pv');
+  await expect(page).toHaveURL(/\/app\?tab=stats&vue=pv$/);
+  await expect(page.locator('#statsvue-pv')).toHaveAttribute('aria-selected', 'true');
+});
+
+test('la page d\'accueil ne déborde pas en 390px de large', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expect(page.locator('h1')).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
 });
