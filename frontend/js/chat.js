@@ -2,7 +2,7 @@
 // rendu des échanges, dictée vocale, envoi de la question ──
 import { API_URL } from './config.js';
 import { settings } from './settings.js';
-import { escapeHtml, renderMarkdown, formatDate, renderThemeTags, renderReponseDetails, listeFr } from './utils.js';
+import { escapeHtml, renderMarkdown, formatDate, renderThemeTags, renderReponseDetails, listeFr, REVEIL_DELAI_MS } from './utils.js';
 import { copyShare, shareBaseUrl } from './share.js';
 import { isLexCommand, runLexCommand } from './lexique.js';
 
@@ -80,10 +80,12 @@ export function renderHistory() {
   const h = getHistory();
   if (!h.length) { block.style.display = 'none'; chips.innerHTML = ''; return; }
   block.style.display = '';
+  // Deux boutons côte à côte (reposer / retirer) dans une puce — jamais un
+  // bouton dans un bouton, et chacun atteignable au clavier.
   chips.innerHTML = h.map(q =>
-    `<span class="suggestion suggestion-history" data-click="askSuggestion">` +
-      `<span class="suggestion-text">${escapeHtml(q)}</span>` +
-      `<button class="suggestion-remove" type="button" data-click="removeHistoryItem" aria-label="Supprimer cette question">×</button>` +
+    `<span class="suggestion suggestion-history">` +
+      `<button class="suggestion-text" type="button" data-click="askSuggestion">${escapeHtml(q)}</button>` +
+      `<button class="suggestion-remove" type="button" data-click="removeHistoryItem" aria-label="Retirer « ${escapeHtml(q)} » des questions récentes"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>` +
     `</span>`
   ).join('');
 }
@@ -212,7 +214,7 @@ export function buildSourcesHtml(srcs) {
     const extraits = (s.n_extraits && s.n_extraits > 1)
       ? ` <span class="video-extraits">(${s.n_extraits} extraits)</span>` : '';
     const ref = s.url
-      ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>▶ Voir le débat · ${formatDate(s.date)}</a>${extraits}`
+      ? `<a class="video-link" href="${s.url}" target="_blank" rel="noopener noreferrer" title="Voir le débat sur YouTube (au bon moment)"><svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Voir le débat · ${formatDate(s.date)}</a>${extraits}`
       : `<svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>Débat du ${formatDate(s.date)}${extraits}`;
     return `
     <div class="source-item source-video">
@@ -295,7 +297,7 @@ export function buildSourcesHtml(srcs) {
       + qes.map(qeItem).join('');
   }
   const dont = vids.length
-    ? ` · dont ${vids.length} débat${vids.length > 1 ? 's' : ''} filmé${vids.length > 1 ? 's' : ''} 🎥`
+    ? ` · dont ${vids.length} débat${vids.length > 1 ? 's' : ''} filmé${vids.length > 1 ? 's' : ''} <svg class="icon" aria-hidden="true"><use href="#ico-video"/></svg>`
     : '';
   return `<div class="sources">
     <div class="sources-title"><svg class="icon" aria-hidden="true"><use href="#ico-source"/></svg>Sources · ${srcs.length}${dont}</div>
@@ -305,6 +307,10 @@ export function buildSourcesHtml(srcs) {
 // ── NOUVELLE RECHERCHE : vide le fil courant (et sa persistance) ; les chips
 // de questions restent. ──
 export function newSearch() {
+  // Une question encore en vol est interrompue (voir submitQuestion) : sans ça,
+  // isLoading restait bloqué sur un fil vidé et la question suivante était
+  // ignorée en silence jusqu'à l'arrivée d'une réponse devenue orpheline.
+  if (currentAbort) currentAbort.abort('nouvelle-recherche');
   document.getElementById('conversation').innerHTML = '';
   document.getElementById('introCard').style.display = '';
   document.getElementById('newSearchBtn').style.display = 'none';
@@ -323,7 +329,7 @@ export function newSearch() {
 // resterait épinglé en haut quand on enchaîne les questions). Mesure le temps
 // réel vu par le citoyen (réveil Render inclus), pas le temps serveur.
 function fmtDuration(t0) {
-  return `⏱ Durée d'exécution : ${((Date.now() - t0) / 1000).toFixed(1)} s`;
+  return `Durée d'exécution : ${((Date.now() - t0) / 1000).toFixed(1).replace('.', ',')} s`;
 }
 
 // ── DICTÉE VOCALE (Web Speech API — côté navigateur, français) ──
@@ -456,6 +462,36 @@ async function runLex(command) {
 }
 
 // ── POSER UNE QUESTION ──
+// Robustesse réseau (le service gratuit s'endort, le mobile décroche) :
+//   • délai maximal ASK_TIMEOUT_MS, au-delà l'appel est interrompu ;
+//   • une seconde tentative automatique sur coupure réseau ou 502/503/504
+//     (le service est en train de se réveiller) ;
+//   • passé REVEIL_DELAI_MS, la bulle explique que le service se réveille,
+//     comme dans Séances et Par élu·e ;
+//   • en échec, un message grand public et un bouton « Réessayer » — jamais
+//     l'URL technique de l'API.
+// « Nouvelle recherche » pendant l'attente interrompt l'appel (abort) au lieu
+// de laisser isLoading bloqué sur un fil vidé.
+const ASK_TIMEOUT_MS = 120_000;
+let currentAbort = null;
+const wait = ms => new Promise(r => setTimeout(r, ms));
+// Une seule annonce aux lecteurs d'écran par question (voir #chatStatus) —
+// le chrono, lui, n'est plus une live region : réécrit 4 fois par seconde, il
+// noyait la lecture.
+function announce(text) { const el = document.getElementById('chatStatus'); if (el) el.textContent = text; }
+function fetchAsk(payload, signal) {
+  return fetch(API_URL + '/ask', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload), signal,
+  });
+}
+export function retryQuestion(question) {
+  const input = document.getElementById('askInput');
+  if (!input || !question) return;
+  input.value = question;
+  submitQuestion();
+}
+
 export async function submitQuestion() {
   if (isLoading) return;
   const input = document.getElementById('askInput');
@@ -491,13 +527,18 @@ export async function submitQuestion() {
       <div class="msg-bubble">
         <div class="loading"><span>Recherche dans les procès-verbaux</span>
         <span class="dots"><span></span><span></span><span></span></span></div>
-        <div class="msg-time msg-time-live" id="${liveId}" role="status" aria-live="polite">⏱ En cours… 0 s</div>
+        <div class="msg-time msg-time-live" id="${liveId}">En cours… 0 s</div>
       </div>
     </div>`);
   const timerId = setInterval(() => {
     const el = document.getElementById(liveId);
-    if (el) el.textContent = `⏱ En cours… ${Math.floor((Date.now() - t0) / 1000)} s`;
+    if (el) el.textContent = `En cours… ${Math.floor((Date.now() - t0) / 1000)} s`;
   }, 250);
+  const hintTimer = setTimeout(() => {
+    const bubble = document.querySelector(`#${loadingId} .msg-bubble`);
+    if (bubble) bubble.insertAdjacentHTML('beforeend',
+      '<p class="loading-hint">Le service gratuit qui héberge les données se réveille après une période d\'inactivité — jusqu\'à une minute la première fois, puis ce sera rapide.</p>');
+  }, REVEIL_DELAI_MS);
   window.scrollTo(0, document.body.scrollHeight);
 
   // Filtre commune : "Toutes" (value vide) → on n'envoie rien (recherche croisée)
@@ -511,25 +552,40 @@ export async function submitQuestion() {
   payload.score_min = settings.scoreMin;
   payload.model = settings.model;
 
+  const ctrl = new AbortController();
+  currentAbort = ctrl;
+  const timeoutId = setTimeout(() => ctrl.abort('timeout'), ASK_TIMEOUT_MS);
+  const cleanup = () => {
+    clearInterval(timerId); clearTimeout(hintTimer); clearTimeout(timeoutId);
+    document.getElementById(loadingId)?.remove();   // déjà retiré si « Nouvelle recherche » a vidé le fil
+  };
+
   try {
-    const res = await fetch(API_URL + '/ask', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    let res;
+    try {
+      res = await fetchAsk(payload, ctrl.signal);
+    } catch (e) {
+      if (ctrl.signal.aborted) throw e;   // délai dépassé ou nouvelle recherche : pas de 2e essai
+      await wait(2500);                    // coupure réseau : une seconde chance
+      res = await fetchAsk(payload, ctrl.signal);
+    }
+    if ([502, 503, 504].includes(res.status)) {   // service en train de se réveiller
+      await wait(3000);
+      res = await fetchAsk(payload, ctrl.signal);
+    }
 
     if (!res.ok) {
       if (res.status === 429) {
         throw new Error("Trop de questions d'affilée. Patientez une minute avant de réessayer.");
       }
+      if (res.status >= 500) throw new Error('Le service est momentanément indisponible.');
       const err = await res.json().catch(() => ({}));
       // slowapi renvoie {error:...}, FastAPI {detail:...}
       throw new Error(err.detail || err.error || 'Erreur ' + res.status);
     }
 
     const data = await res.json();
-    clearInterval(timerId);
-    document.getElementById(loadingId).remove();
+    cleanup();
 
     // Sources ordonnées selon les Options (pertinence [défaut] ou date).
     let srcs = data.sources || [];
@@ -544,23 +600,31 @@ export async function submitQuestion() {
     // Garde aussi la réponse en cache : recliquer cette question dans « Vos
     // questions récentes » la restituera sans rappeler l'API.
     cacheAnswer(question, data.answer, srcs, durationText);
+    announce('Réponse reçue.');
 
   } catch (err) {
-    clearInterval(timerId);
-    document.getElementById(loadingId).remove();
-    conv.insertAdjacentHTML('beforeend', `
-      <div class="msg">
-        <div class="msg-role">Assistant</div>
-        <div class="error-box">
-          Impossible d'obtenir une réponse. ${escapeHtml(err.message)}<br>
-          <small>Vérifiez que le backend est démarré (${API_URL}).</small>
-        </div>
-        <div class="msg-time">${fmtDuration(t0)}</div>
-      </div>`);
+    cleanup();
+    if (!(ctrl.signal.aborted && ctrl.signal.reason !== 'timeout')) {   // sinon : interrompu par « Nouvelle recherche », rien à dire
+      const message = ctrl.signal.aborted
+        ? "Le service n'a pas répondu à temps."
+        : (err instanceof TypeError ? 'Impossible de joindre le service — vérifiez votre connexion.' : err.message);
+      conv.insertAdjacentHTML('beforeend', `
+        <div class="msg">
+          <div class="msg-role">Assistant</div>
+          <div class="error-box" role="alert">
+            <p>${escapeHtml(message)}</p>
+            <p class="error-detail">Votre question n'est pas perdue : relancez-la, le service répond en général au second essai.</p>
+            <div class="error-actions"><button type="button" class="retry-btn" data-click="retryQuestion" data-arg="${escapeHtml(question)}"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg>Réessayer</button></div>
+          </div>
+          <div class="msg-time">${fmtDuration(t0)}</div>
+        </div>`);
+      announce('La question a échoué. Un bouton Réessayer est disponible.');
+    }
+  } finally {
+    if (currentAbort === ctrl) currentAbort = null;
+    isLoading = false;
+    document.getElementById('askBtn').disabled = false;
   }
-
-  isLoading = false;
-  document.getElementById('askBtn').disabled = false;
   window.scrollTo(0, document.body.scrollHeight);
 }
 

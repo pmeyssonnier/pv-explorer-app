@@ -11,7 +11,7 @@ import {
 } from './settings.js';
 import {
   onAskInput, askSuggestion, reuseQuestion, clearHistory, removeHistoryItem,
-  newSearch, toggleDictation, submitQuestion, copyAnswer, downloadAnswer, shareAnswer,
+  newSearch, toggleDictation, submitQuestion, retryQuestion, copyAnswer, downloadAnswer, shareAnswer,
 } from './chat.js';
 import {
   loadStats, toggleYear, drillInto, drillTo, selectSeance, clearSeance,
@@ -19,7 +19,7 @@ import {
   onStatutChipClick, onDrillTypeChipClick, showStatsVue, setPendingStatsVue,
 } from './stats.js';
 import {
-  loadElus, initEluCombo, onEluYearChange,
+  loadElus, initEluCombo, onEluYearChange, retryElu,
   onEluChipClick, onEluRoleChipClick, onEluFacetChipClick, shareElu, setPendingEluKey,
 } from './elus.js';
 import {
@@ -37,9 +37,11 @@ import {
 
 // ── ONGLETS ──
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.add('active');
+  const btn = document.getElementById('tab-' + tab);
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected', 'true');
   document.getElementById('panel-' + tab).classList.add('active');
   document.getElementById('askBar').style.display = (tab === 'chat') ? 'block' : 'none';
   if (tab === 'stats') loadStats();
@@ -78,7 +80,9 @@ registerActions({
   switchTab,
   cycleTheme, openSettings, closeSettings, resetSettings, setMode,
   askSuggestion, reuseQuestion, clearHistory, removeHistoryItem,
-  newSearch, toggleDictation, submitQuestion, copyAnswer, downloadAnswer, shareAnswer,
+  newSearch, toggleDictation, submitQuestion, retryQuestion, copyAnswer, downloadAnswer, shareAnswer,
+  // Boutons « Réessayer » des blocs d'erreur (chat, fiche d'élu·e, stats, séances).
+  retryElu, retryStats: loadStats, retrySeances: loadSeances,
   toggleYear, drillInto, drillTo, selectSeance, clearSeance, selectTheme, setMetric,
   shareStats, trendSuggestion, loadTrend, onActivityTypeChipClick, onStatutChipClick,
   showStatsVue, onDrillTypeChipClick,

@@ -1,7 +1,7 @@
 // ── STATISTIQUES — drill-down Année → Mois → Séance, thématiques, évolution
 // d'un thème (budget) ──
 import { API_URL } from './config.js';
-import { escapeHtml, formatDate, fmtInt, fmtMontant, fmtMontantCompact, fmtEUR, TYPE_COUNT_LABEL,
+import { escapeHtml, formatDate, fmtInt, fmtMontant, fmtMontantCompact, fmtEUR, TYPE_COUNT_LABEL, renderLoadingReveil,
   STATUT_PRINCIPAUX, STATUT_AUTRES } from './utils.js';
 import { doShare, shareBaseUrl } from './share.js';
 
@@ -216,7 +216,7 @@ function renderDrill() {
         ? `<div class="yc-stack" style="height:${h}px"><div class="yc-seg ${cls} yc-seg-top" style="height:${h}px"></div></div>`
         : `<div class="yc-bar" style="height:${h}px"></div>`;
     }
-    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(b.key)}" title="${escapeHtml(tip)}">`
+    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" role="button" tabindex="0" data-keyclick data-click="drillInto" data-arg="${escapeHtml(b.key)}" title="${escapeHtml(tip)}" aria-label="${escapeHtml(tip)}">`
       + `<span class="yc-val">${drillMetric === 'points' ? fmtInt(v) : v}</span>`
       + barre
       + `<span class="yc-yr">${b.label}</span></div>`;
@@ -301,6 +301,7 @@ function renderThemes() {
   const max = Math.max(...rows.map(r => r[1]), 1);
   box.innerHTML = rows.map(([nom, n, m]) => `
     <div class="bar-row bar-clic${nom === selectedTheme ? ' bar-sel' : ''}"
+         role="button" tabindex="0" data-keyclick aria-pressed="${nom === selectedTheme ? 'true' : 'false'}"
          data-click="selectTheme" data-arg="${escapeHtml(nom)}"
          title="Ne montrer que les PV traitant « ${escapeHtml(nom.replace(/_/g, ' '))} »">
       <div class="bar-label">${escapeHtml(nom.replace(/_/g, ' '))}</div>
@@ -492,7 +493,7 @@ function renderStatuts() {
       const cls = statutSegClass(t, si);
       return `<div class="yc-seg ${cls}${topCls}" style="height:${segH}px" title="${escapeHtml(t)} : ${fmtInt(n)}"></div>`;
     }).join('');
-    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(row.label)} : ${fmtInt(value)} point${value > 1 ? 's' : ''}">
+    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" role="button" tabindex="0" data-keyclick data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(row.label)} : ${fmtInt(value)} point${value > 1 ? 's' : ''}" aria-label="${escapeHtml(row.label)} : ${fmtInt(value)} point${value > 1 ? 's' : ''}">
       <span class="yc-val">${fmtInt(value)}</span>
       <div class="yc-stack" style="height:${stackH}px">${segs}</div>
       <span class="yc-yr">${escapeHtml(row.label)}</span>
@@ -592,7 +593,7 @@ function renderActivityTypes() {
     const barTitle = isolate
       ? `${row.label} : ${TYPE_COUNT_LABEL[activiteTypeFilter](value)}`
       : `${row.label} : ${fmtInt(value)} au total`;
-    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(barTitle)}">
+    return `<div class="yc-col yc-clic${sel ? ' yc-sel' : ''}" role="button" tabindex="0" data-keyclick data-click="drillInto" data-arg="${escapeHtml(row.key)}" title="${escapeHtml(barTitle)}" aria-label="${escapeHtml(barTitle)}">
       <span class="yc-val">${fmtInt(value)}</span>
       <div class="yc-stack" style="height:${stackH}px">${segs}</div>
       <span class="yc-yr">${escapeHtml(row.label)}</span>
@@ -661,7 +662,7 @@ function renderPvList() {
     const base = drill.level === 'year' ? 'Toutes les années' : scopeLabel();
     cap.innerHTML = selectedTheme
       ? `${base} · thème « ${escapeHtml(selectedTheme.replace(/_/g, ' '))} » `
-        + `<button type="button" class="pv-clear" data-click="selectTheme" data-arg="${escapeHtml(selectedTheme)}">✕</button>`
+        + `<button type="button" class="pv-clear" data-click="selectTheme" data-arg="${escapeHtml(selectedTheme)}" aria-label="Retirer le filtre thématique"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>`
       : base;
   }
   const all = listSeances();
@@ -741,11 +742,20 @@ export function selectTheme(nom) {
 }
 export function setMetric(m) { drillMetric = m; renderDrill(); }
 
+// `statsLoading` : posé AVANT le fetch — sinon chaque retour sur l'onglet
+// pendant le chargement relançait /stats (3 allers-retours = 3 requêtes de
+// 640 Ko, vérifié), et le rendu se faisait trois fois.
+let statsLoading = false;
 export async function loadStats() {
-  if (statsLoaded) return;
+  if (statsLoaded || statsLoading) return;
+  statsLoading = true;
   const container = document.getElementById('statsContent');
+  // /stats est l'appel le plus lourd de l'app (≈ 10 s à froid) : c'est lui qui
+  // a le plus besoin de dire que le service se réveille (voir utils).
+  const finReveil = renderLoadingReveil(container, 'Chargement des statistiques');
   try {
     const res = await fetch(API_URL + '/stats');
+    finReveil();
     if (!res.ok) {
       if (res.status === 429) throw new Error("Trop de requêtes. Patientez un instant.");
       throw new Error('Erreur ' + res.status);
@@ -836,7 +846,14 @@ export async function loadStats() {
     refreshStats();
     statsLoaded = true;
   } catch (err) {
-    container.innerHTML = `<div class="error-box">Impossible de charger les statistiques. ${escapeHtml(err.message)}</div>`;
+    finReveil();
+    container.innerHTML = `<div class="error-box">
+      <p>Impossible de charger les statistiques pour le moment.</p>
+      <p class="error-detail">${escapeHtml(err.message)}</p>
+      <div class="error-actions"><button type="button" class="retry-btn" data-click="retryStats"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg>Réessayer</button></div>
+    </div>`;
+  } finally {
+    statsLoading = false;
   }
 }
 
@@ -874,19 +891,26 @@ export function trendSuggestion(el) {
   document.getElementById('trendInput').value = el.textContent;
   loadTrend();
 }
+// Garde de fraîcheur (voir seanceRequestSeq) : « propreté » puis « mobilité »
+// enchaînés vite ne doivent jamais afficher le graphe du premier sous le
+// libellé du second.
+let trendRequestSeq = 0;
 export async function loadTrend() {
   const theme = document.getElementById('trendInput').value.trim();
   const box = document.getElementById('trendResult');
   if (!theme) { box.innerHTML = ''; return; }
+  const seq = ++trendRequestSeq;
   box.innerHTML = '<div class="loading"><span>Calcul en cours</span><span class="dots"><span></span><span></span><span></span></span></div>';
   try {
     const res = await fetch(API_URL + '/trend?theme=' + encodeURIComponent(theme));
+    if (seq !== trendRequestSeq) return;
     if (!res.ok) {
       if (res.status === 429) throw new Error("Trop de requêtes. Patientez un instant.");
       const e = await res.json().catch(() => ({}));
       throw new Error(e.detail || e.error || ('Erreur ' + res.status));
     }
     const d = await res.json();
+    if (seq !== trendRequestSeq) return;
     if (!d.annees || !d.annees.length) {
       box.innerHTML = `<div class="trend-empty">Aucun point trouvé pour « ${escapeHtml(theme)} ». Essayez un autre mot-clé.</div>`;
       return;
@@ -915,6 +939,11 @@ export async function loadTrend() {
       <div class="stat-section"><h3>Plus grosses dépenses</h3>${items}</div>
       <p class="trend-note">${escapeHtml(d.note || '')}</p>`;
   } catch (err) {
-    box.innerHTML = `<div class="error-box">Impossible de calculer l'évolution. ${escapeHtml(err.message)}</div>`;
+    if (seq !== trendRequestSeq) return;
+    box.innerHTML = `<div class="error-box">
+      <p>Impossible de calculer l'évolution de ce thème pour le moment.</p>
+      <p class="error-detail">${escapeHtml(err.message)}</p>
+      <div class="error-actions"><button type="button" class="retry-btn" data-click="loadTrend"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg>Réessayer</button></div>
+    </div>`;
   }
 }

@@ -1,6 +1,7 @@
 // ── OPTIONS (menu ⚙️) — préférences par navigateur (localStorage) ──
 import { appVersion } from './config.js';
 import { trimCaches, renderHistory } from './chat.js';
+import { openOverlay, closeOverlay } from './modal.js';
 
 const SETTINGS_KEY = 'pv_settings';
 const SETTINGS_DEFAULTS = {
@@ -56,7 +57,9 @@ export function applyTheme() {
 export function cycleTheme() {
   updateSetting('theme', THEME_ORDER[(THEME_ORDER.indexOf(settings.theme) + 1) % THEME_ORDER.length]);
 }
-export function openSettings() { renderSettings(); document.getElementById('settingsOverlay').classList.add('open'); }
+// Focus initial sur la croix : aucun réglage ne bouge par accident (une flèche
+// sur un curseur focalisé changerait déjà une valeur), voir modal.js.
+export function openSettings() { renderSettings(); openOverlay('settingsOverlay', { initialFocus: '.settings-close' }); }
 // Clic sur le fond assombri (pas sur le panneau lui-même) → ferme le tiroir.
 export function initSettingsOverlay() {
   const overlay = document.getElementById('settingsOverlay');
@@ -65,7 +68,7 @@ export function initSettingsOverlay() {
 export function closeSettings() {
   const panel = document.getElementById('settingsPanel');
   if (panel) panel.style.transform = '';   // efface un éventuel reliquat de glissement interrompu
-  document.getElementById('settingsOverlay').classList.remove('open');
+  closeOverlay('settingsOverlay');
 }
 export function updateSetting(key, val) {
   settings[key] = val; saveSettings();

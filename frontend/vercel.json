@@ -4,7 +4,12 @@
   "outputDirectory": ".",
   "framework": null,
   "rewrites": [
-    { "source": "/", "destination": "/index.html" }
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/app", "destination": "/app.html" }
+  ],
+  "redirects": [
+    { "source": "/", "has": [{ "type": "query", "key": "tab" }], "destination": "/app", "permanent": false },
+    { "source": "/", "has": [{ "type": "query", "key": "q" }], "destination": "/app", "permanent": false }
   ],
   "headers": [
     {

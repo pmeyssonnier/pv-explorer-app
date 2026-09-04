@@ -32,7 +32,12 @@ const MIME = {
 
 http.createServer((req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
-  let filePath = path.join(ROOT, decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname));
+  // Mêmes réécritures que vercel.json : « / » = page d'accueil (index.html),
+  // « /app » = l'outil (app.html). La redirection des anciens liens
+  // « /?tab=… » vers /app est faite côté page (js/landing.js), donc valable
+  // ici comme en prod, sans dépendre des règles `redirects` de Vercel.
+  const route = url.pathname === '/' ? '/index.html' : url.pathname === '/app' ? '/app.html' : url.pathname;
+  let filePath = path.join(ROOT, decodeURIComponent(route));
   if (!filePath.startsWith(ROOT)) { res.writeHead(403); res.end(); return; }
 
   fs.readFile(filePath, (err, data) => {

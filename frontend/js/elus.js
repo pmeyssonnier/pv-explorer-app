@@ -281,6 +281,13 @@ export function shareElu(btn) {
   doShare('PV Explorer — Interventions par élu·e', text, url, btn);
 }
 
+// Garde de fraîcheur (même motif que seanceRequestSeq, voir seances.js) : si
+// l'on change d'élu·e pendant qu'une fiche se charge — courant sur réseau
+// mobile ou au réveil du service — la réponse la plus ancienne ne doit jamais
+// écraser la plus récente. Sans elle, le champ affichait « Abkoui » et la
+// fiche « Jodogne » (vérifié en ralentissant /elu à 2,5 s).
+let eluRequestSeq = 0;
+
 async function loadElu(key) {
   const box = document.getElementById('eluResult');
   if (!key) {
@@ -288,15 +295,25 @@ async function loadElu(key) {
     document.getElementById('eluYear').hidden = true;
     return;
   }
+  const seq = ++eluRequestSeq;
   box.innerHTML = '<div class="loading"><span>Chargement</span><span class="dots"><span></span><span></span><span></span></span></div>';
   try {
     const res = await fetch(API_URL + '/elu/' + encodeURIComponent(key));
-    if (!res.ok) throw new Error('Erreur ' + res.status);
-    renderElu(await res.json());
+    if (seq !== eluRequestSeq) return;   // une sélection plus récente a pris le dessus
+    if (!res.ok) throw new Error(res.status === 429 ? 'Trop de requêtes d\'affilée — patientez un instant.' : 'Erreur ' + res.status);
+    const data = await res.json();
+    if (seq !== eluRequestSeq) return;
+    renderElu(data);
   } catch (err) {
-    box.innerHTML = `<div class="error-box">Impossible de charger cette fiche. ${escapeHtml(err.message)}</div>`;
+    if (seq !== eluRequestSeq) return;
+    box.innerHTML = `<div class="error-box">
+      <p>Impossible de charger cette fiche pour le moment.</p>
+      <p class="error-detail">${escapeHtml(err.message)}</p>
+      <div class="error-actions"><button type="button" class="retry-btn" data-click="retryElu" data-arg="${escapeHtml(key)}"><svg class="icon" aria-hidden="true"><use href="#ico-refresh"/></svg>Réessayer</button></div>
+    </div>`;
   }
 }
+export function retryElu(key) { loadElu(key); }
 
 // Années distinctes (dépôts + réponses), triées récent → ancien.
 function eluYears(d) {
@@ -455,13 +472,13 @@ function eluDeposeRow(it, nom) {
   // point, un lien léger « ▶ vidéo » (généraliste, début de séance).
   let links = '';
   if (it.type === 'video' && it.url) {
-    links = renderVideoLink(it.url, '▶ Voir le débat', 'Voir le débat sur YouTube (au bon moment)');
+    links = renderVideoLink(it.url, 'Voir le débat', 'Voir le débat sur YouTube (au bon moment)');
   } else if (it.type === 'question_ecrite') {
     links += renderPvPdfLink(it.url, null, 'Voir la question (PDF)', 'Ouvrir la question écrite (PDF) sur 1030.be');
   } else {
     links += renderPvPdfLink(it.url, it.page);
     if (it.video_url) {
-      const label = it.video_precise ? '▶ Voir le débat' : '▶ vidéo';
+      const label = it.video_precise ? 'Voir le débat' : 'Vidéo';
       const title = it.video_precise
         ? 'Voir le débat sur YouTube (au bon moment)'
         : 'Voir la séance filmée sur YouTube (début de séance, pas de moment précis identifié pour ce point)';
